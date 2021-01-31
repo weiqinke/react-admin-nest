@@ -10,6 +10,7 @@
     "@types/qs": "^6.9.5",
     "antd": "^4.11.2",
     "axios": "^0.21.1",
+    "babel-plugin-import": "^1.13.3",
     "history": "^5.0.0",
     "js-cookie": "^2.2.1",
     "mockjs": "^1.1.0",
