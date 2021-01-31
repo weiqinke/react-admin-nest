@@ -1,32 +1,11 @@
 import React, { FC } from 'react';
-import { Route, useNavigate } from 'react-router-dom';
-import { Result, Button } from 'antd';
-import { useLocale } from 'locales';
-import { RouteProps, useLocation } from 'react-router';
+import { Route } from 'react-router-dom';
+import { RouteProps } from 'react-router';
 import { useAppState } from 'stores';
-
+import NotAuthPage from 'pages/403';
 const PrivateRoute: FC<RouteProps> = props => {
   const { loginState } = useAppState(state => state.user);
-  const navigate = useNavigate();
-  const { formatMessage } = useLocale();
-  const location = useLocation();
-  return loginState ? (
-    <Route {...props} />
-  ) : (
-    <Result
-      status="403"
-      title="403"
-      subTitle={formatMessage({ id: 'gloabal.tips.unauthorized' })}
-      extra={
-        <Button
-          type="primary"
-          onClick={() => navigate('/login', { replace: true, state: { from: location.pathname } })}
-        >
-          {formatMessage({ id: 'gloabal.tips.goToLogin' })}
-        </Button>
-      }
-    />
-  );
+  return loginState ? <Route {...props} /> : <NotAuthPage />;
 };
 
 export default PrivateRoute;
