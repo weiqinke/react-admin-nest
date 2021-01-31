@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-import { LogoutOutlined, UserOutlined, MenuUnfoldOutlined, MenuFoldOutlined, BellOutlined } from '@ant-design/icons';
+import React, { FC, useState } from 'react';
+import { LogoutOutlined, UserOutlined, MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import { Layout, Dropdown, Menu } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import HeaderNoticeComponent from './notice';
@@ -10,6 +10,8 @@ import { ReactComponent as EnUsSvg } from 'assets/header/en_US.svg';
 import AntdSvg from 'assets/logo/antd.svg';
 import { setUserItem, logoutSystem } from 'stores/user.store';
 import { useAppDispatch, useAppState } from 'stores';
+import FixedMenu from '../menu/FixedMenu';
+import { MenuList } from 'interface/layout/menu.interface';
 import './header.less';
 
 const { Header } = Layout;
@@ -23,6 +25,7 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
   const { loginState, locale, device } = useAppState(state => state.user);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const [menuList] = useState<MenuList>([]);
 
   const logout = async () => {
     navigate('/login');
@@ -57,13 +60,18 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
   return (
     <Header className="layout-page-header topheader">
       {device !== 'MOBILE' && (
-        <div className="logo topheader" style={{ width: collapsed ? 80 : 200 }}>
+        <div className="logo topheader" style={{ width: collapsed ? 80 : 200 }} title="返回首页">
           <img src={AntdSvg} alt="" />
         </div>
       )}
       <div className="layout-page-header-main topheader">
+        {/* 此处是切换隐藏菜单栏 */}
         <div onClick={toggle} className="togglesidebar">
-          <span id="sidebar-trigger">{collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}</span>
+          {collapsed ? <MenuUnfoldOutlined className="icontab" /> : <MenuFoldOutlined className="icontab" />}
+        </div>
+        {/* 菜单管理，仅仅保存一级菜单 */}
+        <div className="menutop">
+          <FixedMenu menuList={menuList}></FixedMenu>
         </div>
         <div className="actions">
           <HeaderNoticeComponent />
@@ -88,7 +96,7 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
             <Dropdown overlay={menu} trigger={['click']}>
               <span className="user-action">
                 <img src={Avator} className="user-avator" alt="avator" />
-                <b className="user-name">韦钦可</b>
+                <b className="user-name">韦钦可韦钦可韦钦可</b>
               </span>
             </Dropdown>
           ) : (

@@ -5,6 +5,7 @@ import { MenuList } from '../../interface/layout/menu.interface';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppState } from 'stores';
 import { useProjectConfig } from 'hooks/useProjectConfig';
+import FixedLeftMenu from './menu/FixedLeftMenu';
 import { useSystemUserInfo } from 'hooks/useSystemInfo';
 import IconFont from 'pages/commponents/iconfont/iconfont';
 import './menu.less';
@@ -31,6 +32,7 @@ const MenuComponent: FC<Props> = ({}) => {
   const [openKeys, setOpenkeys] = useState<string[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const { collapsed } = useAppState(state => state.user);
+  const { changeFixedMenu } = useAppState(state => state.menu);
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { config } = useProjectConfig();
@@ -58,8 +60,7 @@ const MenuComponent: FC<Props> = ({}) => {
     setOpenkeys(() => openKeys);
     setLocalStorage('cacheOpenKeys', openKeys); // 记住展开关闭的组，刷新持久化
   };
-  if (layout === 'fixed') {
-  }
+
   const renderMenuMembers = (adminRoutes: any[]) => {
     // const adminRoutesDeepClone = routesFilter([...adminRoutes], roles); // adminRoutes权限过滤, 此版本不做了，因为菜单就是根据权限筛选出来的
     return adminRoutes.map(({ name, meUrl, children, icon }) => {
@@ -82,6 +83,12 @@ const MenuComponent: FC<Props> = ({}) => {
     navigate(keyPath[0]);
     setSelectedKeys(() => [key]); // 修改当前组件的state
   };
+  if (layout === 'fixed') {
+    /**
+     * 现在不要用原始菜单数据了，需要从缓存中取值
+     */
+    return <FixedLeftMenu menuList={changeFixedMenu}></FixedLeftMenu>;
+  }
   return (
     <Menu
       mode="inline"

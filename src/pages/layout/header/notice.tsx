@@ -1,6 +1,5 @@
 import React, { FC, useState, useEffect } from 'react';
 import { Tabs, Dropdown, Badge, Spin, List, Avatar, Tag } from 'antd';
-import { ReactComponent as NoticeSvg } from 'assets/header/notice.svg';
 import { BellOutlined, LoadingOutlined } from '@ant-design/icons';
 import { getNoticeList } from 'api/nest-admin/User';
 import { Notice, EventStatus } from 'interface/layout/notice.interface';
@@ -20,36 +19,42 @@ const HeaderNoticeComponent: FC = () => {
   const noticeListFilter = <T extends Notice['type']>(type: T) => {
     return noticeList.filter(notice => notice.type === type) as Notice<T>[];
   };
-
+  // 此处有内存泄漏风险，就是定时器问题。暂时不知道怎么解决，先遗留
+  var cacheTimer: any = null;
   const getNotice = async () => {
     //查看我是否有新消息
     setLoading(true);
+    clearTimeout(cacheTimer);
     getNoticeList({})
       .then(result => {
         setLoading(false);
         if (result.status && result.data.data) {
           setNoticeList(result.data.data);
         }
-        //如果错误，就更新随机值
-        const timerid = setTimeout(() => {
+        //如果错误，就更新随机值。
+        cacheTimer = setTimeout(() => {
           setNoticeNum(Math.ceil(Math.random() * 1000));
         }, 3000);
-        return () => clearTimeout(timerid);
+        return () => clearTimeout(cacheTimer);
       })
       .catch(err => {
         console.log('err: ', err);
         setLoading(false);
         //如果错误，就更新随机值
-        const timerid = setTimeout(() => {
+        cacheTimer = setTimeout(() => {
           setNoticeNum(Math.ceil(Math.random() * 1000));
         }, 3000);
-        return () => clearTimeout(timerid);
+        return () => clearTimeout(cacheTimer);
       });
   };
 
   useEffect(() => {
     getNotice();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [noticeNum]);
+  useEffect(() => {
+    return () => clearTimeout(cacheTimer);
+  }, []);
 
   const tabs = (
     <div>

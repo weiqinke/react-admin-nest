@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { defaultConfig } from 'config/defaultConfig';
+import { defaultConfig } from 'config/defaultMenuConfig';
 interface DefaultConfig {
   layout: string;
 }
