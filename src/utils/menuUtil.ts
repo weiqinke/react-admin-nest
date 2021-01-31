@@ -5,6 +5,7 @@ export interface menuchild {
   name: string;
   router: string;
   meUrl?: string;
+  isSubMenu?: number;
 }
 export function ProjectParseMenu(menulist: menuchild[]) {
   let menus: menuchild[] = [];
@@ -27,9 +28,13 @@ export function ProjectParseMenuAsPre(menulist: menuchild[]) {
     var newMenuItem = {};
     if (children && children.length > 0) {
       var echild: any[] = ProjectParseMenuAsPre(children);
-      newMenuItem = { authority, icon, meUrl, name, router, children: echild };
+      newMenuItem = { authority, icon, meUrl, name, router, children: echild, isSubMenu: 1 };
     } else {
-      newMenuItem = { authority, icon, meUrl, name, router };
+      if (children && children.length === 0) {
+        newMenuItem = { authority, icon, meUrl, name, router, isSubMenu: 1 };
+      } else {
+        newMenuItem = { authority, icon, meUrl, name, router, isSubMenu: 0 };
+      }
     }
     menus.push(newMenuItem);
     return true;

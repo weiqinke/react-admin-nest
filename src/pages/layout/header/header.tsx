@@ -13,6 +13,7 @@ import { useAppDispatch, useAppState } from 'stores';
 import FixedMenu from '../menu/FixedMenu';
 import { MenuList } from 'interface/layout/menu.interface';
 import './header.less';
+import { useProjectConfig } from 'hooks/useProjectConfig';
 
 const { Header } = Layout;
 
@@ -26,6 +27,8 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [menuList] = useState<MenuList>([]);
+  const { config } = useProjectConfig();
+  const { layout } = config;
 
   const logout = async () => {
     navigate('/login');
@@ -70,9 +73,11 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
           {collapsed ? <MenuUnfoldOutlined className="icontab" /> : <MenuFoldOutlined className="icontab" />}
         </div>
         {/* 菜单管理，仅仅保存一级菜单 */}
-        <div className="menutop">
-          <FixedMenu menuList={menuList}></FixedMenu>
-        </div>
+        {layout && layout === 'fixed' ? (
+          <div className="menutop">
+            <FixedMenu menuList={menuList}></FixedMenu>
+          </div>
+        ) : null}
         <div className="actions">
           <HeaderNoticeComponent />
           <Dropdown

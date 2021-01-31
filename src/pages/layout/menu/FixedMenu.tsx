@@ -1,5 +1,4 @@
-import { FC, useState, useEffect } from 'react';
-import React from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { Menu } from 'antd';
 import { MenuList } from 'interface/layout/menu.interface';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -20,13 +19,21 @@ function setLocalStorage(name: string, data: any) {
   const dataStr = JSON.stringify(data);
   window.sessionStorage.setItem(name, dataStr);
 }
+const findMenuOpenKeys = (menus: any) => {
+  const cacheUrlList = [menus.meUrl];
+  if (menus.children && menus.children.length > 0) {
+    const [firstChild] = menus.children;
+    const childUrls = findMenuOpenKeys(firstChild);
+    Array.prototype.push.apply(cacheUrlList, childUrls);
+  }
+  return cacheUrlList;
+};
 
 // eslint-disable-next-line no-empty-pattern
 const FixedMenu: FC<Props> = ({}) => {
   const [openKeys, setOpenkeys] = useState<string[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const { collapsed, menuList } = useAppState(state => state.user);
-  const { changeFixedMenu } = useAppState(state => state.menu);
 
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -53,7 +60,7 @@ const FixedMenu: FC<Props> = ({}) => {
   }
   const renderFixedMenuMembers = (adminRoutes: any[]) => {
     // const adminRoutesDeepClone = routesFilter([...adminRoutes], roles); // adminRoutes权限过滤, 此版本不做了，因为菜单就是根据权限筛选出来的
-    return adminRoutes.map(({ name, meUrl, children, icon }) => {
+    return adminRoutes.map(({ name, meUrl }) => {
       return (
         <Item key={meUrl} title={name} icon={<IconFont type={'anticon-shouye'} />}>
           {name}
@@ -83,6 +90,18 @@ const FixedMenu: FC<Props> = ({}) => {
        * 如果当前菜单下全是路由，而不是页面。就认为第一个就是页面
        * 此刻，我们去找第一个菜单中此元素的节点 MenuHasChildren
        * 把MenuHasChildren放到全局中，让别的组件去使用它
+       * 好像我在此刻应该把路径给修改了，让他自己先跳过去
+       */
+      const [nextMenuItem] = MenuHasChildren;
+      const cacheOpenKeys = findMenuOpenKeys(nextMenuItem);
+      setOpenkeys(() => cacheOpenKeys);
+      setLocalStorage('cacheOpenKeys', cacheOpenKeys); // 记住展开关闭的组，刷新持久化
+      const [lastChildUrl] = [...cacheOpenKeys].reverse();
+      navigate({
+        pathname: lastChildUrl
+      });
+      /**
+       * 从nextMenuItem中找到菜单项 跳转过去
        */
     } else {
       navigate({

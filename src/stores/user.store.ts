@@ -78,6 +78,7 @@ export const logoutAsync = () => {
 export const logoutSystem = () => {
   return async (dispatch: Dispatch) => {
     localStorage.clear();
+    sessionStorage.clear();
     dispatch(
       setUserItem({
         loginState: false

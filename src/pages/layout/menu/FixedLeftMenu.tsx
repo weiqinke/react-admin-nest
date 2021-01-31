@@ -1,12 +1,9 @@
-import { FC, useState, useEffect } from 'react';
-import React from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { Menu } from 'antd';
 import { MenuList } from 'interface/layout/menu.interface';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppState } from 'stores';
-import { useProjectConfig } from 'hooks/useProjectConfig';
 
-import { useSystemUserInfo } from 'hooks/useSystemInfo';
 import IconFont from 'pages/commponents/iconfont/iconfont';
 import './FixedLeftMenu.less';
 const { SubMenu, Item } = Menu;
@@ -27,19 +24,19 @@ function getLocalStorage(name: string) {
   return dataStr && JSON.parse(dataStr);
 }
 
-const FixedLeftMenu: FC<Props> = ({}) => {
+const FixedLeftMenu: FC<Props> = () => {
   const [openKeys, setOpenkeys] = useState<string[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const { collapsed } = useAppState(state => state.user);
   const { changeFixedMenu } = useAppState(state => state.menu);
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { getMenu } = useSystemUserInfo();
 
   /**
    * 提前说明
    * 此处需要从原始菜单中读取数据
-   * 原因是 页面刷新。我们从缓存中读取菜单就好了
+   * 原因是 页面刷新。数据可能是旧的了
+   * 我们从内存中读取菜单就好了
    */
 
   useEffect(() => {
@@ -65,7 +62,7 @@ const FixedLeftMenu: FC<Props> = ({}) => {
 
   const renderMenuMembers = (adminRoutes: any[]) => {
     // const adminRoutesDeepClone = routesFilter([...adminRoutes], roles); // adminRoutes权限过滤, 此版本不做了，因为菜单就是根据权限筛选出来的
-    return adminRoutes.map(({ name, meUrl, children, icon }) => {
+    return adminRoutes.map(({ name, meUrl, children }) => {
       return children && children.length > 0 ? (
         <SubMenu key={meUrl} title={name} icon={<IconFont type={'anticon-shouye'} />}>
           {renderMenuMembers(children)}

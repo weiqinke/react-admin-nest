@@ -20,7 +20,7 @@ const HeaderNoticeComponent: FC = () => {
     return noticeList.filter(notice => notice.type === type) as Notice<T>[];
   };
   // 此处有内存泄漏风险，就是定时器问题。暂时不知道怎么解决，先遗留
-  var cacheTimer: any = null;
+  var [cacheTimer]: any = useState(null);
   const getNotice = async () => {
     //查看我是否有新消息
     setLoading(true);
@@ -34,7 +34,7 @@ const HeaderNoticeComponent: FC = () => {
         //如果错误，就更新随机值。
         cacheTimer = setTimeout(() => {
           setNoticeNum(Math.ceil(Math.random() * 1000));
-        }, 3000);
+        }, 300000);
         return () => clearTimeout(cacheTimer);
       })
       .catch(err => {
@@ -43,7 +43,7 @@ const HeaderNoticeComponent: FC = () => {
         //如果错误，就更新随机值
         cacheTimer = setTimeout(() => {
           setNoticeNum(Math.ceil(Math.random() * 1000));
-        }, 3000);
+        }, 300000);
         return () => clearTimeout(cacheTimer);
       });
   };
@@ -54,7 +54,7 @@ const HeaderNoticeComponent: FC = () => {
   }, [noticeNum]);
   useEffect(() => {
     return () => clearTimeout(cacheTimer);
-  }, []);
+  }, [cacheTimer]);
 
   const tabs = (
     <div>
