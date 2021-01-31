@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useRef } from 'react';
 import { Tabs, Dropdown, Badge, Spin, List, Avatar, Tag } from 'antd';
 import { BellOutlined, LoadingOutlined } from '@ant-design/icons';
 import { getNoticeList } from 'api/nest-admin/User';
@@ -8,53 +8,46 @@ import { useAppState } from 'stores';
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 const { TabPane } = Tabs;
-
 const HeaderNoticeComponent: FC = () => {
   const [visible, setVisible] = useState(false);
   const [noticeList, setNoticeList] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(false);
   const { noticeCount } = useAppState(state => state.user);
-
+  const intervalHandle: any = useRef(null);
   const [noticeNum, setNoticeNum] = useState(0);
   const noticeListFilter = <T extends Notice['type']>(type: T) => {
     return noticeList.filter(notice => notice.type === type) as Notice<T>[];
   };
-  // 此处有内存泄漏风险，就是定时器问题。暂时不知道怎么解决，先遗留
-  var [cacheTimer]: any = useState(null);
   const getNotice = async () => {
-    //查看我是否有新消息
+    //查看我是否有新消息 无论如何
     setLoading(true);
-    clearTimeout(cacheTimer);
+    //无论如何，清掉定时器,使用了 ref,肯定能拿到指针。
+    //并且启动一个定时器，定时刷新我的消息
+    clearTimeout(intervalHandle.current);
+    intervalHandle.current = setTimeout(() => {
+      setNoticeNum(Math.ceil(Math.random() * 1000));
+    }, 1000);
     getNoticeList({})
       .then(result => {
         setLoading(false);
         if (result.status && result.data.data) {
           setNoticeList(result.data.data);
         }
-        //如果错误，就更新随机值。
-        cacheTimer = setTimeout(() => {
-          setNoticeNum(Math.ceil(Math.random() * 1000));
-        }, 300000);
-        return () => clearTimeout(cacheTimer);
       })
       .catch(err => {
-        console.log('err: ', err);
         setLoading(false);
-        //如果错误，就更新随机值
-        cacheTimer = setTimeout(() => {
-          setNoticeNum(Math.ceil(Math.random() * 1000));
-        }, 300000);
-        return () => clearTimeout(cacheTimer);
       });
   };
 
   useEffect(() => {
     getNotice();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [noticeNum]);
+
   useEffect(() => {
-    return () => clearTimeout(cacheTimer);
-  }, [cacheTimer]);
+    return () => {
+      clearTimeout(intervalHandle.current);
+    };
+  }, []);
 
   const tabs = (
     <div>

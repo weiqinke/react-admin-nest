@@ -45,17 +45,17 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
   };
   const menu = (
     <Menu>
-      <Menu.Item key="1">
+      <Menu.Item key="1" onClick={() => navigate('/dashboard')}>
         <span>
           <UserOutlined />
-          <span onClick={() => navigate('/dashboard')}>个人设置</span>
+          <span>个人设置</span>
         </span>
       </Menu.Item>
       <Menu.Divider />
-      <Menu.Item key="2">
+      <Menu.Item key="2" onClick={() => logout()}>
         <span>
           <LogoutOutlined />
-          <span onClick={() => logout()}>退出登录</span>
+          <span>退出登录</span>
         </span>
       </Menu.Item>
     </Menu>

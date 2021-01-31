@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Button, Checkbox, Form, Input } from 'antd';
 import './index.less';
 import { useNavigate } from 'react-router-dom';
@@ -20,7 +20,7 @@ const initialValues: LoginParamsMore = {
   sysUserPwd: '6ED30B7CED45',
   remember: true
 };
-
+//此文件也有内存泄漏风险
 const LoginForm: FC = () => {
   const navigate = useNavigate();
   const { setUserInfo, setLoginInfo, saveMenu } = useSystemUserInfo();
@@ -63,7 +63,6 @@ const LoginForm: FC = () => {
     });
   };
   const onFinished = async (form: LoginParams) => {
-    setErrmsg('');
     loginInProject(form).then((result: any) => {
       const { data } = result;
       if (data.code === 0) {
@@ -93,6 +92,7 @@ const LoginForm: FC = () => {
       }
     });
   };
+  useEffect(() => {}, []);
 
   return (
     <div className="login-page">
