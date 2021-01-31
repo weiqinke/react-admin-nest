@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect } from 'react';
 import { Tabs, Dropdown, Badge, Spin, List, Avatar, Tag } from 'antd';
 import { ReactComponent as NoticeSvg } from 'assets/header/notice.svg';
-import { LoadingOutlined } from '@ant-design/icons';
+import { BellOutlined, LoadingOutlined } from '@ant-design/icons';
 import { getNoticeList } from 'api/nest-admin/User';
 import { Notice, EventStatus } from 'interface/layout/notice.interface';
 import { useAppState } from 'stores';
@@ -16,23 +16,40 @@ const HeaderNoticeComponent: FC = () => {
   const [loading, setLoading] = useState(false);
   const { noticeCount } = useAppState(state => state.user);
 
+  const [noticeNum, setNoticeNum] = useState(0);
   const noticeListFilter = <T extends Notice['type']>(type: T) => {
     return noticeList.filter(notice => notice.type === type) as Notice<T>[];
   };
 
   const getNotice = async () => {
+    //查看我是否有新消息
     setLoading(true);
-    getNoticeList({}).then(result => {
-      setLoading(false);
-      if (result.status && result.data.data) {
-        setNoticeList(result.data.data);
-      }
-    });
+    getNoticeList({})
+      .then(result => {
+        setLoading(false);
+        if (result.status && result.data.data) {
+          setNoticeList(result.data.data);
+        }
+        //如果错误，就更新随机值
+        const timerid = setTimeout(() => {
+          setNoticeNum(Math.ceil(Math.random() * 1000));
+        }, 3000);
+        return () => clearTimeout(timerid);
+      })
+      .catch(err => {
+        console.log('err: ', err);
+        setLoading(false);
+        //如果错误，就更新随机值
+        const timerid = setTimeout(() => {
+          setNoticeNum(Math.ceil(Math.random() * 1000));
+        }, 3000);
+        return () => clearTimeout(timerid);
+      });
   };
 
   useEffect(() => {
     getNotice();
-  }, []);
+  }, [noticeNum]);
 
   const tabs = (
     <div>
@@ -109,9 +126,9 @@ const HeaderNoticeComponent: FC = () => {
         borderRadius: 4
       }}
     >
-      <Badge count={noticeCount} overflowCount={999}>
+      <Badge count={noticeNum || noticeCount} overflowCount={999}>
         <span className="notice" id="notice-center">
-          <NoticeSvg className="anticon" />
+          <BellOutlined style={{ fontSize: '22px', color: '#fff' }} />
         </span>
       </Badge>
     </Dropdown>

@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { LogoutOutlined, UserOutlined, MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
+import { LogoutOutlined, UserOutlined, MenuUnfoldOutlined, MenuFoldOutlined, BellOutlined } from '@ant-design/icons';
 import { Layout, Dropdown, Menu } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import HeaderNoticeComponent from './notice';
@@ -55,13 +55,13 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
     </Menu>
   );
   return (
-    <Header className="layout-page-header">
+    <Header className="layout-page-header topheader">
       {device !== 'MOBILE' && (
-        <div className="logo" style={{ width: collapsed ? 80 : 200 }}>
+        <div className="logo topheader" style={{ width: collapsed ? 80 : 200 }}>
           <img src={AntdSvg} alt="" />
         </div>
       )}
-      <div className="layout-page-header-main">
+      <div className="layout-page-header-main topheader">
         <div onClick={toggle} className="togglesidebar">
           <span id="sidebar-trigger">{collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}</span>
         </div>
@@ -88,6 +88,7 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
             <Dropdown overlay={menu} trigger={['click']}>
               <span className="user-action">
                 <img src={Avator} className="user-avator" alt="avator" />
+                <b className="user-name">韦钦可</b>
               </span>
             </Dropdown>
           ) : (

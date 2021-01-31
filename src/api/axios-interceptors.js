@@ -10,6 +10,12 @@ const resp401 = {
    * @returns {*}
    */
   onFulfilled(response) {
+    if (response.status === 400) {
+      $message.error({
+        content: '无此接口权限',
+        duration: 1
+      });
+    }
     if (response.status === 401) {
       $message.error({
         content: '无此接口权限',
@@ -41,14 +47,14 @@ const resp404 = {
       });
     }
     return response;
-  },
-  onRejected(error) {
-    $message.error({
-      content: '请求找不到',
-      duration: 1
-    });
-    return Promise.reject(error);
   }
+  // onRejected(error) {
+  //   $message.error({
+  //     content: '请求找不到',
+  //     duration: 1
+  //   });
+  //   return Promise.reject(error);
+  // }
 };
 
 const resp415 = {
@@ -66,10 +72,11 @@ const resp415 = {
 const resp20401 = {
   onFulfilled(response) {
     if (response.status === 200 && response.data.code === 20401) {
-      $message.error({
-        content: '获取到0条数据',
-        duration: 1
-      });
+      // 为了处理返回数据为空，hash
+      // $message.error({
+      //   content: '获取到0条数据',
+      //   duration: 1
+      // });
     }
     if (response.status === 200 && response.data.code === 41701) {
       $message.error({
@@ -78,6 +85,22 @@ const resp20401 = {
       });
     }
     return response;
+  }
+};
+
+const resperror = {
+  /***兜底的错误，不想在控制台打印错误了，让他正常返回 */
+  onRejected(error) {
+    $message.error({
+      content: '请求错误',
+      duration: 1
+    });
+    return Promise.resolve({
+      status: 400,
+      message: '请求错误',
+      data: {}
+    });
+    // return Promise.reject(error);
   }
 };
 
@@ -107,4 +130,4 @@ const reqCommon = {
   }
 };
 export const requestInterce = [reqCommon]; // 请求拦截
-export const responseInterce = [resp401, resp403, resp404, resp415, resp20401]; // 响应拦截
+export const responseInterce = [resp401, resp403, resp404, resp415, resp20401, resperror]; // 响应拦截
