@@ -1,7 +1,9 @@
-const { override, addLessLoader } = require('customize-cra');
-
+const { override, addLessLoader, setWebpackPublicPath } = require('customize-cra');
+process.env.PORT = 3006;
+process.env.GENERATE_SOURCEMAP !== 'false';
+/***生产环境是否打包 Source Map 两种方法 */
 const rewiredSourceMap = () => config => {
-  config.devtool = config.mode === 'development' ? 'cheap-module-source-map' : false;
+  config.devtool = config.mode === 'development' ? 'cheap-module-source-map' : 'cheap-module-source-map';
   return config;
 };
 
@@ -26,6 +28,7 @@ module.exports = override(
     },
     javascriptEnabled: true
   }),
+  setWebpackPublicPath('/'), // 修改 publicPath
   // new BundleAnalyzerPlugin(),
   rewiredSourceMap()
 );
