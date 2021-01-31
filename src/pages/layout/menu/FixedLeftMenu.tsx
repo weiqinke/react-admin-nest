@@ -28,7 +28,6 @@ const FixedLeftMenu: FC<Props> = () => {
   const [openKeys, setOpenkeys] = useState<string[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const { collapsed } = useAppState(state => state.user);
-  const { changeFixedMenu } = useAppState(state => state.menu);
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -92,7 +91,7 @@ const FixedLeftMenu: FC<Props> = () => {
       onOpenChange={onOpenChange as any}
       className="layout-page-sider-menu nextmenus"
     >
-      {renderMenuMembers([...changeFixedMenu])}
+      {renderMenuMembers([])}
     </Menu>
   );
 };

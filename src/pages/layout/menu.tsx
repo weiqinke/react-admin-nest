@@ -32,7 +32,6 @@ const MenuComponent: FC<Props> = ({}) => {
   const [openKeys, setOpenkeys] = useState<string[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const { collapsed } = useAppState(state => state.user);
-  const { changeFixedMenu } = useAppState(state => state.menu);
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { config } = useProjectConfig();
@@ -87,7 +86,7 @@ const MenuComponent: FC<Props> = ({}) => {
     /**
      * 现在不要用原始菜单数据了，需要从缓存中取值
      */
-    return <FixedLeftMenu menuList={changeFixedMenu}></FixedLeftMenu>;
+    return <FixedLeftMenu menuList={[]}></FixedLeftMenu>;
   }
   return (
     <Menu
