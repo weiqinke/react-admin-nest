@@ -1,6 +1,5 @@
 /* eslint-disable import/no-anonymous-default-export */
 /* eslint-disable no-unused-expressions */
-import Cookie from 'js-cookie';
 import { message as $message } from 'antd';
 // 401拦截
 const resp401 = {
@@ -48,10 +47,7 @@ const resp404 = {
       content: '请求找不到',
       duration: 1
     });
-    return Promise.resolve({
-      staus: 404,
-      message: '请求未找到'
-    });
+    return Promise.reject(error);
   }
 };
 
@@ -89,28 +85,20 @@ const reqCommon = {
   /**
    * 发送请求之前做些什么
    * @param config axios config
-   * @param options 应用配置 包含: {router, i18n, store, message}
    * @returns {*}
    */
-  onFulfilled(config, options) {
-    const { message } = options;
-    const { url, xsrfCookieName } = config;
+  onFulfilled(config) {
     // if (url.indexOf('login') === -1 && xsrfCookieName && !Cookie.get(xsrfCookieName)) {
     //   message.warning('认证 token 已过期，请重新登录')
     // }
-    message;
-    url;
-    xsrfCookieName;
-    Cookie;
     return config;
   },
   /**
    * 请求出错时做点什么
    * @param error 错误对象
-   * @param options 应用配置 包含: {router, i18n, store, message}
    * @returns {Promise<never>}
    */
-  onRejected(error, options) {
+  onRejected(error) {
     $message.error({
       content: error.message,
       duration: 1

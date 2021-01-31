@@ -61,6 +61,10 @@ const routeList: PartialRouteObject[] = [
         element: <WrapperRouteComponent element={<NotFound />} titleId="title.notFount" />
       }
     ]
+  },
+  {
+    path: '*',
+    element: <WrapperRouteComponent element={<LoginPage />} titleId="title.login" auth={false} />
   }
 ];
 

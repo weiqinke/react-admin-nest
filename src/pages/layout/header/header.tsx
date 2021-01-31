@@ -25,7 +25,6 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
   const dispatch = useAppDispatch();
 
   const logout = async () => {
-    console.log('logout: 一次');
     navigate('/login');
     dispatch(logoutSystem());
   };

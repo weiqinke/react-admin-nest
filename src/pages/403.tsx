@@ -1,5 +1,5 @@
-import { Button, Result } from 'antd';
 import React from 'react';
+import { Button, Result } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppState } from 'stores';
 import { addTag, setActiveTag } from 'stores/tags-view.store';
@@ -16,6 +16,8 @@ const NotAuthPage: React.FC<{}> = () => {
     setTimeout(() => {
       navigate('login');
     }, 0);
+    //如果觉得不合适，可以直接返回loading状态就好了
+    // return <Spin />;
   }
   const backToHome = async () => {
     //如果此时仅剩一个标签页, 应该先去获取首页的菜单项，添加一个标签，然后跳转
