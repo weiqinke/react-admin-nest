@@ -30,7 +30,7 @@
     "format": "prettier --write **/*.{js,ts,tsx}",
     "analyze": "source-map-explorer 'build/static/js/*.js'"
   },
-  "homepage":".",
+  "homepage":"/",
   "browserslist": {
     "production": [
       ">0.2%",
