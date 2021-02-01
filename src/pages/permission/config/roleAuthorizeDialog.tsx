@@ -56,7 +56,6 @@ const RoleAuthorizeDialog: FC<RoleModifyDialogProps> = ({ onAuthorize, onCancel,
     // Optimize: Opening a dialog repeatedly will not trigger initData method. #usePrevious hooks
     // Locale changed will trigger initData in any case.
     if ((visible && prevRoleId !== values.id) || prevLocale !== locale) {
-      console.log('initData');
       initData();
     }
   }, [initData, visible, prevRoleId, values.id, prevLocale, locale]);

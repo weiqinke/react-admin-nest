@@ -5,7 +5,7 @@ const DashBoardPage: FC = () => {
   useEffect(() => {}, []);
   return (
     <div>
-      <Overview loading={false} />
+      <Overview />
     </div>
   );
 };

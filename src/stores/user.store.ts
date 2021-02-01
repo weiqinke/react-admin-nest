@@ -16,7 +16,7 @@ const initialState: UserState = {
   role: (localStorage.getItem('username') || '') as Role,
   loginState: localStorage.getItem('token') ? true : false,
   indexUrl: '',
-  RefreshFCUrl: 'workplace'
+  RefreshFCUrl: '/workplace'
 };
 
 const userSlice = createSlice({
@@ -44,7 +44,6 @@ const userSlice = createSlice({
     },
     setRefreshFCUrl(state, action: any) {
       const { RefreshFCUrl } = action.payload;
-      console.log('RefreshFCUrl: ', RefreshFCUrl);
       state.RefreshFCUrl = RefreshFCUrl;
     }
   }

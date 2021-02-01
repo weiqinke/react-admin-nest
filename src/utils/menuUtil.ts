@@ -15,7 +15,6 @@ export function ProjectParseMenu(menulist: menuchild[]) {
     }
     return true;
   });
-  console.log('menus: ', menus);
   return menus;
 }
 /*****

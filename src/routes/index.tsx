@@ -32,7 +32,7 @@ const RenderRouter: FC = () => {
           path: 'workplace',
           element: (
             <WrapperRouteComponent
-              element={RefreshFCUrl === 'workplace' ? <Dashboard /> : <Spin />}
+              element={RefreshFCUrl === '/workplace' ? <Dashboard /> : <Spin />}
               titleId="title.dashboard"
             />
           )

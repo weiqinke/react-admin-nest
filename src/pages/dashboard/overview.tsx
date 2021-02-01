@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Row, Col, Button } from 'antd';
 import { GetAllMenu } from 'api/nest-admin/Account';
-const Overview: FC<{ loading: boolean }> = () => {
+const Overview: FC<{}> = () => {
   const getInfo = () => {
     GetAllMenu({ type: -1 }).then(data => {
       console.log('data: ', data);
