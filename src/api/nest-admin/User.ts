@@ -32,3 +32,8 @@ export const apiLogout = (payload: any) => {
 export const GetPlanPaged = (payload: any) => {
   return request(`${BASE_URL}PlanManage/GetPlanPaged`, 'post', payload);
 };
+
+/** 登录接口 */
+export const Zhuce = (payload: any) => {
+  return request(`${BASE_URL}user/zhuce`, 'post', payload);
+};

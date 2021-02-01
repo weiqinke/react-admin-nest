@@ -5,15 +5,55 @@
   align-items: center;
   background: url(@base-url) no-repeat;
   background-color: #f0f2f5;
-  &-form {
+  &-body {
     width: 300px;
-    padding: 10px 40px;
-    border-radius: 10px;
-    h2 {
+    margin: 0 auto;
+    .title {
+      width: 100%;
       text-align: center;
     }
-    &_button {
-      width: 100%;
+    .ant-tabs-nav-list {
+      .ant-tabs-tab {
+        margin: 0px 20px;
+        text-align: center;
+      }
+    }
+    .login-page-form_account {
+      width: 300px;
+      padding: 0px;
+      border-radius: 10px;
+      h2 {
+        text-align: center;
+      }
+      .login-page-form_button_account {
+        width: 100%;
+      }
+    }
+    .login-page-form_register {
+      width: 300px;
+      padding: 0px;
+      border-radius: 10px;
+      h2 {
+        text-align: center;
+      }
+      .hidetext {
+        opacity: 0;
+      }
+      .login-page-form_button_register {
+        width: 100%;
+      }
     }
   }
+
+  // &-form {
+  //   width: 300px;
+  //   padding: 10px 40px;
+  //   border-radius: 10px;
+  //   h2 {
+  //     text-align: center;
+  //   }
+  //   &_button {
+  //     width: 100%;
+  //   }
+  // }
 }

@@ -2,6 +2,7 @@
  * 代理跨域配置
  */
 const proxy = require('http-proxy-middleware');
+console.log('proxy: ', proxy);
 
 module.exports = function(app) {
   app.use(
@@ -13,6 +14,13 @@ module.exports = function(app) {
       changeOrigin: true,
       pathRewrite: {
         '^/api': ''
+      }
+    }),
+    proxy('/nestapi', {
+      target: `http://localhost:3011/api`,
+      changeOrigin: true,
+      pathRewrite: {
+        '^/api': '/api'
       }
     })
   );

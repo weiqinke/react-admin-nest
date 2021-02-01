@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect, useRef } from 'react';
 import { Tabs, Dropdown, Badge, Spin, List, Avatar, Tag } from 'antd';
 import { BellOutlined, LoadingOutlined } from '@ant-design/icons';
-import { getNoticeList, GetPlanPaged } from 'api/nest-admin/User';
+import { getNoticeList } from 'api/nest-admin/User';
 import { Notice, EventStatus } from 'interface/layout/notice.interface';
 import { useAppState } from 'stores';
 
@@ -26,7 +26,7 @@ const HeaderNoticeComponent: FC = () => {
     clearTimeout(intervalHandle.current);
     intervalHandle.current = setTimeout(() => {
       setNoticeNum(Math.ceil(Math.random() * 1000));
-    }, 1000);
+    }, 1000 * 60);
     getNoticeList({})
       .then(result => {
         setLoading(false);
@@ -34,10 +34,9 @@ const HeaderNoticeComponent: FC = () => {
           setNoticeList(result.data.data);
         }
       })
-      .catch(err => {
+      .catch(() => {
         setLoading(false);
       });
-    GetPlanPaged({ 1: 2 });
   };
 
   useEffect(() => {
