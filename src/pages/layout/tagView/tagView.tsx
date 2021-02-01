@@ -3,21 +3,29 @@ import { Tabs, message } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import usePrevious from 'hooks/usePrevious';
 import { useAppDispatch, useAppState } from 'stores';
-import { addTag, removeTag, removeLeftTag, removeRightTag, removeOtherTag, setActiveTag } from 'stores/tags-view.store';
+import {
+  addTag,
+  removeTag,
+  removeLeftTag,
+  removeRightTag,
+  removeOtherTag,
+  setActiveTag,
+  setTagPlanVisible
+} from 'stores/tags-view.store';
 import { getTagByMenus } from 'utils/menuUtil';
 import './tagView.less';
 import { setRefreshFCUrl } from 'stores/user.store';
 const { TabPane } = Tabs;
 const TagsView: FC = () => {
-  const { tags, activeTagMeUrl } = useAppState(state => state.tagsView);
+  const { tags, activeTagMeUrl, tagPlanVisible } = useAppState(state => state.tagsView);
   const { menuList } = useAppState(state => state.user);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const prevActiveTagUrl = usePrevious(activeTagMeUrl);
-  const [menuVisible, setMenuVisible] = useState(false);
   // 切换标签时触发事件，切换页面地址
   const onChange = (meUrl: string) => {
+    dispatch(setTagPlanVisible(false));
     dispatch(setActiveTag(meUrl));
   };
 
@@ -40,24 +48,24 @@ const TagsView: FC = () => {
     const { clientX, clientY } = event;
     setPageclientX(clientX);
     setPageclientY(clientY);
-    setMenuVisible(true);
+    dispatch(setTagPlanVisible(true));
   };
 
   const handleCloseOtherTags = () => {
     dispatch(removeOtherTag(activeTagMeUrl));
-    setMenuVisible(false);
+    dispatch(setTagPlanVisible(false));
   };
   const handleCloseLeftTags = () => {
     dispatch(removeLeftTag(activeTagMeUrl));
-    setMenuVisible(false);
+    dispatch(setTagPlanVisible(false));
   };
   const handleCloseRightTags = () => {
     dispatch(removeRightTag(activeTagMeUrl));
-    setMenuVisible(false);
+    dispatch(setTagPlanVisible(false));
   };
   const RefreshNowPage = () => {
     /***刷新页面没有实现 */
-    setMenuVisible(false);
+    dispatch(setTagPlanVisible(false));
     const nowTag: any = getTagByMenus(menuList, location.pathname);
     dispatch(
       addTag({
@@ -135,7 +143,7 @@ const TagsView: FC = () => {
           ></TabPane>
         ))}
       </Tabs>
-      {menuVisible ? (
+      {tagPlanVisible ? (
         <ul
           className="contextmenuDom"
           style={{ left: `${pageclientX}px`, top: `${pageclientY}px` }}

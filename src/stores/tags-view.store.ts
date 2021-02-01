@@ -3,7 +3,8 @@ import { TagItem, TagState } from 'interface/layout/tagsView.interface';
 
 const initialState: TagState = {
   activeTagMeUrl: '',
-  tags: []
+  tags: [],
+  tagPlanVisible: false
 };
 
 const tagsViewSlice = createSlice({
@@ -94,6 +95,9 @@ const tagsViewSlice = createSlice({
         }
       }
       state.tags = newTags;
+    },
+    setTagPlanVisible(state, action: PayloadAction<boolean>) {
+      state.tagPlanVisible = action.payload;
     }
   }
 });
@@ -105,7 +109,8 @@ export const {
   removeAllTag,
   removeLeftTag,
   removeRightTag,
-  removeOtherTag
+  removeOtherTag,
+  setTagPlanVisible
 } = tagsViewSlice.actions;
 
 export default tagsViewSlice.reducer;

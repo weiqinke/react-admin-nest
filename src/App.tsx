@@ -8,11 +8,11 @@ import zhCN from 'antd/es/locale/zh_CN';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import RenderRouter from './routes';
-import { useAppState } from 'stores';
-
+import { useAppDispatch, useAppState } from 'stores';
+import { setTagPlanVisible } from 'stores/tags-view.store';
 const App: React.FC = () => {
   const { locale } = useAppState(state => state.user);
-
+  const dispatch = useAppDispatch();
   useEffect(() => {
     if (locale === 'en_US') {
       moment.locale('en');
@@ -20,6 +20,15 @@ const App: React.FC = () => {
       moment.locale('zh-cn');
     }
   }, [locale]);
+  useEffect(() => {
+    const clickRemove = () => {
+      dispatch(setTagPlanVisible(false));
+    };
+    window.addEventListener('click', clickRemove);
+    return () => {
+      window.removeEventListener('click', clickRemove);
+    };
+  }, [dispatch]);
 
   const getAntdLocale = () => {
     if (locale === 'en_US') {

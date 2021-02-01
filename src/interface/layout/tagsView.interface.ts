@@ -25,4 +25,6 @@ export interface TagState {
 
   /**current tagView id */
   activeTagMeUrl: TagItem['meUrl'];
+
+  tagPlanVisible?: boolean;
 }
