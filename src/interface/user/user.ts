@@ -32,4 +32,6 @@ export interface UserState {
 
   /** 首页地址 */
   indexUrl: string;
+  
+  RefreshFCUrl?:string;
 }

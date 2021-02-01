@@ -1,21 +1,11 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useEffect } from 'react';
 import './index.less';
 import Overview from './overview';
-
 const DashBoardPage: FC = () => {
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(undefined as any);
-    }, 2000);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
+  useEffect(() => {}, []);
   return (
     <div>
-      <Overview loading={loading} />
+      <Overview loading={false} />
     </div>
   );
 };

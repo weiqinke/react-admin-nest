@@ -15,7 +15,8 @@ const initialState: UserState = {
   username: localStorage.getItem('username') || '',
   role: (localStorage.getItem('username') || '') as Role,
   loginState: localStorage.getItem('token') ? true : false,
-  indexUrl: ''
+  indexUrl: '',
+  RefreshFCUrl: 'workplace'
 };
 
 const userSlice = createSlice({
@@ -40,11 +41,16 @@ const userSlice = createSlice({
       const { menuList } = action.payload;
       state.menuList = menuList || [];
       localStorage.setItem('menus', JSON.stringify(menuList));
+    },
+    setRefreshFCUrl(state, action: any) {
+      const { RefreshFCUrl } = action.payload;
+      console.log('RefreshFCUrl: ', RefreshFCUrl);
+      state.RefreshFCUrl = RefreshFCUrl;
     }
   }
 });
 
-export const { setUserItem, setIndexUrl, setMenuList } = userSlice.actions;
+export const { setUserItem, setIndexUrl, setMenuList, setRefreshFCUrl } = userSlice.actions;
 
 export default userSlice.reducer;
 

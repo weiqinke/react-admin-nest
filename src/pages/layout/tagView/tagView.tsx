@@ -6,6 +6,7 @@ import { useAppDispatch, useAppState } from 'stores';
 import { addTag, removeTag, removeLeftTag, removeRightTag, removeOtherTag, setActiveTag } from 'stores/tags-view.store';
 import { getTagByMenus } from 'utils/menuUtil';
 import './tagView.less';
+import { setRefreshFCUrl } from 'stores/user.store';
 const { TabPane } = Tabs;
 const TagsView: FC = () => {
   const { tags, activeTagMeUrl } = useAppState(state => state.tagsView);
@@ -65,9 +66,18 @@ const TagsView: FC = () => {
       })
     );
     const { meUrl } = nowTag;
-    dispatch(setActiveTag(meUrl));
-    const from = { pathname: meUrl };
-    navigate(from);
+    dispatch(
+      setRefreshFCUrl({
+        RefreshFCUrl: 'loading'
+      })
+    );
+    setTimeout(() => {
+      dispatch(
+        setRefreshFCUrl({
+          RefreshFCUrl: meUrl
+        })
+      );
+    }, 100);
   };
   useEffect(() => {
     if (menuList.length) {
