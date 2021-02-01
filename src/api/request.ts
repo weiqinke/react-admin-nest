@@ -45,15 +45,6 @@ export const AUTH_TYPE = {
   AUTH2: 'auth2'
 };
 
-// http method
-export const METHOD = {
-  GET: 'get',
-  POST: 'post',
-  DELETE: 'delete',
-  PUT: 'put',
-  PATCH: 'patch'
-};
-
 /**
  * axios请求
  * @param url 请求地址
@@ -63,15 +54,15 @@ export const METHOD = {
  */
 export const request = async (url: string, method: string, params: any, options?: any) => {
   switch (method) {
-    case METHOD.GET:
+    case 'get':
       return axios.get(url, { params });
-    case METHOD.POST:
+    case 'post':
       return axios.post(url, params, { ...options });
-    case METHOD.DELETE:
+    case 'delete':
       return axios.delete(url, { params });
-    case METHOD.PUT:
+    case 'put':
       return axios.put(url, params);
-    case METHOD.PATCH:
+    case 'patch':
       return axios.patch(url, params);
     default:
       return axios.get(url, { params });

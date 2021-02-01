@@ -89,18 +89,12 @@ const resp20401 = {
 };
 
 const resperror = {
-  /***兜底的错误，不想在控制台打印错误了，让他正常返回 */
   onRejected(error) {
     $message.error({
       content: '请求错误',
       duration: 1
     });
-    return Promise.resolve({
-      status: 400,
-      message: '请求错误',
-      data: {}
-    });
-    // return Promise.reject(error);
+    return Promise.reject(error);
   }
 };
 

@@ -27,3 +27,8 @@ export const apiLogin = (payload: any) => {
 export const apiLogout = (payload: any) => {
   return request(`${BASE_URL}user/logout`, 'POST', payload);
 };
+
+/** 登录接口 */
+export const GetPlanPaged = (payload: any) => {
+  return request(`${BASE_URL}PlanManage/GetPlanPaged`, 'post', payload);
+};

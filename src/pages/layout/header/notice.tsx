@@ -1,7 +1,7 @@
 import React, { FC, useState, useEffect, useRef } from 'react';
 import { Tabs, Dropdown, Badge, Spin, List, Avatar, Tag } from 'antd';
 import { BellOutlined, LoadingOutlined } from '@ant-design/icons';
-import { getNoticeList } from 'api/nest-admin/User';
+import { getNoticeList, GetPlanPaged } from 'api/nest-admin/User';
 import { Notice, EventStatus } from 'interface/layout/notice.interface';
 import { useAppState } from 'stores';
 
@@ -37,6 +37,7 @@ const HeaderNoticeComponent: FC = () => {
       .catch(err => {
         setLoading(false);
       });
+    GetPlanPaged({ 1: 2 });
   };
 
   useEffect(() => {
