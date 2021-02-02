@@ -9,6 +9,7 @@ import { useRoutes } from 'react-router-dom';
 import { useAppState } from 'stores';
 import { Spin } from 'antd';
 import UserList from 'pages/system/user/userlist';
+import MenusList from 'pages/system/menus/menuslist';
 
 const NotFound = lazy(() => import(/* webpackChunkName: "404'"*/ 'pages/404'));
 const Documentation = lazy(() => import(/* webpackChunkName: "404'"*/ 'pages/doucumentation'));
@@ -69,6 +70,10 @@ const RenderRouter: FC = () => {
         {
           path: 'systems/users/userlist',
           element: <WrapperRouteComponent element={<UserList />} titleId="title.permission.button" />
+        },
+        {
+          path: 'systems/menus/menuslist',
+          element: <WrapperRouteComponent element={<MenusList />} titleId="title.permission.button" />
         },
         {
           path: '*',

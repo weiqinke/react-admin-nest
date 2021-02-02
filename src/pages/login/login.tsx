@@ -8,7 +8,8 @@ import { ProjectParseMenuAsPre, getSystemMenu, SaveMeUrl, getIndexUrlInfo } from
 import { addTag, setActiveTag } from 'stores/tags-view.store';
 import { useAppDispatch } from 'stores';
 import { setUserItem, setIndexUrl, setMenuList } from 'stores/user.store';
-import { Zhuce, Account, GetMenuByToken } from 'api/nest-admin/User';
+import { Zhuce, Account } from 'api/nest-admin/User';
+import { getAllMenusItem } from 'api/nest-admin/MenuApi';
 interface LoginParamsMore {
   name: string;
   password: string;
@@ -24,7 +25,7 @@ const { TabPane } = Tabs;
 const LoginForm: FC = () => {
   const navigate = useNavigate();
   const { setUserInfo, saveMenu } = useSystemUserInfo();
-  
+
   const [errmsg] = useState('');
   const dispatch = useAppDispatch();
   const [type, setType] = useState<string>('account');
@@ -40,37 +41,37 @@ const LoginForm: FC = () => {
         dispatch(
           setUserItem({
             loginState: true,
-            nick,
+            nick
           })
         );
         localStorage.setItem('token', token);
         setUserInfo(result.data);
-        getMenuDatabyToken(token);
+        getMenuDatabyToken();
       }
     });
   };
   const onRegister = async (form: any) => {
     Zhuce({
-      user: {...form, email:Math.random()+ '@qq.com'}
+      user: { ...form, email: Math.random() + '@qq.com' }
     }).then(result => {
       if (result.data.code === 200) {
         //登录成功，获取菜单
-        const { token, nick } = result.data.data;
+        const { token } = result.data.data;
         dispatch(
           setUserItem({
             loginState: true,
-            nick: form.nick||''
+            nick: form.nick || ''
           })
         );
         localStorage.setItem('token', token);
         setUserInfo(result.data);
-        getMenuDatabyToken(token);
+        getMenuDatabyToken();
       }
     });
   };
   const onRegisterFailed = () => {};
-  const getMenuDatabyToken = (token: string) => {
-    GetMenuByToken(token).then(result => {
+  const getMenuDatabyToken = () => {
+    getAllMenusItem().then(result => {
       if (result.data.code === 200) {
         const cacheMenu = result.data.data;
         const menudata = getSystemMenu(cacheMenu);

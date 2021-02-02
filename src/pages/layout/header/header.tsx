@@ -14,7 +14,6 @@ import FixedMenu from '../menu/FixedMenu';
 import { MenuList } from 'interface/layout/menu.interface';
 import './header.less';
 import { useProjectConfig } from 'hooks/useProjectConfig';
-import { useSystemUserInfo } from 'hooks/useSystemInfo';
 
 const { Header } = Layout;
 

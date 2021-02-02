@@ -29,7 +29,7 @@ const userSlice = createSlice({
       if (username !== state.username) {
         sessionStorage.setItem('username', username || '');
       }
-      if(nick !== state.nick){
+      if (nick !== state.nick) {
         sessionStorage.setItem('nick', nick || '');
       }
       Object.assign(state, action.payload);

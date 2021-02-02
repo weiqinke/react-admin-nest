@@ -6,6 +6,7 @@ export interface menuchild {
   router: string;
   meUrl?: string;
   isSubMenu?: number;
+  url?: string;
 }
 export function ProjectParseMenu(menulist: menuchild[]) {
   let menus: menuchild[] = [];
@@ -23,16 +24,16 @@ export function ProjectParseMenu(menulist: menuchild[]) {
 export function ProjectParseMenuAsPre(menulist: menuchild[]) {
   let menus: any[] = [];
   menulist.map((menuitem: menuchild) => {
-    const { authority, children, icon, meUrl, name, router } = menuitem;
+    const { authority, children, icon, name, url } = menuitem;
     var newMenuItem = {};
     if (children && children.length > 0) {
       var echild: any[] = ProjectParseMenuAsPre(children);
-      newMenuItem = { authority, icon, meUrl, name, router, children: echild, isSubMenu: 1 };
+      newMenuItem = { authority, icon, name, router: url || '', children: echild, isSubMenu: 1 };
     } else {
       if (children && children.length === 0) {
-        newMenuItem = { authority, icon, meUrl, name, router, isSubMenu: 1 };
+        newMenuItem = { authority, icon, name, router: url || '', isSubMenu: 1 };
       } else {
-        newMenuItem = { authority, icon, meUrl, name, router, isSubMenu: 0 };
+        newMenuItem = { authority, icon, name, router: url || '', isSubMenu: 0 };
       }
     }
     menus.push(newMenuItem);
@@ -45,10 +46,7 @@ export function ProjectParseMenuAsPre(menulist: menuchild[]) {
  * 获取菜单 root不是菜单，取第二层及
  */
 export function getSystemMenu(menulist: menuchild[]) {
-  if (menulist && menulist.length > 0 && menulist[0]['children']) {
-    return menulist[0]['children'];
-  }
-  return [];
+  return menulist;
 }
 
 /****
