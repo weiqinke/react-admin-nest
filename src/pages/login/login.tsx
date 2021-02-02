@@ -24,6 +24,7 @@ const { TabPane } = Tabs;
 const LoginForm: FC = () => {
   const navigate = useNavigate();
   const { setUserInfo, saveMenu } = useSystemUserInfo();
+  
   const [errmsg] = useState('');
   const dispatch = useAppDispatch();
   const [type, setType] = useState<string>('account');
@@ -35,10 +36,11 @@ const LoginForm: FC = () => {
     };
     Account(payload).then(result => {
       if (result.data.code === 200) {
-        const { token } = result.data.data;
+        const { token, nick } = result.data.data;
         dispatch(
           setUserItem({
-            loginState: true
+            loginState: true,
+            nick,
           })
         );
         localStorage.setItem('token', token);
@@ -49,15 +51,15 @@ const LoginForm: FC = () => {
   };
   const onRegister = async (form: any) => {
     Zhuce({
-      user: form
+      user: {...form, email:Math.random()+ '@qq.com'}
     }).then(result => {
-      console.log('result: ', result);
       if (result.data.code === 200) {
         //登录成功，获取菜单
-        const { token } = result.data.data;
+        const { token, nick } = result.data.data;
         dispatch(
           setUserItem({
-            loginState: true
+            loginState: true,
+            nick: form.nick||''
           })
         );
         localStorage.setItem('token', token);
@@ -137,9 +139,9 @@ const LoginForm: FC = () => {
               onFinishFailed={onRegisterFailed}
               className="login-page-form_register"
             >
-              {/* 我写的后台，用户名必须是邮箱，将来找回密码的时候，发送邮件 */}
-              <Form.Item label="用户名" name="name" rules={[{ required: true, message: '必须输入邮箱当作用户名' }]}>
-                <Input placeholder="邮箱当作用户名" />
+              {/* 我写的后台，用户名必须有，将来找回密码的时候，发送邮件 */}
+              <Form.Item label="用户名" name="name" rules={[{ required: true, message: '必须输入用户名' }]}>
+                <Input placeholder="请输入用户名" />
               </Form.Item>
 
               <Form.Item
@@ -151,19 +153,19 @@ const LoginForm: FC = () => {
                 name="password"
                 rules={[{ required: true, message: '请输入密码!' }]}
               >
-                <Input.Password placeholder="密码" />
+                <Input.Password placeholder="请输入密码" />
               </Form.Item>
 
               <Form.Item
                 label={
                   <span>
-                    邮<b className="hidetext">和</b>箱
+                    昵<b className="hidetext">和</b>称
                   </span>
                 }
-                name="email"
-                rules={[{ required: true, message: '请输入邮箱!' }]}
+                name="nick"
+                rules={[{ required: true, message: '请输入昵称!' }]}
               >
-                <Input placeholder="请输入邮箱" />
+                <Input placeholder="请输入昵称" />
               </Form.Item>
 
               <Form.Item

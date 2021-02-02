@@ -8,6 +8,7 @@ import WrapperRouteComponent from './config';
 import { useRoutes } from 'react-router-dom';
 import { useAppState } from 'stores';
 import { Spin } from 'antd';
+import UserList from 'pages/system/user/userlist';
 
 const NotFound = lazy(() => import(/* webpackChunkName: "404'"*/ 'pages/404'));
 const Documentation = lazy(() => import(/* webpackChunkName: "404'"*/ 'pages/doucumentation'));
@@ -64,6 +65,10 @@ const RenderRouter: FC = () => {
         {
           path: 'account',
           element: <WrapperRouteComponent element={<AccountPage />} titleId="title.account" />
+        },
+        {
+          path: 'systems/users/userlist',
+          element: <WrapperRouteComponent element={<UserList />} titleId="title.permission.button" />
         },
         {
           path: '*',

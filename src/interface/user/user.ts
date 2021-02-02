@@ -32,6 +32,10 @@ export interface UserState {
 
   /** 首页地址 */
   indexUrl: string;
-  
+  /** 准备刷新的路径 */
   RefreshFCUrl?:string;
+  /** 用户昵称 */
+  nick?:string;
+
+
 }

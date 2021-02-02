@@ -14,6 +14,7 @@ import FixedMenu from '../menu/FixedMenu';
 import { MenuList } from 'interface/layout/menu.interface';
 import './header.less';
 import { useProjectConfig } from 'hooks/useProjectConfig';
+import { useSystemUserInfo } from 'hooks/useSystemInfo';
 
 const { Header } = Layout;
 
@@ -23,13 +24,12 @@ interface Props {
 }
 
 const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
-  const { loginState, locale, device } = useAppState(state => state.user);
+  const { loginState, locale, device, nick } = useAppState(state => state.user);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [menuList] = useState<MenuList>([]);
   const { config } = useProjectConfig();
   const { layout } = config;
-
   const logout = async () => {
     navigate('/login');
     dispatch(logoutSystem());
@@ -101,7 +101,7 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
             <Dropdown overlay={menu} trigger={['click']}>
               <span className="user-action">
                 <img src={Avator} className="user-avator" alt="avator" />
-                <b className="user-name">韦钦可韦钦可韦钦可</b>
+                <b className="user-name">{nick || '无名'}</b>
               </span>
             </Dropdown>
           ) : (

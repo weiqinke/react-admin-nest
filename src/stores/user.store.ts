@@ -12,7 +12,8 @@ const initialState: UserState = {
   locale: (localStorage.getItem('locale')! || 'zh_CN') as Locale,
   newUser: JSON.parse(localStorage.getItem('newUser')!) ?? true,
   menuList: menus,
-  username: localStorage.getItem('username') || '',
+  username: sessionStorage.getItem('username') || '',
+  nick: sessionStorage.getItem('username') || '',
   role: (localStorage.getItem('username') || '') as Role,
   loginState: localStorage.getItem('token') ? true : false,
   indexUrl: '',
@@ -24,12 +25,13 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUserItem(state, action: PayloadAction<Partial<UserState>>) {
-      const { username } = action.payload;
-
+      const { username, nick } = action.payload;
       if (username !== state.username) {
-        localStorage.setItem('username', action.payload.username || '');
+        sessionStorage.setItem('username', username || '');
       }
-
+      if(nick !== state.nick){
+        sessionStorage.setItem('nick', nick || '');
+      }
       Object.assign(state, action.payload);
     },
     setIndexUrl(state, action: PayloadAction<Partial<UserState>>) {
