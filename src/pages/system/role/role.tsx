@@ -1,34 +1,34 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Button, Table } from 'antd';
-import './userlist.less';
-import { FindAllUser } from 'api/nest-admin/Rbac';
+import './role.less';
+import { GetAllRole } from 'api/nest-admin/Rbac';
 import { addMenuItem } from 'api/nest-admin/MenuApi';
 
-const UserList: FC = () => {
-  const [userslist, setUserslist] = useState([]);
+const RoleList: FC = () => {
+  const [menulist, setMenulist] = useState([]);
   useEffect(() => {
-    FindAllUser({}).then(result => {
+    GetAllRole({}).then(result => {
       if (result.data.code === 200) {
-        setUserslist(result.data.data || []);
+        setMenulist(result.data.data || []);
       }
     });
   }, []);
   const columns = [
     {
-      title: '账号',
+      title: '角色名称',
       dataIndex: 'name'
     },
     {
-      title: '昵称',
-      dataIndex: 'nick'
+      title: '角色代码',
+      dataIndex: 'roleCode'
     },
     {
-      title: '邮箱',
-      dataIndex: 'email'
+      title: '备注',
+      dataIndex: 'remarks'
     },
     {
-      title: '手机号',
-      dataIndex: 'phone'
+      title: '排序',
+      dataIndex: 'sort'
     }
   ];
   const addmenuItem = () => {
@@ -43,11 +43,11 @@ const UserList: FC = () => {
   return (
     <div className="users-list-page">
       <Button type="primary" onClick={addmenuItem}>
-        添加菜单
+        添加角色
       </Button>
-      <Table columns={columns} dataSource={userslist} rowKey={(record: any) => record.uid} />;
+      <Table columns={columns} dataSource={menulist} rowKey={(record: any) => record.uid} />;
     </div>
   );
 };
 
-export default UserList;
+export default RoleList;

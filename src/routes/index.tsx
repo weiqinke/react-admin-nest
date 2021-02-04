@@ -10,6 +10,7 @@ import { useAppState } from 'stores';
 import { Spin } from 'antd';
 import UserList from 'pages/system/user/userlist';
 import MenusList from 'pages/system/menus/menuslist';
+import RoleList from 'pages/system/role/role';
 
 const NotFound = lazy(() => import(/* webpackChunkName: "404'"*/ 'pages/404'));
 const Documentation = lazy(() => import(/* webpackChunkName: "404'"*/ 'pages/doucumentation'));
@@ -68,12 +69,16 @@ const RenderRouter: FC = () => {
           element: <WrapperRouteComponent element={<AccountPage />} titleId="title.account" />
         },
         {
-          path: 'systems/users/userlist',
+          path: 'systems/useradmin/userlist',
           element: <WrapperRouteComponent element={<UserList />} titleId="title.permission.button" />
         },
         {
-          path: 'systems/menus/menuslist',
+          path: 'systems/useradmin/menuslist',
           element: <WrapperRouteComponent element={<MenusList />} titleId="title.permission.button" />
+        },
+        {
+          path: 'systems/useradmin/rolelist',
+          element: <WrapperRouteComponent element={<RoleList />} titleId="title.permission.button" />
         },
         {
           path: '*',

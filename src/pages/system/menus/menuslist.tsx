@@ -51,11 +51,11 @@ const MenusList: FC = () => {
     },
     {
       title: '类型',
-      dataIndex: 'menuUid'
+      dataIndex: 'type'
     },
     {
       title: '图标',
-      dataIndex: 'menuUid'
+      dataIndex: 'icon'
     },
     {
       title: '排序',
