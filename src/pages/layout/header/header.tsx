@@ -14,6 +14,7 @@ import FixedMenu from '../menu/FixedMenu';
 import { MenuList } from 'interface/layout/menu.interface';
 import './header.less';
 import { useProjectConfig } from 'hooks/useProjectConfig';
+import { deleteAllTag } from 'stores/tags-view.store';
 
 const { Header } = Layout;
 
@@ -32,6 +33,8 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
   const logout = async () => {
     navigate('/login');
     dispatch(logoutSystem());
+    //退出时，我们把打开的标签记录清空。
+    dispatch(deleteAllTag());
   };
 
   const toLogin = () => {

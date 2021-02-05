@@ -3,12 +3,13 @@ import React from 'react';
 import { Menu } from 'antd';
 import { MenuList } from '../../interface/layout/menu.interface';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAppState } from 'stores';
+import { useAppState, useAppDispatch } from 'stores';
 import { useProjectConfig } from 'hooks/useProjectConfig';
 import FixedLeftMenu from './menu/FixedLeftMenu';
 import { useSystemUserInfo } from 'hooks/useSystemInfo';
 import IconFont from 'pages/commponents/iconfont/iconfont';
 import './menu.less';
+import { setRefreshFCUrl } from 'stores/user.store';
 const { SubMenu, Item } = Menu;
 
 interface Props {
@@ -35,6 +36,7 @@ const MenuComponent: FC<Props> = ({}) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { config } = useProjectConfig();
+  const dispatch = useAppDispatch();
   const { layout } = config;
   const { getMenu } = useSystemUserInfo();
   const sysMenus = getMenu();
@@ -79,6 +81,12 @@ const MenuComponent: FC<Props> = ({}) => {
 
   // 点击 menuItem 触发的事件
   const goPage = ({ keyPath, key }: { keyPath: any[]; key: any }) => {
+    // 此时需要注意下，我们需要设置全局刷新key，否则好多页面会一直处于刷新状态
+    dispatch(
+      setRefreshFCUrl({
+        RefreshFCUrl: key
+      })
+    );
     navigate(keyPath[0]);
     setSelectedKeys(() => [key]); // 修改当前组件的state
   };

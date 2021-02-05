@@ -98,6 +98,10 @@ const tagsViewSlice = createSlice({
     },
     setTagPlanVisible(state, action: PayloadAction<boolean>) {
       state.tagPlanVisible = action.payload;
+    },
+    deleteAllTag(state) {
+      state.activeTagMeUrl = '';
+      state.tags = [];
     }
   }
 });
@@ -110,7 +114,8 @@ export const {
   removeLeftTag,
   removeRightTag,
   removeOtherTag,
-  setTagPlanVisible
+  setTagPlanVisible,
+  deleteAllTag
 } = tagsViewSlice.actions;
 
 export default tagsViewSlice.reducer;

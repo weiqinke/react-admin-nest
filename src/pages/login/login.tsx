@@ -7,7 +7,7 @@ import { useSystemUserInfo } from 'hooks/useSystemInfo';
 import { ProjectParseMenuAsPre, getSystemMenu, SaveMeUrl, getIndexUrlInfo } from 'utils/menuUtil';
 import { addTag, setActiveTag } from 'stores/tags-view.store';
 import { useAppDispatch } from 'stores';
-import { setUserItem, setIndexUrl, setMenuList } from 'stores/user.store';
+import { setUserItem, setIndexUrl, setMenuList, setRefreshFCUrl } from 'stores/user.store';
 import { Zhuce, Account } from 'api/nest-admin/User';
 import { getAllMenusItem } from 'api/nest-admin/MenuApi';
 interface LoginParamsMore {
@@ -92,6 +92,13 @@ const LoginForm: FC = () => {
             indexUrl: meUrl || ''
           })
         );
+        // 此时需要注意下，我们需要设置全局刷新key，否则好多页面会一直处于刷新状态
+        dispatch(
+          setRefreshFCUrl({
+            RefreshFCUrl: meUrl
+          })
+        );
+
         const from = { pathname: meUrl };
         //还得告诉tag 你要把标签历史记录加上新跳转的地址
         dispatch(
