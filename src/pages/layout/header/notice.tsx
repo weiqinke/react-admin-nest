@@ -26,7 +26,7 @@ const HeaderNoticeComponent: FC = () => {
     clearTimeout(intervalHandle.current);
     intervalHandle.current = setTimeout(() => {
       setNoticeNum(Math.ceil(Math.random() * 1000));
-    }, 1000 * 60);
+    }, 1000 * 60 * 60);
     getNoticeList({})
       .then(result => {
         setLoading(false);

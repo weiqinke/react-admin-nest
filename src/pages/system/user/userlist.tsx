@@ -1,13 +1,13 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Button, Table } from 'antd';
 import './userlist.less';
-import { FindAllUser } from 'api/nest-admin/Rbac';
 import { addMenuItem } from 'api/nest-admin/MenuApi';
+import { findalluser } from 'api/nest-admin/User';
 
 const UserList: FC = () => {
   const [userslist, setUserslist] = useState([]);
   useEffect(() => {
-    FindAllUser({}).then(result => {
+    findalluser({}).then(result => {
       if (result.data.code === 200) {
         setUserslist(result.data.data || []);
       }

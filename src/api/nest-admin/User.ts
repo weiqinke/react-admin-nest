@@ -42,7 +42,12 @@ export const GetPlanPaged = (payload: any) => {
   return request(`${BASE_URL}PlanManage/GetPlanPaged`, 'post', payload);
 };
 
-/** 登录接口 */
+/** 注册接口 */
 export const Zhuce = (payload: any) => {
   return request(`${BASE_URL}user/zhuce`, 'post', payload);
+};
+
+/** 获取所有人员 */
+export const findalluser = (payload: any) => {
+  return request(`${BASE_URL}user/findalluser`, 'post', payload);
 };
