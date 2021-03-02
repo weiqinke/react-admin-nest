@@ -125,10 +125,10 @@ const LoginForm: FC = () => {
           <TabPane tab="登录" key="account">
             <Form<LoginParams> onFinish={onFinished} className="login-page-form_account" initialValues={initialValues}>
               <Form.Item name="name" rules={[{ required: true, message: '请输入用户名！' }]}>
-                <Input placeholder="用户名" />
+                <Input placeholder="用户名:qkstart" />
               </Form.Item>
               <Form.Item name="password" rules={[{ required: true, message: '请输入密码！' }]}>
-                <Input type="password" placeholder="密码" />
+                <Input type="password" placeholder="密码:123456" />
               </Form.Item>
               <Form.Item name="remember" valuePropName="checked">
                 <Checkbox>记住用户</Checkbox>
