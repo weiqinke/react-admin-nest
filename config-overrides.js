@@ -35,6 +35,5 @@ module.exports = override(
     javascriptEnabled: true
   }),
   setWebpackPublicPath('/'), // 修改 publicPath
-  // new BundleAnalyzerPlugin(),
   rewiredSourceMap()
 );
