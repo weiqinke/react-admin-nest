@@ -84,7 +84,8 @@ const MenuComponent: FC<Props> = ({}) => {
     // 此时需要注意下，我们需要设置全局刷新key，否则好多页面会一直处于刷新状态
     dispatch(
       setRefreshFCUrl({
-        RefreshFCUrl: key
+        RefreshFCUrl: key,
+        RefreshFlag: false
       })
     );
     navigate(keyPath[0]);

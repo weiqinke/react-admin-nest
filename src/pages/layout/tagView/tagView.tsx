@@ -64,7 +64,6 @@ const TagsView: FC = () => {
     dispatch(setTagPlanVisible(false));
   };
   const RefreshNowPage = () => {
-    /***刷新页面没有实现 */
     dispatch(setTagPlanVisible(false));
     const nowTag: any = getTagByMenus(menuList, location.pathname);
     dispatch(
@@ -74,15 +73,18 @@ const TagsView: FC = () => {
       })
     );
     const { meUrl } = nowTag;
+    console.log('meUrl: ', meUrl);
     dispatch(
       setRefreshFCUrl({
-        RefreshFCUrl: 'loading'
+        RefreshFCUrl: meUrl,
+        RefreshFlag: true
       })
     );
     setTimeout(() => {
       dispatch(
         setRefreshFCUrl({
-          RefreshFCUrl: meUrl
+          RefreshFCUrl: 'loading',
+          RefreshFlag: false
         })
       );
     }, 100);

@@ -95,7 +95,8 @@ const LoginForm: FC = () => {
         // 此时需要注意下，我们需要设置全局刷新key，否则好多页面会一直处于刷新状态
         dispatch(
           setRefreshFCUrl({
-            RefreshFCUrl: meUrl
+            RefreshFCUrl: meUrl,
+            RefreshFlag: false
           })
         );
 

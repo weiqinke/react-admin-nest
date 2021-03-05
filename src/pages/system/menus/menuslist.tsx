@@ -4,7 +4,7 @@ import './menuslist.less';
 import { addMenuItem, delMenuItem, editMenuItem, getAllMenusItem } from 'api/nest-admin/MenuApi';
 const MenusList: FC = () => {
   const [menuslist, setMenuslist] = useState([]);
-  const [, setparentUid] = useState('-1');
+  const [parentUid, setparentUid] = useState('-1');
   useEffect(() => {
     getAllMenusItem().then(result => {
       if (result.data.code === 200) {
@@ -43,7 +43,8 @@ const MenusList: FC = () => {
   const columns = [
     {
       title: '菜单名称',
-      dataIndex: 'name'
+      dataIndex: 'name',
+      width: 300
     },
     {
       title: '路径',
@@ -108,13 +109,9 @@ const MenusList: FC = () => {
     setVisible(true);
   };
   const addmenuItem = () => {
-    addMenuItem({
-      parentUid: '-1',
-      name: '系统管理',
-      url: 'workplace' + Math.random(),
-      sort: 3,
-      remarks: '系统管理路由'
-    });
+    setType('Add');
+    setparentUid('-1');
+    setVisible(true);
   };
   const getallmenus = () => {
     getAllMenusItem().then((result: any) => {
@@ -133,6 +130,7 @@ const MenusList: FC = () => {
     const formdata = getFieldsValue();
     //先从旧值取出来，再重新赋值
     const payload = {
+      parentUid,
       ...nextMenuItem,
       ...formdata
     };
@@ -158,14 +156,14 @@ const MenusList: FC = () => {
   const [form] = Form.useForm();
   const { getFieldsValue, setFieldsValue } = form;
   return (
-    <div className="users-list-page">
-      <Button type="primary" onClick={getallmenus}>
+    <div className="users-list-page menulist">
+      <Button type="primary" className="topbtn" onClick={getallmenus}>
         查询菜单
       </Button>
-      <Button type="primary" onClick={addmenuItem}>
+      <Button type="primary" className="topbtn" onClick={addmenuItem}>
         添加菜单
       </Button>
-      <Table columns={columns} dataSource={menuslist} rowKey={(record: any) => record.menuUid} />;
+      <Table columns={columns} dataSource={menuslist} rowKey={(record: any) => record.menuUid} bordered={true} />;
       <Modal title="Title" visible={visible} onOk={submitMenuItem} onCancel={handleCancel}>
         <Form className="login-page-form_account" initialValues={initialValues} form={form}>
           <Form.Item name="name" rules={[{ required: true, message: '请输入名称！' }]}>

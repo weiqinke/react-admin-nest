@@ -4,11 +4,8 @@ import { Layout, Dropdown, Menu } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import HeaderNoticeComponent from './notice';
 import Avator from 'assets/header/avator.png';
-import { ReactComponent as LanguageSvg } from 'assets/header/language.svg';
-import { ReactComponent as ZhCnSvg } from 'assets/header/zh_CN.svg';
-import { ReactComponent as EnUsSvg } from 'assets/header/en_US.svg';
 import AntdSvg from 'assets/logo/antd.svg';
-import { setUserItem, logoutSystem } from 'stores/user.store';
+import { logoutSystem } from 'stores/user.store';
 import { useAppDispatch, useAppState } from 'stores';
 import FixedMenu from '../menu/FixedMenu';
 import { MenuList } from 'interface/layout/menu.interface';
@@ -24,7 +21,7 @@ interface Props {
 }
 
 const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
-  const { loginState, locale, device, nick } = useAppState(state => state.user);
+  const { loginState, device, nick } = useAppState(state => state.user);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [menuList] = useState<MenuList>([]);
@@ -41,10 +38,6 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
     navigate('/login');
   };
 
-  const selectLocale = ({ key }: { key: any }) => {
-    dispatch(setUserItem({ locale: key }));
-    localStorage.setItem('locale', key);
-  };
   const menu = (
     <Menu>
       <Menu.Item key="1" onClick={() => navigate('/dashboard')}>
@@ -82,7 +75,7 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
         ) : null}
         <div className="actions">
           <HeaderNoticeComponent />
-          <Dropdown
+          {/* <Dropdown
             trigger={['click']}
             overlay={
               <Menu onClick={selectLocale}>
@@ -98,7 +91,7 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
             <span>
               <LanguageSvg id="language-change" />
             </span>
-          </Dropdown>
+          </Dropdown> */}
           {loginState ? (
             <Dropdown overlay={menu} trigger={['click']}>
               <span className="user-action">

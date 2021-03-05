@@ -1,21 +1,27 @@
-@base-url: 'assets/login/probg.svg';
+@base-url: 'assets/login/loginbg2.jpg';
 .login-page {
   display: flex;
   justify-content: center;
   align-items: center;
   background: url(@base-url) no-repeat;
   background-color: #f0f2f5;
+  background-size: 100% 100%;
   &-body {
     width: 300px;
     margin: 0 auto;
     .title {
       width: 100%;
       text-align: center;
+      font-size: 33px;
+      font-weight: 600;
     }
     .ant-tabs-nav-list {
       .ant-tabs-tab {
         margin: 0px 20px;
         text-align: center;
+        .ant-tabs-tab-btn {
+          font-size: 18px;
+        }
       }
     }
     .login-page-form_account {
@@ -27,6 +33,11 @@
       }
       .login-page-form_button_account {
         width: 100%;
+      }
+      .ant-form-item-control-input-content {
+        .ant-input {
+          font-size: 16px;
+        }
       }
     }
     .login-page-form_register {

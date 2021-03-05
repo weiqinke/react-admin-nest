@@ -11,9 +11,9 @@ const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard'"*/ 'pages/d
 const UserList = lazy(() => import(/* webpackChunkName: "userlist'"*/ 'pages/system/user/userlist'));
 const MenusList = lazy(() => import(/* webpackChunkName: "menuslist'"*/ 'pages/system/menus/menuslist'));
 const RoleList = lazy(() => import(/* webpackChunkName: "role'"*/ 'pages/system/role/role'));
-const DashBoardPage = lazy(() => import(/* webpackChunkName: "account'"*/ 'pages/account'));
+const Workbench = lazy(() => import(/* webpackChunkName: "account'"*/ 'pages/workbench/workbench'));
 const NotFound = lazy(() => import(/* webpackChunkName: "404'"*/ 'pages/404'));
-const Documentation = lazy(() => import(/* webpackChunkName: "404'"*/ 'pages/doucumentation'));
+const Documentation = lazy(() => import(/* webpackChunkName: "404'"*/ 'pages/documentation'));
 const Guide = lazy(() => import(/* webpackChunkName: "guide'"*/ 'pages/guide'));
 const RoutePermission = lazy(() => import(/* webpackChunkName: "route-permission"*/ 'pages/permission/route'));
 const ButtonPermission = lazy(() => import(/* webpackChunkName: "button-permission"*/ 'pages/permission/button'));
@@ -30,7 +30,7 @@ const ArticleDetail = lazy(() => import(/* webpackChunkName: "ArticleDetail'"*/ 
 const ArticleList = lazy(() => import(/* webpackChunkName: "ArticleList'"*/ 'pages/article/list/ArticleList'));
 
 const RenderRouter: FC = () => {
-  const { RefreshFCUrl } = useAppState(state => state.user);
+  const { RefreshFCUrl, RefreshFlag } = useAppState(state => state.user);
   const routeList: PartialRouteObject[] = [
     {
       path: 'login',
@@ -44,7 +44,7 @@ const RenderRouter: FC = () => {
           path: 'workplace',
           element: (
             <WrapperRouteComponent
-              element={RefreshFCUrl === '/workplace' ? <Dashboard /> : <Spin />}
+              element={RefreshFCUrl === '/workplace' && RefreshFlag === true ? <Spin /> : <Dashboard />}
               titleId="title.dashboard"
             />
           )
@@ -53,7 +53,7 @@ const RenderRouter: FC = () => {
           path: 'workbench',
           element: (
             <WrapperRouteComponent
-              element={RefreshFCUrl === '/workbench' ? <DashBoardPage /> : <Spin />}
+              element={RefreshFCUrl === '/workbench' && RefreshFlag === true ? <Spin /> : <Workbench />}
               titleId="title.dashboard"
             />
           )
@@ -64,7 +64,7 @@ const RenderRouter: FC = () => {
           path: 'article/detail',
           element: (
             <WrapperRouteComponent
-              element={RefreshFCUrl === '/article/detail' ? <ArticleDetail /> : <Spin />}
+              element={RefreshFCUrl === '/article/detail' && RefreshFlag === true ? <Spin /> : <ArticleDetail />}
               titleId="title.dashboard"
             />
           )
@@ -73,7 +73,7 @@ const RenderRouter: FC = () => {
           path: 'article/edit',
           element: (
             <WrapperRouteComponent
-              element={RefreshFCUrl === '/article/edit' ? <ArticleEdit /> : <Spin />}
+              element={RefreshFCUrl === '/article/edit' && RefreshFlag === true ? <Spin /> : <ArticleEdit />}
               titleId="title.dashboard"
             />
           )
@@ -82,7 +82,7 @@ const RenderRouter: FC = () => {
           path: 'article/list',
           element: (
             <WrapperRouteComponent
-              element={RefreshFCUrl === '/article/list' ? <ArticleList /> : <Spin />}
+              element={RefreshFCUrl === '/article/list' && RefreshFlag === true ? <Spin /> : <ArticleList />}
               titleId="title.dashboard"
             />
           )
@@ -93,7 +93,7 @@ const RenderRouter: FC = () => {
           path: 'chart/areaChart',
           element: (
             <WrapperRouteComponent
-              element={RefreshFCUrl === '/chart/areaChart' ? <AreaChart /> : <Spin />}
+              element={RefreshFCUrl === '/chart/areaChart' && RefreshFlag === true ? <Spin /> : <AreaChart />}
               titleId="title.dashboard"
             />
           )
@@ -102,7 +102,7 @@ const RenderRouter: FC = () => {
           path: 'chart/lineChart',
           element: (
             <WrapperRouteComponent
-              element={RefreshFCUrl === '/chart/lineChart' ? <LineChart /> : <Spin />}
+              element={RefreshFCUrl === '/chart/lineChart' && RefreshFlag === true ? <Spin /> : <LineChart />}
               titleId="title.dashboard"
             />
           )
@@ -111,7 +111,7 @@ const RenderRouter: FC = () => {
           path: 'chart/pieChart',
           element: (
             <WrapperRouteComponent
-              element={RefreshFCUrl === '/chart/pieChart' ? <PieChart /> : <Spin />}
+              element={RefreshFCUrl === '/chart/pieChart' && RefreshFlag === true ? <Spin /> : <PieChart />}
               titleId="title.dashboard"
             />
           )
@@ -120,7 +120,7 @@ const RenderRouter: FC = () => {
           path: 'chart/pillarChart',
           element: (
             <WrapperRouteComponent
-              element={RefreshFCUrl === '/chart/pillarChart' ? <PillarChart /> : <Spin />}
+              element={RefreshFCUrl === '/chart/pillarChart' && RefreshFlag === true ? <Spin /> : <PillarChart />}
               titleId="title.dashboard"
             />
           )
@@ -129,7 +129,7 @@ const RenderRouter: FC = () => {
           path: 'chart/radarChart',
           element: (
             <WrapperRouteComponent
-              element={RefreshFCUrl === '/chart/radarChart' ? <RadarChart /> : <Spin />}
+              element={RefreshFCUrl === '/chart/radarChart' && RefreshFlag === true ? <Spin /> : <RadarChart />}
               titleId="title.dashboard"
             />
           )
@@ -139,7 +139,7 @@ const RenderRouter: FC = () => {
           path: 'chart/operatorsworks',
           element: (
             <WrapperRouteComponent
-              element={RefreshFCUrl === '/chart/operatorsworks' ? <Documentation /> : <Spin />}
+              element={RefreshFCUrl === '/chart/operatorsworks' && RefreshFlag === true ? <Spin /> : <Documentation />}
               titleId="title.dashboard"
             />
           )
@@ -148,7 +148,7 @@ const RenderRouter: FC = () => {
           path: 'chart/customfield',
           element: (
             <WrapperRouteComponent
-              element={RefreshFCUrl === '/chart/customfield' ? <CustomField /> : <Spin />}
+              element={RefreshFCUrl === '/chart/customfield' && RefreshFlag === true ? <Spin /> : <CustomField />}
               titleId="title.dashboard"
             />
           )
@@ -176,15 +176,32 @@ const RenderRouter: FC = () => {
         },
         {
           path: 'systems/useradmin/userlist',
-          element: <WrapperRouteComponent element={<UserList />} titleId="title.permission.button" />
+          element: (
+            <WrapperRouteComponent
+              element={RefreshFCUrl === '/systems/useradmin/userlist' && RefreshFlag === true ? <Spin /> : <UserList />}
+              titleId="title.dashboard"
+            />
+          )
         },
         {
           path: 'systems/useradmin/menuslist',
-          element: <WrapperRouteComponent element={<MenusList />} titleId="title.permission.button" />
+          element: (
+            <WrapperRouteComponent
+              element={
+                RefreshFCUrl === '/systems/useradmin/menuslist' && RefreshFlag === true ? <Spin /> : <MenusList />
+              }
+              titleId="title.dashboard"
+            />
+          )
         },
         {
           path: 'systems/useradmin/rolelist',
-          element: <WrapperRouteComponent element={<RoleList />} titleId="title.permission.button" />
+          element: (
+            <WrapperRouteComponent
+              element={RefreshFCUrl === '/systems/useradmin/rolelist' && RefreshFlag === true ? <Spin /> : <RoleList />}
+              titleId="title.dashboard"
+            />
+          )
         },
         {
           path: '*',
