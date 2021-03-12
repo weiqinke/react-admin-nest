@@ -108,7 +108,7 @@ const reqCommon = {
     // if (url.indexOf('login') === -1 && xsrfCookieName && !Cookie.get(xsrfCookieName)) {
     //   message.warning('认证 token 已过期，请重新登录')
     // }
-    let token = window.localStorage.getItem('token') || '';
+    let token = window.sessionStorage.getItem('token') || '';
     if (token) {
       //将token放到请求头发送给服务器,将tokenkey放在请求头中
       // 后端用请求头 Authorization 来获取token 所以必须放在请求头里面，这种需要前后台协商

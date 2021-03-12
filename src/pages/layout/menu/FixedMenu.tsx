@@ -8,26 +8,12 @@ import { useSystemUserInfo } from 'hooks/useSystemInfo';
 import IconFont from 'pages/commponents/iconfont/iconfont';
 import { setChangeFixedMenu } from 'stores/menu.store';
 import './FixedMenu.less';
+import { findMenuOpenKeys, setLocalStorage } from 'utils/menuUtil';
 const { Item } = Menu;
 
 interface Props {
   menuList: MenuList;
 }
-
-// localStorage 存
-function setLocalStorage(name: string, data: any) {
-  const dataStr = JSON.stringify(data);
-  window.sessionStorage.setItem(name, dataStr);
-}
-const findMenuOpenKeys = (menus: any) => {
-  const cacheUrlList = [menus.meUrl];
-  if (menus.children && menus.children.length > 0) {
-    const [firstChild] = menus.children;
-    const childUrls = findMenuOpenKeys(firstChild);
-    Array.prototype.push.apply(cacheUrlList, childUrls);
-  }
-  return cacheUrlList;
-};
 
 // eslint-disable-next-line no-empty-pattern
 const FixedMenu: FC<Props> = ({}) => {

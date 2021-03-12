@@ -44,7 +44,8 @@ const LoginForm: FC = () => {
             nick
           })
         );
-        localStorage.setItem('token', token);
+        // localStorage.setItem('token', token);
+        sessionStorage.setItem('token', token);
         setUserInfo(result.data);
         getMenuDatabyToken();
       }
@@ -63,7 +64,8 @@ const LoginForm: FC = () => {
             nick: form.nick || ''
           })
         );
-        localStorage.setItem('token', token);
+        // localStorage.setItem('token', token);
+        sessionStorage.setItem('token', token);
         setUserInfo(result.data);
         getMenuDatabyToken();
       }

@@ -12,9 +12,10 @@ import {
   setActiveTag,
   setTagPlanVisible
 } from 'stores/tags-view.store';
-import { getTagByMenus } from 'utils/menuUtil';
+import { findMenuOpenKeys, getTagByMenus, setLocalStorage } from 'utils/menuUtil';
 import './tagView.less';
 import { setRefreshFCUrl } from 'stores/user.store';
+import { setChangeFixedMenu } from 'stores/menu.store';
 const { TabPane } = Tabs;
 const TagsView: FC = () => {
   const { tags, activeTagMeUrl, tagPlanVisible } = useAppState(state => state.tagsView);
@@ -27,6 +28,19 @@ const TagsView: FC = () => {
   const onChange = (meUrl: string) => {
     dispatch(setTagPlanVisible(false));
     dispatch(setActiveTag(meUrl));
+    //此时需要重组
+    const toplevel = meUrl.split('/')[1];
+    const MenuHasChildren: any[] = menuList.filter((menuitem: any) => {
+      return menuitem.router === toplevel && menuitem.children && menuitem.children.length > 0;
+    });
+    dispatch(
+      setChangeFixedMenu({
+        changeFixedMenu: MenuHasChildren
+      })
+    );
+    const [nextMenuItem] = MenuHasChildren;
+    const cacheOpenKeys = findMenuOpenKeys(nextMenuItem);
+    setLocalStorage('cacheOpenKeys', cacheOpenKeys); // 记住展开关闭的组，刷新持久化
   };
 
   //关闭标签时，从tags中删除指定标签
@@ -73,7 +87,6 @@ const TagsView: FC = () => {
       })
     );
     const { meUrl } = nowTag;
-    console.log('meUrl: ', meUrl);
     dispatch(
       setRefreshFCUrl({
         RefreshFCUrl: meUrl,

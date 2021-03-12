@@ -122,3 +122,28 @@ export function SaveMeUrl(list: menuchild[], parentUrl: string = '/') {
   }
   return list;
 }
+
+export const findMenuOpenKeys = (menus: any) => {
+  if (!menus) {
+    return [];
+  }
+  const cacheUrlList = [menus.meUrl];
+  if (menus.children && menus.children.length > 0) {
+    const [firstChild] = menus.children;
+    const childUrls = findMenuOpenKeys(firstChild);
+    Array.prototype.push.apply(cacheUrlList, childUrls);
+  }
+  return cacheUrlList;
+};
+
+// localStorage 存
+export function setLocalStorage(name: string, data: any) {
+  const dataStr = JSON.stringify(data);
+  window.sessionStorage.setItem(name, dataStr);
+}
+
+// localStorage 取
+export function getLocalStorage(name: string) {
+  const dataStr = window.sessionStorage.getItem(name);
+  return dataStr && JSON.parse(dataStr);
+}

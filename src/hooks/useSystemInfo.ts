@@ -16,9 +16,9 @@ export const useSystemUserInfo = () => {
     setMenuData,
     cacheMenu,
     setCacheMenu,
-    saveMenu: (menuList: any) => {
-      setMenuData(menuList);
-      localStorage.setItem('menuList', JSON.stringify(menuList));
+    saveMenu: (menus: any) => {
+      setMenuData(menus);
+      localStorage.setItem('menus', JSON.stringify(menus));
     },
     getMenu: () => {
       const catchMenu = localStorage.getItem('menus');

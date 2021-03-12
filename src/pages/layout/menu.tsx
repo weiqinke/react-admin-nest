@@ -10,22 +10,11 @@ import { useSystemUserInfo } from 'hooks/useSystemInfo';
 import IconFont from 'pages/commponents/iconfont/iconfont';
 import './menu.less';
 import { setRefreshFCUrl } from 'stores/user.store';
+import { getLocalStorage, setLocalStorage } from 'utils/menuUtil';
 const { SubMenu, Item } = Menu;
 
 interface Props {
   menuList: MenuList;
-}
-
-// localStorage 存
-function setLocalStorage(name: string, data: any) {
-  const dataStr = JSON.stringify(data);
-  window.sessionStorage.setItem(name, dataStr);
-}
-
-// localStorage 取
-function getLocalStorage(name: string) {
-  const dataStr = window.sessionStorage.getItem(name);
-  return dataStr && JSON.parse(dataStr);
 }
 
 // eslint-disable-next-line no-empty-pattern
@@ -40,6 +29,7 @@ const MenuComponent: FC<Props> = ({}) => {
   const { layout } = config;
   const { getMenu } = useSystemUserInfo();
   const sysMenus = getMenu();
+  const { changeFixedMenu } = useAppState(state => state.menu);
 
   useEffect(() => {
     // 说明：
@@ -54,7 +44,7 @@ const MenuComponent: FC<Props> = ({}) => {
     const CurrentopenKeys = getLocalStorage('cacheOpenKeys') || [];
     setOpenkeys(() => CurrentopenKeys); // 菜单的展开和关闭的 keys，每一个menu成员都有一个唯一的key
     setSelectedKeys(() => [pathname]); // 选中菜单的keys数组，我们的 route 中的  key 和 path 是一样的
-  }, [collapsed, pathname]);
+  }, [collapsed, pathname, layout]);
 
   // 展开/关闭的回调
   const onOpenChange = (openKeys: any) => {
@@ -91,11 +81,12 @@ const MenuComponent: FC<Props> = ({}) => {
     navigate(keyPath[0]);
     setSelectedKeys(() => [key]); // 修改当前组件的state
   };
+
   if (layout === 'fixed') {
     /**
      * 现在不要用原始菜单数据了，需要从缓存中取值
      */
-    return <FixedLeftMenu menuList={[]}></FixedLeftMenu>;
+    return <FixedLeftMenu menuList={changeFixedMenu}></FixedLeftMenu>;
   }
   return (
     <Menu

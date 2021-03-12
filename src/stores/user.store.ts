@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction, Dispatch } from '@reduxjs/toolkit';
-import { apiLogin } from 'api/nest-admin/User';
-import { LoginParams, Role } from 'interface/user/login';
+import { Role } from 'interface/user/login';
 import { Locale, UserState } from 'interface/user/user';
 import { getGlobalState } from 'utils/getGloabal';
 
@@ -13,9 +12,9 @@ const initialState: UserState = {
   newUser: JSON.parse(localStorage.getItem('newUser')!) ?? true,
   menuList: menus,
   username: sessionStorage.getItem('username') || '',
-  nick: sessionStorage.getItem('username') || '',
-  role: (localStorage.getItem('username') || '') as Role,
-  loginState: localStorage.getItem('token') ? true : false,
+  nick: sessionStorage.getItem('nick') || '',
+  role: (sessionStorage.getItem('nick') || '') as Role,
+  loginState: sessionStorage.getItem('token') ? true : false,
   indexUrl: '',
   RefreshFCUrl: '/workplace',
   RefreshFlag: false
@@ -60,33 +59,6 @@ const userSlice = createSlice({
 export const { setUserItem, setIndexUrl, setMenuList, setRefreshFCUrl, serRefreshFlag } = userSlice.actions;
 
 export default userSlice.reducer;
-
-export const loginAsync = (payload: LoginParams) => {
-  return async (dispatch: Dispatch) => {
-    apiLogin(payload).then((result: any) => {
-      localStorage.setItem('t', result.token);
-      localStorage.setItem('username', result.username);
-      dispatch(
-        setUserItem({
-          username: result.username
-        })
-      );
-      return true;
-    });
-    return false;
-  };
-};
-
-export const logoutAsync = () => {
-  return async (dispatch: Dispatch) => {
-    dispatch(
-      setUserItem({
-        loginState: false
-      })
-    );
-    return true;
-  };
-};
 
 export const logoutSystem = () => {
   return async (dispatch: Dispatch) => {

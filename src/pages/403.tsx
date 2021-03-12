@@ -21,8 +21,8 @@ const NotAuthPage: React.FC<{}> = () => {
   }
   const backToHome = async () => {
     //如果此时仅剩一个标签页, 应该先去获取首页的菜单项，添加一个标签，然后跳转
-    const menuList = JSON.parse(localStorage.getItem('menuList') || '[]');
-    const indexTag: any = getIndexUrlInfo(menuList);
+    const menus = JSON.parse(localStorage.getItem('menus') || '[]');
+    const indexTag: any = getIndexUrlInfo(menus);
     await dispatch(
       addTag({
         ...indexTag,

@@ -38,7 +38,7 @@ const RenderRouter: FC = () => {
     },
     {
       path: '',
-      element: <WrapperRouteComponent element={<LayoutPage />} titleId="" />,
+      element: <WrapperRouteComponent element={<LayoutPage />} titleId="" auth={true} />,
       children: [
         {
           path: 'workplace',

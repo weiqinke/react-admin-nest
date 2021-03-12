@@ -3,33 +3,22 @@ import { Menu } from 'antd';
 import { MenuList } from 'interface/layout/menu.interface';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppState } from 'stores';
-
 import IconFont from 'pages/commponents/iconfont/iconfont';
 import './FixedLeftMenu.less';
-const { SubMenu, Item } = Menu;
+import { getLocalStorage, setLocalStorage } from 'utils/menuUtil';
 
+const { SubMenu, Item } = Menu;
 interface Props {
   menuList: MenuList;
 }
 
-// localStorage 存
-function setLocalStorage(name: string, data: any) {
-  const dataStr = JSON.stringify(data);
-  window.sessionStorage.setItem(name, dataStr);
-}
-
-// localStorage 取
-function getLocalStorage(name: string) {
-  const dataStr = window.sessionStorage.getItem(name);
-  return dataStr && JSON.parse(dataStr);
-}
-
-const FixedLeftMenu: FC<Props> = () => {
+const FixedLeftMenu: FC<Props> = props => {
   const [openKeys, setOpenkeys] = useState<string[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const { collapsed } = useAppState(state => state.user);
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const { changeFixedMenu } = useAppState(state => state.menu);
 
   /**
    * 提前说明
@@ -91,7 +80,7 @@ const FixedLeftMenu: FC<Props> = () => {
       onOpenChange={onOpenChange as any}
       className="layout-page-sider-menu nextmenus"
     >
-      {renderMenuMembers([])}
+      {renderMenuMembers(changeFixedMenu)}
     </Menu>
   );
 };

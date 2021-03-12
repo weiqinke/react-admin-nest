@@ -7,22 +7,24 @@ import { getGlobalState } from 'utils/getGloabal';
 import TagsView from './tagView/tagView';
 import SuspendFallbackLoading from './suspendFallbackLoading';
 import { MenuList } from 'interface/layout/menu.interface';
-import { useGuide } from '../guide/useGuide';
 import { Outlet, useLocation, useNavigate } from 'react-router';
 import { setUserItem } from 'stores/user.store';
 import { useAppDispatch, useAppState } from 'stores';
-
+import { useProjectConfig } from 'hooks/useProjectConfig';
+import FootLinks from './footer/FootLinks';
 const { Sider, Content } = Layout;
 const WIDTH = 992;
 
 const LayoutPage: FC = () => {
   const [menuList] = useState<MenuList>([]);
-  const { device, collapsed, newUser } = useAppState(state => state.user);
+  const { device, collapsed } = useAppState(state => state.user);
   const isMobile = device === 'MOBILE';
   const dispatch = useAppDispatch();
-  const { driverStart } = useGuide();
   const location = useLocation();
   const navigate = useNavigate();
+  const { changeFixedMenu } = useAppState(state => state.menu);
+  const { config } = useProjectConfig();
+  const { layout } = config;
 
   useEffect(() => {
     if (location.pathname === '/') {
@@ -35,6 +37,28 @@ const LayoutPage: FC = () => {
       setUserItem({
         collapsed: !collapsed
       })
+    );
+  };
+
+  const getSider = () => {
+    if (changeFixedMenu && changeFixedMenu.length <= 0 && layout === 'fixed') {
+      return (
+        <Sider
+          className="layout-page-sider menuabc"
+          trigger={null}
+          collapsible
+          collapsed={collapsed}
+          breakpoint="md"
+          width={1}
+        >
+          <MenuComponent menuList={menuList} />
+        </Sider>
+      );
+    }
+    return (
+      <Sider className="layout-page-sider menuabc" trigger={null} collapsible collapsed={collapsed} breakpoint="md">
+        <MenuComponent menuList={menuList} />
+      </Sider>
     );
   };
 
@@ -52,27 +76,19 @@ const LayoutPage: FC = () => {
     };
   }, [dispatch]);
 
-  useEffect(() => {
-    newUser && driverStart();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newUser]);
-
   return (
     <Layout className="layout-page">
       <HeaderComponent collapsed={collapsed} toggle={toggle} />
-      <Layout>
+      <Layout className="layout-page-main">
         {!isMobile ? (
-          <Sider className="layout-page-sider" trigger={null} collapsible collapsed={collapsed} breakpoint="md">
-            <MenuComponent menuList={menuList} />
-          </Sider>
+          getSider()
         ) : (
           <Drawer
-            width="200"
             placement="left"
             bodyStyle={{ padding: 0, height: '100%' }}
             closable={false}
             onClose={toggle}
-            visible={!collapsed}
+            visible={menuList.length > 0}
           >
             <MenuComponent menuList={menuList} />
           </Drawer>
@@ -82,6 +98,7 @@ const LayoutPage: FC = () => {
           <Suspense fallback={<SuspendFallbackLoading />}>
             <Outlet />
           </Suspense>
+          <FootLinks />
         </Content>
       </Layout>
     </Layout>
