@@ -79,20 +79,13 @@ class Basic extends React.Component {
               length: 0
             }}
             label={{
-              style: {
-                textStyle: {
-                  fill: '#aaa'
-                }
-              }
+              style: {}
             }}
           />
           <Axis
             name="value"
             label={{
               style: {
-                textStyle: {
-                  fill: '#aaa'
-                },
                 formatter: (val: string) => Number(val) / 1000 + 'k'
               }
             }}

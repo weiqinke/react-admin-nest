@@ -7,7 +7,9 @@ import { Spin } from 'antd';
 // login别懒加载，会导致页面无数据出来的
 import LayoutPage from 'pages/layout';
 import LoginPage from 'pages/login/login';
-const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard'"*/ 'pages/dashboard'));
+import TarceIndex from 'pages/tarceindex/tarceindex';
+import TypingCardIndex from 'pages/permission/typingcard/typingcard';
+// const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard'"*/ 'pages/dashboard'));
 const UserList = lazy(() => import(/* webpackChunkName: "userlist'"*/ 'pages/system/user/userlist'));
 const MenusList = lazy(() => import(/* webpackChunkName: "menuslist'"*/ 'pages/system/menus/menuslist'));
 const RoleList = lazy(() => import(/* webpackChunkName: "role'"*/ 'pages/system/role/role'));
@@ -41,10 +43,20 @@ const RenderRouter: FC = () => {
       element: <WrapperRouteComponent element={<LayoutPage />} titleId="" auth={true} />,
       children: [
         {
+          path: 'typingcard',
+          element: (
+            <WrapperRouteComponent
+              element={RefreshFCUrl === '/typingcard' && RefreshFlag === true ? <Spin /> : <TypingCardIndex />}
+              titleId="title.dashboard"
+            />
+          )
+        },
+
+        {
           path: 'workplace',
           element: (
             <WrapperRouteComponent
-              element={RefreshFCUrl === '/workplace' && RefreshFlag === true ? <Spin /> : <Dashboard />}
+              element={RefreshFCUrl === '/workplace' && RefreshFlag === true ? <Spin /> : <TarceIndex />}
               titleId="title.dashboard"
             />
           )
@@ -199,6 +211,15 @@ const RenderRouter: FC = () => {
           element: (
             <WrapperRouteComponent
               element={RefreshFCUrl === '/systems/useradmin/rolelist' && RefreshFlag === true ? <Spin /> : <RoleList />}
+              titleId="title.dashboard"
+            />
+          )
+        },
+        {
+          path: 'tarce/tarceindex',
+          element: (
+            <WrapperRouteComponent
+              element={RefreshFCUrl === '/tarce/tarceindex' && RefreshFlag === true ? <Spin /> : <TarceIndex />}
               titleId="title.dashboard"
             />
           )
