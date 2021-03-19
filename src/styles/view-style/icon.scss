@@ -1,0 +1,33 @@
+.icon {
+    .anticons-list::after {
+        content: '';
+        display: block;
+        clear: both;
+    }
+
+    .anticons-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        li {
+            position: relative;
+            float: left;
+            width: 10%;
+            height: 60px;
+            line-height: 60px;
+            overflow: hidden;
+            color: #555;
+            text-align: center;
+            list-style: none;
+            background-color: #fff;
+            border-radius: 4px;
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        li:hover {
+            background-color: #ccc;
+        }
+    }
+}

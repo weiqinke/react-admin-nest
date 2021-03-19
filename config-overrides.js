@@ -1,4 +1,4 @@
-const { override, addLessLoader, setWebpackPublicPath, fixBabelImports } = require('customize-cra');
+const { override, addLessLoader, setWebpackPublicPath, fixBabelImports, adjustStyleLoaders } = require('customize-cra');
 process.env.PORT = 3006;
 // eslint-disable-next-line no-unused-expressions
 process.env.GENERATE_SOURCEMAP !== 'false';
@@ -33,6 +33,16 @@ module.exports = override(
         '0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)' // 浮层阴影
     },
     javascriptEnabled: true
+  }),
+  adjustStyleLoaders(rule => {
+    if (rule.test.toString().includes("scss")) {
+      rule.use.push({
+        loader: require.resolve("sass-resources-loader"),
+        options: {
+          resources: "./src/styles/App.scss" //这里是你自己放公共scss变量的路径
+        }
+      });
+    }
   }),
   setWebpackPublicPath('/'), // 修改 publicPath
   rewiredSourceMap()

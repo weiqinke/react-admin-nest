@@ -1,1 +1,0 @@
-import './role.mock';

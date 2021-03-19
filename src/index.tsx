@@ -5,7 +5,6 @@ import store from './stores';
 import { Provider } from 'react-redux';
 import reportWebVitals from './reportWebVitals';
 import App from './App';
-import './mock';
 
 ReactDOM.render(
   <Provider store={store}>
