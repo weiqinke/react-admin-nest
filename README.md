@@ -32,99 +32,99 @@ npm run build
 - [ ] 持续开发
 
 ## 项目结构
-react-admin-nest
-├── config-overrides.js
-├── LICENSE
-├── public
-│   ├── favicon.ico
-│   ├── index.html
-│   ├── logo192.png
-│   ├── logo512.png
-│   ├── manifest.json
-│   └── robots.txt
-├── README.md
-├── src
-│   ├── api
-│   │   ├── axios-interceptors.js
-│   │   ├── nest-admin
-│   │   ├── request.ts
-│   │   └── request_old.ts
-│   ├── App.test.tsx
-│   ├── App.tsx
-│   ├── assets
-│   │   ├── header
-│   ├── config
-│   │   └── defaultMenuConfig.ts
-│   ├── hooks
-│   │   ├── useAsyncEffect.ts
-│   │   ├── usePrevious.ts
-│   │   ├── useProjectConfig.ts
-│   │   └── useSystemInfo.ts
-│   ├── index.tsx
-│   ├── interface
-│   │   ├── http
-│   │   ├── index.ts
-│   │   ├── layout
-│   │   ├── permission
-│   │   └── user
-│   ├── locales
-│   │   ├── en-US
-│   │   ├── index.tsx
-│   │   └── zh-CN
-│   ├── pages
-│   │   ├── 403.tsx
-│   │   ├── 404.tsx
-│   │   ├── account
-│   │   ├── article
-│   │   ├── chart
-│   │   ├── commponents
-│   │   ├── dashboard
-│   │   ├── documentation
-│   │   ├── form
-│   │   ├── guide
-│   │   ├── layout
-│   │   ├── list
-│   │   ├── login
-│   │   ├── notauth
-│   │   ├── permission
-│   │   ├── system
-│   │   ├── tarceindex
-│   │   └── workbench
-│   ├── react-app-env.d.ts
-│   ├── reportWebVitals.ts
-│   ├── routes
-│   │   ├── config.tsx
-│   │   ├── index.tsx
-│   │   └── pravateRoute.tsx
-│   ├── server
-│   │   └── system.login.ts
-│   ├── setupProxy.js
-│   ├── setupTests.ts
-│   ├── stores
-│   │   ├── index.ts
-│   │   ├── menu.store.ts
-│   │   ├── rootReducer.tsx
-│   │   ├── tags-view.store.ts
-│   │   └── user.store.ts
-│   ├── styles
-│   │   ├── antd.reset.less
-│   │   ├── App.scss
-│   │   ├── base.scss
-│   │   ├── index.less
-│   │   ├── layout.scss
-│   │   ├── main.less
-│   │   └── view-style
-│   └── utils
-│       ├── constant-mng.ts
-│       ├── core.ts
-│       ├── event-bus.ts
-│       ├── file.ts
-│       ├── getGloabal.ts
-│       ├── menuUtil.ts
-│       ├── render-routes
-│       ├── scrollTo.ts
-│       ├── typing.js
-│       ├── validate.ts
-│       └── websocket.ts
-├── tsconfig.json
-└── yarn.lock
+react-admin-nest  
+├── config-overrides.js  
+├── LICENSE  
+├── public  
+│   ├── favicon.ico  
+│   ├── index.html  
+│   ├── logo192.png  
+│   ├── logo512.png  
+│   ├── manifest.json  
+│   └── robots.txt  
+├── README.md  
+├── src  
+│   ├── api  
+│   │   ├── axios-interceptors.js  
+│   │   ├── nest-admin  
+│   │   ├── request.ts  
+│   │   └── request_old.ts  
+│   ├── App.test.tsx  
+│   ├── App.tsx  
+│   ├── assets  
+│   │   ├── header  
+│   ├── config  
+│   │   └── defaultMenuConfig.ts  
+│   ├── hooks  
+│   │   ├── useAsyncEffect.ts  
+│   │   ├── usePrevious.ts  
+│   │   ├── useProjectConfig.ts  
+│   │   └── useSystemInfo.ts  
+│   ├── index.tsx  
+│   ├── interface  
+│   │   ├── http  
+│   │   ├── index.ts  
+│   │   ├── layout  
+│   │   ├── permission  
+│   │   └── user  
+│   ├── locales  
+│   │   ├── en-US  
+│   │   ├── index.tsx  
+│   │   └── zh-CN  
+│   ├── pages  
+│   │   ├── 403.tsx  
+│   │   ├── 404.tsx  
+│   │   ├── account  
+│   │   ├── article  
+│   │   ├── chart  
+│   │   ├── commponents  
+│   │   ├── dashboard  
+│   │   ├── documentation  
+│   │   ├── form  
+│   │   ├── guide  
+│   │   ├── layout  
+│   │   ├── list  
+│   │   ├── login  
+│   │   ├── notauth  
+│   │   ├── permission  
+│   │   ├── system  
+│   │   ├── tarceindex  
+│   │   └── workbench  
+│   ├── react-app-env.d.ts  
+│   ├── reportWebVitals.ts  
+│   ├── routes  
+│   │   ├── config.tsx  
+│   │   ├── index.tsx  
+│   │   └── pravateRoute.tsx  
+│   ├── server  
+│   │   └── system.login.ts  
+│   ├── setupProxy.js  
+│   ├── setupTests.ts  
+│   ├── stores  
+│   │   ├── index.ts  
+│   │   ├── menu.store.ts  
+│   │   ├── rootReducer.tsx  
+│   │   ├── tags-view.store.ts  
+│   │   └── user.store.ts  
+│   ├── styles  
+│   │   ├── antd.reset.less  
+│   │   ├── App.scss  
+│   │   ├── base.scss  
+│   │   ├── index.less  
+│   │   ├── layout.scss  
+│   │   ├── main.less  
+│   │   └── view-style  
+│   └── utils  
+│       ├── constant-mng.ts  
+│       ├── core.ts  
+│       ├── event-bus.ts  
+│       ├── file.ts  
+│       ├── getGloabal.ts  
+│       ├── menuUtil.ts  
+│       ├── render-routes  
+│       ├── scrollTo.ts  
+│       ├── typing.js  
+│       ├── validate.ts  
+│       └── websocket.ts  
+├── tsconfig.json  
+└── yarn.lock  
