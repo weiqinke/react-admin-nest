@@ -139,7 +139,7 @@ const TagsView: FC = () => {
         type="editable-card"
         hideAdd
         onEdit={(targetKey, action) => action === 'remove' && onClose(targetKey as string)}
-        tabBarExtraContent={<span>123</span>}
+        tabBarExtraContent={<span></span>}
       >
         {tags.map((tag, tagindex) => (
           <TabPane
