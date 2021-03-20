@@ -59,12 +59,12 @@ const MenuComponent: FC<Props> = ({}) => {
         <SubMenu
           key={meUrl}
           title={<span className="menuname">{name}</span>}
-          icon={<IconFont type={icon} className="nexticon" />}
+          icon={<IconFont type={icon || 'icon-shouye'} className="nexticon" />}
         >
           {renderMenuMembers(children)}
         </SubMenu>
       ) : (
-        <Item key={meUrl} icon={<IconFont type={icon} className="nexticon" />}>
+        <Item key={meUrl} icon={<IconFont type={icon || 'icon-shouye'} className="nexticon" />}>
           <span className="menuname">{name}</span>
         </Item>
       );

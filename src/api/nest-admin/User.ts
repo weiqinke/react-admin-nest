@@ -46,3 +46,18 @@ export const Zhuce = (payload: any) => {
 export const findalluser = (payload: any) => {
   return request(`${BASE_URL}user/findalluser`, 'post', payload);
 };
+
+/** 添加一个人员 */
+export const addOneUser = (payload: any) => {
+  return request(`${BASE_URL}user/addOneUser`, 'post', payload);
+};
+
+/** 编辑一个人员 */
+export const editOneUser = (payload: any) => {
+  return request(`${BASE_URL}user/editOneUser`, 'post', payload);
+};
+
+/** 切换一个人员状态 */
+export const changeUserStatus = (payload: any) => {
+  return request(`${BASE_URL}user/changeUserStatus`, 'post', payload);
+};

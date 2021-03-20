@@ -1,11 +1,12 @@
 /**
  * 个人中心
  */
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import './style.scss';
-import { Card, Divider } from 'antd';
+import { Button, Card, Col, Divider, Form, Input, Row } from 'antd';
 import Avatar from 'pages/commponents/avatar';
 import userPoster from 'assets/header/user.webp';
+const { TextArea } = Input;
 const { Meta } = Card;
 const userInfo = {
   id: '71b0ee35-f16b-4181-89b0-2eefa0b5d548',
@@ -38,19 +39,86 @@ const BasePage: FC = function() {
     </div>
   );
 
+  const [form] = Form.useForm();
+  const [requiredMark, setRequiredMarkType] = useState<any>('optional');
+
+  const onRequiredTypeChange = ({ requiredMarkValue }: { requiredMarkValue: any }) => {
+    setRequiredMarkType(requiredMarkValue);
+  };
+
   return (
-    <div className="setting-base">
-      <Divider orientation="left" plain>
-        个人中心
-      </Divider>
-      <Card style={{ width: 350 }} cover={<img alt="" src={userPoster} className="poster" />}>
-        <Meta
-          avatar={<Avatar src={userInfo.avatarUrl} size="large" />}
-          title={userInfo.username}
-          description={MetaDesc}
-        />
-      </Card>
-    </div>
+    <Row>
+      <Col span={24}>
+        <Divider orientation="left" plain>
+          个人中心
+        </Divider>
+      </Col>
+      <Col span={10} lg={10} sm={24} md={24}>
+        <div className="setting-base">
+          <Card style={{ width: 350 }} cover={<img alt="" src={userPoster} className="poster" />}>
+            <Meta
+              avatar={<Avatar src={userInfo.avatarUrl} size="large" />}
+              title={userInfo.username}
+              description={MetaDesc}
+            />
+          </Card>
+        </div>
+      </Col>
+      <Col span={12} offset={1} lg={10} sm={23} md={23}>
+        <Form
+          form={form}
+          initialValues={{ requiredMark }}
+          onValuesChange={onRequiredTypeChange}
+          requiredMark={requiredMark}
+          layout="inline"
+          className="formdom"
+        >
+          <Col span={12} className="formitem">
+            <Form.Item label="账号" required>
+              <Input placeholder="" />
+            </Form.Item>
+          </Col>
+
+          <Col span={12} className="formitem">
+            <Form.Item label="密码" required>
+              <Input placeholder="" />
+            </Form.Item>
+          </Col>
+
+          <Col span={12} className="formitem">
+            <Form.Item label="昵称" required>
+              <Input placeholder="" />
+            </Form.Item>
+          </Col>
+
+          <Col span={12} className="formitem">
+            <Form.Item label="邮箱" required>
+              <Input placeholder="" />
+            </Form.Item>
+          </Col>
+          <Col span={12} className="formitem">
+            <Form.Item label="地区" required>
+              <Input placeholder="" />
+            </Form.Item>
+          </Col>
+
+          <Col span={12} className="formitem">
+            <Form.Item label="注册时间" required>
+              <Input placeholder="" />
+            </Form.Item>
+          </Col>
+          <Col span={24} className="formitem">
+            <Form.Item label="简介" required>
+              <TextArea rows={4} />
+            </Form.Item>
+          </Col>
+
+          <Form.Item>
+            <Button type="primary">提交</Button>
+          </Form.Item>
+        </Form>
+      </Col>
+    </Row>
   );
 };
 export default BasePage;
