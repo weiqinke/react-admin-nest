@@ -1,3 +1,4 @@
+import qs from 'qs';
 /**
  * 生成指定区间的随机整数
  * @param {Number} min 最小数
@@ -48,18 +49,7 @@ export const getURLParams = (url: string): any => {
  */
 
 export function paramsSerializer(params = {}) {
-  const paramArr: string[] = [];
-  let key: string;
-  let value: any;
-  for ([key, value] of Object.entries(params)) {
-    if (Array.isArray(value)) {
-      value.forEach(item => paramArr.push(`${encodeURIComponent(key)}=${encodeURIComponent(item)}`));
-    } else {
-      // 剔除null和undefined值
-      value != null && paramArr.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
-    }
-  }
-  return paramArr.join('&');
+  return qs.stringify(params, { arrayFormat: 'repeat' });
 }
 
 /**
@@ -175,4 +165,13 @@ export const documentReady = (fn: (ev?: Event) => any, waitLoaded: boolean = fal
   } else {
     document.addEventListener('DOMContentLoaded', fn);
   }
+};
+
+/**
+ * 计算百分比
+ * @example
+ * totalPercentage(8589934592, 225492992)  // => 98
+ */
+export const totalPercentage = (totalmem: number, freemem: number) => {
+  return Math.floor(((totalmem - freemem) / totalmem) * 100);
 };

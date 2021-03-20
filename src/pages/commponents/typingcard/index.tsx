@@ -14,7 +14,11 @@ const TypingCard = (props: any) => {
       output: outputEl,
       delay: 30
     });
+    typing.stopFlag = false;
     typing.start();
+    return () => {
+      typing.opts.done();
+    };
   }, []);
   return (
     <Card bordered={false} className="card-item" title={title}>

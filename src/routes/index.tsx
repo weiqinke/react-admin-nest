@@ -9,6 +9,7 @@ import LayoutPage from 'pages/layout';
 import LoginPage from 'pages/login/login';
 import TarceIndex from 'pages/tarceindex/tarceindex';
 import TypingCardIndex from 'pages/permission/typingcard/typingcard';
+import Account from 'pages/account/Account';
 // const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard'"*/ 'pages/dashboard'));
 const UserList = lazy(() => import(/* webpackChunkName: "userlist'"*/ 'pages/system/user/userlist'));
 const MenusList = lazy(() => import(/* webpackChunkName: "menuslist'"*/ 'pages/system/menus/menuslist'));
@@ -224,6 +225,31 @@ const RenderRouter: FC = () => {
             />
           )
         },
+        {
+          path: 'setting/personal',
+          element: (
+            <WrapperRouteComponent
+              element={RefreshFCUrl === '/setting/personal' && RefreshFlag === true ? <Spin /> : <Account />}
+              titleId="title.dashboard"
+            />
+          )
+        },
+        {
+          path: 'setting/account',
+          element: (
+            <WrapperRouteComponent
+              element={RefreshFCUrl === '/setting/account' && RefreshFlag === true ? <Spin /> : <Account />}
+              titleId="title.dashboard"
+            />
+          ),
+          children: [
+            {
+              path: '*',
+              element: <WrapperRouteComponent element={<Spin />} titleId="title.dashboard" />
+            }
+          ]
+        },
+
         {
           path: '*',
           element: <WrapperRouteComponent element={<NotFound />} titleId="title.notFount" />

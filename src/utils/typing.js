@@ -9,6 +9,7 @@ class Typing {
       dom: this.output,
       val: []
     };
+    this.stopFlag = false;
     if (!(typeof this.opts.done === 'function')) this.opts.done = function() {};
   }
 
@@ -41,6 +42,9 @@ class Typing {
       if (dom.current) {
         dom.current.appendChild(document.createTextNode(val));
       } else {
+        if (!dom.appendChild) {
+          return;
+        }
         dom.appendChild(document.createTextNode(val));
       }
       callback();
