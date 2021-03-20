@@ -46,6 +46,7 @@ const LoginForm: FC = () => {
         );
         // localStorage.setItem('token', token);
         sessionStorage.setItem('token', token);
+        localStorage.setItem('nick', nick);
         setUserInfo(result.data);
         getMenuDatabyToken();
       }

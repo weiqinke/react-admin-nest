@@ -12,8 +12,8 @@ const initialState: UserState = {
   newUser: JSON.parse(localStorage.getItem('newUser')!) ?? true,
   menuList: menus,
   username: sessionStorage.getItem('username') || '',
-  nick: sessionStorage.getItem('nick') || '',
-  role: (sessionStorage.getItem('nick') || '') as Role,
+  nick: localStorage.getItem('nick') || '',
+  role: (sessionStorage.getItem('role') || '') as Role,
   loginState: sessionStorage.getItem('token') ? true : false,
   indexUrl: '',
   RefreshFCUrl: '/workplace',
@@ -26,6 +26,7 @@ const userSlice = createSlice({
   reducers: {
     setUserItem(state, action: PayloadAction<Partial<UserState>>) {
       const { username, nick } = action.payload;
+
       if (username !== state.username) {
         sessionStorage.setItem('username', username || '');
       }

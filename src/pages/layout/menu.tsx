@@ -56,12 +56,16 @@ const MenuComponent: FC<Props> = ({}) => {
     // const adminRoutesDeepClone = routesFilter([...adminRoutes], roles); // adminRoutes权限过滤, 此版本不做了，因为菜单就是根据权限筛选出来的
     return adminRoutes.map(({ name, meUrl, children, icon }) => {
       return children && children.length > 0 ? (
-        <SubMenu key={meUrl} title={name} icon={<IconFont type={'anticon-shouye'} />}>
+        <SubMenu
+          key={meUrl}
+          title={<span className="menuname">{name}</span>}
+          icon={<IconFont type={icon} className="nexticon" />}
+        >
           {renderMenuMembers(children)}
         </SubMenu>
       ) : (
-        <Item key={meUrl} icon={<IconFont type={'anticon-shouye'} />}>
-          {name}
+        <Item key={meUrl} icon={<IconFont type={icon} className="nexticon" />}>
+          <span className="menuname">{name}</span>
         </Item>
       );
       // 动态路由不进行显示，因为一般动态路由是详情页

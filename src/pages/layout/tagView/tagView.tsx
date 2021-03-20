@@ -131,7 +131,7 @@ const TagsView: FC = () => {
   }, [activeTagMeUrl, prevActiveTagUrl]);
 
   return (
-    <div id="pageTabs" style={{ background: '#fff', padding: '6px 4px' }}>
+    <div id="pageTabs" className="tagsdiv">
       <Tabs
         tabBarStyle={{ margin: 0 }}
         onChange={onChange}
@@ -139,22 +139,28 @@ const TagsView: FC = () => {
         type="editable-card"
         hideAdd
         onEdit={(targetKey, action) => action === 'remove' && onClose(targetKey as string)}
+        tabBarExtraContent={<span>123</span>}
       >
         {tags.map((tag, tagindex) => (
           <TabPane
             tab={
-              <span
-                className="textshow"
-                onContextMenu={e => {
-                  contextTag(e, tag, tagindex);
-                }}
-              >
-                {tag.name}
-                <b className="contextb"></b>
-              </span>
+              <div className="tagitem">
+                <span
+                  className="textshow"
+                  onContextMenu={e => {
+                    contextTag(e, tag, tagindex);
+                  }}
+                >
+                  <b className="round"></b>
+                  <b>{tag.name}</b>
+                  <b className="contextb"></b>
+                </span>
+                <span className="bottomline"></span>
+              </div>
             }
             key={tag.meUrl}
             closable={tag.closable}
+            className="changettag"
           ></TabPane>
         ))}
       </Tabs>
