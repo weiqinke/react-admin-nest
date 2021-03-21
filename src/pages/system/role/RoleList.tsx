@@ -1,11 +1,12 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Button, Table, Modal, message, Tag } from 'antd';
+import { Button, Table, Modal, message, Tag, Alert } from 'antd';
 import './RoleList.less';
-import { getallrole, deleterole, getUsersByRoleCode } from 'api/nest-admin/Rbac';
+import { getallrole, deleterole, getUsersByRoleCode, findAllMenu, getMenusByRoleCode } from 'api/nest-admin/Rbac';
 import RoleEditModal from './RoleEditModal';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import ChecksUsersModal from 'pages/commponents/modalmessage/ChecksUsersModal';
 import { findalluser } from 'api/nest-admin/User';
+import ChecksMenusModal from 'pages/commponents/modalmessage/ChecksMenusModal';
 const { confirm } = Modal;
 const RoleList: FC = () => {
   const [userslist, setUserslist] = useState([]);
@@ -17,11 +18,21 @@ const RoleList: FC = () => {
   const [changeUser, setChangeUser] = useState([]);
   const [checksUserVisible, setchecksUserVisible] = useState(false);
 
+  //菜单模块
+  const [allMenu, setAllMenu] = useState([]);
+  const [changeMenu, setChangeMenu] = useState([]);
+  const [checksMenuVisible, setChecksMenuVisible] = useState(false);
+
   useEffect(() => {
     findAll();
     findalluser({}).then(result => {
       if (result.data.code === 200) {
         setAllUser(result.data.data || []);
+      }
+    });
+    findAllMenu({ isdeleted: 0 }).then((result: any) => {
+      if (result.data.code === 200) {
+        setAllMenu(result.data.data || []);
       }
     });
   }, []);
@@ -38,6 +49,16 @@ const RoleList: FC = () => {
         setRoleCode(record.roleCode);
         setChangeUser(result.data.data || []);
         setchecksUserVisible(true);
+      }
+    });
+  };
+  // 分配菜单
+  const willGiveMenu = (record: any) => {
+    getMenusByRoleCode({ roleCode: record.roleCode }).then(result => {
+      if (result.data.code === 200) {
+        setRoleCode(record.roleCode);
+        setChangeMenu(result.data.data || []);
+        setChecksMenuVisible(true);
       }
     });
   };
@@ -124,6 +145,16 @@ const RoleList: FC = () => {
               size="small"
               type="primary"
               onClick={() => {
+                willGiveMenu(item);
+              }}
+              style={{ marginRight: '10px' }}
+            >
+              分配菜单
+            </Button>
+            <Button
+              size="small"
+              type="primary"
+              onClick={() => {
                 roleEdit(item);
               }}
               style={{ marginRight: '10px' }}
@@ -144,12 +175,7 @@ const RoleList: FC = () => {
       }
     }
   ];
-  const pendingCallback = (flag: boolean) => {
-    if (flag) {
-      findAll();
-    }
-    setVisible(false);
-  };
+
   const addOneRole = () => {
     setVisible(true);
     setIsEdit(false);
@@ -168,20 +194,39 @@ const RoleList: FC = () => {
       findAll();
     }
     setchecksUserVisible(false);
+    setChecksMenuVisible(false);
+    setVisible(false);
   };
 
   return (
     <div className="users-list-page">
+      <Alert
+        message={
+          <h1>
+            朋友们,咱们尽量别改动 {<span style={{ fontSize: '15px', color: 'red' }}>qkstat</span>}{' '}
+            的权限和菜单，因为新人登陆进来都是这个账号，祝大家体验愉快，有问题可以提{' '}
+            {<span style={{ fontSize: '15px', color: 'red' }}>issues</span>} ,我会及时回复您的。
+          </h1>
+        }
+        type="success"
+      />
       <Button type="primary" onClick={addOneRole}>
         添加角色
       </Button>
-      <RoleEditModal visible={visible} isEdit={isEdit} id={id} initRoleItem={role} pendingCallback={pendingCallback} />
+      <RoleEditModal visible={visible} isEdit={isEdit} id={id} initRoleItem={role} pendingCallback={usercallback} />
       <Table columns={columns} dataSource={userslist} rowKey={(record: any) => record.id} />
       <ChecksUsersModal
         allUser={allUser}
         changeUser={changeUser}
         visible={checksUserVisible}
         roleCode={roleCode}
+        pendingCallback={usercallback}
+      />
+      <ChecksMenusModal
+        allMenu={allMenu}
+        changeMenu={changeMenu}
+        roleCode={roleCode}
+        visible={checksMenuVisible}
         pendingCallback={usercallback}
       />
     </div>

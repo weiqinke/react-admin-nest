@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Button, Checkbox, Form, Input, Tabs } from 'antd';
+import { Button, Checkbox, Form, Input, message, Tabs } from 'antd';
 import './index.less';
 import { useNavigate } from 'react-router-dom';
 import { LoginParams } from 'interface/user/login';
@@ -9,7 +9,7 @@ import { addTag, setActiveTag } from 'stores/tags-view.store';
 import { useAppDispatch } from 'stores';
 import { setUserItem, setIndexUrl, setMenuList, setRefreshFCUrl } from 'stores/user.store';
 import { Zhuce, Account } from 'api/nest-admin/User';
-import { getAllMenusItem } from 'api/nest-admin/MenuApi';
+import { getUserMenus } from 'api/nest-admin/MenuApi';
 interface LoginParamsMore {
   name: string;
   password: string;
@@ -33,7 +33,7 @@ const LoginForm: FC = () => {
     const payload = {
       ...form,
       logintype: 'web',
-      email: '123@qq.com'
+      email: form.name + '@qq.com'
     };
     Account(payload).then(result => {
       if (result.data.code === 200) {
@@ -54,7 +54,7 @@ const LoginForm: FC = () => {
   };
   const onRegister = async (form: any) => {
     Zhuce({
-      user: { ...form, email: Math.random() + '@qq.com' }
+      user: { ...form, email: form.name + '@qq.com' }
     }).then(result => {
       if (result.data.code === 200) {
         //登录成功，获取菜单
@@ -74,9 +74,13 @@ const LoginForm: FC = () => {
   };
   const onRegisterFailed = () => {};
   const getMenuDatabyToken = () => {
-    getAllMenusItem().then(result => {
+    getUserMenus().then(result => {
       if (result.data.code === 200) {
         const cacheMenu = result.data.data;
+        if (cacheMenu.length <= 0) {
+          message.info('暂未分配权限，请通知管理员分配权限');
+          return;
+        }
         const menudata = getSystemMenu(cacheMenu);
         const projectMenuPre = ProjectParseMenuAsPre(menudata.concat());
         const allMenusInfo: any = SaveMeUrl(projectMenuPre.concat(), '');

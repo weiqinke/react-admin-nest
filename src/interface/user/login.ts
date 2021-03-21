@@ -6,6 +6,7 @@ export interface LoginParams {
   username: string;
   /** 用户密码 */
   password: string;
+  name?: string;
 }
 
 export interface LoginResult {

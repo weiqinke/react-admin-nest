@@ -91,7 +91,7 @@ const UserEditModal: FC<any> = (props: any) => {
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item name="address" label="联系地址" rules={[{ required: false }]}>
+            <Form.Item name="group" label="联系地址" rules={[{ required: false }]}>
               <Input />
             </Form.Item>
           </Col>

@@ -1,6 +1,6 @@
 import React, { useEffect, FC, useState } from 'react';
-import { Modal } from 'antd';
-import { Table, Radio, Divider } from 'antd';
+import { message, Modal } from 'antd';
+import { Table } from 'antd';
 import { giveUser } from 'api/nest-admin/Rbac';
 
 const ChecksUsersModal: FC<any> = (props: any) => {
@@ -12,8 +12,14 @@ const ChecksUsersModal: FC<any> = (props: any) => {
       roleCode,
       users: nextUsers
     };
-    giveUser(payload);
-    // pendingCallback(true);
+    const result: any = await giveUser(payload);
+    if (result.data.code === 200) {
+      message.info('操作成功');
+      pendingCallback(true);
+      return;
+    }
+    message.error('操作失败');
+    //
   };
   const CancelSubmit = () => {
     pendingCallback(false);
@@ -21,8 +27,7 @@ const ChecksUsersModal: FC<any> = (props: any) => {
   const columns = [
     {
       title: '账号',
-      dataIndex: 'name',
-      render: (text: string) => <a>{text}</a>
+      dataIndex: 'name'
     },
     {
       title: '昵称',
@@ -31,24 +36,20 @@ const ChecksUsersModal: FC<any> = (props: any) => {
   ];
   const [nextUsers, setNextUsers] = useState<any[]>([]);
 
-  // rowSelection object indicates the need for row selection
   const rowSelection = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
-      console.log('selectedRows: ', selectedRows);
+    onChange: (selectedRowKeys: React.Key[]) => {
       setNextUsers(selectedRowKeys);
     },
     selectedRowKeys: nextUsers
   };
 
   useEffect(() => {
-    const list = [];
-    const MenuHasChildren = allUser.filter((user: any) => {
-      return (
-        changeUser.filter((cuser: any) => {
-          return cuser.uid === user.uid;
-        }).length > 0
-      );
+    const list: any = [];
+    changeUser.map((item: any) => {
+      list.push(item.uid);
+      return true;
     });
+    setNextUsers(list);
   }, [allUser, changeUser]);
 
   return (

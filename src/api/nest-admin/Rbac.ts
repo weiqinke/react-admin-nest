@@ -26,9 +26,22 @@ export const getUsersByRoleCode = (payload: any) => {
   return request(`${BASE_URL}role/getUsersByRoleCode`, 'post', payload);
 };
 
+/** nest角色接口 */
+export const getMenusByRoleCode = (payload: any) => {
+  return request(`${BASE_URL}role/getMenusByRoleCode`, 'post', payload);
+};
 
 /** nest角色分配人接口 */
 export const giveUser = (payload: any) => {
   return request(`${BASE_URL}role/giveUser`, 'post', payload);
 };
 
+/** nest角色分配人接口 */
+export const giveRoleMenus = (payload: any) => {
+  return request(`${BASE_URL}role/giveRoleMenus`, 'post', payload);
+};
+
+/** nest角色分配人接口 */
+export const findAllMenu = (payload: any) => {
+  return request(`${BASE_URL}role/findAllMenu`, 'post', payload);
+};

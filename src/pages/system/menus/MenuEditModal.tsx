@@ -25,7 +25,6 @@ const MenuEditModal: FC<any> = (props: any) => {
     } else {
       result = await addMenuItem(payload);
     }
-    console.log('result: ', result);
     if (result.data.code !== 200) {
       message.info('操作失败');
       return;

@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Button, Form, message, Modal, Table, Tag } from 'antd';
 import './menuslist.less';
-import { delMenuItem, getAllMenusItem } from 'api/nest-admin/MenuApi';
+import { delMenuItem, getAllMenus } from 'api/nest-admin/MenuApi';
 import MenuEditModal from './MenuEditModal';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 const { confirm } = Modal;
@@ -9,7 +9,7 @@ const MenusList: FC = () => {
   const [menuslist, setMenuslist] = useState([]);
   const [parentUid, setparentUid] = useState('-1');
   useEffect(() => {
-    getallmenus();
+    getallmenusdata();
   }, []);
 
   const [visible, setVisible] = React.useState(false);
@@ -31,7 +31,7 @@ const MenusList: FC = () => {
         const result = await delMenuItem(record);
         if (result.data.code === 200) {
           message.info('操作成功');
-          getallmenus();
+          getallmenusdata();
           return;
         }
         message.info('操作失败');
@@ -130,9 +130,9 @@ const MenusList: FC = () => {
     setparentUid('-1');
     setVisible(true);
   };
-  const getallmenus = () => {
+  const getallmenusdata = () => {
     setMenuslist([]);
-    getAllMenusItem().then((result: any) => {
+    getAllMenus().then((result: any) => {
       if (result.data.code === 200) {
         const menudata = result.data.data;
         setMenuslist(menudata || []);
@@ -144,7 +144,7 @@ const MenusList: FC = () => {
   const { setFieldsValue } = form;
   const pendingCallback = (flag: boolean) => {
     if (flag) {
-      getallmenus();
+      getallmenusdata();
     }
     setVisible(false);
   };
@@ -152,7 +152,7 @@ const MenusList: FC = () => {
 
   return (
     <div className="users-list-page menulist">
-      <Button type="primary" className="topbtn" onClick={getallmenus}>
+      <Button type="primary" className="topbtn" onClick={getallmenusdata}>
         查询菜单
       </Button>
       <Button type="primary" className="topbtn" onClick={addmenuItem}>
