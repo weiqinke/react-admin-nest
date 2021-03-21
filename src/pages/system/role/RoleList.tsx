@@ -1,30 +1,43 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Button, Table, Tag, Modal, message } from 'antd';
-import './userlist.less';
-import { changeUserStatus, findalluser } from 'api/nest-admin/User';
-import UserEditModal from './UserEditModal';
-import ModalMessage from 'pages/commponents/modalmessage/ModalMessage';
+import { Button, Table, Modal, message, Tag } from 'antd';
+import './RoleList.less';
+import { getallrole, deleterole, getUsersByRoleCode } from 'api/nest-admin/Rbac';
+import RoleEditModal from './RoleEditModal';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import ChecksUsersModal from 'pages/commponents/modalmessage/ChecksUsersModal';
+import { findalluser } from 'api/nest-admin/User';
 const { confirm } = Modal;
-const UserList: FC = () => {
+const RoleList: FC = () => {
   const [userslist, setUserslist] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [id, setID] = useState(null);
   const [visible, setVisible] = useState(false);
-  const [user, setUser] = useState({});
-  //提示框的属性
-  const [tipvisible] = useState(false);
-  const [tipContent] = useState('是否删除');
-
-  const tipcallback = () => {};
+  const [role, setRole] = useState({});
+  const [allUser, setAllUser] = useState([]);
+  const [changeUser, setChangeUser] = useState([]);
+  const [checksUserVisible, setchecksUserVisible] = useState(false);
 
   useEffect(() => {
     findAll();
-  }, []);
-  const findAll = () => {
     findalluser({}).then(result => {
       if (result.data.code === 200) {
+        setAllUser(result.data.data || []);
+      }
+    });
+  }, []);
+  const findAll = () => {
+    getallrole({}).then(result => {
+      if (result.data.code === 200) {
         setUserslist(result.data.data || []);
+      }
+    });
+  };
+  const willGiveUser = (record: any) => {
+    getUsersByRoleCode({ roleCode: record.roleCode }).then(result => {
+      if (result.data.code === 200) {
+        setRoleCode(record.roleCode);
+        setChangeUser(result.data.data || []);
+        setchecksUserVisible(true);
       }
     });
   };
@@ -38,12 +51,12 @@ const UserList: FC = () => {
       icon: <ExclamationCircleOutlined />,
       content: (
         <span style={{ color: 'red', fontSize: '19px' }}>{`是否${item.isdeleted ? '启用' : '禁用'}该用户？`}</span>
-      ), //<Alert message={`"是否${flag?'禁用':'启用'}该用户？"`} type="error" />,
+      ),
       okText: '确定',
       okType: 'danger',
       cancelText: '取消',
       onOk: async () => {
-        const result = await changeUserStatus(item);
+        const result = await deleterole({ ...item, isdeleted: item.isdeleted === 0 ? 1 : 0 });
         if (result.data.code === 200) {
           message.info('操作成功');
           findAll();
@@ -59,20 +72,20 @@ const UserList: FC = () => {
 
   const columns = [
     {
-      title: '账号',
+      title: '角色名称',
       dataIndex: 'name'
     },
     {
-      title: '昵称',
-      dataIndex: 'nick'
+      title: '角色代码',
+      dataIndex: 'roleCode'
     },
     {
-      title: '邮箱',
-      dataIndex: 'email'
+      title: '备注',
+      dataIndex: 'remarks'
     },
     {
-      title: '手机号',
-      dataIndex: 'phone'
+      title: '排序',
+      dataIndex: 'sort'
     },
     {
       title: '状态',
@@ -101,7 +114,17 @@ const UserList: FC = () => {
               size="small"
               type="primary"
               onClick={() => {
-                userEdit(item);
+                willGiveUser(item);
+              }}
+              style={{ marginRight: '10px' }}
+            >
+              分配人员
+            </Button>
+            <Button
+              size="small"
+              type="primary"
+              onClick={() => {
+                roleEdit(item);
               }}
               style={{ marginRight: '10px' }}
             >
@@ -127,28 +150,42 @@ const UserList: FC = () => {
     }
     setVisible(false);
   };
-  const addUser = () => {
+  const addOneRole = () => {
     setVisible(true);
     setIsEdit(false);
     setID(null);
   };
-  const userEdit = (item: any) => {
+  const roleEdit = (item: any) => {
     setVisible(true);
     setIsEdit(true);
-    setUser(item);
+    setRole(item);
     setID(item.id);
+  };
+
+  const [roleCode, setRoleCode] = useState('-1');
+  const usercallback = (flag: boolean) => {
+    if (flag) {
+      findAll();
+    }
+    setchecksUserVisible(false);
   };
 
   return (
     <div className="users-list-page">
-      <Button type="primary" onClick={addUser}>
-        添加人员
+      <Button type="primary" onClick={addOneRole}>
+        添加角色
       </Button>
-      <UserEditModal visible={visible} isEdit={isEdit} id={id} initUser={user} pendingCallback={pendingCallback} />
-      <Table columns={columns} dataSource={userslist} rowKey={(record: any) => record.uid} />;
-      <ModalMessage visible={tipvisible} pendingCallback={tipcallback} content={tipContent} />
+      <RoleEditModal visible={visible} isEdit={isEdit} id={id} initRoleItem={role} pendingCallback={pendingCallback} />
+      <Table columns={columns} dataSource={userslist} rowKey={(record: any) => record.id} />
+      <ChecksUsersModal
+        allUser={allUser}
+        changeUser={changeUser}
+        visible={checksUserVisible}
+        roleCode={roleCode}
+        pendingCallback={usercallback}
+      />
     </div>
   );
 };
 
-export default UserList;
+export default RoleList;

@@ -13,7 +13,7 @@ import Account from 'pages/account/Account';
 // const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard'"*/ 'pages/dashboard'));
 const UserList = lazy(() => import(/* webpackChunkName: "userlist'"*/ 'pages/system/user/userlist'));
 const MenusList = lazy(() => import(/* webpackChunkName: "menuslist'"*/ 'pages/system/menus/menuslist'));
-const RoleList = lazy(() => import(/* webpackChunkName: "role'"*/ 'pages/system/role/role'));
+const RoleList = lazy(() => import(/* webpackChunkName: "role'"*/ 'pages/system/role/RoleList'));
 const Workbench = lazy(() => import(/* webpackChunkName: "account'"*/ 'pages/workbench/workbench'));
 const NotFound = lazy(() => import(/* webpackChunkName: "404'"*/ 'pages/404'));
 const Documentation = lazy(() => import(/* webpackChunkName: "404'"*/ 'pages/documentation'));
