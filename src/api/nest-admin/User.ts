@@ -61,3 +61,10 @@ export const editOneUser = (payload: any) => {
 export const changeUserStatus = (payload: any) => {
   return request(`${BASE_URL}user/changeUserStatus`, 'post', payload);
 };
+
+/** 获取登录日志 */
+export const getAccountLog = (payload: any) => {
+  return request(`${BASE_URL}user/getAccountLog`, 'post', payload);
+};
+
+

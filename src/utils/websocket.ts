@@ -1,5 +1,7 @@
 import { tupleStr } from 'utils/core';
-const config: any = {};
+const config: any = {
+  domain:'ws://localhost:3021/'
+};
 // 项目中所有websocket事件名称
 const eventName = tupleStr('paySignMoney');
 
@@ -31,8 +33,9 @@ class WebsocketManager {
       url = config.domain.replace('http', 'ws');
     } else {
       // 本地代理地址
-      const proxyAddress = 'http://proxy';
+      const proxyAddress = 'ws://localhost:3021/';
       url = proxyAddress.replace('http', 'ws');
+      console.log('url: ', url);
     }
     this.websocket = new WebSocket(url);
     this.websocket.onopen = this.onOpen;
