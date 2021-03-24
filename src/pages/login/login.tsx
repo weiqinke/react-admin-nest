@@ -10,6 +10,7 @@ import { useAppDispatch } from 'stores';
 import { setUserItem, setIndexUrl, setMenuList, setRefreshFCUrl } from 'stores/user.store';
 import { Zhuce, Account } from 'api/nest-admin/User';
 import { getUserMenus } from 'api/nest-admin/MenuApi';
+import { webSocketManager } from 'utils/websocket';
 interface LoginParamsMore {
   name: string;
   password: string;
@@ -37,6 +38,10 @@ const LoginForm: FC = () => {
     Account(payload).then(result => {
       if (result.data.code === 200) {
         const { token, nick } = result.data.data;
+        setSocketMeseage({
+          message: nick + '上线了',
+          data: ''
+        });
         dispatch(
           setUserItem({
             loginState: true,
@@ -119,8 +124,15 @@ const LoginForm: FC = () => {
       }
     });
   };
+  const [socketMessage, setSocketMeseage] = useState<any>({ message: null, data: null });
 
   useEffect(() => {}, []);
+  useEffect(() => {
+    const { message, data } = socketMessage;
+    if (message) {
+      webSocketManager.postMessage({ name: 'loginMessage', message, data });
+    }
+  }, [socketMessage]);
 
   return (
     <div className="login-page">

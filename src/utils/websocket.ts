@@ -1,28 +1,22 @@
 import { tupleStr } from 'utils/core';
 import io from 'socket.io-client';
-const config: any = {
-  domain: 'ws://localhost:3021/'
-};
+import { notification } from 'antd';
+
 // 项目中所有websocket事件名称
-const eventName = tupleStr('paySignMoney');
+const eventName = tupleStr('paySignMoney', 'loginMessage');
 
 interface SocketEvent {
   name: EventName;
-  message: string;
+  message: any;
   data: any;
 }
 
 type EventName = typeof eventName[number];
 type websocketEventFn = (e: SocketEvent) => void;
 
-const MAX_RETRY_TIMES = 5; // 最大重试次数
-
 class WebsocketManager {
-  private websocket!: WebSocket;
-  private retryTimes: number = 0;
-  private errorConnectInterval!: NodeJS.Timeout;
-  private serverTimeoutInterval!: NodeJS.Timeout;
   private websocketListeners = new Set<websocketEventFn>();
+  public MySocketID: any = '';
   private rooms: any = {
     general: false,
     roomA: false,
@@ -30,87 +24,19 @@ class WebsocketManager {
     roomC: false,
     roomD: false
   };
-  private listRooms: any = ['loginTongzhi', 'mess', 'roomB', 'roomC', 'roomD'];
-  private title: any = 'NestJS Chat Real Time';
-  private name: any = '';
-  private text: any = '';
   private selected: any = 'general';
-  private messages: any = [];
   private socket: any = null;
   private activeRoom: any = '';
   //  建立连接
   public create() {
-    const socket = io('ws://localhost:3011/chat')
+    const socket = io('https://qkstart.com/nest3011/api/chat');
     this.socket = socket;
     this.activeRoom = this.selected;
-    this.socket.on('msgToClient', (message: any) => {
-      console.log(message);
-      this.receivedMessage(message);
-    });
-
-    this.socket.on('connect', () => {
-      this.check();
-    });
-
-    this.socket.on('joinedRoom', (room: any) => {
-      this.rooms[room] = true;
-    });
-
-    this.socket.on('leftRoom', (room: any) => {
-      this.rooms[room] = false;
-    });
     this.socket.connect();
-    this.socket.emit('msgToServer', 'message');
+    this.StartBindEventHandler();
+    this.tellServerOnline();
+    this.checkID();
   }
-
-  // 关闭连接
-  public close = () => {
-    if (this.websocket) {
-      this.websocket.close();
-    }
-    this.retryTimes = 0;
-    clearInterval(this.errorConnectInterval);
-    this.heartCheck.reset();
-  };
-  private onChange = (event: any) => {
-    this.socket.emit('leaveRoom', this.activeRoom);
-    this.activeRoom = event.target.value;
-    this.socket.emit('joinRoom', this.activeRoom);
-    
-  };
-
-  private sendMessage = (event: any) => {
-    if (this.validateInput()) {
-      const message = {
-        name: this.name,
-        text: this.text,
-        room: this.activeRoom
-      };
-      this.socket.emit('msgToServer', message);
-      this.text = '';
-    }
-  };
-  private receivedMessage = (message: any) => {
-    this.messages.push(message);
-  };
-  private validateInput = () => {
-    return this.name.length > 0 && this.text.length > 0;
-  };
-  private check = () => {
-    if (this.isMemberOfActiveRoom()) {
-      this.socket.emit('leaveRoom', this.activeRoom);
-    } else {
-      this.socket.emit('joinRoom', this.activeRoom);
-      setInterval(()=>{
-        console.log('加入房间: ', this.activeRoom);
-        this.socket.emit('joinRoom', this.activeRoom);
-      },2000)
-      
-    }
-  };
-  private isMemberOfActiveRoom = () => {
-    return this.rooms[this.activeRoom];
-  };
 
   // 添加事件监听
   public addEventHandler = (fn: websocketEventFn) => {
@@ -123,68 +49,70 @@ class WebsocketManager {
   public removeEventHandler = (fn: websocketEventFn) => {
     this.websocketListeners.delete(fn);
   };
-
-  private dispatchEventHandle = (e: SocketEvent) => {
-    this.websocketListeners.forEach(fn => fn(e));
-  };
-
-  // 连接成功
-  private onOpen = () => {
-    this.retryTimes = 0;
-    clearInterval(this.errorConnectInterval);
-    window.removeEventListener('online', this.create);
-    this.heartCheck.reset();
-    this.heartCheck.start();
-    console.log('成功建立连接');
-  };
-
-  // 收到消息
-  private onMessage = (e: MessageEvent) => {
-    const data = JSON.parse(e.data);
-    this.heartCheck.reset();
-    this.heartCheck.start();
-    this.dispatchEventHandle(data);
-  };
-
-  // 连接断开
-  private onClose = (e: Event) => {
-    console.log('断开连接' + e);
-  };
-
-  // 连接发生错误
-  private onError = (e: Event) => {
-    clearInterval(this.errorConnectInterval);
-    if (this.retryTimes > MAX_RETRY_TIMES) {
-      window.addEventListener('online', this.create);
-      console.log('停止连接');
-    } else {
-      this.retryTimes++;
-      this.errorConnectInterval = setInterval(() => {
-        this.create();
-      }, this.retryTimes * 3000);
+  public close = () => {
+    if (this.socket) {
+      this.socket.emit('meOnLine', '我准备断开了');
+      this.socket.disconnect();
     }
-    console.log('连接发生错误' + e);
   };
 
-  // 心跳检测
-  private heartCheck = {
-    timeout: 10000,
-    reset: () => {
-      clearInterval(this.serverTimeoutInterval);
-    },
-    start: () => {
-      this.serverTimeoutInterval = setInterval(() => {
-        if (this.websocket.readyState === WebSocket.OPEN) {
-          this.websocket.send('ping');
-        } else {
-          clearInterval(this.serverTimeoutInterval);
-          if (this.retryTimes <= MAX_RETRY_TIMES) {
-            this.create();
-          }
+  //主动发起消息
+  public postMessage(payload: SocketEvent) {
+    if (payload.name && this.socket && this.socket.connected) {
+      const { name, message, data } = payload;
+      this.socket.emit(name, {
+        message,
+        data,
+        id: this.MySocketID
+      });
+    }
+  }
+
+  private tellServerOnline() {
+    if (!this.socket) {
+      return;
+    }
+    setTimeout(() => {
+      this.socket.emit('meOnLine', '我在线呢');
+      this.tellServerOnline();
+    }, 5000);
+  }
+  private checkID() {
+    setTimeout(() => {
+      if (this.socket) {
+        this.MySocketID = this.socket.id;
+        return;
+      }
+      this.checkID();
+    }, 1000);
+  }
+
+  private StartBindEventHandler() {
+    this.socket.emit('joinRoom', this.activeRoom);
+    this.socket.on('msgToClient', (message: any) => {});
+    this.socket.on('joinedRoom', (room: any) => {
+      this.rooms[room] = true;
+    });
+
+    this.socket.on('leftRoom', (room: any) => {
+      this.rooms[room] = false;
+    });
+    this.socket.on('msgToClient', (room: any) => {});
+    this.socket.on('qkstartCar', (payload: any) => {
+      // 汇总事件来了，可能需要解析具体包
+      const { message, name, id } = payload;
+      if (name === 'loginMessage') {
+        if (id === this.MySocketID) {
+          // TODO 我自己上线，不用通知我，其实此时需要判断有没有登录，没登录，就不要提示了。
+          return;
         }
-      }, this.heartCheck.timeout);
-    }
-  };
+        notification.open({
+          message: '通知',
+          description: message
+        });
+      }
+    });
+  }
 }
 
 const webSocketManager = new WebsocketManager();

@@ -31,9 +31,9 @@ const App: React.FC = () => {
     };
   }, [dispatch]);
   useEffect(() => {
-		webSocketManager.create()
-		return webSocketManager.close
-}, [])
+    webSocketManager.create();
+    return webSocketManager.close;
+  }, []);
   const getAntdLocale = () => {
     if (locale === 'en_US') {
       return enUS;
