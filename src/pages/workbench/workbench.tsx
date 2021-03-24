@@ -11,7 +11,6 @@ const Workbench: FC = () => {
       <SystemInfo />
       <AccountLog />
       <div className="workbench-chart">
-        
         <WorkChart />
       </div>
     </div>

@@ -10,7 +10,6 @@ import 'moment/locale/zh-cn';
 import RenderRouter from './routes';
 import { useAppDispatch, useAppState } from 'stores';
 import { setTagPlanVisible } from 'stores/tags-view.store';
-import { webSocketManager } from 'utils/websocket';
 const App: React.FC = () => {
   const { locale } = useAppState(state => state.user);
   const dispatch = useAppDispatch();
@@ -30,11 +29,6 @@ const App: React.FC = () => {
       window.removeEventListener('click', clickRemove);
     };
   }, [dispatch]);
-
-  useEffect(() => {
-		webSocketManager.create()
-		return webSocketManager.close
-  }, [])
 
   const getAntdLocale = () => {
     if (locale === 'en_US') {

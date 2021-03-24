@@ -66,5 +66,3 @@ export const changeUserStatus = (payload: any) => {
 export const getAccountLog = (payload: any) => {
   return request(`${BASE_URL}user/getAccountLog`, 'post', payload);
 };
-
-

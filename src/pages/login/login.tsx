@@ -25,7 +25,6 @@ const { TabPane } = Tabs;
 const LoginForm: FC = () => {
   const navigate = useNavigate();
   const { setUserInfo, saveMenu } = useSystemUserInfo();
-
   const [errmsg] = useState('');
   const dispatch = useAppDispatch();
   const [type, setType] = useState<string>('account');
