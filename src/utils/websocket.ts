@@ -1,5 +1,8 @@
 import { tupleStr } from 'utils/core';
-const config: any = {};
+import io from 'socket.io-client';
+const config: any = {
+  domain: 'ws://localhost:3021/'
+};
 // 项目中所有websocket事件名称
 const eventName = tupleStr('paySignMoney');
 
@@ -20,25 +23,44 @@ class WebsocketManager {
   private errorConnectInterval!: NodeJS.Timeout;
   private serverTimeoutInterval!: NodeJS.Timeout;
   private websocketListeners = new Set<websocketEventFn>();
-
+  private rooms: any = {
+    general: false,
+    roomA: false,
+    roomB: false,
+    roomC: false,
+    roomD: false
+  };
+  private listRooms: any = ['loginTongzhi', 'mess', 'roomB', 'roomC', 'roomD'];
+  private title: any = 'NestJS Chat Real Time';
+  private name: any = '';
+  private text: any = '';
+  private selected: any = 'general';
+  private messages: any = [];
+  private socket: any = null;
+  private activeRoom: any = '';
   //  建立连接
   public create() {
-    if (!window.WebSocket) return;
-    let url = '';
-    if (process.env.NODE_ENV === 'production') {
-      url = config.domain.replace('https', 'wss');
-    } else if (process.env.NODE_ENV === 'test') {
-      url = config.domain.replace('http', 'ws');
-    } else {
-      // 本地代理地址
-      const proxyAddress = 'http://proxy';
-      url = proxyAddress.replace('http', 'ws');
-    }
-    this.websocket = new WebSocket(url);
-    this.websocket.onopen = this.onOpen;
-    this.websocket.onclose = this.onClose;
-    this.websocket.onerror = this.onError;
-    this.websocket.onmessage = this.onMessage;
+    const socket = io('ws://localhost:3011/chat')
+    this.socket = socket;
+    this.activeRoom = this.selected;
+    this.socket.on('msgToClient', (message: any) => {
+      console.log(message);
+      this.receivedMessage(message);
+    });
+
+    this.socket.on('connect', () => {
+      this.check();
+    });
+
+    this.socket.on('joinedRoom', (room: any) => {
+      this.rooms[room] = true;
+    });
+
+    this.socket.on('leftRoom', (room: any) => {
+      this.rooms[room] = false;
+    });
+    this.socket.connect();
+    this.socket.emit('msgToServer', 'message');
   }
 
   // 关闭连接
@@ -49,6 +71,45 @@ class WebsocketManager {
     this.retryTimes = 0;
     clearInterval(this.errorConnectInterval);
     this.heartCheck.reset();
+  };
+  private onChange = (event: any) => {
+    this.socket.emit('leaveRoom', this.activeRoom);
+    this.activeRoom = event.target.value;
+    this.socket.emit('joinRoom', this.activeRoom);
+    
+  };
+
+  private sendMessage = (event: any) => {
+    if (this.validateInput()) {
+      const message = {
+        name: this.name,
+        text: this.text,
+        room: this.activeRoom
+      };
+      this.socket.emit('msgToServer', message);
+      this.text = '';
+    }
+  };
+  private receivedMessage = (message: any) => {
+    this.messages.push(message);
+  };
+  private validateInput = () => {
+    return this.name.length > 0 && this.text.length > 0;
+  };
+  private check = () => {
+    if (this.isMemberOfActiveRoom()) {
+      this.socket.emit('leaveRoom', this.activeRoom);
+    } else {
+      this.socket.emit('joinRoom', this.activeRoom);
+      setInterval(()=>{
+        console.log('加入房间: ', this.activeRoom);
+        this.socket.emit('joinRoom', this.activeRoom);
+      },2000)
+      
+    }
+  };
+  private isMemberOfActiveRoom = () => {
+    return this.rooms[this.activeRoom];
   };
 
   // 添加事件监听
