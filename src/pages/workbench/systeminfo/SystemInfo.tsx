@@ -70,7 +70,7 @@ const SystemInfo: React.FC = () => {
 
   return (
     <Row gutter={{ xs: 8, sm: 16, md: 24 }} className="system-data">
-      <Col xl={8} lg={12} md={12} sm={24} xs={24}>
+      <Col xs={24} sm={24} md={8} lg={8} xl={8} xxl={8}>
         <Card title="系统参数" hoverable loading={!fetchinfo.nodeVersion}>
           <p className="item-text">
             <em>系统类型：</em>
@@ -95,7 +95,7 @@ const SystemInfo: React.FC = () => {
           </p>
         </Card>
       </Col>
-      <Col xl={8} lg={12} md={12} sm={24} xs={24}>
+      <Col xs={24} sm={24} md={8} lg={8} xl={8} xxl={8}>
         <Card title="我的消息" hoverable loading={loading}>
           {messageList.length > 0 ? (
             messageList.map((msg: any) => (
@@ -108,7 +108,7 @@ const SystemInfo: React.FC = () => {
           )}
         </Card>
       </Col>
-      <Col xl={8} lg={12} md={12} sm={24} xs={24}>
+      <Col xs={24} sm={24} md={8} lg={8} xl={8} xxl={8}>
         <Card title={`内存使用率(${bytes(fetchinfo.totalmem)})`} hoverable className="mem">
           <Progress
             type="circle"

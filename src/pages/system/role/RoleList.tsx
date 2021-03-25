@@ -91,22 +91,25 @@ const RoleList: FC = () => {
     });
   };
 
-  const columns = [
+  const columns: any = [
     {
       title: '角色名称',
       dataIndex: 'name'
     },
     {
       title: '角色代码',
-      dataIndex: 'roleCode'
+      dataIndex: 'roleCode',
+      responsive: ['lg']
     },
     {
       title: '备注',
-      dataIndex: 'remarks'
+      dataIndex: 'remarks',
+      responsive: ['lg']
     },
     {
       title: '排序',
-      dataIndex: 'sort'
+      dataIndex: 'sort',
+      responsive: ['lg']
     },
     {
       title: '状态',
@@ -214,7 +217,7 @@ const RoleList: FC = () => {
         添加角色
       </Button>
       <RoleEditModal visible={visible} isEdit={isEdit} id={id} initRoleItem={role} pendingCallback={usercallback} />
-      <Table columns={columns} dataSource={userslist} rowKey={(record: any) => record.id} />
+      <Table columns={columns} dataSource={userslist} rowKey={(record: any) => record.id}></Table>
       <ChecksUsersModal
         allUser={allUser}
         changeUser={changeUser}

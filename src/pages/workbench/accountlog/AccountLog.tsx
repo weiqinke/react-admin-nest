@@ -32,7 +32,7 @@ const AccountLog: React.FC = () => {
   }, []);
   return (
     <div>
-      <Table columns={columns} dataSource={userslist} rowKey={(record: any) => record.uid} />;
+      <Table columns={columns} dataSource={userslist} rowKey={(record: any) => record.created} />;
     </div>
   );
 };

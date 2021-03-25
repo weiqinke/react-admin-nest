@@ -42,7 +42,7 @@ const MenusList: FC = () => {
     });
   };
 
-  const columns = [
+  const columns: any = [
     {
       title: '菜单名称',
       dataIndex: 'name',
@@ -55,6 +55,7 @@ const MenusList: FC = () => {
     {
       title: '类型',
       dataIndex: 'type',
+      responsive: ['xxl', 'xl', 'lg', 'md'],
       render: (text: any) => {
         if (text === 'menu') {
           return <Tag color="#87d068">菜单</Tag>;
@@ -67,15 +68,18 @@ const MenusList: FC = () => {
     },
     {
       title: '图标',
-      dataIndex: 'icon'
+      dataIndex: 'icon',
+      responsive: ['xxl', 'xl', 'lg', 'md']
     },
     {
       title: '排序',
-      dataIndex: 'sort'
+      dataIndex: 'sort',
+      responsive: ['xxl', 'xl', 'lg', 'md']
     },
     {
       title: '备注',
       dataIndex: 'remarks',
+      responsive: ['xxl', 'xl', 'lg', 'md'],
       render: (text: any) => {
         return <span>{text.slice(0, 15)}</span>;
       }

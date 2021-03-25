@@ -75,7 +75,6 @@ const LayoutPage: FC = () => {
       );
     };
   }, [dispatch]);
-
   return (
     <Layout className="layout-page">
       <HeaderComponent collapsed={collapsed} toggle={toggle} />
@@ -88,7 +87,7 @@ const LayoutPage: FC = () => {
             bodyStyle={{ padding: 0, height: '100%' }}
             closable={false}
             onClose={toggle}
-            visible={menuList.length > 0}
+            visible={!collapsed}
           >
             <MenuComponent menuList={menuList} />
           </Drawer>

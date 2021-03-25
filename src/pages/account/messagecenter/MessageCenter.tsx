@@ -27,6 +27,7 @@ const MessageCenter: FC = () => {
           selectedRowKeys,
           onChange: (selectedKeys: any) => setSelectedRowKeys(selectedKeys)
         }}
+        rowKey={(record: any) => record.uid}
       />
       <div className="action-group">
         <Button onClick={handleAction} disabled={selectedRowKeys.length <= 0}>

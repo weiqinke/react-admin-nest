@@ -24,7 +24,7 @@ class TarceIndex extends Component {
     return (
       <Layout className="index animated fadeIn">
         <Row gutter={24} className="index-header">
-          <Col span={6}>
+          <Col xs={24} sm={12} md={12} lg={6} xl={6} xxl={6}>
             <div className="base-style wechat">
               <WechatOutlined className="icon-style" />
               <div>
@@ -33,7 +33,7 @@ class TarceIndex extends Component {
               </div>
             </div>
           </Col>
-          <Col span={6}>
+          <Col xs={24} sm={12} md={12} lg={6} xl={6} xxl={6}>
             <div className="base-style qq">
               <QqOutlined className="icon-style" />
               <div>
@@ -42,7 +42,7 @@ class TarceIndex extends Component {
               </div>
             </div>
           </Col>
-          <Col span={6}>
+          <Col xs={24} sm={12} md={12} lg={6} xl={6} xxl={6}>
             <div className="base-style weibo">
               <WeiboOutlined className="icon-style" />
               <div>
@@ -51,7 +51,7 @@ class TarceIndex extends Component {
               </div>
             </div>
           </Col>
-          <Col span={6}>
+          <Col xs={24} sm={12} md={12} lg={6} xl={6} xxl={6}>
             <div className="base-style dingding">
               <DingdingOutlined className="icon-style" />
               <div>
@@ -75,22 +75,22 @@ class TarceIndex extends Component {
           </Col>
         </Row>
         <Row gutter={8}>
-          <Col span={12}>
+          <Col xs={24} sm={12} md={12} lg={12} xl={12} xxl={12}>
             <div className="base-style">
               <EchartsLine />
             </div>
           </Col>
-          <Col span={12}>
+          <Col xs={24} sm={12} md={12} lg={12} xl={12} xxl={12}>
             <div className="base-style">
               <EchartsPie />
             </div>
           </Col>
-          <Col span={12}>
+          <Col xs={24} sm={12} md={12} lg={12} xl={12} xxl={12}>
             <div className="base-style">
               <EchartsScatter />
             </div>
           </Col>
-          <Col span={12}>
+          <Col xs={24} sm={12} md={12} lg={12} xl={12} xxl={12}>
             <div className="base-style">
               <EchartsPictorialBar />
             </div>

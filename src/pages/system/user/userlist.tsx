@@ -56,8 +56,7 @@ const UserList: FC = () => {
       }
     });
   };
-
-  const columns = [
+  const columns: any = [
     {
       title: '账号',
       dataIndex: 'name'
@@ -68,15 +67,18 @@ const UserList: FC = () => {
     },
     {
       title: '邮箱',
-      dataIndex: 'email'
+      dataIndex: 'email',
+      responsive: ['xxl', 'xl', 'lg', 'md']
     },
     {
       title: '手机号',
-      dataIndex: 'phone'
+      dataIndex: 'phone',
+      responsive: ['xxl', 'xl', 'lg', 'md']
     },
     {
       title: '状态',
       dataIndex: 'isdeleted',
+      responsive: ['xxl', 'xl', 'lg', 'md'],
       render: (item: any) => {
         if (item) {
           return (

@@ -27,9 +27,22 @@ class WebsocketManager {
   private selected: any = 'general';
   private socket: any = null;
   private activeRoom: any = '';
+  private ConnectNum: any = 0;
+  private SokcetUrl: any = 'http://localhost:3011';
+  private AfterUrl: any = '/chat';
   //  建立连接
   public create() {
-    const socket = io('https://qkstart.com/nest3011/api/chat');
+    // const BASE_URL: string = process.env.REACT_APP_SOCKET_URL || '';
+    if (process.env.NODE_ENV === 'production') {
+      this.SokcetUrl = process.env.REACT_APP_SOCKET_URL;
+    } else if (process.env.NODE_ENV === 'development') {
+      this.SokcetUrl = process.env.REACT_APP_SOCKET_URL;
+    } else {
+      // 本地代理地址
+      this.SokcetUrl = process.env.REACT_APP_SOCKET_URL;
+    }
+
+    const socket = io(this.SokcetUrl);
     this.socket = socket;
     this.activeRoom = this.selected;
     this.socket.connect();
@@ -78,8 +91,16 @@ class WebsocketManager {
     }, 5000);
   }
   private checkID() {
-    setTimeout(() => {
+    this.ConnectNum++;
+    if (this.ConnectNum >= 10) {
+      this.ConnectNum = 0;
       if (this.socket) {
+        this.create();
+        return;
+      }
+    }
+    setTimeout(() => {
+      if (this.socket && this.socket.id) {
         this.MySocketID = this.socket.id;
         return;
       }
