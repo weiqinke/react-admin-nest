@@ -4,7 +4,7 @@ import { Spin, Alert } from 'antd';
 const SuspendFallbackLoading: FC = () => {
   return (
     <Spin tip="加载中...">
-      <Alert message="Alert message title" description="Further details about the context of this alert." type="info" />
+      <Alert message="加载中" description="正在加载页面，不会太久，请稍等。" type="info" />
     </Spin>
   );
 };

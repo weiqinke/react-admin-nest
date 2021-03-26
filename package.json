@@ -35,6 +35,7 @@
     "react-resizable": "^1.11.1",
     "react-router-dom": "^6.0.0-beta.0",
     "react-scripts": "4.0.0",
+    "react-transition-group": "^4.4.1",
     "recharts": "^2.0.4",
     "sass-resources-loader": "^2.1.1",
     "screenfull": "^5.1.0",

@@ -66,3 +66,12 @@ export const changeUserStatus = (payload: any) => {
 export const getAccountLog = (payload: any) => {
   return request(`${BASE_URL}user/getAccountLog`, 'post', payload);
 };
+/** 获取我自己的信息 */
+export const getmyuserinfo = () => {
+  return request(`${BASE_URL}user/getmyuserinfo`, 'post', {});
+};
+
+/** 更新我自己的信息 */
+export const updateMyinfo = (payload: any) => {
+  return request(`${BASE_URL}user/updateMyinfo`, 'post', payload);
+};

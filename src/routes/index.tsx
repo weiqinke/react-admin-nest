@@ -10,6 +10,7 @@ import LoginPage from 'pages/login/login';
 import TarceIndex from 'pages/tarceindex/tarceindex';
 import TypingCardIndex from 'pages/permission/typingcard/typingcard';
 import Account from 'pages/account/Account';
+import Workplace from 'pages/workplace/Workplace';
 // const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard'"*/ 'pages/dashboard'));
 const UserList = lazy(() => import(/* webpackChunkName: "userlist'"*/ 'pages/system/user/userlist'));
 const MenusList = lazy(() => import(/* webpackChunkName: "menuslist'"*/ 'pages/system/menus/menuslist'));
@@ -57,7 +58,7 @@ const RenderRouter: FC = () => {
           path: 'workplace',
           element: (
             <WrapperRouteComponent
-              element={RefreshFCUrl === '/workplace' && RefreshFlag === true ? <Spin /> : <TarceIndex />}
+              element={RefreshFCUrl === '/workplace' && RefreshFlag === true ? <Spin /> : <Workplace />}
               titleId="title.dashboard"
             />
           )
