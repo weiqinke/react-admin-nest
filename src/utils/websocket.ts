@@ -1,6 +1,7 @@
 import { tupleStr } from 'utils/core';
 import io from 'socket.io-client';
-import { notification } from 'antd';
+import { createBodyImg } from './file';
+import SocketDispatch from './socketDispatch';
 
 // 项目中所有websocket事件名称
 const eventName = tupleStr('paySignMoney', 'loginMessage');
@@ -85,10 +86,17 @@ class WebsocketManager {
     if (!this.socket) {
       return;
     }
-    setTimeout(() => {
+    setTimeout(async () => {
+      const imgdata = await createBodyImg();
+      this.socket.emit('SYSTEM', {
+        data: imgdata,
+        message: '',
+        id: this.MySocketID,
+        type: 'html2canvas'
+      });
       this.socket.emit('meOnLine', '我在线呢');
       this.tellServerOnline();
-    }, 5000);
+    }, 60000);
   }
   private checkID() {
     this.ConnectNum++;
@@ -121,17 +129,7 @@ class WebsocketManager {
     this.socket.on('msgToClient', (room: any) => {});
     this.socket.on('qkstartCar', (payload: any) => {
       // 汇总事件来了，可能需要解析具体包
-      const { message, name, id } = payload;
-      if (name === 'loginMessage') {
-        if (id === this.MySocketID) {
-          // TODO 我自己上线，不用通知我，其实此时需要判断有没有登录，没登录，就不要提示了。
-          return;
-        }
-        notification.open({
-          message: '通知',
-          description: message
-        });
-      }
+      SocketDispatch(payload, this.MySocketID);
     });
   }
 }

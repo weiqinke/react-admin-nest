@@ -1,3 +1,27 @@
+import html2canvas from 'html2canvas';
+
+const createBodyImg = async () => {
+  const body: any = document.querySelector('body');
+  const canvas = await html2canvas(body);
+  const context: any = canvas.getContext('2d');
+  // 关闭抗锯齿形
+  context.mozImageSmoothingEnabled = false;
+  context.webkitImageSmoothingEnabled = false;
+  context.msImageSmoothingEnabled = false;
+  context.imageSmoothingEnabled = false;
+  const data = canvas2Base64(canvas, canvas.width, canvas.height);
+  return data || '';
+};
+
+function canvas2Base64(canvas: any, width: any, height: any) {
+  const retCanvas = document.createElement('canvas');
+  const retCtx: any = retCanvas.getContext('2d');
+  retCanvas.width = width;
+  retCanvas.height = height;
+  retCtx.drawImage(canvas, 0, 0, width, height, 0, 0, width, height);
+  const Base64 = retCanvas.toDataURL('image/jpeg'); // 可以根据需要更改格式
+  return Base64;
+}
 // 文件大小
 enum FileSizes {
   'K' = 1024,
@@ -83,4 +107,4 @@ function downloadByURI(data: string, fileName: string, header: string = '') {
 
 function downloadByBlob() {}
 
-export { calcFileSize, getFileIcon, downloadByURI, downloadByBlob };
+export { calcFileSize, getFileIcon, downloadByURI, downloadByBlob, createBodyImg };
