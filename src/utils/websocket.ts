@@ -42,7 +42,6 @@ class WebsocketManager {
       // 本地代理地址
       this.SokcetUrl = process.env.REACT_APP_SOCKET_URL;
     }
-
     const socket = io(this.SokcetUrl);
     this.socket = socket;
     this.activeRoom = this.selected;
@@ -117,7 +116,6 @@ class WebsocketManager {
   }
 
   private StartBindEventHandler() {
-    this.socket.emit('joinRoom', this.activeRoom);
     this.socket.on('msgToClient', (message: any) => {});
     this.socket.on('joinedRoom', (room: any) => {
       this.rooms[room] = true;
