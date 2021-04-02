@@ -9,6 +9,22 @@ const AccountLog: React.FC = () => {
       dataIndex: 'name'
     },
     {
+      title: '浏览器版本',
+      dataIndex: 'bowser'
+    },
+    {
+      title: 'IP地址',
+      dataIndex: 'ip'
+    },
+    {
+      title: '登录设备',
+      dataIndex: 'os'
+    },
+    {
+      title: '账号',
+      dataIndex: 'name'
+    },
+    {
       title: '登陆时间',
       dataIndex: 'created',
       render: (item: any) => {

@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TagItem, TagState } from 'interface/layout/tagsView.interface';
 
 const initialState: TagState = {
+  /**正在显示的路由 */
   activeTagMeUrl: '',
   tags: [],
   tagPlanVisible: false
@@ -25,23 +26,12 @@ const tagsViewSlice = createSlice({
       if (state.tags.length <= 1) {
         return;
       }
-
       let activeTagMeUrl = state.activeTagMeUrl;
-      let lastIndex = 0;
-
-      state.tags.forEach((tag, i) => {
-        if (tag.meUrl === targetKey) {
-          state.tags.splice(i, 1);
-          lastIndex = i - 1;
-        }
-      });
       const tagList = state.tags.filter(tag => tag.meUrl !== targetKey);
-      if (tagList.length && activeTagMeUrl === targetKey) {
-        if (lastIndex >= 0) {
-          state.activeTagMeUrl = tagList[lastIndex].meUrl;
-        } else {
-          state.activeTagMeUrl = tagList[0].meUrl;
-        }
+      state.tags = tagList;
+      const nowTag = tagList.filter(tag => tag.meUrl === activeTagMeUrl);
+      if (nowTag.length !== 1) {
+        state.activeTagMeUrl = state.tags[state.tags.length - 1]['meUrl'];
       }
     },
     removeAllTag(state, action: PayloadAction<string>) {
@@ -49,50 +39,50 @@ const tagsViewSlice = createSlice({
       state.tags = [state.tags[0]];
     },
     removeOtherTag(state, action: PayloadAction<string>) {
-      var len = state.tags.length;
-      const nowurl = action.payload;
-      const newTags = [];
-      for (let index = 0; index < len; index++) {
-        const element = state.tags[index];
-        if (element.meUrl === nowurl) {
-          newTags.push(element);
-          break;
-        }
-      }
+      //选中了谁，就用谁显示
+      const changeurl = action.payload;
+      const newTags = state.tags.filter(tag => tag.meUrl === changeurl);
       state.tags = newTags;
+      state.activeTagMeUrl = changeurl;
     },
     removeLeftTag(state, action: PayloadAction<string>) {
-      var flag = false;
+      //这儿需要判断，如果是从当前节点往左，找到了正在显示的页面，就点击当前页签，否则认为关闭了其他无用窗口
+      let activeTagMeUrl = state.activeTagMeUrl;
+      const changeurl = action.payload;
       var len = state.tags.length;
-      const nowurl = action.payload;
+      var flag = false;
       const newTags = [];
       for (let index = 0; index < len; index++) {
         const element = state.tags[index];
-        if (element.meUrl === nowurl) {
+        if (element.meUrl === changeurl) {
           flag = true;
         }
         if (flag) {
           newTags.push(element);
         }
       }
+      const findresult = newTags.filter(tag => tag.meUrl === activeTagMeUrl);
+      if (findresult.length !== 1) {
+        state.activeTagMeUrl = changeurl;
+      }
       state.tags = newTags;
     },
     removeRightTag(state, action: PayloadAction<string>) {
-      /**删除当前标签的右侧标签 */
-      var flag = true;
+      //这儿需要判断，如果是从当前节点往左，找到了正在显示的页面，就点击当前页签，否则认为关闭了其他无用窗口
+      let activeTagMeUrl = state.activeTagMeUrl;
+      const changeurl = action.payload;
       var len = state.tags.length;
-      const nowurl = action.payload;
       const newTags = [];
       for (let index = 0; index < len; index++) {
         const element = state.tags[index];
-        if (element.meUrl === nowurl) {
-          newTags.push(element);
-          flag = false;
-          continue;
+        newTags.push(element);
+        if (element.meUrl === changeurl) {
+          break;
         }
-        if (flag) {
-          newTags.push(element);
-        }
+      }
+      const findresult = newTags.filter(tag => tag.meUrl === activeTagMeUrl);
+      if (findresult.length !== 1) {
+        state.activeTagMeUrl = changeurl;
       }
       state.tags = newTags;
     },

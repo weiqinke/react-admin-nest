@@ -16,6 +16,7 @@ import { findMenuOpenKeys, getTagByMenus, setLocalStorage } from 'utils/menuUtil
 import './tagView.less';
 import { setRefreshFCUrl } from 'stores/user.store';
 import { setChangeFixedMenu } from 'stores/menu.store';
+import { CloseOutlined } from '@ant-design/icons';
 const { TabPane } = Tabs;
 const TagsView: FC = () => {
   const { tags, activeTagMeUrl, tagPlanVisible } = useAppState(state => state.tagsView);
@@ -44,7 +45,10 @@ const TagsView: FC = () => {
   };
 
   //关闭标签时，从tags中删除指定标签
-  const onClose = (meUrl: string) => {
+  const onClose = (event: any, changeItem: any) => {
+    event.stopPropagation();
+    event.preventDefault();
+    const { meUrl } = changeItem;
     if (tags && tags.length <= 1) {
       message.success({
         content: '请保留至少一个标签',
@@ -56,25 +60,27 @@ const TagsView: FC = () => {
   };
   const [pageclientX, setPageclientX] = useState(0);
   const [pageclientY, setPageclientY] = useState(0);
-  const contextTag = (event: any, tag: any, tagindex: any) => {
+  const [contTag, setContTag] = useState('');
+  const contextTag = (event: any, tag: any) => {
     event.stopPropagation();
     event.preventDefault();
     const { clientX, clientY } = event;
     setPageclientX(clientX);
     setPageclientY(clientY);
+    setContTag(tag.meUrl || '');
     dispatch(setTagPlanVisible(true));
   };
 
   const handleCloseOtherTags = () => {
-    dispatch(removeOtherTag(activeTagMeUrl));
+    dispatch(removeOtherTag(contTag));
     dispatch(setTagPlanVisible(false));
   };
   const handleCloseLeftTags = () => {
-    dispatch(removeLeftTag(activeTagMeUrl));
+    dispatch(removeLeftTag(contTag));
     dispatch(setTagPlanVisible(false));
   };
   const handleCloseRightTags = () => {
-    dispatch(removeRightTag(activeTagMeUrl));
+    dispatch(removeRightTag(contTag));
     dispatch(setTagPlanVisible(false));
   };
   const RefreshNowPage = () => {
@@ -127,33 +133,34 @@ const TagsView: FC = () => {
         navigate(tag.meUrl);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTagMeUrl, prevActiveTagUrl]);
-
+  }, [activeTagMeUrl, prevActiveTagUrl, tags, navigate]);
   return (
     <div id="pageTabs" className="tagsdiv">
       <Tabs
         tabBarStyle={{ margin: 0 }}
         onChange={onChange}
         activeKey={activeTagMeUrl}
-        type="editable-card"
-        hideAdd
-        onEdit={(targetKey, action) => action === 'remove' && onClose(targetKey as string)}
         tabBarExtraContent={<span></span>}
       >
-        {tags.map((tag, tagindex) => (
+        {tags.map(tag => (
           <TabPane
             tab={
-              <div className="tagitem">
-                <span
-                  className="textshow"
-                  onContextMenu={e => {
-                    contextTag(e, tag, tagindex);
-                  }}
-                >
+              <div
+                className="tagitem"
+                onContextMenu={e => {
+                  contextTag(e, tag);
+                }}
+              >
+                <span className="textshow">
                   <b className="round"></b>
                   <b>{tag.name}</b>
                   <b className="contextb"></b>
+                  <CloseOutlined
+                    className="close"
+                    onClick={e => {
+                      onClose(e, tag);
+                    }}
+                  />
                 </span>
                 <span className="bottomline"></span>
               </div>
@@ -165,15 +172,11 @@ const TagsView: FC = () => {
         ))}
       </Tabs>
       {tagPlanVisible ? (
-        <ul
-          className="contextmenuDom"
-          style={{ left: `${pageclientX}px`, top: `${pageclientY}px` }}
-          // ref={this.contextMenuContainer}
-        >
+        <ul className="contextmenuDom" style={{ left: `${pageclientX}px`, top: `${pageclientY}px` }}>
           <li onClick={handleCloseLeftTags}>关闭左侧</li>
           <li onClick={handleCloseRightTags}>关闭右侧</li>
           <li onClick={handleCloseOtherTags}>关闭其他</li>
-          <li onClick={RefreshNowPage}>刷新页面</li>
+          {contTag && contTag === activeTagMeUrl ? <li onClick={RefreshNowPage}>刷新页面</li> : ''}
         </ul>
       ) : null}
     </div>

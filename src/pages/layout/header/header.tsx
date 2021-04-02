@@ -40,7 +40,7 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
 
   const menu = (
     <Menu>
-      <Menu.Item key="1" onClick={() => navigate('/dashboard')}>
+      <Menu.Item key="1" onClick={() => navigate('/workplace')}>
         <span>
           <UserOutlined />
           <span>个人设置</span>

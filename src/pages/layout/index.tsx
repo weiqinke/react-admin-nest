@@ -17,7 +17,7 @@ const WIDTH = 992;
 
 const LayoutPage: FC = () => {
   const [menuList] = useState<MenuList>([]);
-  const { device, collapsed } = useAppState(state => state.user);
+  const { device, collapsed, RefreshFlag } = useAppState(state => state.user);
   const isMobile = device === 'MOBILE';
   const dispatch = useAppDispatch();
   const location = useLocation();
@@ -25,13 +25,11 @@ const LayoutPage: FC = () => {
   const { changeFixedMenu } = useAppState(state => state.menu);
   const { config } = useProjectConfig();
   const { layout } = config;
-
   useEffect(() => {
     if (location.pathname === '/') {
-      navigate('/dashboard');
+      navigate('/workplace');
     }
   }, [navigate, location]);
-
   const toggle = () => {
     dispatch(
       setUserItem({
@@ -95,7 +93,7 @@ const LayoutPage: FC = () => {
         <Content className="layout-page-content">
           <TagsView />
           <Suspense fallback={<SuspendFallbackLoading />}>
-            <Outlet />
+            {RefreshFlag ? <SuspendFallbackLoading /> : <Outlet />}
           </Suspense>
           <FootLinks />
         </Content>

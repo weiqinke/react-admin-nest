@@ -112,7 +112,7 @@ export function getNextLevelMenu(list: menuchild[], url: string) {
   return [];
 }
 
-export function SaveMeUrl(list: menuchild[], parentUrl: string = '/') {
+export function SaveMeUrl(list: menuchild[], parentUrl: string = '') {
   for (let index = 0; index < list.length; index++) {
     const element = list[index];
     element.meUrl = parentUrl + '/' + element.router;

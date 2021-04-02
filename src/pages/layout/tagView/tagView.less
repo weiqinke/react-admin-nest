@@ -48,7 +48,13 @@
     .ant-tabs-tab {
       background: #fafafa;
       border: 1px solid #e8e8e8;
+      padding: 0px;
+      margin: 0px;
+      margin-right: 2px;
       .tagitem {
+        padding: 10px 36px 10px 16px;
+        margin: 0px;
+
         .bottomline {
           position: absolute;
           left: 0px;
@@ -57,6 +63,18 @@
           height: 4px;
           background: #fafafa;
           border-radius: 0px 0px 100px 100px;
+        }
+        .close {
+          position: absolute;
+          width: 20px;
+          height: 30px;
+          line-height: 30px;
+          top: 5px;
+          color: #898989;
+          margin-left: 12px;
+          &:hover {
+            color: #1890ff;
+          }
         }
       }
       b.round {

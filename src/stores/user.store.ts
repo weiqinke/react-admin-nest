@@ -16,7 +16,7 @@ const initialState: UserState = {
   role: (sessionStorage.getItem('role') || '') as Role,
   loginState: sessionStorage.getItem('token') ? true : false,
   indexUrl: '',
-  RefreshFCUrl: '/workplace',
+  RefreshFCUrl: 'loading',
   RefreshFlag: false
 };
 
@@ -50,14 +50,14 @@ const userSlice = createSlice({
       state.RefreshFCUrl = RefreshFCUrl;
       state.RefreshFlag = RefreshFlag;
     },
-    serRefreshFlag(state, action: any) {
+    setRefreshFlag(state, action: any) {
       const { RefreshFlag } = action.payload;
       state.RefreshFlag = RefreshFlag;
     }
   }
 });
 
-export const { setUserItem, setIndexUrl, setMenuList, setRefreshFCUrl, serRefreshFlag } = userSlice.actions;
+export const { setUserItem, setIndexUrl, setMenuList, setRefreshFCUrl, setRefreshFlag } = userSlice.actions;
 
 export default userSlice.reducer;
 

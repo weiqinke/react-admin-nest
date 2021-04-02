@@ -4,12 +4,14 @@ import { createBodyImg } from './file';
 import SocketDispatch from './socketDispatch';
 
 // 项目中所有websocket事件名称
-const eventName = tupleStr('paySignMoney', 'loginMessage');
+const eventName = tupleStr('paySignMoney', 'loginMessage', 'qkstartCar', 'QKSTART_REC');
 
 interface SocketEvent {
   name: EventName;
   message: any;
   data: any;
+  type?: any;
+  func?: string;
 }
 
 type EventName = typeof eventName[number];
@@ -44,9 +46,10 @@ class WebsocketManager {
     }
     const socket = io(this.SokcetUrl);
     this.socket = socket;
+    this.StartBindEventHandler();
     this.activeRoom = this.selected;
     this.socket.connect();
-    this.StartBindEventHandler();
+
     this.tellServerOnline();
     this.checkID();
   }
@@ -64,7 +67,14 @@ class WebsocketManager {
   };
   public close = () => {
     if (this.socket) {
-      this.socket.emit('meOnLine', '我准备断开了');
+      const token = sessionStorage.getItem('token');
+      if (token) {
+        this.socket.emit('client_take_disconnect', {
+          id: this.MySocketID,
+          token
+        });
+      }
+
       this.socket.disconnect();
     }
   };
@@ -72,11 +82,12 @@ class WebsocketManager {
   //主动发起消息
   public postMessage(payload: SocketEvent) {
     if (payload.name && this.socket && this.socket.connected) {
-      const { name, message, data } = payload;
+      const { name, message, data, type } = payload;
       this.socket.emit(name, {
         message,
         data,
-        id: this.MySocketID
+        id: this.MySocketID,
+        type
       });
     }
   }
@@ -106,11 +117,30 @@ class WebsocketManager {
         return;
       }
     }
-    setTimeout(() => {
-      if (this.socket && this.socket.id) {
-        this.MySocketID = this.socket.id;
+    if (this.socket && this.socket.id) {
+      this.MySocketID = this.socket.id;
+      const token = sessionStorage.getItem('token');
+      if (token) {
+        this.postMessage({
+          name: 'QKSTART_REC',
+          message: '重新连接',
+          data: {
+            token
+          }
+        });
+        this.postMessage({
+          name: 'qkstartCar',
+          message: '看下在线人数',
+          data: {
+            token,
+            func: 'getOnlineUser'
+          },
+          type: 'MESSAGE'
+        });
         return;
       }
+    }
+    setTimeout(() => {
       this.checkID();
     }, 1000);
   }

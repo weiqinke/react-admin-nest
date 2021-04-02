@@ -33,9 +33,9 @@ export interface UserState {
   /** 首页地址 */
   indexUrl: string;
   /** 准备刷新的路径 */
-  RefreshFCUrl?:string;
+  RefreshFCUrl:string;
   /****确认刷新 */
-  RefreshFlag?: boolean;
+  RefreshFlag: boolean;
   /** 用户昵称 */
   nick?:string;
 
