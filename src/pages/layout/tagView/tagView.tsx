@@ -62,12 +62,15 @@ const TagsView: FC = () => {
   const [pageclientY, setPageclientY] = useState(0);
   const [contTag, setContTag] = useState('');
   const contextTag = (event: any, tag: any) => {
+    console.log('tag.meUrl: ', tag.meUrl);
+    console.log('activeTagMeUrl: ', activeTagMeUrl);
     event.stopPropagation();
     event.preventDefault();
     const { clientX, clientY } = event;
     setPageclientX(clientX);
     setPageclientY(clientY);
     setContTag(tag.meUrl || '');
+
     dispatch(setTagPlanVisible(true));
   };
 
@@ -85,17 +88,8 @@ const TagsView: FC = () => {
   };
   const RefreshNowPage = () => {
     dispatch(setTagPlanVisible(false));
-    const nowTag: any = getTagByMenus(menuList, location.pathname);
-    dispatch(
-      addTag({
-        ...nowTag,
-        closable: true
-      })
-    );
-    const { meUrl } = nowTag;
     dispatch(
       setRefreshFCUrl({
-        RefreshFCUrl: meUrl,
         RefreshFlag: true
       })
     );

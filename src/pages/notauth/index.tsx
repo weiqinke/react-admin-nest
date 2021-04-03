@@ -42,11 +42,6 @@ const LoginForm: FC = () => {
         const data = result.data;
         if (data.user && data.token) {
           localStorage.setItem('token', data.token);
-          dispatch(
-            setUserItem({
-              newUser: false
-            })
-          );
         }
         // 保存登录信息
         setLoginInfo(data);
@@ -60,7 +55,6 @@ const LoginForm: FC = () => {
 
   return (
     <div className="login-page">
-      11111111111111111111111111111111111111111111111111111111111111111111
       <Form<LoginParams> onFinish={onFinished} className="login-page-form" initialValues={initialValues}>
         <h2>Nest Admin</h2>
         <Form.Item name="sysUserAccount" rules={[{ required: true, message: '请输入用户名！' }]}>

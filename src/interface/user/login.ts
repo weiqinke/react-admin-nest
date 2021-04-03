@@ -27,14 +27,3 @@ export interface LoginBackUser {
   name: string;
   sysuserid: string;
 }
-
-// address: null
-// avatar: null
-// departID: "JG003"
-// departName: "运营调度中心"
-// name: "吕东泽"
-// position: {cn: null, hk: null, us: null}
-// roleSign: "PT,PT"
-// sysRoleID: "1,40"
-// sysRoleName: "超级管理员,运管技术员"
-// sysuserid: "8f008d41-a222-4b55-8d3a-7cf0f102037d"

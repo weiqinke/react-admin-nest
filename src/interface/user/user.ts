@@ -4,8 +4,6 @@ import { Role } from './login';
 export type Locale = 'zh_CN' | 'en_US';
 
 export interface UserState {
-  username: string;
-
   /** menu list for init tagsView */
   menuList: any;
 
@@ -23,9 +21,6 @@ export interface UserState {
 
   /** 用户的语言 */
   locale: Locale;
-
-  /** 是否首次使用系统 ? */
-  newUser: boolean;
 
   /** 登录状态 */
   loginState?: boolean;

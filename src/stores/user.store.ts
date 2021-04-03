@@ -9,9 +9,7 @@ const initialState: UserState = {
   ...getGlobalState(),
   noticeCount: 0,
   locale: (localStorage.getItem('locale')! || 'zh_CN') as Locale,
-  newUser: JSON.parse(localStorage.getItem('newUser')!) ?? true,
   menuList: menus,
-  username: sessionStorage.getItem('username') || '',
   nick: localStorage.getItem('nick') || '',
   role: (sessionStorage.getItem('role') || '') as Role,
   loginState: sessionStorage.getItem('token') ? true : false,
@@ -25,11 +23,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUserItem(state, action: PayloadAction<Partial<UserState>>) {
-      const { username, nick } = action.payload;
-
-      if (username !== state.username) {
-        sessionStorage.setItem('username', username || '');
-      }
+      const { nick } = action.payload;
       if (nick !== state.nick) {
         sessionStorage.setItem('nick', nick || '');
       }

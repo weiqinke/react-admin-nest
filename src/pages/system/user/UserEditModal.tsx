@@ -66,11 +66,11 @@ const UserEditModal: FC<any> = (props: any) => {
           </Col>
           <Col span={20}>
             <Form.Item name="name" label="账号" rules={[{ required: true }]}>
-              <Input />
+              <Input readOnly />
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item name="password" label="账号" rules={[{ required: true }]}>
+            <Form.Item name="password" label="密码" rules={[{ required: true }]}>
               <Input type={type} placeholder="请输入密码" onChange={setInputType} />
             </Form.Item>
           </Col>
