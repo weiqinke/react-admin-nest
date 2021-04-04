@@ -2,9 +2,7 @@ import React from 'react';
 import { Form, Button } from 'antd';
 
 const CustomField: React.FC = () => {
-  const handleFinish = (values: any) => {
-    console.log(values);
-  };
+  const handleFinish = () => {};
 
   return (
     <div>

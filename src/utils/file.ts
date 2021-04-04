@@ -90,8 +90,7 @@ function getFileSuffix(fileName: string): string {
 // 获取文件图标
 function getFileIcon(fileName: string): string {
   const suffix: string = getFileSuffix(fileName);
-  console.log('suffix: ', suffix);
-  return Icons['doc'];
+  return Icons['doc'] || suffix;
 }
 
 // 下载文件

@@ -85,9 +85,7 @@ const RoleList: FC = () => {
         }
         message.info('操作失败');
       },
-      onCancel() {
-        console.log('Cancel');
-      }
+      onCancel() {}
     });
   };
 

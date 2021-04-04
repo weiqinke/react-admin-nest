@@ -39,8 +39,8 @@ const getOnlineUser = async (payload: any, MySocketID: string) => {
   const { OnlineUser } = data;
   switch (func_call) {
     case 'getOnlineuser':
-      console.log(OnlineUser, '在线列表');
-      return;
+      // console.log(OnlineUser, '在线列表');
+      return OnlineUser;
   }
 };
 export default SocketDispatch;

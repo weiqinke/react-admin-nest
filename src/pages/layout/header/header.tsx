@@ -11,7 +11,8 @@ import FixedMenu from '../menu/FixedMenu';
 import { MenuList } from 'interface/layout/menu.interface';
 import { useProjectConfig } from 'hooks/useProjectConfig';
 import { deleteAllTag } from 'stores/tags-view.store';
-
+import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
 const { Header } = Layout;
 
 interface Props {
@@ -26,6 +27,7 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
   const [menuList] = useState<MenuList>([]);
   const { config } = useProjectConfig();
   const { layout } = config;
+  const { t } = useTranslation();
   const logout = async () => {
     navigate('/login');
     dispatch(logoutSystem());
@@ -36,9 +38,25 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
   const toLogin = () => {
     navigate('/login');
   };
+  const [nunm, setNunm] = useState(0);
+  const changeLanguage = (lng: any) => {
+    //定义多语言的change
+    setNunm(nunm + 1);
+    if (nunm % 2 === 0) {
+      i18n.changeLanguage('en'); //i18n会通过这个方法去改变它的语言
+    } else {
+      i18n.changeLanguage(lng); //i18n会通过这个方法去改变它的语言
+    }
+  };
 
   const menu = (
     <Menu>
+      <Menu.Item key="0" onClick={() => changeLanguage('zh')}>
+        <span>
+          <LogoutOutlined />
+          <span>{t('changelanguage')}</span>
+        </span>
+      </Menu.Item>
       <Menu.Item key="1" onClick={() => navigate('/workplace')}>
         <span>
           <UserOutlined />

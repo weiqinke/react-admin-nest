@@ -11,6 +11,8 @@ import RenderRouter from './routes';
 import { useAppDispatch, useAppState } from 'stores';
 import { setTagPlanVisible } from 'stores/tags-view.store';
 import { webSocketManager } from 'utils/websocket';
+import { I18nextProvider } from 'react-i18next';
+import i18n from './i18n'; // 在这里导入 i18n.js
 const App: React.FC = () => {
   const { locale } = useAppState(state => state.user);
   const dispatch = useAppDispatch();
@@ -45,9 +47,11 @@ const App: React.FC = () => {
   return (
     <ConfigProvider locale={getAntdLocale()} componentSize="middle">
       <IntlProvider locale={locale.split('_')[0]} messages={lacaleConfig[locale]}>
-        <BrowserRouter>
-          <RenderRouter />
-        </BrowserRouter>
+        <I18nextProvider i18n={i18n}>
+          <BrowserRouter>
+            <RenderRouter />
+          </BrowserRouter>
+        </I18nextProvider>
       </IntlProvider>
     </ConfigProvider>
   );

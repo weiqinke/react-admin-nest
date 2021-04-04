@@ -63,8 +63,6 @@ const TagsView: FC = () => {
   const [pageclientY, setPageclientY] = useState(0);
   const [contTag, setContTag] = useState('');
   const contextTag = (event: any, tag: any) => {
-    console.log('tag.meUrl: ', tag.meUrl);
-    console.log('activeTagMeUrl: ', activeTagMeUrl);
     event.stopPropagation();
     event.preventDefault();
     const { clientX, clientY } = event;
