@@ -44,6 +44,81 @@
 .tagsdiv {
   background: #fff;
   padding: 6px 4px 0px 4px;
+  .DropChild {
+    white-space: nowrap;
+    overflow-x: scroll;
+    &::-webkit-scrollbar {
+      /*滚动条整体样式*/
+      height: 5px;
+    }
+    &::-webkit-scrollbar-thumb {
+      /*滚动条里面小方块*/
+      border-radius: 10px;
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+      background: #aeaeae;
+    }
+    &::-webkit-scrollbar-track {
+      /*滚动条里面轨道*/
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      background: #ededed;
+    }
+
+    &::after {
+      content: '';
+      display: table;
+      clear: both;
+    }
+    .tagitem {
+      margin: 0px;
+      padding: 0px;
+      background: transparent;
+      display: inline-block;
+      .tagChildDiv {
+        padding: 10px 0px 10px 16px;
+        margin: 0px;
+        margin-right: 2px;
+        border: 1px solid #000;
+        border-bottom: 2px solid #000;
+        border-radius: 2px;
+        background: #fafafa;
+        line-height: 22px;
+        white-space: nowrap;
+        b.round {
+          float: left;
+          width: 9px;
+          height: 9px;
+          background: #ccc;
+          border-radius: 50%;
+          margin-top: 7px;
+          margin-left: 0px;
+          margin-right: 5px;
+        }
+        b.name {
+          color: #575757;
+          &:hover {
+            color: #1890ff;
+            opacity: 0.85;
+          }
+        }
+        .bottomline {
+          width: 100%;
+          height: 4px;
+          background: #fafafa;
+          border-radius: 0px 0px 100px 100px;
+        }
+        .close {
+          color: #898989;
+          margin-left: 12px;
+          margin-top: 5px;
+          margin-right: 12px;
+          &:hover {
+            color: #1890ff;
+          }
+        }
+      }
+    }
+  }
   .ant-tabs-nav-list {
     .ant-tabs-tab {
       background: #fafafa;
@@ -52,56 +127,62 @@
       margin: 0px;
       margin-right: 2px;
       .tagitem {
-        padding: 10px 36px 10px 16px;
         margin: 0px;
-
-        .bottomline {
-          position: absolute;
-          left: 0px;
-          top: 37px;
-          width: 100%;
-          height: 4px;
-          background: #fafafa;
-          border-radius: 0px 0px 100px 100px;
-        }
-        .close {
-          position: absolute;
-          width: 20px;
-          height: 30px;
-          line-height: 30px;
-          top: 5px;
-          color: #898989;
-          margin-left: 12px;
-          &:hover {
-            color: #1890ff;
+        padding: 0px;
+        .tagChildDiv {
+          position: relative;
+          padding: 10px 32px 10px 16px;
+          margin: 0px;
+          margin-right: 2px;
+          border-radius: 2px;
+          line-height: 18px;
+          .round {
+            float: left;
+            width: 9px;
+            height: 9px;
+            background: #ccc;
+            border-radius: 50%;
+            margin-top: 6px;
+            margin-left: 0px;
+            margin-right: 5px;
+          }
+          .name {
+            color: #575757;
+            padding: 0px 4px;
+            &:hover {
+              color: #1890ff;
+              opacity: 0.85;
+            }
+          }
+          .bottomline {
+            width: 100%;
+            height: 4px;
+            background: #fafafa;
+            border-radius: 0px 0px 100px 100px;
+          }
+          .close {
+            color: #898989;
+            margin-left: 12px;
+            margin-top: 4px;
+            position: absolute;
+            right: -3px;
+            // margin-right: 0px;
+            &:hover {
+              color: #1890ff;
+            }
           }
         }
-      }
-      b.round {
-        float: left;
-        width: 9px;
-        height: 9px;
-        background: #ccc;
-        border-radius: 50%;
-        margin-top: 5px;
-        margin-left: 0px;
-        margin-right: 5px;
-      }
-      b.bottomline {
-        position: absolute;
-        bottom: 0px;
-        left: 0px;
-        height: 4px;
-        width: 100%;
-        border-radius: 0 0 5px 5px;
       }
     }
     .ant-tabs-tab-active.ant-tabs-tab {
       color: #1890ff;
-      b.round {
-        background: #1890ff;
-      }
+
       .tagitem {
+        .tagChildDiv {
+          .round {
+            background: #1890ff;
+          }
+        }
         .bottomline {
           background: #1890ff;
         }

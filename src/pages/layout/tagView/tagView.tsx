@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Tabs, message } from 'antd';
+import { Menu, message, Tabs } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import usePrevious from 'hooks/usePrevious';
 import { useAppDispatch, useAppState } from 'stores';
@@ -16,7 +16,11 @@ import { findMenuOpenKeys, getTagByMenus, setLocalStorage } from 'utils/menuUtil
 import './tagView.less';
 import { setRefreshFCUrl } from 'stores/user.store';
 import { setChangeFixedMenu } from 'stores/menu.store';
-import { CloseOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, CloseOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { Drag, Drop, DropChild, MyTagShow } from './drag';
+import { current } from '@reduxjs/toolkit';
+import SubMenu from 'antd/lib/menu/SubMenu';
 const { TabPane } = Tabs;
 const TagsView: FC = () => {
   const { tags, activeTagMeUrl, tagPlanVisible } = useAppState(state => state.tagsView);
@@ -25,6 +29,12 @@ const TagsView: FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const prevActiveTagUrl = usePrevious(activeTagMeUrl);
+  const onDragEnd = (result: any) => {
+    console.log('======================: ', result);
+    if (!result.destination) {
+      return;
+    }
+  };
   // 切换标签时触发事件，切换页面地址
   const onChange = (meUrl: string) => {
     dispatch(setTagPlanVisible(false));
@@ -128,6 +138,7 @@ const TagsView: FC = () => {
       }
     }
   }, [activeTagMeUrl, prevActiveTagUrl, tags, navigate]);
+
   return (
     <div id="pageTabs" className="tagsdiv">
       <Tabs
@@ -145,18 +156,14 @@ const TagsView: FC = () => {
                   contextTag(e, tag);
                 }}
               >
-                <span className="textshow">
-                  <b className="round"></b>
-                  <b>{tag.name}</b>
-                  <b className="contextb"></b>
+                <MyTagShow tag={tag}>
                   <CloseOutlined
                     className="close"
                     onClick={e => {
                       onClose(e, tag);
                     }}
                   />
-                </span>
-                <span className="bottomline"></span>
+                </MyTagShow>
               </div>
             }
             key={tag.meUrl}
@@ -165,6 +172,33 @@ const TagsView: FC = () => {
           ></TabPane>
         ))}
       </Tabs>
+      {/***
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Drop type={'COLUMN'} direction={'horizontal'} droppableId={'kanban'}>
+          <DropChild className='DropChild'>
+            {tags.map((tag: any, tagindex: any) => (
+              <Drag key={tag.meUrl} index={tagindex} draggableId={'task' + tag.meUrl}>
+                <div
+                  className="tagitem"
+                  onContextMenu={e => {
+                    contextTag(e, tag);
+                  }}
+                >
+                  <MyTagShow tag={tag}>
+                    <CloseOutlined
+                      className="close"
+                      onClick={e => {
+                        onClose(e, tag);
+                      }}
+                    />
+                  </MyTagShow>
+                </div>
+              </Drag>
+            ))}
+          </DropChild>
+        </Drop>
+      </DragDropContext>
+      ** */}
       {tagPlanVisible ? (
         <ul className="contextmenuDom" style={{ left: `${pageclientX}px`, top: `${pageclientY}px` }}>
           <li onClick={handleCloseLeftTags}>关闭左侧</li>
