@@ -31,7 +31,7 @@ const HeaderNoticeComponent: FC = () => {
     getallnotices()
       .then(result => {
         setLoading(false);
-        if (result.status && result.data) {
+        if (result.status && result.data && Array.isArray(result.data)) {
           setNoticeList(result.data);
         }
       })

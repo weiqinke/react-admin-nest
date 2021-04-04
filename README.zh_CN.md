@@ -3,12 +3,14 @@
 <h1 align="center">Nest Admin</h1>
 
 - 预览: https://qkstart.com
+- Github: https://github.com/weiqinke/react-admin-nest
+- 欢迎 fork star
 
 ## 📦 Install
 
 ```bash
-$ git clone https://gitee.com/weiqinke/nest-admin.git
-$ cd nest-admin
+$ git clone https://gitee.com/weiqinke/react-admin-nest.git
+$ cd react-admin-nest
 $ npm install
 $ npm start
 ```
