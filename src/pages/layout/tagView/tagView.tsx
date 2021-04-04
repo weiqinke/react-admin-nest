@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Menu, message, Tabs } from 'antd';
+import { message, Tabs } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import usePrevious from 'hooks/usePrevious';
 import { useAppDispatch, useAppState } from 'stores';
@@ -16,11 +16,8 @@ import { findMenuOpenKeys, getTagByMenus, setLocalStorage } from 'utils/menuUtil
 import './tagView.less';
 import { setRefreshFCUrl } from 'stores/user.store';
 import { setChangeFixedMenu } from 'stores/menu.store';
-import { AppstoreOutlined, CloseOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import { Drag, Drop, DropChild, MyTagShow } from './drag';
-import { current } from '@reduxjs/toolkit';
-import SubMenu from 'antd/lib/menu/SubMenu';
+import { CloseOutlined } from '@ant-design/icons';
+import { MyTagShow } from './drag';
 const { TabPane } = Tabs;
 const TagsView: FC = () => {
   const { tags, activeTagMeUrl, tagPlanVisible } = useAppState(state => state.tagsView);
@@ -29,12 +26,6 @@ const TagsView: FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const prevActiveTagUrl = usePrevious(activeTagMeUrl);
-  const onDragEnd = (result: any) => {
-    console.log('======================: ', result);
-    if (!result.destination) {
-      return;
-    }
-  };
   // 切换标签时触发事件，切换页面地址
   const onChange = (meUrl: string) => {
     dispatch(setTagPlanVisible(false));

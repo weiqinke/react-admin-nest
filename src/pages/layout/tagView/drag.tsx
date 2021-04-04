@@ -1,4 +1,3 @@
-import { Tag } from 'antd';
 import React, { ReactNode } from 'react';
 import {
   Draggable,
@@ -58,9 +57,9 @@ export const Drag = ({ children, ...props }: DragProps) => {
 export const MyTagShow = (props: any) => {
   const { children, tag } = props;
   return (
-    <div className='tagChildDiv'>
+    <div className="tagChildDiv">
       <span className="round"></span>
-      <span className='name'>{tag.name}</span>
+      <span className="name">{tag.name}</span>
       {/* <span className="textshow">
         <b className="contextb"></b>
       </span> */}
