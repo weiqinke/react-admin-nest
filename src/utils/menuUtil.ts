@@ -7,6 +7,7 @@ export interface menuchild {
   meUrl?: string;
   isSubMenu?: number;
   url?: string;
+  hiddMenu?: string;
 }
 export function ProjectParseMenu(menulist: menuchild[]) {
   let menus: menuchild[] = [];
@@ -18,22 +19,25 @@ export function ProjectParseMenu(menulist: menuchild[]) {
   });
   return menus;
 }
+
 /*****
  * 清除菜单中的空节点，当成一个菜单
  */
 export function ProjectParseMenuAsPre(menulist: menuchild[]) {
   let menus: any[] = [];
   menulist.map((menuitem: menuchild) => {
-    const { authority, children, icon, name, url } = menuitem;
-    var newMenuItem = {};
+    const { children } = menuitem;
+    var newMenuItem: any = {};
     if (children && children.length > 0) {
       var echild: any[] = ProjectParseMenuAsPre(children);
-      newMenuItem = { authority, icon, name, router: url || '', children: echild, isSubMenu: 1 };
+      newMenuItem = { ...menuitem, children: echild, isSubMenu: 1 };
     } else {
       if (children && children.length === 0) {
-        newMenuItem = { authority, icon, name, router: url || '', isSubMenu: 1 };
+        newMenuItem = { ...menuitem, isSubMenu: 1 };
+        delete newMenuItem.children;
       } else {
-        newMenuItem = { authority, icon, name, router: url || '', isSubMenu: 0 };
+        newMenuItem = { ...menuitem, isSubMenu: 0 };
+        delete newMenuItem.children;
       }
     }
     menus.push(newMenuItem);
@@ -69,13 +73,42 @@ export function getTagByMenus(menulist: any[], prevActiveTagUrl: string) {
   return menuitem;
 }
 
+/**
+ * 筛选菜单，hiddMenu不在菜单中显示
+ */
+export function getShowMenus(menulist: any[]) {
+  let menus: any[] = [];
+  menulist.map((menuitem: menuchild) => {
+    const { children, hiddMenu } = menuitem;
+    if (hiddMenu === '0') {
+      return true;
+    }
+    var newMenuItem: any = {};
+    if (children && children.length > 0) {
+      var echild: any[] = getShowMenus(children);
+      newMenuItem = { ...menuitem, children: echild, isSubMenu: 1 };
+    } else {
+      if (children && children.length === 0) {
+        newMenuItem = { ...menuitem, children: null, isSubMenu: 1 };
+        delete newMenuItem.children;
+      } else {
+        newMenuItem = { ...menuitem, children: null, isSubMenu: 0 };
+        delete newMenuItem.children;
+      }
+    }
+    menus.push(newMenuItem);
+    return true;
+  });
+  return menus;
+}
+
 //获取首页路径
 export function getIndexUrl(list: menuchild[]) {
   var str = '';
   for (let index = 0; index < list.length; index++) {
     const element = list[index];
     if (index === 0) {
-      str += '/' + element.router;
+      str += '/' + element.url;
       if (element.children && element.children.length >= 1) {
         str += getIndexUrl(element.children);
       }
@@ -105,17 +138,16 @@ export function getIndexUrlInfo(list: menuchild[]) {
 export function getNextLevelMenu(list: menuchild[], url: string) {
   for (let index = 0; index < list.length; index++) {
     const element = list[index];
-    if (element.router === url) {
+    if (element.url === url) {
       return element.children || [];
     }
   }
   return [];
 }
-
 export function SaveMeUrl(list: menuchild[], parentUrl: string = '') {
   for (let index = 0; index < list.length; index++) {
     const element = list[index];
-    element.meUrl = parentUrl + '/' + element.router;
+    element.meUrl = parentUrl + '/' + element.url;
     if (element.children && element.children.length > 0) {
       SaveMeUrl(element.children, element.meUrl);
     }
@@ -135,6 +167,28 @@ export const findMenuOpenKeys = (menus: any) => {
   }
   return cacheUrlList;
 };
+
+/****
+ * 获取菜单中有没有指定的url
+ */
+export function isMyMenusUrl(menulist: any[], url: string) {
+  var patch = false;
+  menulist.map(item => {
+    if (item.meUrl === url) {
+      patch = true;
+      return true;
+    }
+    if (item.children && item.children.length > 0) {
+      const childflag = isMyMenusUrl(item.children, url);
+      if (childflag) {
+        patch = childflag;
+        return true;
+      }
+    }
+    return true;
+  });
+  return patch;
+}
 
 // localStorage 存
 export function setLocalStorage(name: string, data: any) {

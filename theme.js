@@ -10,8 +10,6 @@ const options = {
     outputFilePath: path.join(__dirname, './public/theme.less'),
 }
 
-generateTheme(options).then(less => {
-    console.log('Theme generated successfully');
-}).catch(error => {
+generateTheme(options).then(less => {}).catch(error => {
     console.log('Error', error);
 });

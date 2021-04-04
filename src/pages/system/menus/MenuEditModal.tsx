@@ -39,6 +39,10 @@ const MenuEditModal: FC<any> = (props: any) => {
   const onGenderChange = (value: string) => {
     form.setFieldsValue({ type: value });
   };
+  const hiddMenuChange = (value: string) => {
+    form.setFieldsValue({ hiddMenu: value });
+  };
+
   useEffect(() => {
     form.resetFields();
     form.getFieldsValue();
@@ -93,6 +97,14 @@ const MenuEditModal: FC<any> = (props: any) => {
               <Select placeholder="请选择类型" onChange={onGenderChange}>
                 <Option value="menu">菜单</Option>
                 <Option value="page">页面</Option>
+              </Select>
+            </Form.Item>
+          </Col>
+          <Col span={20}>
+            <Form.Item name="hiddMenu" label="是否显示" rules={[{ required: true }]} initialValue="1">
+              <Select placeholder="请选择是否在菜单中显示" onChange={hiddMenuChange}>
+                <Option value="1">显示</Option>
+                <Option value="0">隐藏</Option>
               </Select>
             </Form.Item>
           </Col>

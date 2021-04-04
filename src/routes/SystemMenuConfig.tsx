@@ -7,6 +7,8 @@ import TypingCardIndex from 'pages/permission/typingcard/typingcard';
 import Account from 'pages/account/Account';
 import Workplace from 'pages/workplace/Workplace';
 import Dashboard from 'pages/dashboard/Dashboard';
+import OnlineList from 'pages/onlinelist/OnlineList';
+
 const UserList = lazy(() => import(/* webpackChunkName: "userlist'"*/ 'pages/system/user/userlist'));
 const MenusList = lazy(() => import(/* webpackChunkName: "menuslist'"*/ 'pages/system/menus/menuslist'));
 const RoleList = lazy(() => import(/* webpackChunkName: "role'"*/ 'pages/system/role/RoleList'));
@@ -27,7 +29,7 @@ const CustomField = lazy(() => import(/* webpackChunkName: "CustomField'"*/ 'pag
 const ArticleEdit = lazy(() => import(/* webpackChunkName: "ArticleEdit'"*/ 'pages/article/edit/ArticleEdit'));
 const ArticleDetail = lazy(() => import(/* webpackChunkName: "ArticleDetail'"*/ 'pages/article/detail/ArticleDetail'));
 const ArticleList = lazy(() => import(/* webpackChunkName: "ArticleList'"*/ 'pages/article/list/ArticleList'));
-
+const MyInfo = lazy(() => import(/* webpackChunkName: "ArticleList'"*/ 'pages/system/myinfo/MyInfo'));
 const SystemPages: any[] = [
   {
     url: 'login',
@@ -149,21 +151,28 @@ const SystemPages: any[] = [
       },
       {
         url: 'setting/personal',
-        routerDom: <Account />
+        routerDom: <MyInfo />
+      },
+      {
+        url: 'myinfo',
+        routerDom: <MyInfo />
       },
       {
         url: 'setting/account',
-        routerDom: <Account />,
-        children: [
-          {
-            url: '*',
-            routerDom: <NotFound />
-          }
-        ]
+        routerDom: <Account />
       },
+      {
+        url: 'onlinelist',
+        routerDom: <NotFound />
+      },
+
       {
         url: '*',
         routerDom: <NotFound />
+      },
+      {
+        url: 'OnlineList1',
+        routerDom: <OnlineList />
       }
     ]
   },

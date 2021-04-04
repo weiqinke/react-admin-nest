@@ -4,7 +4,7 @@ import './index.less';
 import { useNavigate } from 'react-router-dom';
 import { LoginParams } from 'interface/user/login';
 import { useSystemUserInfo } from 'hooks/useSystemInfo';
-import { ProjectParseMenuAsPre, getSystemMenu, SaveMeUrl, getIndexUrlInfo } from 'utils/menuUtil';
+import { ProjectParseMenuAsPre, SaveMeUrl, getIndexUrlInfo } from 'utils/menuUtil';
 import { addTag, setActiveTag } from 'stores/tags-view.store';
 import { useAppDispatch } from 'stores';
 import { setUserItem, setIndexUrl, setMenuList, setRefreshFCUrl } from 'stores/user.store';
@@ -85,8 +85,7 @@ const LoginForm: FC = () => {
           message.info('暂未分配权限，请通知管理员分配权限');
           return;
         }
-        const menudata = getSystemMenu(cacheMenu);
-        const projectMenuPre = ProjectParseMenuAsPre(menudata.concat());
+        const projectMenuPre = ProjectParseMenuAsPre(cacheMenu.concat());
         const allMenusInfo: any = SaveMeUrl(projectMenuPre.concat(), '');
         dispatch(
           setMenuList({

@@ -10,7 +10,7 @@ import { useSystemUserInfo } from 'hooks/useSystemInfo';
 import IconFont from 'pages/commponents/iconfont/iconfont';
 import './menu.less';
 import { setRefreshFCUrl } from 'stores/user.store';
-import { getLocalStorage, setLocalStorage } from 'utils/menuUtil';
+import { getLocalStorage, getShowMenus, setLocalStorage } from 'utils/menuUtil';
 const { SubMenu, Item } = Menu;
 
 interface Props {
@@ -54,7 +54,7 @@ const MenuComponent: FC<Props> = ({}) => {
 
   const renderMenuMembers = (adminRoutes: any[]) => {
     // const adminRoutesDeepClone = routesFilter([...adminRoutes], roles); // adminRoutes权限过滤, 此版本不做了，因为菜单就是根据权限筛选出来的
-    return adminRoutes.map(({ name, meUrl, children, icon }) => {
+    return adminRoutes.map(({ name, meUrl, children, icon, hiddMenu }) => {
       return children && children.length > 0 ? (
         <SubMenu
           key={meUrl}
@@ -92,6 +92,7 @@ const MenuComponent: FC<Props> = ({}) => {
      */
     return <FixedLeftMenu menuList={changeFixedMenu}></FixedLeftMenu>;
   }
+  const newmenus = getShowMenus([...sysMenus]);
   return (
     <Menu
       mode="inline"
@@ -102,7 +103,7 @@ const MenuComponent: FC<Props> = ({}) => {
       onOpenChange={onOpenChange as any}
       className="layout-page-sider-menu nextmenus"
     >
-      {renderMenuMembers([...sysMenus])}
+      {renderMenuMembers(newmenus)}
     </Menu>
   );
 };

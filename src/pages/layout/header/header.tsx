@@ -57,7 +57,7 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
           <span>{t('changelanguage')}</span>
         </span>
       </Menu.Item>
-      <Menu.Item key="1" onClick={() => navigate('/workplace')}>
+      <Menu.Item key="1" onClick={() => navigate('/myinfo')}>
         <span>
           <UserOutlined />
           <span>个人设置</span>

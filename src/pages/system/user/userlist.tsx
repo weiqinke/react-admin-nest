@@ -5,6 +5,7 @@ import { changeUserStatus, findalluser } from 'api/nest-admin/User';
 import UserEditModal from './UserEditModal';
 import ModalMessage from 'pages/commponents/modalmessage/ModalMessage';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 const { confirm } = Modal;
 const UserList: FC = () => {
   const [userslist, setUserslist] = useState([]);
@@ -15,7 +16,7 @@ const UserList: FC = () => {
   //提示框的属性
   const [tipvisible] = useState(false);
   const [tipContent] = useState('是否删除');
-
+  const navigate = useNavigate();
   const tipcallback = () => {};
 
   useEffect(() => {
@@ -138,11 +139,16 @@ const UserList: FC = () => {
     setUser(item);
     setID(item.id);
   };
-
+  const tonew = () => {
+    navigate('/myinfo');
+  };
   return (
     <div className="users-list-page">
       <Button type="primary" onClick={addUser}>
         添加人员
+      </Button>
+      <Button type="primary" onClick={tonew}>
+        跳转
       </Button>
       <UserEditModal visible={visible} isEdit={isEdit} id={id} initUser={user} pendingCallback={pendingCallback} />
       <Table columns={columns} dataSource={userslist} rowKey={(record: any) => record.uid} />;
