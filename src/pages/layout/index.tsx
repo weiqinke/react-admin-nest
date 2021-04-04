@@ -12,6 +12,7 @@ import { setUserItem } from 'stores/user.store';
 import { useAppDispatch, useAppState } from 'stores';
 import { useProjectConfig } from 'hooks/useProjectConfig';
 import FootLinks from './footer/FootLinks';
+import ThemePicker from './ThemePicker';
 const { Sider, Content } = Layout;
 const WIDTH = 992;
 
@@ -90,8 +91,10 @@ const LayoutPage: FC = () => {
             <MenuComponent menuList={menuList} />
           </Drawer>
         )}
+        <ThemePicker />
         <Content className="layout-page-content">
           <TagsView />
+
           <Suspense fallback={<SuspendFallbackLoading />}>
             {RefreshFlag ? <SuspendFallbackLoading /> : <Outlet />}
           </Suspense>

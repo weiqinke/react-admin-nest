@@ -9,7 +9,6 @@ import { logoutSystem } from 'stores/user.store';
 import { useAppDispatch, useAppState } from 'stores';
 import FixedMenu from '../menu/FixedMenu';
 import { MenuList } from 'interface/layout/menu.interface';
-import './header.less';
 import { useProjectConfig } from 'hooks/useProjectConfig';
 import { deleteAllTag } from 'stores/tags-view.store';
 
@@ -56,7 +55,7 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
     </Menu>
   );
   return (
-    <Header className="layout-page-header topheader">
+    <Header className="layout-page-header header">
       {device !== 'MOBILE' && (
         <div className="logo topheader" style={{ width: collapsed ? 80 : 200 }} title="返回首页">
           <img src={AntdSvg} alt="" />
