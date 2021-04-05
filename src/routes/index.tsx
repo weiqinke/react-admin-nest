@@ -13,7 +13,7 @@ const RenderRouter: FC = () => {
           title={item.title}
           auth={item.auth}
           url={item.url}
-          hiddMenu={false}
+          dontshow={'1'}
         />
       );
       //释放routerDom属性，释放内存;

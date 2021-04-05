@@ -10,7 +10,7 @@ export interface WrapperRouteProps extends RouteProps {
   /** authorization */
   auth: boolean;
   url: string;
-  hiddMenu: boolean;
+  dontshow: string;
 }
 
 const WrapperRouteComponent: FC<WrapperRouteProps> = props => {

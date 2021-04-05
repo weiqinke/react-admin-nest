@@ -7,7 +7,7 @@ export interface menuchild {
   meUrl?: string;
   isSubMenu?: number;
   url?: string;
-  hiddMenu?: string;
+  dontshow?: string;
 }
 export function ProjectParseMenu(menulist: menuchild[]) {
   let menus: menuchild[] = [];
@@ -74,13 +74,13 @@ export function getTagByMenus(menulist: any[], prevActiveTagUrl: string) {
 }
 
 /**
- * 筛选菜单，hiddMenu不在菜单中显示
+ * 筛选菜单，dontshow不在菜单中显示
  */
 export function getShowMenus(menulist: any[]) {
   let menus: any[] = [];
   menulist.map((menuitem: menuchild) => {
-    const { children, hiddMenu } = menuitem;
-    if (hiddMenu === '0') {
+    const { children, dontshow } = menuitem;
+    if (dontshow === '0') {
       return true;
     }
     var newMenuItem: any = {};

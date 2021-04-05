@@ -6,7 +6,7 @@ import NotAuthPage from 'pages/403';
 import { isMyMenusUrl } from 'utils/menuUtil';
 export interface KeyRouteProps extends RouteProps {
   url: string;
-  hiddMenu: boolean;
+  dontshow: string;
 }
 const PrivateRoute: FC<KeyRouteProps> = ({ url, ...props }) => {
   const { loginState, menuList } = useAppState(state => state.user);

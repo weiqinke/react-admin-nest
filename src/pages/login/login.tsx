@@ -8,7 +8,7 @@ import { ProjectParseMenuAsPre, SaveMeUrl, getIndexUrlInfo } from 'utils/menuUti
 import { addTag, setActiveTag } from 'stores/tags-view.store';
 import { useAppDispatch } from 'stores';
 import { setUserItem, setIndexUrl, setMenuList, setRefreshFCUrl } from 'stores/user.store';
-import { Zhuce, Account } from 'api/nest-admin/User';
+import { Zhuce, accountlogin } from 'api/nest-admin/User';
 import { getUserMenus } from 'api/nest-admin/MenuApi';
 import { webSocketManager } from 'utils/websocket';
 interface LoginParamsMore {
@@ -32,12 +32,11 @@ const LoginForm: FC = () => {
   const onFinished = async (form: LoginParams) => {
     const payload = {
       ...form,
-      logintype: 'web',
-      email: form.name + '@qq.com'
+      logintype: 'web'
     };
-    Account(payload).then(result => {
+    accountlogin(payload).then(result => {
       if (result.data.code === 200) {
-        const { token, nick } = result.data.data;
+        const { token, nick, avatar } = result.data.data;
         setSocketMeseage({
           message: nick + '上线了',
           data: ''
@@ -51,6 +50,7 @@ const LoginForm: FC = () => {
         // localStorage.setItem('token', token);
         sessionStorage.setItem('token', token);
         localStorage.setItem('nick', nick);
+        localStorage.setItem('avatar', avatar);
         setUserInfo(result.data);
         getMenuDatabyToken();
       }

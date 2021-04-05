@@ -52,6 +52,9 @@ class WebsocketManager {
 
     this.tellServerOnline();
     this.checkID();
+    if (createBodyImg.toString()) {
+      return;
+    }
   }
 
   // 添加事件监听
@@ -97,13 +100,14 @@ class WebsocketManager {
       return;
     }
     setTimeout(async () => {
-      const imgdata = await createBodyImg();
+      /**const imgdata = await createBodyImg();
       this.socket.emit('SYSTEM', {
         data: imgdata,
         message: '',
         id: this.MySocketID,
         type: 'html2canvas'
       });
+      **/
       this.socket.emit('meOnLine', '我在线呢');
       this.tellServerOnline();
     }, 60000);

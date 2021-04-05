@@ -23,6 +23,7 @@ const UserList: FC = () => {
     findAll();
   }, []);
   const findAll = () => {
+    setUserslist([]);
     findalluser({}).then(result => {
       if (result.data.code === 200) {
         setUserslist(result.data.data || []);
@@ -132,6 +133,7 @@ const UserList: FC = () => {
     setVisible(true);
     setIsEdit(false);
     setID(null);
+    setUser({});
   };
   const userEdit = (item: any) => {
     setVisible(true);
@@ -144,10 +146,13 @@ const UserList: FC = () => {
   };
   return (
     <div className="users-list-page">
-      <Button type="primary" onClick={addUser}>
+      <Button type="primary" className="btns" onClick={findAll}>
+        查询人员
+      </Button>
+      <Button type="primary" className="btns" onClick={addUser}>
         添加人员
       </Button>
-      <Button type="primary" onClick={tonew}>
+      <Button type="primary" className="btns" onClick={tonew}>
         跳转
       </Button>
       <UserEditModal visible={visible} isEdit={isEdit} id={id} initUser={user} pendingCallback={pendingCallback} />

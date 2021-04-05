@@ -1,9 +1,8 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { LogoutOutlined, UserOutlined, MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import { Layout, Dropdown, Menu } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import HeaderNoticeComponent from './notice';
-import Avator from 'assets/header/avator.png';
 import AntdSvg from 'assets/logo/antd.svg';
 import { logoutSystem } from 'stores/user.store';
 import { useAppDispatch, useAppState } from 'stores';
@@ -13,6 +12,7 @@ import { useProjectConfig } from 'hooks/useProjectConfig';
 import { deleteAllTag } from 'stores/tags-view.store';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
+import './header.less';
 const { Header } = Layout;
 
 interface Props {
@@ -28,6 +28,7 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
   const { config } = useProjectConfig();
   const { layout } = config;
   const { t } = useTranslation();
+  const [headerUrl, setheaderUrl] = useState(localStorage.getItem('avatar') || '');
   const logout = async () => {
     navigate('/login');
     dispatch(logoutSystem());
@@ -48,6 +49,10 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
       i18n.changeLanguage(lng); //i18n会通过这个方法去改变它的语言
     }
   };
+  useEffect(() => {
+    const avatar: string = localStorage.getItem('avatar') || '';
+    setheaderUrl(avatar);
+  }, []);
 
   const menu = (
     <Menu>
@@ -112,7 +117,7 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
           {loginState ? (
             <Dropdown overlay={menu} trigger={['click']}>
               <span className="user-action">
-                <img src={Avator} className="user-avator" alt="avator" />
+                <img src={headerUrl} className="user-avator" alt="avator" />
                 <b className="user-name">{nick || '无名'}</b>
               </span>
             </Dropdown>

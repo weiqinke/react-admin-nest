@@ -1,6 +1,8 @@
 import React, { useState, useEffect, FC } from 'react';
-import { Form, Row, Col, Input, Modal, message } from 'antd';
-import { addOneUser, editOneUser } from 'api/nest-admin/User';
+import { Form, Row, Col, Input, Modal, message, Radio, Upload, Avatar } from 'antd';
+import { addOneUser, editOneUser, updateUserAvatarUrl } from 'api/nest-admin/User';
+import { UserOutlined } from '@ant-design/icons';
+import './UserEditModal.less';
 const layout = {
   labelCol: { span: 8 },
   wrapperCol: { span: 16 }
@@ -11,19 +13,64 @@ const UserEditModal: FC<any> = (props: any) => {
   const [form] = Form.useForm();
   const [type, setType] = useState('text');
   const [title, setTitle] = useState('添加');
+  const [avatarUrl, setAvatarUrl] = useState('');
+
+  const [fileList, setfileList] = useState<any[]>([]);
+
+  const [uploading, setuploading] = useState(false);
+  const getBase64 = async (img: any, callback: any) => {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+  };
+  const handleUpload = (uid: string) => {
+    const formData = new FormData();
+    fileList.forEach(file => {
+      formData.append('files', file);
+    });
+    if (uploading) {
+      return;
+    }
+    formData.append('userUid', uid);
+    setuploading(true);
+    updateUserAvatarUrl(formData)
+      .then(result => {
+        setAvatarUrl('');
+        if (result.data.code === 200) {
+          message.info('头像修改成功');
+          return;
+        }
+        message.info('头像修改失败');
+      })
+      .catch(() => {
+        setAvatarUrl('');
+        message.info('头像修改失败');
+      });
+  };
+
+  const UpLoadProps = {
+    beforeUpload: (file: any) => {
+      setuploading(false);
+      setfileList([file]);
+      getBase64(file, (imageUrl: any) => setAvatarUrl(imageUrl));
+      return false;
+    },
+    fileList
+  };
 
   const handleSubmit = () => {};
   const creatRoleSubmit = async () => {
     const data = await form.getFieldsValue();
     var result: any = null;
     if (isEdit) {
-      const { nick, title, phone, email } = data;
+      const { nick, title, phone, email, sex } = data;
       const payload = {
         ...initUser,
         nick,
         title,
         phone,
-        email
+        email,
+        sex
       };
       result = await editOneUser(payload);
     } else {
@@ -34,6 +81,8 @@ const UserEditModal: FC<any> = (props: any) => {
       return;
     }
     message.info('操作成功');
+    setuploading(false);
+    handleUpload(initUser.uid);
     pendingCallback(true);
   };
   const CancelSubmit = () => {
@@ -53,10 +102,32 @@ const UserEditModal: FC<any> = (props: any) => {
     if (visible) {
       form.resetFields();
     }
+    if (initUser) {
+      setAvatarUrl(initUser.avatar || '');
+    }
+    return () => {
+      setType('text');
+    };
   }, [initUser, isEdit, visible, form]);
 
   return (
-    <Modal title={title} visible={visible} onOk={creatRoleSubmit} onCancel={CancelSubmit} width={800}>
+    <Modal
+      title={title}
+      visible={visible}
+      onOk={creatRoleSubmit}
+      onCancel={CancelSubmit}
+      width={800}
+      className="UserEditModal"
+    >
+      <Row>
+        <Col span={24}>
+          <div className="Avatar">
+            <Upload {...UpLoadProps}>
+              <Avatar size={100} icon={<UserOutlined />} src={avatarUrl} />
+            </Upload>
+          </div>
+        </Col>
+      </Row>
       <Form form={form} onFinish={handleSubmit} initialValues={initUser} {...layout}>
         <Row>
           <Col span={20}>
@@ -78,6 +149,14 @@ const UserEditModal: FC<any> = (props: any) => {
           <Col span={20}>
             <Form.Item name="nick" label="昵称" rules={[{ required: true }]}>
               <Input />
+            </Form.Item>
+          </Col>
+          <Col span={20}>
+            <Form.Item name="sex" label="性别" rules={[{ required: true }]}>
+              <Radio.Group>
+                <Radio value="1">男</Radio>
+                <Radio value="2">女</Radio>
+              </Radio.Group>
             </Form.Item>
           </Col>
           <Col span={20}>

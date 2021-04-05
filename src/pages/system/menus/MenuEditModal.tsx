@@ -40,7 +40,7 @@ const MenuEditModal: FC<any> = (props: any) => {
     form.setFieldsValue({ type: value });
   };
   const hiddMenuChange = (value: string) => {
-    form.setFieldsValue({ hiddMenu: value });
+    form.setFieldsValue({ dontshow: value });
   };
 
   useEffect(() => {
@@ -101,7 +101,7 @@ const MenuEditModal: FC<any> = (props: any) => {
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item name="hiddMenu" label="是否显示" rules={[{ required: true }]} initialValue="1">
+            <Form.Item name="dontshow" label="是否显示" rules={[{ required: true }]} initialValue="1">
               <Select placeholder="请选择是否在菜单中显示" onChange={hiddMenuChange}>
                 <Option value="1">显示</Option>
                 <Option value="0">隐藏</Option>

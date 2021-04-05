@@ -54,7 +54,7 @@ const MenuComponent: FC<Props> = ({}) => {
 
   const renderMenuMembers = (adminRoutes: any[]) => {
     // const adminRoutesDeepClone = routesFilter([...adminRoutes], roles); // adminRoutes权限过滤, 此版本不做了，因为菜单就是根据权限筛选出来的
-    return adminRoutes.map(({ name, meUrl, children, icon, hiddMenu }) => {
+    return adminRoutes.map(({ name, meUrl, children, icon, dontshow }) => {
       return children && children.length > 0 ? (
         <SubMenu
           key={meUrl}

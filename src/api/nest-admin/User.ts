@@ -18,8 +18,8 @@ export const apiLogin = (payload: any) => {
   return request(`${BASE_URL}user/login`, 'POST', payload);
 };
 /** nest登录接口 */
-export const Account = (payload: any) => {
-  return request(`${BASE_URL}user/account`, 'post', payload);
+export const accountlogin = (payload: any) => {
+  return request(`${BASE_URL}user/accountlogin`, 'post', payload);
 };
 
 /** nest获取菜单接口 */
@@ -74,4 +74,11 @@ export const getmyuserinfo = () => {
 /** 更新我自己的信息 */
 export const updateMyinfo = (payload: any) => {
   return request(`${BASE_URL}user/updateMyinfo`, 'post', payload);
+};
+
+/** 更新我自己的信息 */
+export const updateUserAvatarUrl = (payload: any) => {
+  return request(`${BASE_URL}user/updateUserAvatarUrl`, 'post', payload, {
+    processData: false
+  });
 };
