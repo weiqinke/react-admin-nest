@@ -14,6 +14,7 @@ const UserEditModal: FC<any> = (props: any) => {
   const [type, setType] = useState('text');
   const [title, setTitle] = useState('添加');
   const [avatarUrl, setAvatarUrl] = useState('');
+  const [isreadOnly, setIsreadOnly] = useState(true);
 
   const [fileList, setfileList] = useState<any[]>([]);
 
@@ -24,6 +25,9 @@ const UserEditModal: FC<any> = (props: any) => {
     reader.readAsDataURL(img);
   };
   const handleUpload = (uid: string) => {
+    if (fileList.length <= 0 || !uid) {
+      return;
+    }
     const formData = new FormData();
     fileList.forEach(file => {
       formData.append('files', file);
@@ -50,6 +54,14 @@ const UserEditModal: FC<any> = (props: any) => {
 
   const UpLoadProps = {
     beforeUpload: (file: any) => {
+      if (file.size >= 1024 * 1024) {
+        message.error(`${file.name} 文件太大了`);
+        return false;
+      }
+      if (file.type !== 'image/png' && file.type !== 'image/jpeg' && file.type !== 'image/jpg') {
+        message.error(`${file.name} 不是图片`);
+        return false;
+      }
       setuploading(false);
       setfileList([file]);
       getBase64(file, (imageUrl: any) => setAvatarUrl(imageUrl));
@@ -60,7 +72,7 @@ const UserEditModal: FC<any> = (props: any) => {
 
   const handleSubmit = () => {};
   const creatRoleSubmit = async () => {
-    const data = await form.getFieldsValue();
+    const data = await form.validateFields();
     var result: any = null;
     if (isEdit) {
       const { nick, title, phone, email, sex } = data;
@@ -82,7 +94,7 @@ const UserEditModal: FC<any> = (props: any) => {
     }
     message.info('操作成功');
     setuploading(false);
-    handleUpload(initUser.uid);
+    handleUpload(initUser.uid || result.data.data.uid);
     pendingCallback(true);
   };
   const CancelSubmit = () => {
@@ -94,16 +106,21 @@ const UserEditModal: FC<any> = (props: any) => {
   };
 
   useEffect(() => {
-    if (isEdit) {
-      setTitle('编辑');
-    } else {
-      setTitle('添加');
-    }
     if (visible) {
       form.resetFields();
     }
     if (initUser) {
       setAvatarUrl(initUser.avatar || '');
+    }
+    if (isEdit) {
+      setTitle('编辑');
+      setIsreadOnly(true);
+    } else {
+      setTitle('添加');
+      setIsreadOnly(false);
+      form.setFieldsValue({
+        sex: '1'
+      });
     }
     return () => {
       setType('text');
@@ -132,23 +149,23 @@ const UserEditModal: FC<any> = (props: any) => {
         <Row>
           <Col span={20}>
             <Form.Item name="id" label="用户编号" rules={[{ required: false }]}>
-              <Input readOnly placeholder="自动生成" />
+              <Input readOnly placeholder="自动生成" autoComplete="off" />
             </Form.Item>
           </Col>
           <Col span={20}>
             <Form.Item name="name" label="账号" rules={[{ required: true }]}>
-              <Input readOnly />
+              <Input readOnly={isreadOnly} autoComplete="off" placeholder="请输入账号" />
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item name="password" label="密码" rules={[{ required: true }]}>
+            <Form.Item name="password" label="密码" rules={[{ required: !isreadOnly }]}>
               <Input type={type} placeholder="请输入密码" onChange={setInputType} />
             </Form.Item>
           </Col>
 
           <Col span={20}>
             <Form.Item name="nick" label="昵称" rules={[{ required: true }]}>
-              <Input />
+              <Input autoComplete="off" placeholder="请输入昵称" />
             </Form.Item>
           </Col>
           <Col span={20}>
