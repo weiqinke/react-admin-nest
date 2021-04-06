@@ -1,68 +1,49 @@
 import React from 'react';
-import { Chart, Axis, Tooltip, Coordinate, Legend, Interval } from 'bizcharts';
+import { Chart, Tooltip, Interval, Annotation } from 'bizcharts';
 import DataSet from '@antv/data-set';
+interface IProps {
+  chartdata: TimeData | any;
+}
+interface TimeData {
+  count: string;
+  year: string;
+  value: number;
+}
 
-const WorkChart: React.FC = () => {
-  const data = [
-    {
-      label: 'Monday',
-      series1: 2800,
-      series2: 2260
-    },
-    {
-      label: 'Tuesday',
-      series1: 1800,
-      series2: 1300
-    },
-    {
-      label: 'Wednesday',
-      series1: 950,
-      series2: 900
-    },
-    {
-      label: 'Thursday',
-      series1: 500,
-      series2: 390
-    },
-    {
-      label: 'Friday',
-      series1: 170,
-      series2: 100
-    }
-  ];
+const WorkChart: React.FC<IProps> = (props: any) => {
+  const { chartdata } = props;
   const ds = new DataSet();
-  const dv = ds.createView().source(data);
+  const dv = ds.createView().source(chartdata);
   dv.transform({
-    type: 'fold',
-    fields: ['series1', 'series2'],
-    // 展开字段集
-    key: 'type',
-    // key字段
-    value: 'value' // value字段
+    type: 'percent',
+    field: 'value', // 统计销量
+    dimension: 'count', // 每年的占比
+    groupBy: ['year'] // 以不同产品类别为分组
   });
 
   return (
-    <Chart height={600} data={dv.rows} autoFit>
-      <Legend />
-      <Coordinate actions={[['scale', 1, -1], ['transpose']]} />
-      <Axis
-        name="label"
-        label={{
-          offset: 12
+    <Chart
+      height={600}
+      padding="auto"
+      scale={{
+        percent: {
+          min: 0
+        }
+      }}
+      data={dv.rows}
+      autoFit
+    >
+      <Interval adjust="stack" color="count" position="year*value" />
+      <Annotation.Text
+        position={['min', 'max']}
+        content="最近7天活跃频率"
+        offsetX={-140}
+        offsetY={10}
+        style={{
+          fontSize: 14
         }}
       />
-      <Axis name="value" position={'left'} />
-      <Tooltip />
-      <Interval
-        position="label*value"
-        color={'type'}
-        adjust={[
-          {
-            type: 'dodge',
-            marginRatio: 1 / 32
-          }
-        ]}
-      />
+      <Tooltip shared />
     </Chart>
   );
 };
