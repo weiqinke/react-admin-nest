@@ -1377,7 +1377,7 @@
     "@babel/helper-plugin-utils" "^7.10.4"
     "@babel/plugin-transform-typescript" "^7.12.1"
 
-"@babel/runtime-corejs3@^7.10.2":
+"@babel/runtime-corejs3@^7.10.2", "@babel/runtime-corejs3@^7.11.2":
   version "7.13.10"
   resolved "https://registry.npm.taobao.org/@babel/runtime-corejs3/download/@babel/runtime-corejs3-7.13.10.tgz?cache=0&sync_timestamp=1615243359522&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40babel%2Fruntime-corejs3%2Fdownload%2F%40babel%2Fruntime-corejs3-7.13.10.tgz#14c3f4c85de22ba88e8e86685d13e8861a82fe86"
   integrity sha1-FMP0yF3iK6iOjoZoXRPohhqC/oY=
@@ -3944,6 +3944,11 @@ caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001109, can
   version "1.0.30001207"
   resolved "https://registry.npm.taobao.org/caniuse-lite/download/caniuse-lite-1.0.30001207.tgz?cache=0&sync_timestamp=1617514414671&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fcaniuse-lite%2Fdownload%2Fcaniuse-lite-1.0.30001207.tgz#364d47d35a3007e528f69adb6fecb07c2bb2cc50"
   integrity sha1-Nk1H01owB+Uo9prbb+ywfCuyzFA=
+
+captcha-mini@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npm.taobao.org/captcha-mini/download/captcha-mini-1.1.0.tgz#c76548ec220c208b7028e162fdc9d7fae50d6038"
+  integrity sha1-x2VI7CIMIItwKOFi/cnX+uUNYDg=
 
 capture-exit@^2.0.0:
   version "2.0.0"
@@ -13824,6 +13829,15 @@ walker@^1.0.7, walker@~1.0.5:
   integrity sha1-L3+bj9ENZ3JisYqITijRlhjgKPs=
   dependencies:
     makeerror "1.0.x"
+
+wangeditor@^4.6.14:
+  version "4.6.14"
+  resolved "https://registry.npm.taobao.org/wangeditor/download/wangeditor-4.6.14.tgz?cache=0&sync_timestamp=1617886026990&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fwangeditor%2Fdownload%2Fwangeditor-4.6.14.tgz#257e7dee44026b6338ece180e8376a894cfa6350"
+  integrity sha1-JX597kQCa2M47OGA6DdqiUz6Y1A=
+  dependencies:
+    "@babel/runtime" "^7.11.2"
+    "@babel/runtime-corejs3" "^7.11.2"
+    tslib "^2.1.0"
 
 warning@^4.0.1, warning@^4.0.3:
   version "4.0.3"

@@ -11,14 +11,17 @@ import { setUserItem, setIndexUrl, setMenuList, setRefreshFCUrl } from 'stores/u
 import { Zhuce, accountlogin } from 'api/nest-admin/User';
 import { getUserMenus } from 'api/nest-admin/MenuApi';
 import { webSocketManager } from 'utils/websocket';
+import CaptchaMini from 'captcha-mini';
 interface LoginParamsMore {
   name: string;
   password: string;
+  yanzhegnma: string;
   remember: boolean;
 }
 const initialValues: LoginParamsMore = {
   name: '',
   password: '',
+  yanzhegnma: '',
   remember: true
 };
 const { TabPane } = Tabs;
@@ -125,7 +128,24 @@ const LoginForm: FC = () => {
   };
   const [socketMessage, setSocketMeseage] = useState<any>({ message: null, data: null });
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    let captcha2 = new CaptchaMini({
+      lineWidth: 1, //线条宽度
+      lineNum: 4, //线条数量
+      dotR: 2, //点的半径
+      dotNum: 15, //点的数量
+      preGroundColor: [10, 80], //前景色区间
+      backGroundColor: [150, 250], //背景色区间
+      fontSize: 25, //字体大小
+      fontFamily: ['Georgia', '微软雅黑', 'Helvetica', 'Arial'], //字体类型
+      fontStyle: 'stroke', //字体绘制方法，有fill和stroke
+      content: 'abcdefghijkmnpqrstuvw', //验证码内容
+      length: 4 //验证码长度
+    });
+    captcha2.draw(document.querySelector('#captcha2'), (r: any) => {
+      console.log(r, '验证码2');
+    });
+  }, []);
   useEffect(() => {
     const { message, data } = socketMessage;
     if (message) {
@@ -148,6 +168,17 @@ const LoginForm: FC = () => {
               <Form.Item name="password" rules={[{ required: true, message: '请输入密码！' }]}>
                 <Input type="password" placeholder="密码:123456" />
               </Form.Item>
+              <Form.Item
+                name="yanzhegnma"
+                rules={[{ required: true, message: '请输入验证码！' }]}
+                className="yanzhengmaitem"
+              >
+                <div>
+                  <Input type="yanzhengma" placeholder="请输入验证码" style={{ width: '50%' }} />
+                  <canvas width="140" height="35" id="captcha2" className="yanzhengmacan"></canvas>
+                </div>
+              </Form.Item>
+
               <Form.Item name="remember" valuePropName="checked">
                 <Checkbox>记住用户</Checkbox>
               </Form.Item>

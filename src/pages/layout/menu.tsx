@@ -58,7 +58,14 @@ const MenuComponent: FC<Props> = ({}) => {
       return children && children.length > 0 ? (
         <SubMenu
           key={meUrl}
-          title={<span className="menuname">{name}</span>}
+          title={
+            <span className="caidanmenu">
+              {' '}
+              <span className="menuname">{name}</span>
+              <span className="redPoint"></span>
+              <span className="redInfo">new</span>{' '}
+            </span>
+          }
           icon={<IconFont type={icon || 'icon-shouye'} className="nexticon" />}
         >
           {renderMenuMembers(children)}
@@ -66,6 +73,8 @@ const MenuComponent: FC<Props> = ({}) => {
       ) : (
         <Item key={meUrl} icon={<IconFont type={icon || 'icon-shouye'} className="nexticon" />}>
           <span className="menuname">{name}</span>
+          <span className="redPoint"></span>
+          <span className="redInfo">new</span>
         </Item>
       );
       // 动态路由不进行显示，因为一般动态路由是详情页

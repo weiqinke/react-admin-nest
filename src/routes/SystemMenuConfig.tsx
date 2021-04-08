@@ -8,6 +8,7 @@ import Account from 'pages/account/Account';
 import Workplace from 'pages/workplace/Workplace';
 import Dashboard from 'pages/dashboard/Dashboard';
 import OnlineList from 'pages/onlinelist/OnlineList';
+import WangeditorPage from 'pages/wangeditor/wangeditor';
 
 const UserList = lazy(() => import(/* webpackChunkName: "userlist'"*/ 'pages/system/user/userlist'));
 const MenusList = lazy(() => import(/* webpackChunkName: "menuslist'"*/ 'pages/system/menus/menuslist'));
@@ -164,6 +165,10 @@ const SystemPages: any[] = [
       {
         url: 'onlinelist',
         routerDom: <NotFound />
+      },
+      {
+        url: 'WangeditorPage',
+        routerDom: <WangeditorPage />
       },
 
       {
