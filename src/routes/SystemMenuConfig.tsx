@@ -67,6 +67,14 @@ const SystemPages: any[] = [
         routerDom: <ArticleDetail />
       },
       {
+        url: 'article/detail?id',
+        routerDom: <ArticleDetail />
+      },
+      {
+        url: 'article/detail/:id',
+        routerDom: <ArticleDetail />
+      },
+      {
         url: 'article/edit',
         routerDom: <ArticleEdit />
       },
@@ -168,6 +176,10 @@ const SystemPages: any[] = [
       },
       {
         url: 'WangeditorPage',
+        routerDom: <WangeditorPage />
+      },
+      {
+        url: 'WangeditorPage/:id',
         routerDom: <WangeditorPage />
       },
 

@@ -21,6 +21,7 @@ const WangeditorPage: FC = () => {
   useEffect(() => {
     SysEditor.current = new E('#ArticleDomOne');
     SysEditor.current.config.showFullScreen = false;
+    SysEditor.current.config.zIndex = 1;
     SysEditor.current.config.onchange = (newHtml: any) => {
       setBodyCode(newHtml);
     };
