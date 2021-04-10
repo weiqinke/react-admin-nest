@@ -4,7 +4,7 @@ import { createBodyImg } from './file';
 import SocketDispatch from './socketDispatch';
 
 // 项目中所有websocket事件名称
-const eventName = tupleStr('paySignMoney', 'loginMessage', 'qkstartCar', 'QKSTART_REC');
+const eventName = tupleStr('paySignMoney', 'loginMessage', 'qkstartCar', 'QKSTART_REC', 'MESSAGE', 'OSSTATUS');
 
 interface SocketEvent {
   name: EventName;
@@ -28,28 +28,29 @@ class WebsocketManager {
     roomD: false
   };
   private selected: any = 'general';
-  private socket: any = null;
+  public socket: any = null;
   private activeRoom: any = '';
   private ConnectNum: any = 0;
   private SokcetUrl: any = 'http://localhost:3011';
   private AfterUrl: any = '/chat';
   //  建立连接
+  public that = this;
   public create() {
+    console.log('新建通信 ', this);
     // const BASE_URL: string = process.env.REACT_APP_SOCKET_URL || '';
     if (process.env.NODE_ENV === 'production') {
-      this.SokcetUrl = process.env.REACT_APP_SOCKET_URL;
+      this.that.SokcetUrl = process.env.REACT_APP_SOCKET_URL;
     } else if (process.env.NODE_ENV === 'development') {
-      this.SokcetUrl = process.env.REACT_APP_SOCKET_URL;
+      this.that.SokcetUrl = process.env.REACT_APP_SOCKET_URL;
     } else {
       // 本地代理地址
-      this.SokcetUrl = process.env.REACT_APP_SOCKET_URL;
+      this.that.SokcetUrl = process.env.REACT_APP_SOCKET_URL;
     }
-    const socket = io(this.SokcetUrl);
-    this.socket = socket;
+    this.socket = io(this.SokcetUrl, {
+      transports: ['websocket']
+    }).connect();
     this.StartBindEventHandler();
     this.activeRoom = this.selected;
-    this.socket.connect();
-
     this.tellServerOnline();
     this.checkID();
     if (createBodyImg.toString()) {
@@ -68,6 +69,10 @@ class WebsocketManager {
   public removeEventHandler = (fn: websocketEventFn) => {
     this.websocketListeners.delete(fn);
   };
+  //派发事件。方便在任意组件中，通知到指定的消息
+  private dispatchEventHandle = (e: SocketEvent) => {
+    this.websocketListeners.forEach(fn => fn(e));
+  };
   public close = () => {
     if (this.socket) {
       const token = sessionStorage.getItem('token');
@@ -77,7 +82,6 @@ class WebsocketManager {
           token
         });
       }
-
       this.socket.disconnect();
     }
   };
@@ -116,8 +120,8 @@ class WebsocketManager {
     this.ConnectNum++;
     if (this.ConnectNum >= 10) {
       this.ConnectNum = 0;
-      if (this.socket) {
-        this.create();
+      if (this.socket && !this.socket.connected) {
+        this.socket.disconnect();
         return;
       }
     }
@@ -162,6 +166,7 @@ class WebsocketManager {
     this.socket.on('qkstartCar', (payload: any) => {
       // 汇总事件来了，可能需要解析具体包
       SocketDispatch(payload, this.MySocketID);
+      this.dispatchEventHandle(payload);
     });
   }
 }

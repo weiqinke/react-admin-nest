@@ -1,10 +1,11 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import SystemInfo from './systeminfo/SystemInfo';
 import WorkChart from './workchart/WorkChart';
 import './workbench.less';
 import AccountLog from './accountlog/AccountLog';
 import { findalllogs } from 'api/nest-admin/Accountlog';
 import moment from 'moment';
+import { webSocketManager } from 'utils/websocket';
 
 interface TimeData {
   count: string;
@@ -13,6 +14,11 @@ interface TimeData {
 }
 const Workbench: FC = () => {
   const [chartdata, setchartdata] = useState<TimeData[]>([]);
+  const intervalHandle: any = useRef(null);
+  const [OsInfo, setOsInfo] = useState<any>({
+    freemem: 0,
+    totalmem: 0
+  });
   const findAllLogs = async () => {
     const result = await findalllogs({
       st: moment().subtract(7, 'days'),
@@ -30,13 +36,39 @@ const Workbench: FC = () => {
       setchartdata(timedata);
     }
   };
+  const getSystemInfo = useCallback(() => {
+    webSocketManager.postMessage({
+      name: 'qkstartCar',
+      type: 'OSSTATUS',
+      message: '查看内存使用情况',
+      data: {}
+    });
+    clearTimeout(intervalHandle.current);
+    intervalHandle.current = setTimeout(() => {
+      getSystemInfo();
+    }, 1000 * 20);
+  }, []);
+
   useEffect(() => {
     findAllLogs();
+    getSystemInfo();
+    return () => {
+      clearTimeout(intervalHandle.current);
+    };
+  }, [getSystemInfo]);
+  useEffect(() => {
+    const removeHandler = webSocketManager.addEventHandler(payload => {
+      const { name, data } = payload;
+      if (name === 'OSSTATUS') {
+        setOsInfo(data);
+      }
+    });
+    return removeHandler;
   }, []);
 
   return (
     <div className="workbench panel">
-      <SystemInfo />
+      <SystemInfo OsInfo={OsInfo} />
       <AccountLog />
       <div className="workbench-chart">
         <WorkChart chartdata={chartdata} />

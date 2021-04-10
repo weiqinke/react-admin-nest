@@ -14,7 +14,7 @@ const PrivateRoute: FC<KeyRouteProps> = ({ url, ...props }) => {
   if (loginState) {
     if (!OkStatus && url !== '' && url) {
       // 没找到此菜单
-      return <NotAuthPage />;
+      // return <NotAuthPage />;
     }
   }
   //此处用菜单验证，认为菜单返回的就是此人真正的菜单

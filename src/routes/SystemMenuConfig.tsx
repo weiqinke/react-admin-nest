@@ -71,7 +71,11 @@ const SystemPages: any[] = [
         routerDom: <ArticleDetail />
       },
       {
-        url: 'article/detail/:id',
+        url: 'article/detail/:slug',
+        routerDom: <ArticleDetail />
+      },
+      {
+        url: 'article/detail/*',
         routerDom: <ArticleDetail />
       },
       {

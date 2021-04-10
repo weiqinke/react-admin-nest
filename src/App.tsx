@@ -34,7 +34,16 @@ const App: React.FC = () => {
   }, [dispatch]);
   useEffect(() => {
     webSocketManager.create();
-    return webSocketManager.close;
+    return () => {
+      webSocketManager.postMessage({
+        name: 'qkstartCar',
+        type: '123',
+        message: '',
+        data: []
+      });
+      webSocketManager.socket.disconnect();
+      webSocketManager.close();
+    };
   }, []);
   const getAntdLocale = () => {
     if (locale === 'en_US') {

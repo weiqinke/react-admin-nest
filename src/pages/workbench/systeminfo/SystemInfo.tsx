@@ -14,8 +14,6 @@ let timer: any;
 const fetchinfo = {
   mysqlVersion: '5.7.31',
   currentSystemTime: 3616206185635,
-  freemem: 773998336,
-  totalmem: 1927364608,
   platform: 'linux',
   type: 'Linux',
   hostname: 'VM-0-14-centos',
@@ -23,20 +21,30 @@ const fetchinfo = {
   nodeVersion: 'v14.12.0',
   cpus: [
     {
-      model: 'Intel(R) Xeon(R) CPU E5-26xx v4',
+      model: 'Intel(R) Xeon(R) CPU Platinum 8280L',
       speed: 2394,
       times: { user: 197855420, nice: 61270, sys: 140104620, idle: 15165295990, irq: 0 }
     }
   ]
 };
-const SystemInfo: React.FC = () => {
+interface OSINFO {
+  freemem: number;
+  totalmem: number;
+  release: string;
+  platform: string;
+  loadavg: number[];
+  arch: string;
+  uptime: string;
+}
+const SystemInfo: React.FC<{
+  OsInfo: OSINFO;
+}> = ({ OsInfo }) => {
   const [curSystemTime, setCurSystemTime] = useState('');
   const [messageList, setMessageList] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const memPercentage = useMemo(() => {
-    return totalPercentage(fetchinfo.totalmem, fetchinfo.freemem);
-  }, []);
+    return totalPercentage(OsInfo.totalmem, OsInfo.freemem);
+  }, [OsInfo]);
 
   // 倒计时
   const countdown = useCallback(() => {
@@ -60,9 +68,9 @@ const SystemInfo: React.FC = () => {
   useEffect(() => {
     setLoading(false);
     const message: any = [
-      { id: '1', content: 'CPU正常' },
-      { id: '2', content: '内存正常' },
-      { id: '3', content: '正在获取信息...' },
+      { id: '1', content: 'CPU Intel(R) Xeon(R) Platinum 8280L 正常' },
+      { id: '2', content: '最近5、10、15分钟平均负载 正常' },
+      { id: '3', content: '内存 正常' },
       { id: '4', content: '欢迎登陆' }
     ];
     setMessageList(message);
@@ -74,8 +82,7 @@ const SystemInfo: React.FC = () => {
         <Card title="系统参数" hoverable loading={!fetchinfo.nodeVersion}>
           <p className="item-text">
             <em>系统类型：</em>
-            {fetchinfo.platform}
-            {fetchinfo.arch}
+            {OsInfo.platform}_{OsInfo.arch}
           </p>
           <p className="item-text">
             <em>Node版本：</em>
@@ -109,14 +116,14 @@ const SystemInfo: React.FC = () => {
         </Card>
       </Col>
       <Col xs={24} sm={24} md={8} lg={8} xl={8} xxl={8}>
-        <Card title={`内存使用率(${bytes(fetchinfo.totalmem)})`} hoverable className="mem">
+        <Card title={`内存使用率(${memPercentage}%)`} hoverable className="mem">
           <Progress
             type="circle"
             percent={memPercentage}
             strokeColor={statusColor(memPercentage)}
             format={percent => percent + '%'}
           />
-          <div className="surplus">剩余{bytes(fetchinfo.freemem)}</div>
+          <div className="surplus">剩余{bytes(OsInfo.freemem)}</div>
         </Card>
       </Col>
     </Row>
