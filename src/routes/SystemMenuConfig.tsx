@@ -9,6 +9,8 @@ import Workplace from 'pages/workplace/Workplace';
 import Dashboard from 'pages/dashboard/Dashboard';
 import OnlineList from 'pages/onlinelist/OnlineList';
 import WangeditorPage from 'pages/wangeditor/wangeditor';
+import WebsocketPage from 'pages/websocketpage/WebsocketPage';
+import Labels from 'pages/system/labels/Labels';
 
 const UserList = lazy(() => import(/* webpackChunkName: "userlist'"*/ 'pages/system/user/userlist'));
 const MenusList = lazy(() => import(/* webpackChunkName: "menuslist'"*/ 'pages/system/menus/menuslist'));
@@ -31,6 +33,7 @@ const ArticleEdit = lazy(() => import(/* webpackChunkName: "ArticleEdit'"*/ 'pag
 const ArticleDetail = lazy(() => import(/* webpackChunkName: "ArticleDetail'"*/ 'pages/article/detail/ArticleDetail'));
 const ArticleList = lazy(() => import(/* webpackChunkName: "ArticleList'"*/ 'pages/article/list/ArticleList'));
 const MyInfo = lazy(() => import(/* webpackChunkName: "ArticleList'"*/ 'pages/system/myinfo/MyInfo'));
+
 const SystemPages: any[] = [
   {
     url: 'login',
@@ -159,6 +162,10 @@ const SystemPages: any[] = [
         routerDom: <RoleList />
       },
       {
+        url: 'systems/useradmin/labels',
+        routerDom: <Labels />
+      },
+      {
         url: 'tarce/tarceindex',
         routerDom: <TarceIndex />
       },
@@ -185,6 +192,10 @@ const SystemPages: any[] = [
       {
         url: 'WangeditorPage/:id',
         routerDom: <WangeditorPage />
+      },
+      {
+        url: 'WebsocketPage',
+        routerDom: <WebsocketPage />
       },
 
       {

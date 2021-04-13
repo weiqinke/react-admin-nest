@@ -2,9 +2,19 @@ import { tupleStr } from 'utils/core';
 import io from 'socket.io-client';
 import { createBodyImg } from './file';
 import SocketDispatch from './socketDispatch';
-
 // 项目中所有websocket事件名称
-const eventName = tupleStr('paySignMoney', 'loginMessage', 'qkstartCar', 'QKSTART_REC', 'MESSAGE', 'OSSTATUS');
+const eventName = tupleStr(
+  'paySignMoney',
+  'loginMessage',
+  'qkstartCar',
+  'QKSTART_REC',
+  'MESSAGE',
+  'OSSTATUS',
+  'WEBSOCKET_CHAT_SERVER_TO_CLIENT',
+  'WEBSOCKET_CHAT_SENDER_TO_RECEIVER',
+  'WEBSOCKET_CHAT_SERVER_ONLINE',
+  'WEBSOCKET_CHAT_GET_HISTORY'
+);
 
 interface SocketEvent {
   name: EventName;

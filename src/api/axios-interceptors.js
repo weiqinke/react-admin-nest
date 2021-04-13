@@ -84,6 +84,13 @@ const resp20401 = {
         duration: 1
       });
     }
+    if (response.data.code !== 200 && response.data.message) {
+      console.log('response.data.message: ', response.data.message);
+      $message.error({
+        content: `${response.data.message}`,
+        duration: 1
+      });
+    }
     return response;
   }
 };

@@ -57,6 +57,13 @@ const WangeditorPage: FC = () => {
     }
   };
 
+  /**
+   * 获取我的分类
+   */
+  useEffect(() => {
+    return () => {};
+  }, []);
+
   useEffect(() => {
     return () => {};
   }, []);
