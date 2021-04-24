@@ -7,6 +7,7 @@ const eventName = tupleStr(
   'paySignMoney',
   'loginMessage',
   'qkstartCar',
+  'NewPlacard',
   'QKSTART_REC',
   'MESSAGE',
   'OSSTATUS',
@@ -46,7 +47,6 @@ class WebsocketManager {
   //  建立连接
   public that = this;
   public create() {
-    console.log('新建通信 ', this);
     // const BASE_URL: string = process.env.REACT_APP_SOCKET_URL || '';
     if (process.env.NODE_ENV === 'production') {
       this.that.SokcetUrl = process.env.REACT_APP_SOCKET_URL;

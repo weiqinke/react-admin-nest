@@ -13,6 +13,7 @@ import { setTagPlanVisible } from 'stores/tags-view.store';
 import { webSocketManager } from 'utils/websocket';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n'; // 在这里导入 i18n.js
+import WebSocketPublic from 'pages/system/socketpublic/WebSocketPublic';
 const App: React.FC = () => {
   const { locale } = useAppState(state => state.user);
   const dispatch = useAppDispatch();
@@ -60,6 +61,7 @@ const App: React.FC = () => {
           <BrowserRouter>
             <RenderRouter />
           </BrowserRouter>
+          <WebSocketPublic />
         </I18nextProvider>
       </IntlProvider>
     </ConfigProvider>

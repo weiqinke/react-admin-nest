@@ -4,6 +4,7 @@ import { broadcastPlacard, findAllTypePlacardList } from 'api/nest-admin/placard
 import { Button, message, Table, Tag } from 'antd';
 import PlacardEditModal from './PlacardEditModal';
 import moment from 'moment';
+import { webSocketManager } from 'utils/websocket';
 
 interface PlacardData {
   created: string;
@@ -98,12 +99,17 @@ const Placard: FC = () => {
     const result = await broadcastPlacard(record);
     if (result.data.code === 200) {
       message.info('发布成功');
+      webSocketManager.postMessage({
+        name: 'qkstartCar',
+        type: 'broadcastPlacard',
+        message: '',
+        data: record
+      });
     } else {
       message.info(result.data.message);
     }
     setUpdate(update + 1);
   };
-
   useEffect(() => {
     findAllPlacards();
     return () => {};
