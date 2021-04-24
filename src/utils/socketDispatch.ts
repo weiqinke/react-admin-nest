@@ -1,7 +1,6 @@
 import { notification } from 'antd';
 const SocketDispatch = (payload: any, MySocketID: string) => {
   const { name } = payload;
-  console.log('name: ', name);
   switch (name) {
     case 'STSTEM':
       SOCKET_SYSTE(payload, MySocketID);

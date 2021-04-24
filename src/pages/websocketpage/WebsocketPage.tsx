@@ -64,7 +64,6 @@ const WebsocketPage: FC = () => {
     });
     const removeHandler = webSocketManager.addEventHandler(payload => {
       const { name, data } = payload;
-      console.log('name: ', name);
       if (name === 'WEBSOCKET_CHAT_SERVER_ONLINE') {
         const { users } = data;
         setUserList(users);
