@@ -11,6 +11,7 @@ import OnlineList from 'pages/onlinelist/OnlineList';
 import WangeditorPage from 'pages/wangeditor/wangeditor';
 import WebsocketPage from 'pages/websocketpage/WebsocketPage';
 import Labels from 'pages/system/labels/Labels';
+import Placard from 'pages/system/placard/Placard';
 
 const UserList = lazy(() => import(/* webpackChunkName: "userlist'"*/ 'pages/system/user/userlist'));
 const MenusList = lazy(() => import(/* webpackChunkName: "menuslist'"*/ 'pages/system/menus/menuslist'));
@@ -164,6 +165,10 @@ const SystemPages: any[] = [
       {
         url: 'systems/useradmin/labels',
         routerDom: <Labels />
+      },
+      {
+        url: 'systems/useradmin/placard',
+        routerDom: <Placard />
       },
       {
         url: 'tarce/tarceindex',

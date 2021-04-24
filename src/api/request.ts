@@ -56,7 +56,11 @@ export const request = async (url: string, method: string, params: any, options?
   switch (method) {
     case 'get':
       return axios.get(url, { params });
+    case 'GET':
+      return axios.get(url, { params });
     case 'post':
+      return axios.post(url, params, { ...options });
+    case 'POST':
       return axios.post(url, params, { ...options });
     case 'delete':
       return axios.delete(url, { params });

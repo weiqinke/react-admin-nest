@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Button, Checkbox, Form, Input, message, Tabs } from 'antd';
+import { Button, Checkbox, Form, Input, message, Modal, Tabs } from 'antd';
 import './index.less';
 import { useNavigate } from 'react-router-dom';
 import { LoginParams } from 'interface/user/login';
@@ -12,6 +12,7 @@ import { Zhuce, accountlogin } from 'api/nest-admin/User';
 import { getUserMenus } from 'api/nest-admin/MenuApi';
 import { webSocketManager } from 'utils/websocket';
 import CaptchaMini from 'captcha-mini';
+import { findLastTypePlacardList, readOnePlacard } from 'api/nest-admin/placard';
 interface LoginParamsMore {
   name: string;
   password: string;
@@ -24,6 +25,7 @@ const initialValues: LoginParamsMore = {
   yanzhegnma: '',
   remember: true
 };
+
 const { TabPane } = Tabs;
 //此文件也有内存泄漏风险
 const LoginForm: FC = () => {
@@ -122,11 +124,38 @@ const LoginForm: FC = () => {
           })
         );
         dispatch(setActiveTag(meUrl));
+        //需要获取下我未读的系统公告
+        findLastTypePlacardList({
+          type: 'system',
+          status: 'broadcasting'
+        }).then(result => {
+          //如果请求成功，需要弹出对应数量的公告modal
+          countDown(result.data.data);
+        });
         navigate(from);
       }
     });
   };
   const [socketMessage, setSocketMeseage] = useState<any>({ message: null, data: null });
+
+  const countDown = (result: any) => {
+    result.map((item: any, index: number) => {
+      return Modal.info({
+        title: <p>{item.title}</p>,
+        mask: index === 0,
+        okText: '确认收到',
+        width: 600,
+        content: (
+          <div className="systemCard">
+            <p>{item.description}</p>
+          </div>
+        ),
+        onOk() {
+          readOnePlacard(item);
+        }
+      });
+    });
+  };
 
   useEffect(() => {
     let captcha2 = new CaptchaMini({
