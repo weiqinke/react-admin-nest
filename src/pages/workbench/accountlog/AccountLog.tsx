@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Table } from 'antd';
-import { getAccountLog } from 'api/nest-admin/User';
 import moment from 'moment';
-const AccountLog: React.FC = () => {
+const AccountLog: React.FC<any> = props => {
+  const { Tableata } = props;
   const columns = [
     {
       title: '账号',
@@ -21,8 +21,16 @@ const AccountLog: React.FC = () => {
       dataIndex: 'os'
     },
     {
-      title: '账号',
-      dataIndex: 'name'
+      title: '国家',
+      dataIndex: 'country'
+    },
+    {
+      title: '省份',
+      dataIndex: 'province'
+    },
+    {
+      title: '市区',
+      dataIndex: 'city'
     },
     {
       title: '登陆时间',
@@ -32,23 +40,10 @@ const AccountLog: React.FC = () => {
       }
     }
   ];
-  const [userslist, setUserlist] = useState([]);
-  useEffect(() => {
-    getAccountLog({
-      name: '',
-      st: moment()
-        .subtract('7', 'day')
-        .format('YYYY-MM-DD'),
-      et: moment().format('YYYY-MM-DD HH:mm:ss')
-    }).then(result => {
-      if (result.data.code === 200) {
-        setUserlist(result.data.data);
-      }
-    });
-  }, []);
+  useEffect(() => {}, []);
   return (
     <div>
-      <Table columns={columns} dataSource={userslist} rowKey={(record: any) => record.created} />
+      <Table columns={columns} dataSource={Tableata} rowKey={(record: any) => record.id} />
     </div>
   );
 };

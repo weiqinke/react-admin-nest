@@ -3,7 +3,7 @@ import SystemInfo from './systeminfo/SystemInfo';
 import WorkChart from './workchart/WorkChart';
 import './workbench.less';
 import AccountLog from './accountlog/AccountLog';
-import { findalllogs } from 'api/nest-admin/Accountlog';
+import { findalllogs, updateAllIpAddrs } from 'api/nest-admin/Accountlog';
 import moment from 'moment';
 import { webSocketManager } from 'utils/websocket';
 
@@ -19,6 +19,7 @@ const Workbench: FC = () => {
     freemem: 0,
     totalmem: 0
   });
+  const [Tabledata, setTabledata] = useState<TimeData[]>([]);
   const findAllLogs = async () => {
     const result = await findalllogs({
       st: moment().subtract(7, 'days'),
@@ -26,6 +27,7 @@ const Workbench: FC = () => {
     });
     if (result.data.code === 200) {
       const timedata: TimeData[] = [];
+      setTabledata(result.data.data || []);
       result.data.data.map((item: any) => {
         return timedata.push({
           count: item.name,
@@ -57,6 +59,7 @@ const Workbench: FC = () => {
     };
   }, [getSystemInfo]);
   useEffect(() => {
+    updateAllIpAddrs();
     const removeHandler = webSocketManager.addEventHandler(payload => {
       const { name, data } = payload;
       if (name === 'OSSTATUS') {
@@ -69,7 +72,7 @@ const Workbench: FC = () => {
   return (
     <div className="workbench panel">
       <SystemInfo OsInfo={OsInfo} />
-      <AccountLog />
+      <AccountLog Tableata={Tabledata} />
       <div className="workbench-chart">
         <WorkChart chartdata={chartdata} />
       </div>
