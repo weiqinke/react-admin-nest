@@ -43,7 +43,7 @@ const AccountLog: React.FC<any> = props => {
   useEffect(() => {}, []);
   return (
     <div>
-      <Table columns={columns} dataSource={Tableata} rowKey={(record: any) => record.id} />
+      <Table columns={columns} dataSource={Tableata.reverse()} rowKey={(record: any) => record.id} />
     </div>
   );
 };

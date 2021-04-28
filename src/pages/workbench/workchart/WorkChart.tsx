@@ -36,8 +36,8 @@ const WorkChart: React.FC<IProps> = (props: any) => {
       <Interval adjust="stack" color="count" position="year*value" />
       <Annotation.Text
         position={['min', 'max']}
-        content="最近7天活跃频率"
-        offsetX={-140}
+        content="最近15天活跃频率"
+        offsetX={-40}
         offsetY={10}
         style={{
           fontSize: 14

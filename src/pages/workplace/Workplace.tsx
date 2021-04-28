@@ -17,7 +17,7 @@ const Workplace: FC = () => {
   }, []);
   return (
     <div className="Workplace">
-      <DropChild>123</DropChild>
+      <DropChild></DropChild>
 
       <TarceIndex />
     </div>

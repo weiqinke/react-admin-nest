@@ -1,9 +1,9 @@
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import SystemInfo from './systeminfo/SystemInfo';
 import WorkChart from './workchart/WorkChart';
 import './workbench.less';
 import AccountLog from './accountlog/AccountLog';
-import { findalllogs, updateAllIpAddrs } from 'api/nest-admin/Accountlog';
+import { findalllogs } from 'api/nest-admin/Accountlog';
 import moment from 'moment';
 import { webSocketManager } from 'utils/websocket';
 
@@ -22,7 +22,7 @@ const Workbench: FC = () => {
   const [Tabledata, setTabledata] = useState<TimeData[]>([]);
   const findAllLogs = async () => {
     const result = await findalllogs({
-      st: moment().subtract(7, 'days'),
+      st: moment().subtract(15, 'days'),
       et: moment()
     });
     if (result.data.code === 200) {
@@ -59,7 +59,6 @@ const Workbench: FC = () => {
     };
   }, [getSystemInfo]);
   useEffect(() => {
-    updateAllIpAddrs();
     const removeHandler = webSocketManager.addEventHandler(payload => {
       const { name, data } = payload;
       if (name === 'OSSTATUS') {
@@ -69,13 +68,16 @@ const Workbench: FC = () => {
     return removeHandler;
   }, []);
 
+  //使用memo优化图形组件。
+  const Memo = useMemo(() => {
+    return <WorkChart chartdata={chartdata} />;
+  }, [chartdata]);
+
   return (
     <div className="workbench panel">
       <SystemInfo OsInfo={OsInfo} />
       <AccountLog Tableata={Tabledata} />
-      <div className="workbench-chart">
-        <WorkChart chartdata={chartdata} />
-      </div>
+      <div className="workbench-chart">{Memo}</div>
     </div>
   );
 };
