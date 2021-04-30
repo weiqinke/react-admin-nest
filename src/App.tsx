@@ -14,6 +14,9 @@ import { webSocketManager } from 'utils/websocket';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n'; // 在这里导入 i18n.js
 import WebSocketPublic from 'pages/system/socketpublic/WebSocketPublic';
+import { ErrorBoundary } from 'pages/commponents/error-boundary';
+import { FullPageErrorFallback } from 'pages/commponents/lib';
+
 const App: React.FC = () => {
   const { locale } = useAppState(state => state.user);
   const dispatch = useAppDispatch();
@@ -55,16 +58,18 @@ const App: React.FC = () => {
   };
 
   return (
-    <ConfigProvider locale={getAntdLocale()} componentSize="middle">
-      <IntlProvider locale={locale.split('_')[0]} messages={lacaleConfig[locale]}>
-        <I18nextProvider i18n={i18n}>
-          <BrowserRouter>
-            <RenderRouter />
-          </BrowserRouter>
-          <WebSocketPublic />
-        </I18nextProvider>
-      </IntlProvider>
-    </ConfigProvider>
+    <ErrorBoundary fallbackRender={FullPageErrorFallback}>
+      <ConfigProvider locale={getAntdLocale()} componentSize="middle">
+        <IntlProvider locale={locale.split('_')[0]} messages={lacaleConfig[locale]}>
+          <I18nextProvider i18n={i18n}>
+            <BrowserRouter>
+              <RenderRouter />
+            </BrowserRouter>
+            <WebSocketPublic />
+          </I18nextProvider>
+        </IntlProvider>
+      </ConfigProvider>
+    </ErrorBoundary>
   );
 };
 
