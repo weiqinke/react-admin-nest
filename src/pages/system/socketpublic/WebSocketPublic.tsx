@@ -30,7 +30,7 @@ const WebSocketPublic: FC = () => {
     });
     return removeHandler;
   }, []);
-  return <div className="users-list-page"></div>;
+  return <></>;
 };
 
 export default WebSocketPublic;

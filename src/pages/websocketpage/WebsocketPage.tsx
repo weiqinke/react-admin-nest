@@ -98,7 +98,9 @@ const WebsocketPage: FC = () => {
           renderItem={item => (
             <List.Item>
               <List.Item.Meta
-                avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+                avatar={
+                  <Avatar src="https://portrait.gitee.com/uploads/avatars/user/431/1295434_weiqinke_1591925291.png!avatar30" />
+                }
                 title={<a href="https://ant.design">{item.sender}</a>}
                 description={item.note}
               />

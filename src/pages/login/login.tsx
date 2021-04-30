@@ -184,7 +184,6 @@ const LoginForm: FC = () => {
 
   return (
     <div className="login-page">
-      <div className="bgimg"></div>
       <div className="login-page-body">
         <h2 className="title">Nest Admin</h2>
         <h2>{errmsg}</h2>

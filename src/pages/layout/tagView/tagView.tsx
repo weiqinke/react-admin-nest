@@ -12,7 +12,7 @@ import {
   setActiveTag,
   setTagPlanVisible
 } from 'stores/tags-view.store';
-import { findMenuOpenKeys, getTagByMenus, setLocalStorage } from 'utils/menuUtil';
+import { getTagByMenus } from 'utils/menuUtil';
 import './tagView.less';
 import { setRefreshFCUrl } from 'stores/user.store';
 import { setChangeFixedMenu } from 'stores/menu.store';
@@ -40,9 +40,11 @@ const TagsView: FC = () => {
         changeFixedMenu: MenuHasChildren
       })
     );
-    const [nextMenuItem] = MenuHasChildren;
-    const cacheOpenKeys = findMenuOpenKeys(nextMenuItem);
-    setLocalStorage('cacheOpenKeys', cacheOpenKeys); // 记住展开关闭的组，刷新持久化
+    // const [nextMenuItem] = MenuHasChildren;
+    // const cacheOpenKeys = findMenuOpenKeys(nextMenuItem);
+    // setLocalStorage('cacheOpenKeys', cacheOpenKeys); // 记住展开关闭的组，刷新持久化
+    // 此处是指切换标签时，想切换左边的菜单选中状态，实际操作后发现，同一个菜单下的子菜单，切换时会闭合掉，暂时不追此问题，
+    //我分析是 切换时。切换了tab 导致最后一次记录被清空，所以菜单也分不清该展开谁。
   };
 
   //关闭标签时，从tags中删除指定标签
