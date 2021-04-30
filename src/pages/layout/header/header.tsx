@@ -13,6 +13,7 @@ import { deleteAllTag } from 'stores/tags-view.store';
 import { useTranslation } from 'react-i18next';
 import i18n from 'i18next';
 import './header.less';
+import { webSocketManager } from 'utils/websocket';
 const { Header } = Layout;
 
 interface Props {
@@ -30,6 +31,14 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
   const { t } = useTranslation();
   const [headerUrl, setheaderUrl] = useState(localStorage.getItem('avatar') || '');
   const logout = async () => {
+    //下线时，我主动断开房间连接
+    webSocketManager.postMessage({
+      name: 'nest-admin',
+      type: 'leaveWEBSOCKET_ROOM',
+      message: '',
+      data: {}
+    });
+
     navigate('/login');
     dispatch(logoutSystem());
     //退出时，我们把打开的标签记录清空。
@@ -52,6 +61,16 @@ const HeaderComponent: FC<Props> = ({ collapsed, toggle }) => {
   useEffect(() => {
     const avatar: string = localStorage.getItem('avatar') || '';
     setheaderUrl(avatar);
+  }, []);
+  useEffect(() => {
+    const removeHandler = webSocketManager.addEventHandler(payload => {
+      const { name } = payload;
+      if (name === 'ForcedOffline') {
+        logout();
+      }
+    });
+    return removeHandler;
+    // eslint-disable-next-line
   }, []);
 
   const menu = (

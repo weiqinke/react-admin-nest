@@ -18,7 +18,6 @@ const Workplace: FC = () => {
   return (
     <div className="Workplace">
       <DropChild></DropChild>
-
       <TarceIndex />
     </div>
   );

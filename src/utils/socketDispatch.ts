@@ -6,7 +6,7 @@ const SocketDispatch = (payload: any, MySocketID: string) => {
       SOCKET_SYSTE(payload, MySocketID);
       return;
     case 'MESSAGE':
-      getOnlineUser(payload, MySocketID);
+      getOnlineUsers(payload, MySocketID);
       return;
     default:
       SOCKET_lOGIN(payload, MySocketID);
@@ -34,11 +34,11 @@ const SOCKET_SYSTE = async (payload: any, MySocketID: string) => {
   }
 };
 
-const getOnlineUser = async (payload: any, MySocketID: string) => {
+const getOnlineUsers = async (payload: any, MySocketID: string) => {
   const { func_call, data } = payload;
   const { OnlineUser } = data;
   switch (func_call) {
-    case 'getOnlineuser':
+    case 'getOnlineUsers':
       // console.log(OnlineUser, '在线列表');
       return OnlineUser;
   }

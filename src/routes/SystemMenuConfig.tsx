@@ -188,7 +188,7 @@ const SystemPages: any[] = [
       },
       {
         url: 'onlinelist',
-        routerDom: <NotFound />
+        routerDom: <OnlineList />
       },
       {
         url: 'WangeditorPage',

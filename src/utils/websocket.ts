@@ -18,7 +18,7 @@ const eventName = tupleStr(
 );
 
 interface SocketEvent {
-  name: EventName;
+  name: EventName | string;
   message: any;
   data: any;
   type?: any;
@@ -146,14 +146,13 @@ class WebsocketManager {
             token
           }
         });
-        this.postMessage({
-          name: 'qkstartCar',
-          message: '看下在线人数',
+        webSocketManager.postMessage({
+          name: 'nest-admin',
+          message: '修改socket名称',
+          type: 'ResetUserName',
           data: {
-            token,
-            func: 'getOnlineUser'
-          },
-          type: 'MESSAGE'
+            userName: localStorage.getItem('nick')
+          }
         });
         return;
       }
@@ -176,6 +175,10 @@ class WebsocketManager {
     this.socket.on('qkstartCar', (payload: any) => {
       // 汇总事件来了，可能需要解析具体包
       SocketDispatch(payload, this.MySocketID);
+      this.dispatchEventHandle(payload);
+    });
+    //主线事件包
+    this.socket.on('nest-admin', (payload: any) => {
       this.dispatchEventHandle(payload);
     });
   }

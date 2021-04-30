@@ -58,6 +58,14 @@ const LoginForm: FC = () => {
         localStorage.setItem('avatar', avatar);
         setUserInfo(result.data);
         getMenuDatabyToken();
+        webSocketManager.postMessage({
+          name: 'nest-admin',
+          message: '修改socket名称',
+          type: 'ResetUserName',
+          data: {
+            userName: nick
+          }
+        });
       }
     });
   };
