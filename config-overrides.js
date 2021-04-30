@@ -5,6 +5,7 @@ process.env.GENERATE_SOURCEMAP !== 'false';
 /***生产环境是否打包 Source Map 两种方法 */
 const rewiredSourceMap = () => config => {
   config.devtool = config.mode === 'development' ? 'cheap-module-source-map' : 'cheap-module-source-map';
+  if(process.env.NODE_ENV==="production") config.devtool=false;
   return config;
 };
 
