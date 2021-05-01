@@ -3,6 +3,12 @@ import moment from 'moment';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import './Workplace.less';
 import { bd_encrypt } from 'utils/core';
+import ReactDOM from 'react-dom';
+import usePrevious from 'hooks/usePrevious';
+import { sendToOne } from 'api/nest-admin/Notice';
+import { message } from 'antd';
+var lastid: string = '';
+var receiverid: string = '';
 const BaiduMap: FC = () => {
   const BMap = (window as any).BMap;
   const [, setMapdiv] = useState(null);
@@ -39,6 +45,9 @@ const BaiduMap: FC = () => {
         const point = new BMap.Point(bd_lng, bd_lat);
         var marker = new BMap.Marker(point);
         marker.Iteminfo = item;
+        //这里注意下。因为目前使用的数据量比较小，暂时生成保存。
+        //如果量比较大的情况下，需要先生成marker点，然后在点击事件中。再次生成window点
+        marker.infoWindow = createInfoWindow(item);
         marker.mouseoverMaker = initOneLabel(item, point);
         var icon = marker.getIcon();
         marker.setShadow(icon);
@@ -75,11 +84,81 @@ const BaiduMap: FC = () => {
           setHovering(false);
           mapHandle.current.removeOverlay(marker.mouseoverMaker);
         });
-
+        marker.addEventListener('click', () => {
+          if (mapHandle.current.getInfoWindow() === null) {
+            lastid = '';
+          } else {
+            if (item.id === lastid) {
+              return;
+            }
+          }
+          lastid = item.id;
+          receiverid = item.uid || '';
+          mapHandle.current.openInfoWindow(marker.infoWindow, point); // 打开信息窗口
+          setTimeout(() => {
+            var dom = document.getElementById(`InfoWindowContent_${item.id}`);
+            if (dom) {
+              ReactDOM.render(infowindowJsx(item), dom);
+            }
+          }, 20);
+        });
         mapHandle.current.addOverlay(marker);
         return true;
       });
     }
+  };
+  const sendata = () => {
+    const payload = {
+      description: textareavalue,
+      type: 'message',
+      receiverid: receiverid
+    };
+    sendToOne(payload).then(result => {
+      if (result.data.code === 200) {
+        message.info('发送成功');
+        textRef.current.value = '';
+      }
+    });
+  };
+  var textareavalue: any = usePrevious('');
+  const changeTextareaValue = (event: any) => {
+    textareavalue = event.target.value;
+  };
+  var textRef: any = useRef(null);
+
+  const infowindowJsx = (item: any) => {
+    return (
+      <div className={''}>
+        <div className="inputtext">
+          <textarea className="textarea" name="" id="" rows={5} onChange={changeTextareaValue} ref={textRef}></textarea>
+        </div>
+        <div
+          className="sendtext"
+          onClick={() => {
+            sendata();
+          }}
+        >
+          发送文字
+        </div>
+      </div>
+    );
+  };
+
+  const createInfoWindow = (iteminfo: any) => {
+    var opts = {
+      width: 690, // 信息窗口宽度
+      height: 200, // 信息窗口高度
+      title: `<div class="infowindowtitle "><span class="title" data-id="${iteminfo.id}">${iteminfo.name}</span></div>`, // 信息窗口标题
+      offset: 0,
+      enableCloseOnClick: false
+    };
+    var infoWindow = new BMap.InfoWindow(
+      `<div class="InfoWindowContent InfoWindowContent_${iteminfo.id}" id="InfoWindowContent_${iteminfo.id}" ></div>`,
+      opts
+    ); // 创建信息窗口对象
+    infoWindow.Snowflake = iteminfo.id;
+    infoWindow.enableAutoPan();
+    return infoWindow;
   };
 
   const initOneLabel = (item: any, point: any) => {
@@ -118,6 +197,9 @@ const BaiduMap: FC = () => {
       mapHandle.current.removeOverlay();
       mapHandle.current.closeInfoWindow();
     };
+
+    //需要添加一次事件委托，保证地图中的事件能正常触发
+
     // eslint-disable-next-line
   }, []);
 

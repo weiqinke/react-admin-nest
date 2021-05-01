@@ -4,7 +4,7 @@ import { BellOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Notice, EventStatus } from 'interface/layout/notice.interface';
 import { useAppState } from 'stores';
 import './notice.less';
-import { getallnotices } from 'api/nest-admin/Notice';
+import { getallnotices, getUidNotices } from 'api/nest-admin/Notice';
 
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
@@ -28,16 +28,17 @@ const HeaderNoticeComponent: FC = () => {
     intervalHandle.current = setTimeout(() => {
       setNoticeNum(Math.ceil(Math.random() * 1000));
     }, 1000 * 60 * 60);
-    getallnotices()
+    getUidNotices()
       .then(result => {
         setLoading(false);
-        if (result.status && result.data && Array.isArray(result.data)) {
-          setNoticeList(result.data);
+        if (result.status && result.data && Array.isArray(result.data.data)) {
+          setNoticeList(result.data.data);
         }
       })
       .catch(() => {
         setLoading(false);
       });
+    getallnotices();
   };
 
   useEffect(() => {
@@ -49,7 +50,8 @@ const HeaderNoticeComponent: FC = () => {
       clearTimeout(intervalHandle.current);
     };
   }, []);
-
+  const onClear = () => {};
+  const onViewMore = () => {};
   const tabs = (
     <div className="topNotice">
       <Spin tip="Loading..." indicator={antIcon} spinning={loading}>
@@ -70,15 +72,19 @@ const HeaderNoticeComponent: FC = () => {
           </TabPane>
           <TabPane tab={`消息(${noticeListFilter('message').length})`} key="2">
             <List
-              dataSource={noticeListFilter('message')}
+              dataSource={noticeListFilter('message').slice(0, 5)}
               renderItem={item => (
                 <List.Item>
                   <List.Item.Meta
-                    avatar={<Avatar src={item.avatar} />}
-                    title={<a href={item.title}>{item.title}</a>}
+                    avatar={
+                      <Avatar src={'http://image.weiqinke.top/qkstartimg/Avatar/' + item.originUid + '-Avatar.png'} />
+                    }
+                    title={<span>{item.title}</span>}
                     description={
                       <div className="notice-description">
-                        <div className="notice-description-content">{item.description}</div>
+                        <div className="notice-description-content">
+                          {item.description.slice(0, 50)} {item.description.length > 50 ? '......' : ''}
+                        </div>
                         <div className="notice-description-datetime">{item.datetime}</div>
                       </div>
                     }
@@ -106,6 +112,14 @@ const HeaderNoticeComponent: FC = () => {
             />
           </TabPane>
         </Tabs>
+        <div className="bottomBar">
+          <div onClick={onClear}>
+            <span>清空</span>
+          </div>
+          <div onClick={onViewMore}>
+            <span>查看更多</span>
+          </div>
+        </div>
       </Spin>
     </div>
   );
@@ -120,7 +134,7 @@ const HeaderNoticeComponent: FC = () => {
         width: 336,
         backgroundColor: '#ffffff',
         boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-        padding: 8,
+        padding: '8px 8px 0px 8px',
         borderRadius: 4
       }}
     >

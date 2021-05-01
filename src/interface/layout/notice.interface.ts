@@ -19,6 +19,7 @@ export interface Notification extends Base {
 }
 
 export interface Message extends Base {
+  originUid: string;
   type: 'message';
   read?: boolean;
   avatar: string;
