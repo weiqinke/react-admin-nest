@@ -12,6 +12,7 @@ import WangeditorPage from 'pages/wangeditor/wangeditor';
 import WebsocketPage from 'pages/websocketpage/WebsocketPage';
 import Labels from 'pages/system/labels/Labels';
 import Placard from 'pages/system/placard/Placard';
+import BaiduMap from 'pages/workplace/BaiduMap';
 
 const UserList = lazy(() => import(/* webpackChunkName: "userlist'"*/ 'pages/system/user/userlist'));
 const MenusList = lazy(() => import(/* webpackChunkName: "menuslist'"*/ 'pages/system/menus/menuslist'));
@@ -63,6 +64,11 @@ const SystemPages: any[] = [
       {
         url: 'workbench',
         routerDom: <Workbench />
+      },
+      //地图监控
+      {
+        url: 'baidumap',
+        routerDom: <BaiduMap />
       },
 
       // 文章模块
