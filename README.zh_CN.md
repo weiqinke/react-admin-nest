@@ -2,7 +2,7 @@
 
 <h1 align="center">Nest Admin</h1>
 
-- 预览: https://qkstart.com
+- 预览: https://nest-admin.com
 - Github: https://github.com/weiqinke/react-admin-nest
 - 欢迎 fork star
 
