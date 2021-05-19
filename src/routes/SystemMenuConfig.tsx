@@ -13,6 +13,7 @@ import WebsocketPage from 'pages/websocketpage/WebsocketPage';
 import Labels from 'pages/system/labels/Labels';
 import Placard from 'pages/system/placard/Placard';
 import BaiduMap from 'pages/workplace/BaiduMap';
+import D3Page from 'pages/workplace/D3Page';
 
 const UserList = lazy(() => import(/* webpackChunkName: "userlist'"*/ 'pages/system/user/userlist'));
 const MenusList = lazy(() => import(/* webpackChunkName: "menuslist'"*/ 'pages/system/menus/menuslist'));
@@ -207,6 +208,10 @@ const SystemPages: any[] = [
       {
         url: 'WebsocketPage',
         routerDom: <WebsocketPage />
+      },
+      {
+        url: 'D3Page',
+        routerDom: <D3Page />
       },
 
       {
