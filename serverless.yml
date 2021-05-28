@@ -1,0 +1,23 @@
+# 欢迎使用 ⚡️serverless⚡️ 组件
+#
+# serverless组件是基于具体使用场景(Express, 静态网站等)提供的定制云资源编排和组织的解决方案。
+# 这是serverless的主要配置文件，包含了一些使用示例以及注释说明。
+# 您只需几行配置描述，即可进行云函数、API 网关、COS、DB 等
+# Serverless 资源进行快速创建、部署和修改。
+#
+# 有关完整的配置选项，请检查文档：
+# https://cloud.tencent.com/document/product/1154/51080
+#
+# 👩‍💻 Happy Coding 👨‍💻
+
+# ##应用信息##
+app: my-react.js-app-92c1cdfd # app名称(app唯一识别标识)。同账号下需唯一，留空则继承组件实例名称
+component: website # [必选]要使用组件，更多组件请查看 https://github.com/serverless-components
+name: react-starter # [必选]组件实例名称
+
+# #website 组件配置##
+# 更多内容请查看：https://github.com/serverless-components/tencent-website/blob/master/docs/configure.md
+inputs:
+  src: ./build
+  bucketName: my-react-starter # Bucket 名称（不允许大写字母）。默认添加 AppId 作为后缀
+  protocol: https
