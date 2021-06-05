@@ -132,7 +132,7 @@ class Double extends React.Component {
     };
     return (
       <div>
-        <Chart height={400} background={{ fill: '#fff' }} data={data} scale={scale} forceFit>
+        <Chart height={400} width={400} background={{ fill: '#fff' }} data={data} scale={scale} forceFit>
           <Legend />
           <Axis name="month" />
           <Axis

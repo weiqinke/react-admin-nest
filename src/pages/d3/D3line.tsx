@@ -143,6 +143,7 @@ const D3line: FC = () => {
         svg.remove();
       }
     };
+    // eslint-disable-next-line
   }, []);
   return (
     <div className="D3line">

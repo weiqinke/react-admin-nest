@@ -75,17 +75,21 @@ const LoginForm: FC = () => {
     }).then(result => {
       if (result.data.code === 200) {
         //登录成功，获取菜单
-        const { token } = result.data.data;
-        dispatch(
-          setUserItem({
-            loginState: true,
-            nick: form.nick || ''
-          })
-        );
-        // localStorage.setItem('token', token);
-        sessionStorage.setItem('token', token);
-        setUserInfo(result.data);
-        getMenuDatabyToken();
+
+        // const { token } = result.data.data;
+        // dispatch(
+        //   setUserItem({
+        //     loginState: true,
+        //     nick: form.nick || ''
+        //   })
+        // );
+        // // localStorage.setItem('token', token);
+        // sessionStorage.setItem('token', token);
+        // setUserInfo(result.data);
+        // getMenuDatabyToken();
+        message.success('注册成功，请登录。');
+      } else {
+        message.error('注册失败，请检查填写内容。');
       }
     });
   };

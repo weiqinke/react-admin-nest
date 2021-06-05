@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import { Row, Col } from 'antd';
 import D3line from 'pages/d3/D3line';
 const D3Page: FC = () => {

@@ -55,6 +55,7 @@ class BaseChart extends React.Component {
       <div>
         <Chart
           height={400}
+          width={400}
           padding={[30, 40, 50, 65]}
           forceFit={true}
           background={{ fill: '#fff' }}

@@ -49,7 +49,15 @@ class Basic extends React.Component {
     };
     return (
       <div>
-        <Chart height={400} padding={[40, 0, 50, 0]} background={{ fill: '#fff' }} data={dv} scale={scale} forceFit>
+        <Chart
+          height={400}
+          width={400}
+          padding={[40, 0, 50, 0]}
+          background={{ fill: '#fff' }}
+          data={dv}
+          scale={scale}
+          forceFit
+        >
           <Coord type="polar" radius={1} />
           <Axis name="item" />
           <Tooltip />

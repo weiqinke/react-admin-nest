@@ -43,7 +43,15 @@ class InnerLabel extends React.Component {
     };
     return (
       <div>
-        <Chart height={400} padding={[20, 0, 20, 0]} background={{ fill: '#fff' }} data={dv} scale={scale} forceFit>
+        <Chart
+          height={400}
+          width={400}
+          padding={[20, 0, 20, 0]}
+          background={{ fill: '#fff' }}
+          data={dv}
+          scale={scale}
+          forceFit
+        >
           <Coord type="theta" radius={1} />
           <Axis name="percent" />
           <Legend position="right" offsetY={-200} offsetX={-60} />

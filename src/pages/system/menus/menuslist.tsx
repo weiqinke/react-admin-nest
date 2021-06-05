@@ -89,14 +89,17 @@ const MenusList: FC = () => {
       render: (text: any, record: any) => {
         return (
           <div>
-            <Button
-              type="link"
-              onClick={() => {
-                addChildPage(record);
-              }}
-            >
-              添加子页面
-            </Button>
+            {record.type === 'page' ? null : (
+              <Button
+                type="link"
+                onClick={() => {
+                  addChildPage(record);
+                }}
+              >
+                添加子页面
+              </Button>
+            )}
+
             <Button
               type="link"
               onClick={() => {
