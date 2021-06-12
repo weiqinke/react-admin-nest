@@ -32,9 +32,11 @@ const LoginForm: FC = () => {
   const navigate = useNavigate();
   const { setUserInfo, saveMenu } = useSystemUserInfo();
   const [errmsg] = useState('');
+  const [loginLoading, setloginLoading] = useState(false);
   const dispatch = useAppDispatch();
   const [type, setType] = useState<string>('account');
-  const onFinished = async (form: LoginParams) => {
+  const Logined = async (form: LoginParams) => {
+    setloginLoading(true);
     const payload = {
       ...form,
       logintype: 'web'
@@ -201,7 +203,7 @@ const LoginForm: FC = () => {
         <h2>{errmsg}</h2>
         <Tabs defaultActiveKey={type} centered onChange={setType}>
           <TabPane tab="登录" key="account">
-            <Form<LoginParams> onFinish={onFinished} className="login-page-form_account" initialValues={initialValues}>
+            <Form<LoginParams> onFinish={Logined} className="login-page-form_account" initialValues={initialValues}>
               <Form.Item name="name" rules={[{ required: true, message: '请输入用户名！' }]}>
                 <Input placeholder="用户名:qkstart" />
               </Form.Item>
@@ -223,7 +225,12 @@ const LoginForm: FC = () => {
                 <Checkbox>记住用户</Checkbox>
               </Form.Item>
               <Form.Item>
-                <Button htmlType="submit" type="primary" className="login-page-form_button_account">
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  className="login-page-form_button_account"
+                  loading={loginLoading}
+                >
                   登录
                 </Button>
               </Form.Item>
