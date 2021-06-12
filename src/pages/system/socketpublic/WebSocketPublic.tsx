@@ -1,4 +1,4 @@
-import { Modal } from 'antd';
+import { Modal, notification } from 'antd';
 import { readOnePlacard } from 'api/nest-admin/placard';
 import React, { FC, useEffect, useRef } from 'react';
 import { webSocketManager } from 'utils/websocket';
@@ -26,6 +26,20 @@ const WebSocketPublic: FC = () => {
           }
         });
         PlacardIndex.current += 1;
+      }
+      if (type === 'joinRoom') {
+        // 加入房间
+        notification.open({
+          message: '通知',
+          description: data.name + '进入了系统'
+        });
+      }
+      if (type === 'leaveRoom') {
+        // 离开房间
+        notification.open({
+          message: '通知',
+          description: data.name + '离开了系统'
+        });
       }
     });
     return removeHandler;
