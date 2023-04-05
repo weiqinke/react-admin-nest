@@ -1,0 +1,44 @@
+.container {
+  width: 324px;
+  height: 366px;
+  padding: 12px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -183px;
+  margin-left: -162px;
+  background: #fff;
+}
+
+.title {
+  text-align: center;
+  padding: 12px;
+}
+
+.forgetPassword {
+  float: right;
+  padding-right: 12px;
+  cursor: pointer;
+  color: #1890ff;
+}
+
+.other {
+  padding-bottom: 24px;
+}
+
+.submit {
+  text-align: center;
+}
+
+.captchaLogin {
+  margin-top: -11px;
+}
+
+.captchaContainer {
+  position: relative;
+  top: 11px;
+}
+
+.captchaInput {
+  width: 50%;
+}

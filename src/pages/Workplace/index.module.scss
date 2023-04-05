@@ -1,0 +1,63 @@
+$fork-me: "@/assets/github/fork.png";
+
+.baseStyle {
+  display: flex;
+  padding: 1rem;
+  border-radius: 5px;
+  font-size: 2em;
+}
+
+.wechat {
+  @extend .baseStyle;
+  background-color: #70ca63;
+}
+
+.qq {
+  @extend .baseStyle;
+  background-color: #12b7f5;
+}
+
+.dingding {
+  @extend .baseStyle;
+  background-color: #0089ff;
+}
+
+.weibo {
+  @extend .baseStyle;
+  background-color: #fb452d;
+}
+
+.iconStyle {
+  color: #fbfbf4b3;
+  font-size: 5rem;
+  padding-right: 1rem;
+}
+
+.baseTitle {
+  font-size: 2rem;
+}
+
+.githubCorner {
+  position: absolute;
+  top: 0;
+  right: 12px;
+  background-image: url($fork-me);
+  background-size: 100% 100%;
+  width: 120px;
+  height: 120px;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.header {
+  color: #fff;
+}
+
+.container {
+  padding: 1rem;
+}
+
+.baseChart {
+  background-color: #fff;
+  margin-top: 12px;
+}

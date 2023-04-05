@@ -1,0 +1,19 @@
+.sider {
+  height: calc(100vh - 50px);
+  overflow: auto;
+  user-select: none;
+}
+
+.pageContent {
+  overflow: auto;
+  height: 100%;
+}
+
+.outletContainer {
+  height: calc(100vh - 50px);
+  overflow: auto;
+}
+
+.pageOutlet {
+  min-height: calc(100vh - 70px);
+}

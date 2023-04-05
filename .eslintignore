@@ -1,4 +1,4 @@
-!**/.eslintrc*
+.eslintrc
 node_modules*
 dist
 *.svg
@@ -8,3 +8,16 @@ dist
 *.md
 *.log
 *.lock
+!.eslintrc*
+!.package*
+/logs
+/server/mockData
+/node_modules
+/dist
+/onlinedist
+/src/assets/js
+/src/lib/achieve/KSWebBridge.js
+/package-lock.json
+.DS_Store
+fis-conf.js
+/.eslintrc

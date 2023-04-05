@@ -1,0 +1,11 @@
+$border-radius-p0: 0;
+
+.root {
+  border-radius: $border-radius-p0;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}

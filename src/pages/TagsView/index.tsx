@@ -1,0 +1,137 @@
+import React, { FC, useContext, useState } from "react";
+import { message, Tabs } from "antd";
+import { CloseOutlined } from "@ant-design/icons";
+import MenuTagContext from "@/contexts/MenuTagContext";
+import { MyTagShow } from "./Drag";
+
+import styles from "./index.module.scss";
+
+const { TabPane } = Tabs;
+
+const TagsView: FC = () => {
+  const { tags, setTags, setActiveUrl, tagPlanVisible, setTagPlanVisible, setRefresh } = useContext(MenuTagContext);
+
+  const [pageclientX, setPageclientX] = useState(0);
+  const [pageclientY, setPageclientY] = useState(0);
+  const [contextMenuTag, setContextMenuTag] = useState<any>();
+
+  // 切换标签时触发事件，切换页面地址
+  const onChange = (url: string) => {
+    setTagPlanVisible(false);
+    setTags(prev => {
+      return prev.map(v => {
+        v.active = v.url === url;
+        return v;
+      });
+    });
+    setActiveUrl(url);
+  };
+
+  //关闭标签时，从tags中删除指定标签
+  const onClose = (event: any, item: any) => {
+    event.stopPropagation();
+    event.preventDefault();
+    if (tags && tags.length <= 1) {
+      return message.success({
+        content: "请保留至少一个标签",
+        duration: 0.5
+      });
+    }
+    removeTag(item);
+  };
+
+  const contextTag = (event: any, tag: any) => {
+    event.stopPropagation();
+    event.preventDefault();
+    const { clientX, clientY } = event;
+    setPageclientX(clientX);
+    setPageclientY(clientY);
+    setContextMenuTag(tag);
+    setTagPlanVisible(true);
+  };
+
+  // 关闭其他标签
+  const handleCloseOtherTags = () => {
+    const item = tags.find(v => v.url === contextMenuTag.url);
+    item.active = true;
+    setActiveUrl(item.url);
+    setTags([item]);
+    setTagPlanVisible(false);
+  };
+
+  // 关闭左侧标签
+  const handleCloseLeftTags = () => {
+    const index = tags.findIndex(v => v.url === contextMenuTag.url);
+    const activeIndex = tags.findIndex(v => v.active);
+    const arr = tags.slice(index);
+    if (activeIndex < index) {
+      setActiveUrl(arr[0]["url"]);
+      arr[0]["active"] = true;
+    }
+    setTags(arr);
+  };
+
+  // 关闭右侧标签
+  const handleCloseRightTags = () => {
+    const index = tags.findIndex(v => v.url === contextMenuTag.url);
+    // 如果右侧的菜单有选中值 就把最后一个当作 active
+    const activeIndex = tags.findIndex(v => v.active);
+    setTagPlanVisible(false);
+    const arr = tags.slice(0, index + 1);
+    if (activeIndex > index) {
+      setActiveUrl(tags[index]["url"]);
+      arr[index]["active"] = true;
+    }
+    setTags(arr);
+  };
+
+  // 刷新当前页面
+  const refreshPage = () => {
+    setTagPlanVisible(false);
+    setRefresh(true);
+    setTimeout(() => setRefresh(false), 2000);
+  };
+
+  const removeTag = ({ url, active }) => {
+    // 只剩下一个了，别删除了
+    if (tags.length <= 1) return;
+    const tagList = tags.filter(tag => tag.url !== url);
+    // 如果删除的是选中的
+    if (active) {
+      tagList[tagList.length - 1]["active"] = true;
+      setActiveUrl(tagList[tagList.length - 1]["url"]);
+    }
+    setTags(tagList);
+  };
+
+  return (
+    <div className={styles.tagsdiv}>
+      <Tabs tabBarStyle={{ margin: 0 }} onChange={onChange} tabBarExtraContent={<span></span>}>
+        {tags.map(tag => (
+          <TabPane
+            closable
+            key={tag.url}
+            className={styles.changettag}
+            tab={
+              <div className={styles.tagitem} onContextMenu={e => contextTag(e, tag)}>
+                <MyTagShow tag={tag}>
+                  <CloseOutlined className={styles.close} onClick={e => onClose(e, tag)} />
+                </MyTagShow>
+              </div>
+            }
+          />
+        ))}
+      </Tabs>
+      {tagPlanVisible ? (
+        <ul className={styles.contextmenuDom} style={{ left: `${pageclientX}px`, top: `${pageclientY}px` }}>
+          <li onClick={handleCloseLeftTags}>关闭左侧</li>
+          <li onClick={handleCloseRightTags}>关闭右侧</li>
+          <li onClick={handleCloseOtherTags}>关闭其他</li>
+          {contextMenuTag?.active ? <li onClick={refreshPage}>刷新页面</li> : ""}
+        </ul>
+      ) : null}
+    </div>
+  );
+};
+
+export default TagsView;

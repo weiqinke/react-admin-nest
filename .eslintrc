@@ -1,23 +1,62 @@
 {
-  "extends": [
-    "react-app",
-    "react-app/jest",
-    "plugin:prettier/recommended",
-    "prettier/@typescript-eslint"
-  ],
+  "extends": ["plugin:prettier/recommended"],
+  "plugins": ["eslint-plugin-simple-import-sort"],
   "rules": {
-    "prettier/prettier": "warn",
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
-    "@typescript-eslint/no-use-before-define": "off",
-    "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/camelcase": "off",
-    "@typescript-eslint/explicit-member-accessibility": "off",
-    "@typescript-eslint/ban-ts-ignore": "off",
-    "@typescript-eslint/no-non-null-assertion": "off",
-    "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-empty-interface": "off",
-    "react/prop-types": "off",
-    "react/display-name": "off"
+    "no-unused-vars": "warn", //把该条提示信息转换成警告信息
+    "semi": 2, //在代码尾部添加分号
+    "semi-spacing": 0, // 强制分号之前和之后使用一致的空格
+    "trailingComma": 2, //在代码尾部添加逗号
+    "quotes": [2, "double", "avoid-escape"],
+    "no-const-assign": 2, // 禁止修改 const 声明的变量
+    "no-var": 0, // 要求使用 let 或 const 而不是 var
+    "sort-imports": 1, // 强制模块内的 import 排序
+    "no-trailing-spaces": 2, // 禁用行尾空格
+    "no-mixed-spaces-and-tabs": 2, // 不允许空格和 tab 混合缩进
+    "max-len": "error",
+    "jsx-quotes": 0, // 强制在 JSX 属性中一致地使用双引号或单引号
+    "max-nested-callbacks": [1, 5], // 强制回调函数最大嵌套深度 5层
+    "eol-last": 2, // 文件末尾强制换行
+    "no-magic-numbers": [
+      1,
+      {
+        "ignore": [0, -1, 1]
+      }
+    ], // 禁用魔术数字(3.14什么的用常量代替)
+    "eqeqeq": [2, "allow-null"], // 使用 === 替代 == allow-null允许null和undefined==
+    "prettier/prettier": [
+      // eslint校验不成功后，error或2则报错，warn或1则警告，off或0则无提示
+      "error",
+      {
+        // 不要分号
+        "semi": 2,
+        // 设置单引号
+        "singleQuote": 2,
+        // 设置换行长度
+        "printWidth": 150
+      }
+    ],
+    "simple-import-sort/imports": [
+      "error",
+      {
+        "groups": [
+          // react放在首行
+          ["^react", "^@?\\w"],
+          // 内部导入
+          ["^(@|components)(/.*|$)"],
+          // 父级导入. 把 `..` 放在最后.
+          ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
+          // 同级导入. 把同一个文件夹.放在最后
+          ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
+          // 样式导入.
+          ["^.+\\.?(css)$"],
+          // 带有副作用导入，比如import 'a.css'这种.
+          ["^\\u0000"]
+        ]
+      }
+    ],
+    "simple-import-sort/exports": "error", // 导出
+    "import/no-duplicates": "error", // 合并同一个导入。ide自动导入，会导致impoprt {a} from 'A'和impoprt {a1} from 'A'导入2次
+    "import/first": "error", // 确保所有导入位于文件的顶部
+    "import/newline-after-import": "error" // 确保在导入后有换行符
   }
 }
