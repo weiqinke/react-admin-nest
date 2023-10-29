@@ -93,7 +93,7 @@ const DefaultLayoutHeader = () => {
   return (
     <div className={styles.container}>
       <div className={styles.logo} onClick={() => navigate("/workplace")}>
-        {/* <span className={styles.title}>nest-admin</span> */}
+        <span className={styles.title}>nest-admin</span>
       </div>
 
       <div className={styles.user}>

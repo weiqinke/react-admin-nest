@@ -6,7 +6,8 @@ import MenuTagContext from "@/contexts/MenuTagContext";
 import TagsView from "@/pages/TagsView";
 import { Layout } from "antd";
 import React, { Suspense, useContext, useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
 import styles from "./index.module.scss";
 
@@ -16,6 +17,7 @@ const WorkLayout = () => {
   const { setTagPlanVisible, refresh } = useContext(MenuTagContext);
 
   const [visible, setVisible] = useState(true);
+  const { pathname } = useLocation();
 
   useEffect(() => {
     setVisible(false);
@@ -41,7 +43,11 @@ const WorkLayout = () => {
             <TagsView />
             <Suspense fallback={<SuspendFallbackLoading />}>
               <div className={styles.outletContainer}>
-                <div className={styles.pageOutlet}>{refresh ? <SuspendFallbackLoading /> : <Outlet />}</div>
+                <div className={styles.pageOutlet}>{refresh ? <SuspendFallbackLoading /> : <TransitionGroup>
+                  <CSSTransition key={pathname} timeout={1000} classNames="fade">
+                  <Outlet />
+                  </CSSTransition>
+                </TransitionGroup>}</div>
                 <Copyright />
               </div>
             </Suspense>
