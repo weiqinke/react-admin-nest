@@ -36,6 +36,7 @@
     "react-intl": "^6.3.2",
     "react-router": "^6.10.0",
     "react-router-dom": "^6.10.0",
+    "react-transition-group": "^4.4.5",
     "socket.io-client": "^4.6.1",
     "stylus-loader": "^7.1.0"
   },

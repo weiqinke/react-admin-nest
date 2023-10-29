@@ -1,3 +1,23 @@
 .root {
   border-radius: 0;
 }
+
+.fade-enter {
+  opacity: 1;
+  transform: translateX(100%);
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: transform 1s ease-in-out,;
+  transform: translateX(0px);
+}
+
+
+.fade-exit {
+  opacity: 0;
+}
+
+.fade-exit-active {
+  opacity: 0;
+}
