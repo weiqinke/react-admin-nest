@@ -2,10 +2,11 @@ import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Col, Form, Input, message, Modal, Radio, Row, Upload } from "antd";
 import type { FC } from "react";
 import React, { useEffect, useState } from "react";
-import { addOneUser, editOneUser, updateUserAvatarUrl } from "@/api/caravan/Login";
+import { addOneUser, editOneUser, saveUserAvatarUrl, updateUserAvatarUrl } from "@/api/caravan/Login";
 import { trim } from "lodash";
 
 import styles from "./index.module.scss";
+import axios from "axios";
 
 const layout = {
   labelCol: { span: 8 },
@@ -28,7 +29,7 @@ const UserEditModal: FC<any> = (props: any) => {
     reader.addEventListener("load", () => callback(reader.result));
     reader.readAsDataURL(img);
   };
-  const handleUpload = (uid: string) => {
+  const handleUpload = async (uid: string) => {
     if (fileList.length <= 0 || !uid) {
       return;
     }
@@ -41,19 +42,28 @@ const UserEditModal: FC<any> = (props: any) => {
     }
     formData.append("userUid", uid);
     setuploading(true);
-    updateUserAvatarUrl(formData)
-      .then(result => {
-        setAvatarUrl("");
-        if (result.data.code === 200) {
-          message.info("头像修改成功");
-          return;
-        }
-        message.info("头像修改失败");
-      })
-      .catch(() => {
-        setAvatarUrl("");
-        message.info("头像修改失败");
-      });
+    const avatar = await axios.post('https://freeimg.cn/api/v1/upload',{
+      file:fileList[0],
+      album_id:145
+    },{
+      headers:{
+        "Authorization": "Bearer 134|dfgG6kRMsd3SP6E0ZJvieEq98mOOhdaATYQRZruZ",
+        "Content-Type": "multipart/form-data"
+      }
+    }).then(result => {
+      setAvatarUrl("");
+      message.info(`头像上传${result?.data?.status?"成功":"失败"}`);
+      return result?.data?.data?.links?.url;
+    })
+    .catch(() => {
+      setAvatarUrl("");
+      message.info("头像修改失败");
+      return ''
+    });
+    updateUserAvatarUrl({
+      uid,
+      avatar
+    }).finally(()=>onOk(true))
   };
 
   const UpLoadProps = {
@@ -101,7 +111,6 @@ const UserEditModal: FC<any> = (props: any) => {
     message.info("操作成功");
     setuploading(false);
     handleUpload(initUser.uid || result.data.data.uid);
-    onOk(true);
   };
 
   const setInputType = () => {

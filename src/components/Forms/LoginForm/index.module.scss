@@ -7,7 +7,12 @@
   left: 50%;
   margin-top: -183px;
   margin-left: -162px;
-  background: #fff;
+  background: rgba(164,203,200,.3);
+  &:hover{
+    box-shadow: -4px 4px 16px 1px rgba(0, 0, 0, 0.15);
+    background: rgba(164,203,200,1);
+    transition: box-shadow 1s,background 1s, transform 2s;
+  }
 }
 
 .title {

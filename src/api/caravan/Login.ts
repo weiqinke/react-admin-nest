@@ -104,3 +104,13 @@ export const updateUserAvatarUrl = payload => {
 export const findAccountLogs = (payload: any) => {
   return request(`${BASE_URL}Accountlog/findAccountLogs`, "GET", payload);
 };
+
+/**
+ * 使用免费图床
+ * */
+export const saveUserAvatarUrl = payload => {
+  return request(`https://freeimg.cn/api/v1/upload`, "POST", payload, {
+    processData: false,
+    "Content-Type":"multipart/form-data"
+  });
+};

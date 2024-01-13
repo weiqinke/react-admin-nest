@@ -59,7 +59,7 @@ const WsOnlineList: React.FC = () => {
         renderItem={(item: any) => (
           <List.Item>
             <List.Item.Meta title={<b>{item.name}</b>} description={webSocketManager.MySocketID === item.id ? "当前用户" : item.id} />
-            <div className="listinfo">
+            {webSocketManager.MySocketID === item.id ?null:<div className="listinfo">
               <Button
                 danger
                 type="primary"
@@ -69,7 +69,7 @@ const WsOnlineList: React.FC = () => {
               >
                 强制下线
               </Button>
-            </div>
+            </div>}
           </List.Item>
         )}
       />

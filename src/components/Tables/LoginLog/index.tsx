@@ -15,8 +15,8 @@ const LoginLog = () => {
       dataIndex: "bowser"
     },
     {
-      title: "IP地址",
-      dataIndex: "ip"
+      title: "来源",
+      dataIndex: "host"
     },
     {
       title: "登录设备",

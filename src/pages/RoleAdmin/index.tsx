@@ -37,7 +37,7 @@ const RoleList: FC = () => {
     findalluser({})
       .then(res => setUserDatasource(res.data.data || []))
       .catch(() => setUserDatasource([]));
-    findAllMenu({ isdeleted: 0 })
+    findAllMenu({ isdeleted: 0, version: 2 })
       .then((res: any) => setMenuDataSource(res.data.data || []))
       .catch(() => setMenuDataSource([]));
   }, []);
