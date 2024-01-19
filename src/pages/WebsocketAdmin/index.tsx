@@ -16,7 +16,7 @@ const WebsocketAdmin: FC = () => {
   const [imgSrc, setImgSrc] = useState(prewImg);
   const getOnlintUsers = () => {
     webSocketManager.postMessage({
-      type: "GetAllOnLineClient",
+      type: "GetAllOnLineClient"
     });
     clearTimeout(timer.current);
     timer.current = setTimeout(getOnlintUsers, 5000);
@@ -31,17 +31,17 @@ const WebsocketAdmin: FC = () => {
   }, []);
 
   useEffect(() => {
-    const removeHandler = webSocketManager.addEventHandler((payload) => {
+    const removeHandler = webSocketManager.addEventHandler(payload => {
       const { type, data } = payload;
       if (type === "OnlineUsers") {
         const { OnlineUser = [] } = data;
-        setSocketUsers(OnlineUser.filter((v) => v?.login));
+        setSocketUsers(OnlineUser.filter(v => v?.login));
       }
     });
     return removeHandler;
   }, []);
 
-  const ForcedOffline = (item) => {
+  const ForcedOffline = item => {
     if (webSocketManager.MySocketID === item.id) {
       return message.info("不允许让自己强制下线");
     }
@@ -54,43 +54,35 @@ const WebsocketAdmin: FC = () => {
       onOk: async () => {
         webSocketManager.postMessage({
           type: "HandleForcedOffline",
-          data: { receiver: item.id },
+          data: { receiver: item.id }
         });
         message.info("请求已发送");
         getOnlintUsers();
       },
-      onCancel() {},
+      onCancel() {}
     });
   };
 
-  const loadUserInfo = (user) => {
-    getUserInfoByUid({ uid: user?.uid }).then((result) => {
+  const loadUserInfo = user => {
+    getUserInfoByUid({ uid: user?.uid }).then(result => {
       if (result.data.code === 200) {
         setUserInfo(result.data.data);
       }
     });
   };
 
-  const getUserView = (item) => {
+  const getUserView = item => {
     webSocketManager.postMessage({
       type: "GetPageView",
-      data: { receiver: item.id },
+      data: { receiver: item.id }
     });
   };
 
-  const ceatt = (Bdata) => {
-    return (
-      "data:image/png;base64," +
-      window.btoa(
-        new Uint8Array(Bdata).reduce(
-          (data, byte) => data + String.fromCharCode(byte),
-          ""
-        )
-      )
-    );
+  const ceatt = Bdata => {
+    return "data:image/png;base64," + window.btoa(new Uint8Array(Bdata).reduce((data, byte) => data + String.fromCharCode(byte), ""));
   };
   useEffect(() => {
-    const removeHandler = webSocketManager.addEventHandler((payload) => {
+    const removeHandler = webSocketManager.addEventHandler(payload => {
       if (payload?.type === "PageViewBlob") {
         console.log("payload: ", payload);
         const Bdata = payload.data.blob;
@@ -107,13 +99,13 @@ const WebsocketAdmin: FC = () => {
           width={300}
           src={imgSrc}
           preview={{
-            src: imgSrc,
+            src: imgSrc
           }}
         />
       </div>
 
       <Row gutter={16}>
-        {socketUsers.map((item) => {
+        {socketUsers.map(item => {
           const isMe = webSocketManager.MySocketID === item.id;
           return (
             <Col span={6} key={item.id}>
@@ -124,18 +116,13 @@ const WebsocketAdmin: FC = () => {
                     {item.nick || item.name}
                     {isMe ? "(自己)" : ""}
                   </div>
-                }
-              >
+                }>
                 <div style={{ textAlign: isMe ? "center" : "left" }}>
                   <Button type="link" onClick={() => loadUserInfo(item)}>
                     查看详情
                   </Button>
                   {!isMe && (
-                    <Button
-                      danger
-                      type="link"
-                      onClick={() => ForcedOffline(item)}
-                    >
+                    <Button danger type="link" onClick={() => ForcedOffline(item)}>
                       强制下线
                     </Button>
                   )}
@@ -148,9 +135,7 @@ const WebsocketAdmin: FC = () => {
           );
         })}
       </Row>
-      {userInfo && (
-        <MetaDescModal userInfo={userInfo} onOk={() => setUserInfo(null)} />
-      )}
+      {userInfo && <MetaDescModal userInfo={userInfo} onOk={() => setUserInfo(null)} />}
     </div>
   );
 };

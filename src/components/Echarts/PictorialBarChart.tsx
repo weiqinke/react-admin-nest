@@ -5,148 +5,148 @@ import "echarts-wordcloud";
 const data = [
   {
     name: "java",
-    value: 1,
+    value: 1
   },
   {
     name: "C",
-    value: 11,
+    value: 11
   },
   {
     name: "C++",
-    value: 12,
+    value: 12
   },
   {
     name: "PASCAL",
-    value: 12,
+    value: 12
   },
   {
     name: "LISP",
-    value: 18,
+    value: 18
   },
   {
     name: "Prolog",
-    value: 13,
+    value: 13
   },
   {
     name: "CLIPS",
-    value: 14,
+    value: 14
   },
   {
     name: "OpenCyc",
-    value: 21,
+    value: 21
   },
   {
     name: "Fazzy",
-    value: 18,
+    value: 18
   },
   {
     name: "Python",
-    value: 22,
+    value: 22
   },
   {
     name: "PHP",
-    value: 26,
+    value: 26
   },
   {
     name: "Ruby",
-    value: 24,
+    value: 24
   },
   {
     name: "Lua",
-    value: 15,
+    value: 15
   },
   {
     name: "True basic",
-    value: 18,
+    value: 18
   },
   {
     name: "Qbasic",
-    value: 18,
+    value: 18
   },
   {
     name: "Virtual Basic",
-    value: 22,
+    value: 22
   },
   {
     name: "Objective-C",
-    value: 26,
+    value: 26
   },
   {
     name: "Go",
-    value: 24,
+    value: 24
   },
   {
     name: "JavaScript",
-    value: 115,
+    value: 115
   },
   {
     name: "Swift",
-    value: 18,
+    value: 18
   },
   {
     name: "Visual Basic",
-    value: 15,
+    value: 15
   },
   {
     name: "Modula2",
-    value: 10,
+    value: 10
   },
   {
     name: "MATLAB",
-    value: 17,
+    value: 17
   },
   {
     name: "RPG",
-    value: 15,
+    value: 15
   },
   {
     name: "AppleScript",
-    value: 16,
+    value: 16
   },
   {
     name: "BeanShell",
-    value: 1,
+    value: 1
   },
   {
     name: "FScript",
-    value: 6,
+    value: 6
   },
   {
     name: "VBScript",
-    value: 7,
+    value: 7
   },
   {
     name: "PowerShell",
-    value: 15,
+    value: 15
   },
   {
     name: "HTML",
-    value: 10,
+    value: 10
   },
   {
     name: "CSS",
-    value: 17,
+    value: 17
   },
   {
     name: "XML",
-    value: 15,
+    value: 15
   },
   {
     name: "IO",
-    value: 16,
+    value: 16
   },
   {
     name: "Slate",
-    value: 1,
+    value: 1
   },
   {
     name: "Scala",
-    value: 6,
+    value: 6
   },
   {
     name: "SQL",
-    value: 7,
-  },
+    value: 7
+  }
 ];
 const PictorialBarChart: FC = () => {
   const ref = useRef();
@@ -158,8 +158,8 @@ const PictorialBarChart: FC = () => {
         show: true,
         position: "top",
         textStyle: {
-          fontSize: 12,
-        },
+          fontSize: 12
+        }
       },
       series: [
         {
@@ -190,26 +190,18 @@ const PictorialBarChart: FC = () => {
           shrinkToFit: false,
           textStyle: {
             color: function () {
-              return (
-                "rgb(" +
-                [
-                  Math.round(Math.random() * 160),
-                  Math.round(Math.random() * 160),
-                  Math.round(Math.random() * 160),
-                ].join(",") +
-                ")"
-              );
-            },
+              return "rgb(" + [Math.round(Math.random() * 160), Math.round(Math.random() * 160), Math.round(Math.random() * 160)].join(",") + ")";
+            }
           },
           emphasis: {
             textStyle: {
               fontWeight: "bold",
-              color: "#53F6FF",
-            },
+              color: "#53F6FF"
+            }
           },
-          data: data,
-        },
-      ],
+          data: data
+        }
+      ]
     });
 
     window.addEventListener("resize", function () {

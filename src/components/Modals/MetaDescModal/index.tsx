@@ -4,12 +4,7 @@ import React, { FC } from "react";
 import { Avatar, Button, Modal } from "antd";
 
 import styles from "./index.module.scss";
-import {
-  BankOutlined,
-  HomeOutlined,
-  MailOutlined,
-  WomanOutlined,
-} from "@ant-design/icons";
+import { BankOutlined, HomeOutlined, MailOutlined, WomanOutlined } from "@ant-design/icons";
 import IconFont from "@/components/IconFont";
 
 const MetaDescModal: FC<any> = ({ userInfo, onOk }) => {
@@ -24,14 +19,9 @@ const MetaDescModal: FC<any> = ({ userInfo, onOk }) => {
         <Button type="primary" onClick={onOk}>
           确定
         </Button>
-      }
-    >
+      }>
       <div className={styles.container}>
-        <Avatar
-          src={userInfo.avatar || ""}
-          className={styles.avatar}
-          style={{ userSelect: "none" }}
-        />
+        <Avatar src={userInfo.avatar || ""} className={styles.avatar} style={{ userSelect: "none" }} />
         <div className={styles.name}>{userInfo.name}</div>
         <div className={styles.description}>{userInfo.signature}</div>
         <div className={styles.area}></div>

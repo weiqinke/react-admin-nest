@@ -37,5 +37,5 @@ export {
   PieBorderRadius,
   DataFlowChart,
   HomeSenseChart,
-  ServerStatusChart,
+  ServerStatusChart
 };

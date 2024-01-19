@@ -74,7 +74,7 @@ export const getmyuserinfo = () => {
 };
 
 /** 获取一个用户的信息 */
-export const getUserInfoByUid = (uid) => {
+export const getUserInfoByUid = uid => {
   return request(`${BASE_URL}user`, "GET", uid);
 };
 
@@ -86,7 +86,7 @@ export const updateMyinfo = (payload: any) => {
 /** 更新我自己的信息 */
 export const updateUserAvatarUrl = (payload: any) => {
   return request(`${BASE_URL}user/updateUserAvatarUrl`, "POST", payload, {
-    processData: false,
+    processData: false
   });
 };
 

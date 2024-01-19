@@ -1,22 +1,12 @@
-import {
-  ChinaChart,
-  DataFlowChart,
-  PieBorderRadius,
-} from "@/components/Echarts";
-import {
-  DingdingOutlined,
-  QqOutlined,
-  WechatOutlined,
-  WeiboOutlined,
-} from "@ant-design/icons";
+import { ChinaChart, DataFlowChart, PieBorderRadius } from "@/components/Echarts";
+import { DingdingOutlined, QqOutlined, WechatOutlined, WeiboOutlined } from "@ant-design/icons";
 import { Col, Row } from "antd";
 import CountUp from "react-countup";
 
 import styles from "./index.module.scss";
 
 const Workplace = () => {
-  const toMygit = () =>
-    window.open("https://github.com/weiqinke/react-admin-nest", "topFrame");
+  const toMygit = () => window.open("https://github.com/weiqinke/react-admin-nest", "topFrame");
 
   return (
     <div className={styles.container}>

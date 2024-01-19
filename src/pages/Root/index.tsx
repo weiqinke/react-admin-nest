@@ -18,7 +18,7 @@ const Root = () => {
         name: "qkstartCar",
         type: "123",
         message: "",
-        data: [],
+        data: []
       });
       webSocketManager.socket.disconnect();
       webSocketManager.close();
@@ -30,14 +30,13 @@ const Root = () => {
       theme={{
         components: {
           Menu: {
-            darkItemSelectedBg: "#41b3a3",
+            darkItemSelectedBg: "#41b3a3"
             // darkPopupBg: "#7cc1ad",
             // darkSubMenuItemBg: "#7cc1ad",
             // darkItemBg: "#7cc1ad",
-          },
-        },
-      }}
-    >
+          }
+        }
+      }}>
       <ProjectContextProvider>
         <MenuTagContextProvider>
           <RouterProvider router={router} />

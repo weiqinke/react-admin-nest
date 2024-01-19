@@ -1,10 +1,7 @@
 import * as React from "react";
 
 // 出错后显示的元素类型
-type FallbackElement = React.ReactElement<
-  unknown,
-  string | React.FC | typeof React.Component
-> | null;
+type FallbackElement = React.ReactElement<unknown, string | React.FC | typeof React.Component> | null;
 
 // 出错显示组件的 props
 export interface FallbackProps {
@@ -23,10 +20,7 @@ interface ErrorBoundaryProps {
   onError?: (error: Error, info: string) => void;
   onReset?: () => void;
   resetKeys?: Array<unknown>;
-  onResetKeysChange?: (
-    prevResetKey: Array<unknown> | undefined,
-    resetKeys: Array<unknown> | undefined
-  ) => void;
+  onResetKeysChange?: (prevResetKey: Array<unknown> | undefined, resetKeys: Array<unknown> | undefined) => void;
 }
 
 // 本组件 ErrorBoundary 的 props
@@ -35,20 +29,15 @@ interface ErrorBoundaryState {
 }
 
 const changedArray = (a: Array<unknown> = [], b: Array<unknown> = []) => {
-  return (
-    a.length !== b.length || a.some((item, index) => !Object.is(item, b[index]))
-  );
+  return a.length !== b.length || a.some((item, index) => !Object.is(item, b[index]));
 };
 
 // 初始状态
 const initialState: ErrorBoundaryState = {
-  error: null,
+  error: null
 };
 
-class ErrorBoundary extends React.Component<
-  React.PropsWithChildren<ErrorBoundaryProps>,
-  ErrorBoundaryState
-> {
+class ErrorBoundary extends React.Component<React.PropsWithChildren<ErrorBoundaryProps>, ErrorBoundaryState> {
   state = initialState;
   updatedWithError = false;
 
@@ -62,9 +51,7 @@ class ErrorBoundary extends React.Component<
     }
   }
 
-  componentDidUpdate(
-    prevProps: Readonly<React.PropsWithChildren<ErrorBoundaryProps>>
-  ) {
+  componentDidUpdate(prevProps: Readonly<React.PropsWithChildren<ErrorBoundaryProps>>) {
     const { error } = this.state;
     const { resetKeys, onResetKeysChange } = this.props;
 
@@ -101,7 +88,7 @@ class ErrorBoundary extends React.Component<
     if (error !== null) {
       const fallbackProps: FallbackProps = {
         error,
-        resetErrorBoundary: this.resetErrorBoundary,
+        resetErrorBoundary: this.resetErrorBoundary
       };
 
       if (React.isValidElement(fallback)) {
@@ -114,9 +101,7 @@ class ErrorBoundary extends React.Component<
         return <FallbackComponent {...fallbackProps} />;
       }
 
-      throw new Error(
-        "ErrorBoundary 组件需要传入 fallback, fallbackRender, FallbackComponent 其中一个"
-      );
+      throw new Error("ErrorBoundary 组件需要传入 fallback, fallbackRender, FallbackComponent 其中一个");
     }
 
     return this.props.children;
@@ -128,11 +113,8 @@ class ErrorBoundary extends React.Component<
  * @param Component 业务组件
  * @param errorBoundaryProps error boundary 的 props
  */
-function withErrorBoundary<P>(
-  Component: React.ComponentType<P>,
-  errorBoundaryProps: ErrorBoundaryProps
-): React.ComponentType<P> {
-  const Wrapped: React.ComponentType<P> = (props) => {
+function withErrorBoundary<P>(Component: React.ComponentType<P>, errorBoundaryProps: ErrorBoundaryProps): React.ComponentType<P> {
+  const Wrapped: React.ComponentType<P> = props => {
     return (
       <ErrorBoundary {...errorBoundaryProps}>
         <Component {...props} />
@@ -151,9 +133,7 @@ function withErrorBoundary<P>(
  * 自定义错误的 handler
  * @param givenError
  */
-function useErrorHandler<P = Error>(
-  givenError?: P | null | undefined
-): React.Dispatch<React.SetStateAction<P | null>> {
+function useErrorHandler<P = Error>(givenError?: P | null | undefined): React.Dispatch<React.SetStateAction<P | null>> {
   const [error, setError] = React.useState<P | null>(null);
   if (givenError) throw givenError;
   if (error) throw error;

@@ -1,13 +1,5 @@
 import React, { FC, useState, useEffect, useRef } from "react";
-import {
-  Dropdown,
-  Badge,
-  MenuProps,
-  Tabs,
-  DropdownProps,
-  List,
-  Avatar,
-} from "antd";
+import { Dropdown, Badge, MenuProps, Tabs, DropdownProps, List, Avatar } from "antd";
 import { BellOutlined } from "@ant-design/icons";
 
 import { getUidNotices } from "@/api/caravan/User";
@@ -26,7 +18,7 @@ const HeaderNotice: FC = () => {
   const [dataSource, setDataSource] = useState([]);
 
   const noticeListFilter = <T extends string>(type: T) => {
-    return noticeList.filter((notice) => notice.type === type) as any[];
+    return noticeList.filter(notice => notice.type === type) as any[];
   };
 
   const getNotice = async () => {
@@ -35,11 +27,14 @@ const HeaderNotice: FC = () => {
     //无论如何，清掉定时器,使用了 ref,肯定能拿到指针。
     //并且启动一个定时器，定时刷新我的消息
     clearTimeout(intervalHandle.current);
-    intervalHandle.current = setTimeout(() => {
-      setNoticeNum(Math.ceil(Math.random() * 1000));
-    }, 1000 * 60 * 60);
+    intervalHandle.current = setTimeout(
+      () => {
+        setNoticeNum(Math.ceil(Math.random() * 1000));
+      },
+      1000 * 60 * 60
+    );
     getUidNotices()
-      .then((result) => {
+      .then(result => {
         setLoading(false);
         if (result.status && result.data && Array.isArray(result.data.data)) {
           setNoticeList(result.data.data);
@@ -79,11 +74,11 @@ const HeaderNotice: FC = () => {
             items={[
               { label: "通知", type: "notification" },
               { label: "消息", type: "message" },
-              { label: "待办", type: "event" },
-            ].map((tab) => {
+              { label: "待办", type: "event" }
+            ].map(tab => {
               return {
                 label: tab.label,
-                key: tab.type,
+                key: tab.type
               };
             })}
           />
@@ -102,14 +97,10 @@ const HeaderNotice: FC = () => {
                 </div>
               }
               dataSource={dataSource}
-              renderItem={(item) => (
+              renderItem={item => (
                 <List.Item key={item.id}>
                   <List.Item.Meta
-                    avatar={
-                      <Avatar
-                        src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${item.id}`}
-                      />
-                    }
+                    avatar={<Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${item.id}`} />}
                     title={<a href="https://ant.design">{item.title}</a>}
                     description={item.description}
                   />
@@ -118,11 +109,11 @@ const HeaderNotice: FC = () => {
             />
           </div>
         </div>
-      ),
-    },
+      )
+    }
   ];
 
-  const onClick: MenuProps["onClick"] = (e) => {
+  const onClick: MenuProps["onClick"] = e => {
     if (e.key === "3") {
       setOpen(false);
     }
@@ -136,13 +127,7 @@ const HeaderNotice: FC = () => {
 
   return (
     <div className={styles.notice}>
-      <Dropdown
-        menu={{ items, onClick }}
-        placement="bottomRight"
-        trigger={["hover"]}
-        onOpenChange={handleOpenChange}
-        open={open}
-      >
+      <Dropdown menu={{ items, onClick }} placement="bottomRight" trigger={["hover"]} onOpenChange={handleOpenChange} open={open}>
         <Badge count={noticeList.length || noticeCount} overflowCount={999}>
           <span>
             <BellOutlined style={{ fontSize: "22px", color: "#fff" }} />

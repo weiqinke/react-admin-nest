@@ -10,7 +10,7 @@ const createData = () => {
   const n = 4;
   return Array.from({ length: 200 }, (_, i) => ({
     r: r(),
-    group: i && (i % n) + 1,
+    group: i && (i % n) + 1
   }));
 };
 const data = createData();
@@ -19,7 +19,7 @@ const nodes = data.map(Object.create);
 const Collision = () => {
   const svgRef = useRef<SVGSVGElement | null>(null);
 
-  const pointermoved = (event) => {
+  const pointermoved = event => {
     const [x, y] = d3.pointer(event);
     nodes[0].fx = x - width / 2;
     nodes[0].fy = y - height / 2;
@@ -37,7 +37,7 @@ const Collision = () => {
         "collide",
         d3
           .forceCollide()
-          .radius((d) => d.r + 1)
+          .radius(d => d.r + 1)
           .iterations(3)
       )
       .force(
@@ -60,7 +60,7 @@ const Collision = () => {
       });
 
     d3.select(context.canvas)
-      .on("touchmove", (event) => event.preventDefault())
+      .on("touchmove", event => event.preventDefault())
       .on("pointermove", pointermoved);
   }, []);
 

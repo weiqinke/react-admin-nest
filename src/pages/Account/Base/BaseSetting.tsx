@@ -22,7 +22,7 @@ const BaseSetting: FC = function () {
     }
   };
   useEffect(() => {
-    getmyuserinfo().then((result) => {
+    getmyuserinfo().then(result => {
       if (result.data.code === 200) {
         setInitFormItem(result.data.data);
       }
@@ -37,26 +37,13 @@ const BaseSetting: FC = function () {
       </Col>
 
       <Col span={12}>
-        <BaseFrom
-          initFormItem={initFormItem}
-          pendingCallback={pendingCallback}
-        />
+        <BaseFrom initFormItem={initFormItem} pendingCallback={pendingCallback} />
       </Col>
       <Col span={6} offset={1}>
         <div className="setting-base">
-          <Card
-            style={{ width: 350 }}
-            cover={<img alt="" src={userPoster} className="poster" />}
-          >
+          <Card style={{ width: 350 }} cover={<img alt="" src={userPoster} className="poster" />}>
             <Meta
-              avatar={
-                <Avatar
-                  src={
-                    "https://admiring-dijkstra-34cb29.netlify.app/static/media/b1.553c69e9.jpg"
-                  }
-                  size="large"
-                />
-              }
+              avatar={<Avatar src={"https://admiring-dijkstra-34cb29.netlify.app/static/media/b1.553c69e9.jpg"} size="large" />}
               description={<MetaDesc userInfo={initFormItem} />}
             />
           </Card>

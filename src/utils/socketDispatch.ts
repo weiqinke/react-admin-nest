@@ -22,7 +22,7 @@ const SOCKET_lOGIN = async (payload: any, MySocketID: string) => {
     }
     notification.open({
       message: "通知",
-      description: message,
+      description: message
     });
   }
 };

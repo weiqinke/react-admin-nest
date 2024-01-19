@@ -13,10 +13,9 @@ class Typing {
     this.chain = {
       parent: null,
       dom: this.output,
-      val: [],
+      val: []
     };
-    if (!(typeof this.opts.done === "function"))
-      this.opts.done = function () {};
+    if (!(typeof this.opts.done === "function")) this.opts.done = function () {};
   }
 
   convert(dom, arr) {
@@ -31,7 +30,7 @@ class Typing {
         val = this.convert(node, val);
         arr.push({
           dom: node,
-          val: val,
+          val: val
         });
       }
     }
@@ -73,7 +72,7 @@ class Typing {
       this.play({
         parent: ele,
         dom,
-        val: current.val,
+        val: current.val
       });
     }
   }

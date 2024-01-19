@@ -15,11 +15,7 @@ const { Content, Sider } = Layout;
 
 const SuspendFallbackLoading = () => (
   <Spin tip="加载中...">
-    <Alert
-      message="加载中"
-      description="正在加载页面，不会太久，请稍等。"
-      type="info"
-    />
+    <Alert message="加载中" description="正在加载页面，不会太久，请稍等。" type="info" />
   </Spin>
 );
 
@@ -41,13 +37,7 @@ const DefaultLayout = () => {
         <DefaultLayoutHeader />
       </ErrorBoundary>
       <Layout className={styles.content}>
-        <Sider
-          className={styles.sider}
-          trigger={null}
-          collapsible
-          collapsed={false}
-          breakpoint="md"
-        >
+        <Sider className={styles.sider} trigger={null} collapsible collapsed={false} breakpoint="md">
           <WebMenu />
         </Sider>
 
@@ -56,9 +46,7 @@ const DefaultLayout = () => {
           <ErrorBoundary fallbackRender={FailContainer}>
             <Suspense fallback={<SuspendFallbackLoading />}>
               <div className={styles.outletContainer}>
-                <div className={styles.pageOutlet}>
-                  {refresh ? <SuspendFallbackLoading /> : <Outlet />}
-                </div>
+                <div className={styles.pageOutlet}>{refresh ? <SuspendFallbackLoading /> : <Outlet />}</div>
                 <Copyright />
               </div>
             </Suspense>

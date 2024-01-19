@@ -6,7 +6,7 @@ const PieChart: FC = () => {
   const datas = [
     { value: 40, value1: 188.82, name: "对外收入", rate: "94.41%" },
     { value: 24, value1: 33.45, name: "对内收入", rate: "66.9%" },
-    { value: 32, value1: 228.1, name: "回款金额", rate: "87.06%" },
+    { value: 32, value1: 228.1, name: "回款金额", rate: "87.06%" }
   ];
 
   let datap = [];
@@ -15,7 +15,7 @@ const PieChart: FC = () => {
   for (let i = 0; i < datas.length; i++) {
     datap.push({
       value: datas[i].value,
-      name: "rosetemp" + i,
+      name: "rosetemp" + i
     });
     color.push("#FFFFFF");
   }
@@ -36,10 +36,8 @@ const PieChart: FC = () => {
         itemGap: 10,
         // padding: [5, 10, 5, 0],
         formatter(name) {
-          const item = datas.filter((item) => item.name === name)[0];
-          return `{name|${name}}{value1| ${item.value1 + "（万元）}"}{name2|${
-            item.rate
-          }}`;
+          const item = datas.filter(item => item.name === name)[0];
+          return `{name|${name}}{value1| ${item.value1 + "（万元）}"}{name2|${item.rate}}`;
         },
         textStyle: {
           rich: {
@@ -47,22 +45,22 @@ const PieChart: FC = () => {
               color: "#595959",
               fontSize: 14,
               width: 150,
-              fontWeight: 600,
+              fontWeight: 600
             },
             name2: {
               color: "#595959",
               fontSize: 14,
               width: 200,
-              fontWeight: 600,
+              fontWeight: 600
             },
             value1: {
               color: "#595959",
               fontSize: 14,
               width: 170,
-              fontWeight: 600,
-            },
-          },
-        },
+              fontWeight: 600
+            }
+          }
+        }
       },
       title: {
         text: "2023年收入实际完成率",
@@ -72,8 +70,8 @@ const PieChart: FC = () => {
         textStyle: {
           color: "#262626",
           fontSize: 18,
-          fontWeight: "600",
-        },
+          fontWeight: "600"
+        }
         // subtext:'2022年收入实际完成情况',
         // subtextStyle:{
         //   color: '#262626',
@@ -94,21 +92,21 @@ const PieChart: FC = () => {
           startAngle: 180,
           legendHoverLink: false,
           itemStyle: {
-            borderRadius: 0,
+            borderRadius: 0
           },
           label: {
-            show: false,
+            show: false
           },
           emphasis: {
             label: {
-              show: false,
-            },
+              show: false
+            }
           },
           color: ["#f6f8fe", "#ffffff"],
           data: [
             { value: 10, name: "r" },
-            { value: 10, name: "ro" },
-          ],
+            { value: 10, name: "ro" }
+          ]
         },
         {
           name: "Nightingale Chart",
@@ -121,7 +119,7 @@ const PieChart: FC = () => {
           itemStyle: {
             borderRadius: 0,
             borderColor: "#fff",
-            borderWidth: 1,
+            borderWidth: 1
           },
           label: {
             show: true,
@@ -129,16 +127,16 @@ const PieChart: FC = () => {
             color: "#fff",
             formatter(params) {
               return params.data.rate;
-            },
+            }
           },
           emphasis: {
             label: {
-              show: true,
-            },
+              show: true
+            }
           },
-          data: datap,
-        },
-      ],
+          data: datap
+        }
+      ]
     });
     window.addEventListener("resize", function () {
       myChart.resize();

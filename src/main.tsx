@@ -5,6 +5,4 @@ import { RouterProvider } from "react-router-dom";
 import "./reset.css";
 const router = ProjectRouter();
 
-ReactDOM.createRoot(document.getElementById("caravan-root")!).render(
-  <RouterProvider router={router} />
-);
+ReactDOM.createRoot(document.getElementById("caravan-root")!).render(<RouterProvider router={router} />);

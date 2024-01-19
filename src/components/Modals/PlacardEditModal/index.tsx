@@ -32,15 +32,7 @@ const PlacardEditModal: FC<any> = ({ placard, onOk, onCancel }: any) => {
   }, [placard, form]);
 
   return (
-    <Modal
-      visible
-      forceRender
-      title={`${placard?.id ? "编辑" : "新增"}公告`}
-      onOk={() => form.submit()}
-      onCancel={onCancel}
-      width={800}
-      getContainer={false}
-    >
+    <Modal visible forceRender title={`${placard?.id ? "编辑" : "新增"}公告`} onOk={() => form.submit()} onCancel={onCancel} width={800} getContainer={false}>
       <Form form={form} onFinish={onFinish} initialValues={placard} {...layout} autoComplete="off">
         <Row>
           <Col span={20}>

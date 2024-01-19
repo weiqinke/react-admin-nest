@@ -12,17 +12,17 @@ const resp401 = {
     if (response.status === 400) {
       message.error({
         content: "无此接口权限",
-        duration: 1,
+        duration: 1
       });
     }
     if (response.status === 401) {
       message.error({
         content: "无此接口权限",
-        duration: 1,
+        duration: 1
       });
     }
     return response;
-  },
+  }
 };
 
 const resp403 = {
@@ -30,11 +30,11 @@ const resp403 = {
     if (response.status === 403) {
       message.error({
         content: "请求被拒绝",
-        duration: 1,
+        duration: 1
       });
     }
     return response;
-  },
+  }
 };
 
 const resp404 = {
@@ -42,11 +42,11 @@ const resp404 = {
     if (response.status === 404) {
       message.error({
         content: "请求找不到",
-        duration: 1,
+        duration: 1
       });
     }
     return response;
-  },
+  }
 };
 
 const resp415 = {
@@ -54,11 +54,11 @@ const resp415 = {
     if (response.status === 415) {
       message.error({
         content: "请求方式不受支持",
-        duration: 1,
+        duration: 1
       });
     }
     return response;
-  },
+  }
 };
 
 const resp20401 = {
@@ -73,27 +73,27 @@ const resp20401 = {
     if (response.status === 200 && response.data.code === 41701) {
       message.error({
         content: "查询参数错误",
-        duration: 1,
+        duration: 1
       });
     }
     if (response.data.code !== 200 && response.data.message) {
       message.error({
         content: `${response.data.message}`,
-        duration: 1,
+        duration: 1
       });
     }
     return response;
-  },
+  }
 };
 
 const resperror = {
   onRejected(error) {
     message.error({
       content: "请求错误",
-      duration: 1,
+      duration: 1
     });
     return Promise.reject(error);
-  },
+  }
 };
 
 const reqCommon = {
@@ -123,19 +123,12 @@ const reqCommon = {
   onRejected(error) {
     message.error({
       content: error.message,
-      duration: 1,
+      duration: 1
     });
     return Promise.reject(error);
-  },
+  }
 };
 
 export const requestInterce = [reqCommon]; // 请求拦截
 
-export const responseInterce = [
-  resp401,
-  resp403,
-  resp404,
-  resp415,
-  resp20401,
-  resperror,
-]; // 响应拦截
+export const responseInterce = [resp401, resp403, resp404, resp415, resp20401, resperror]; // 响应拦截

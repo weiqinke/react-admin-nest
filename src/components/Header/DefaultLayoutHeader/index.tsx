@@ -36,16 +36,16 @@ const DefaultLayoutHeader = () => {
   const items: MenuProps["items"] = [
     {
       label: "个人中心",
-      key: "1",
+      key: "1"
     },
     {
       label: "切换语言",
-      key: "2",
+      key: "2"
     },
     {
       label: "退出登录",
-      key: "3",
-    },
+      key: "3"
+    }
   ];
   const onClick: MenuProps["onClick"] = ({ key }) => {
     if (key === "1") return navigate("/account");
@@ -53,23 +53,23 @@ const DefaultLayoutHeader = () => {
     if (key === "3") return logout();
   };
 
-  const GetPageView = async (payload) => {
+  const GetPageView = async payload => {
     // 开始截屏
     const result = await html2canvas(document.body, {
       useCORS: true, // 【重要】开启跨域配置
       scale: window.devicePixelRatio < 3 ? window.devicePixelRatio : 2,
-      allowTaint: true, // 允许跨域图片
+      allowTaint: true // 允许跨域图片
     });
 
-    result.toBlob((res) => {
+    result.toBlob(res => {
       webSocketManager.postMessage({
         type: "PageViewBlob",
-        data: { blob: res, receiver: payload.receiver },
+        data: { blob: res, receiver: payload.receiver }
       });
     });
   };
   useEffect(() => {
-    const removeHandler = webSocketManager.addEventHandler((payload) => {
+    const removeHandler = webSocketManager.addEventHandler(payload => {
       if (payload?.type === "HandleForcedOffline") logout();
       if (payload?.type === "GetPageView") {
         GetPageView(payload);
@@ -82,9 +82,9 @@ const DefaultLayoutHeader = () => {
     if (readPlacard) return;
     getPlacardListByType({
       type: "system",
-      status: "broadcasting",
+      status: "broadcasting"
     })
-      .then((result) => {
+      .then(result => {
         //如果请求成功，需要弹出对应数量的公告modal
         result.data.data.map((item: any, index: number) => {
           return Modal.info({
@@ -97,7 +97,7 @@ const DefaultLayoutHeader = () => {
                 <p>{item.description.slice(0, 300)}</p>
               </div>
             ),
-            onOk: () => readOnePlacard(item),
+            onOk: () => readOnePlacard(item)
           });
         });
       })

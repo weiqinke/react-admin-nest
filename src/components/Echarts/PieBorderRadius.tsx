@@ -7,10 +7,10 @@ const PieBorderRadius: FC = () => {
     const myChart: any = echarts.init(ref.current);
     myChart.setOption({
       title: {
-        text: "UserAgent",
+        text: "UserAgent"
       },
       tooltip: {
-        trigger: "item",
+        trigger: "item"
       },
       series: [
         {
@@ -21,14 +21,14 @@ const PieBorderRadius: FC = () => {
           itemStyle: {
             borderRadius: 100,
             borderColor: "#fff",
-            borderWidth: 2,
+            borderWidth: 2
           },
           data: [
             { value: 200, name: "Edge" },
             { value: 200, name: "Safari" },
             { value: 200, name: "Firefox" },
             { value: 200, name: "Other" },
-            { value: 200, name: "Chrome" },
+            { value: 200, name: "Chrome" }
           ],
           label: {
             show: true,
@@ -36,10 +36,10 @@ const PieBorderRadius: FC = () => {
               const name = params.name;
               const percent = params.percent;
               return name + "\n" + percent;
-            },
-          },
-        },
-      ],
+            }
+          }
+        }
+      ]
     });
     window.addEventListener("resize", function () {
       myChart.resize();

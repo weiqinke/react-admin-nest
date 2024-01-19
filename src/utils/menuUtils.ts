@@ -93,7 +93,7 @@ export const getOpenKeysByUrls = (urls = [], menus = []) => {
   const openKeys: string[] = [];
   let currentKey: string[] = [];
   const unbendMenus = getUnbendMenus(menus);
-  urls.filter((v) => {
+  urls.filter(v => {
     const data = unbendMenus.find((d: { url: any }) => d.url === v);
     if (data?.id) {
       const id = `${data?.id}`;
@@ -109,10 +109,7 @@ export const saveMenus = (menus: string) => localStorage.setItem(MENUS, menus);
 export const getLocalStorageMenus = () => localStorage.getItem(MENUS) || "[]";
 
 export const getIndexUrl = () => {
-  const allMenusInfo = SaveMeUrl(
-    ProjectParseMenuAsPre(JSON.parse(getLocalStorageMenus())),
-    ""
-  );
+  const allMenusInfo = SaveMeUrl(ProjectParseMenuAsPre(JSON.parse(getLocalStorageMenus())), "");
   //找到第一个url直接跳转过去吧
   const indexTag = getIndexUrlInfo(allMenusInfo);
   return { pathname: indexTag.meUrl };
@@ -147,7 +144,7 @@ export function getShowMenus(menulist: any[]) {
 
     return newMenuItem;
   });
-  return menus.filter((v) => v);
+  return menus.filter(v => v);
 }
 
 // localStorage 存
@@ -167,7 +164,7 @@ export function getLocalStorage(name: string) {
  */
 export function getTagByMenus(menulist: any[], prevActiveTagUrl: string) {
   let menuitem = null;
-  menulist.map((item) => {
+  menulist.map(item => {
     if (item.meUrl === prevActiveTagUrl) menuitem = item;
     if (item.children && item.children.length > 0) {
       const childitem = getTagByMenus(item.children, prevActiveTagUrl);

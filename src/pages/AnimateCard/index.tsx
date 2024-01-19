@@ -104,20 +104,17 @@ const AnimateCard = () => {
     "animate__slideOutDown",
     "animate__slideOutLeft",
     "animate__slideOutRight",
-    "animate__slideOutUp",
+    "animate__slideOutUp"
   ];
 
   const onMouseOver = (event, animate) => {
     event.stopPropagation();
     event.preventDefault();
     event.target.removeAttribute("class");
-    event.target.setAttribute(
-      "class",
-      `animateContainer animate__animated ${animate}`
-    );
+    event.target.setAttribute("class", `animateContainer animate__animated ${animate}`);
   };
 
-  const onMouseOut = (event) => {
+  const onMouseOut = event => {
     event.stopPropagation();
     event.preventDefault();
     if (event.target.getAttribute("data-sorce")) {
@@ -129,14 +126,10 @@ const AnimateCard = () => {
   return (
     <div className={styles.container}>
       <Row gutter={[12, 12]}>
-        {animateList.map((v) => {
+        {animateList.map(v => {
           return (
-            <Col span={4} onMouseLeave={(event) => onMouseOut(event)} key={v}>
-              <div
-                data-sorce="1"
-                onMouseEnter={(event) => onMouseOver(event, v)}
-                className="animateContainer"
-              >
+            <Col span={4} onMouseLeave={event => onMouseOut(event)} key={v}>
+              <div data-sorce="1" onMouseEnter={event => onMouseOver(event, v)} className="animateContainer">
                 {v}
               </div>
             </Col>

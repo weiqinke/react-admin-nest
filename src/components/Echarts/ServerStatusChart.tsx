@@ -13,7 +13,7 @@ const data = [
     symbolSize: [150, 80],
     label: {
       color: "#FFF",
-      position: "bottom",
+      position: "bottom"
     },
     category: 1,
     itemStyle: {
@@ -21,15 +21,15 @@ const data = [
         color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
           {
             offset: 0,
-            color: "#157eff",
+            color: "#157eff"
           },
           {
             offset: 1,
-            color: "#35c2ff",
-          },
-        ]),
-      },
-    },
+            color: "#35c2ff"
+          }
+        ])
+      }
+    }
   },
 
   {
@@ -44,7 +44,7 @@ const data = [
     symbolSize: [150, 80],
     label: {
       color: "#FFF",
-      position: "bottom",
+      position: "bottom"
     },
     category: 1,
     itemStyle: {
@@ -52,15 +52,15 @@ const data = [
         color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
           {
             offset: 0,
-            color: "#157eff",
+            color: "#157eff"
           },
           {
             offset: 1,
-            color: "#35c2ff",
-          },
-        ]),
-      },
-    },
+            color: "#35c2ff"
+          }
+        ])
+      }
+    }
   },
   {
     name: "redis",
@@ -74,7 +74,7 @@ const data = [
     symbolSize: [120, 80],
     label: {
       color: "#FFF",
-      position: "bottom",
+      position: "bottom"
     },
     category: 1,
     itemStyle: {
@@ -82,15 +82,15 @@ const data = [
         color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
           {
             offset: 0,
-            color: "#157eff",
+            color: "#157eff"
           },
           {
             offset: 1,
-            color: "#35c2ff",
-          },
-        ]),
-      },
-    },
+            color: "#35c2ff"
+          }
+        ])
+      }
+    }
   },
   {
     name: "web",
@@ -99,7 +99,7 @@ const data = [
     symbolSize: [60, 30],
     label: {
       color: "#efefef",
-      position: "bottom",
+      position: "bottom"
     },
     value: [100, 400],
 
@@ -112,15 +112,15 @@ const data = [
         color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
           {
             offset: 0,
-            color: "#ffb402",
+            color: "#ffb402"
           },
           {
             offset: 1,
-            color: "#ffdc84",
-          },
-        ]),
-      },
-    },
+            color: "#ffdc84"
+          }
+        ])
+      }
+    }
   },
   {
     name: "iOS",
@@ -129,7 +129,7 @@ const data = [
     symbolSize: [60, 30],
     label: {
       color: "#efefef",
-      position: "bottom",
+      position: "bottom"
     },
     value: [200, 400],
 
@@ -142,15 +142,15 @@ const data = [
         color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
           {
             offset: 0,
-            color: "#ffb402",
+            color: "#ffb402"
           },
           {
             offset: 1,
-            color: "#ffdc84",
-          },
-        ]),
-      },
-    },
+            color: "#ffdc84"
+          }
+        ])
+      }
+    }
   },
   {
     name: "Android",
@@ -159,7 +159,7 @@ const data = [
     symbolSize: [60, 30],
     label: {
       color: "#efefef",
-      position: "bottom",
+      position: "bottom"
     },
     value: [300, 400],
 
@@ -172,15 +172,15 @@ const data = [
         color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
           {
             offset: 0,
-            color: "#ffb402",
+            color: "#ffb402"
           },
           {
             offset: 1,
-            color: "#ffdc84",
-          },
-        ]),
-      },
-    },
+            color: "#ffdc84"
+          }
+        ])
+      }
+    }
   },
   {
     name: "Mini Program",
@@ -189,7 +189,7 @@ const data = [
     symbolSize: [60, 30],
     label: {
       color: "#efefef",
-      position: "bottom",
+      position: "bottom"
     },
     value: [400, 400],
 
@@ -202,15 +202,15 @@ const data = [
         color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
           {
             offset: 0,
-            color: "#ffb402",
+            color: "#ffb402"
           },
           {
             offset: 1,
-            color: "#ffdc84",
-          },
-        ]),
-      },
-    },
+            color: "#ffdc84"
+          }
+        ])
+      }
+    }
   },
   {
     name: "raspberry",
@@ -219,7 +219,7 @@ const data = [
     symbolSize: [60, 30],
     label: {
       color: "#efefef",
-      position: "bottom",
+      position: "bottom"
     },
     value: [500, 400],
 
@@ -232,15 +232,15 @@ const data = [
         color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
           {
             offset: 0,
-            color: "#ffb402",
+            color: "#ffb402"
           },
           {
             offset: 1,
-            color: "#ffdc84",
-          },
-        ]),
-      },
-    },
+            color: "#ffdc84"
+          }
+        ])
+      }
+    }
   },
   {
     name: "TV",
@@ -249,7 +249,7 @@ const data = [
     symbolSize: [60, 30],
     label: {
       color: "#efefef",
-      position: "bottom",
+      position: "bottom"
     },
     value: [600, 400],
 
@@ -262,16 +262,16 @@ const data = [
         color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
           {
             offset: 0,
-            color: "#ffb402",
+            color: "#ffb402"
           },
           {
             offset: 1,
-            color: "#ffdc84",
-          },
-        ]),
-      },
-    },
-  },
+            color: "#ffdc84"
+          }
+        ])
+      }
+    }
+  }
 ];
 
 const ServerStatusChart = ({ dataSource = [] }) => {
@@ -283,16 +283,16 @@ const ServerStatusChart = ({ dataSource = [] }) => {
       backgroundColor: "#000",
       xAxis: {
         show: false,
-        type: "value",
+        type: "value"
       },
       yAxis: {
         show: false,
-        type: "value",
+        type: "value"
       },
       grid: {
         left: 0,
         top: 30,
-        bottom: 30,
+        bottom: 30
       },
       tooltip: {},
       series: [
@@ -305,26 +305,26 @@ const ServerStatusChart = ({ dataSource = [] }) => {
           symbolOffset: ["15%", 0],
           label: {
             normal: {
-              show: true,
-            },
+              show: true
+            }
           },
           data: data,
           links: [
             {
               source: "web",
-              target: "server",
+              target: "server"
             },
             {
               source: "iOS",
-              target: "server",
+              target: "server"
             },
             {
               source: "Android",
-              target: "server",
+              target: "server"
             },
             {
               source: "Mini Program",
-              target: "server",
+              target: "server"
             },
             {
               source: "raspberry",
@@ -332,36 +332,36 @@ const ServerStatusChart = ({ dataSource = [] }) => {
               lineStyle: {
                 normal: {
                   color: "red",
-                  curveness: 0.3,
-                },
-              },
+                  curveness: 0.3
+                }
+              }
             },
             {
               source: "TV",
-              target: "server",
+              target: "server"
             },
             {
               source: "业务数据7",
-              target: "server",
+              target: "server"
             },
             {
               source: "server",
               target: "mysql",
               lineStyle: {
                 normal: {
-                  curveness: -0.3,
-                },
-              },
+                  curveness: -0.3
+                }
+              }
             },
             {
               source: "server",
               target: "redis",
               lineStyle: {
                 normal: {
-                  curveness: -0.3,
-                },
-              },
-            },
+                  curveness: -0.3
+                }
+              }
+            }
           ],
           /** 设置服务器件的连线样式*/
           lineStyle: {
@@ -369,9 +369,9 @@ const ServerStatusChart = ({ dataSource = [] }) => {
               opacity: 1,
               color: "#53B5EA",
               curveness: 0.3,
-              width: 2,
-            },
-          },
+              width: 2
+            }
+          }
         },
         /** 分发点*/
         {
@@ -387,46 +387,46 @@ const ServerStatusChart = ({ dataSource = [] }) => {
             symbolSize: 12,
             symbol: "pin",
             loop: true,
-            color: "rgba(55,155,255,0.5)",
+            color: "rgba(55,155,255,0.5)"
           },
           lineStyle: {
             normal: {
               color: "#22AC38",
               width: 0,
-              curveness: 0.3,
-            },
+              curveness: 0.3
+            }
           },
           data: [
             {
               coords: [
                 [100, 400],
-                [400, 200],
-              ],
+                [400, 200]
+              ]
             },
             {
               coords: [
                 [200, 400],
-                [400, 200],
-              ],
+                [400, 200]
+              ]
             },
             {
               coords: [
                 [300, 400],
-                [400, 200],
-              ],
+                [400, 200]
+              ]
             },
             {
               coords: [
                 [400, 400],
-                [400, 200],
-              ],
+                [400, 200]
+              ]
             },
             {
               coords: [
                 [600, 400],
-                [400, 200],
-              ],
-            },
+                [400, 200]
+              ]
+            }
             // {
             //     coords: [
             //         [700, 350],
@@ -451,7 +451,7 @@ const ServerStatusChart = ({ dataSource = [] }) => {
             //         [400, 200],
             //     ],
             // },
-          ],
+          ]
         },
         {
           type: "lines",
@@ -466,59 +466,59 @@ const ServerStatusChart = ({ dataSource = [] }) => {
             symbolSize: 12,
             symbol: "pin",
             loop: true,
-            color: "rgba(55,155,255,0.5)",
+            color: "rgba(55,155,255,0.5)"
           },
           lineStyle: {
             normal: {
               color: "#22AC38",
               width: 0,
-              curveness: 0.3,
-            },
+              curveness: 0.3
+            }
           },
           data: [
             {
               coords: [
                 [100, 400],
-                [400, 200],
-              ],
+                [400, 200]
+              ]
             },
             {
               coords: [
                 [200, 400],
-                [400, 200],
-              ],
+                [400, 200]
+              ]
             },
             {
               coords: [
                 [300, 400],
-                [400, 200],
-              ],
+                [400, 200]
+              ]
             },
             {
               coords: [
                 [400, 400],
-                [400, 200],
-              ],
+                [400, 200]
+              ]
             },
             {
               coords: [
                 [600, 400],
-                [400, 200],
-              ],
+                [400, 200]
+              ]
             },
             {
               coords: [
                 [300, 50],
-                [400, 200],
-              ],
+                [400, 200]
+              ]
             },
             {
               coords: [
                 [500, 50],
-                [400, 200],
-              ],
-            },
-          ],
+                [400, 200]
+              ]
+            }
+          ]
         },
         {
           type: "lines",
@@ -533,58 +533,58 @@ const ServerStatusChart = ({ dataSource = [] }) => {
             symbolSize: 12,
             symbol: "pin",
             loop: true,
-            color: "rgba(55,155,255,0.5)",
+            color: "rgba(55,155,255,0.5)"
           },
           lineStyle: {
             normal: {
               color: "#22AC38",
               width: 0,
-              curveness: 0.3,
-            },
+              curveness: 0.3
+            }
           },
           data: [
             {
               coords: [
                 [100, 400],
-                [400, 200],
-              ],
+                [400, 200]
+              ]
             },
             {
               coords: [
                 [200, 400],
-                [400, 200],
-              ],
+                [400, 200]
+              ]
             },
             {
               coords: [
                 [300, 400],
-                [400, 200],
-              ],
+                [400, 200]
+              ]
             },
             {
               coords: [
                 [400, 400],
-                [400, 200],
-              ],
+                [400, 200]
+              ]
             },
             {
               coords: [
                 [600, 400],
-                [400, 200],
-              ],
+                [400, 200]
+              ]
             },
             {
               coords: [
                 [300, 50],
-                [400, 200],
-              ],
+                [400, 200]
+              ]
             },
             {
               coords: [
                 [500, 50],
-                [400, 200],
-              ],
-            },
+                [400, 200]
+              ]
+            }
             // {
             //     coords: [
             //         [700, 350],
@@ -597,7 +597,7 @@ const ServerStatusChart = ({ dataSource = [] }) => {
             //         [400, 200],
             //     ],
             // },
-          ],
+          ]
         },
         {
           type: "lines",
@@ -612,25 +612,25 @@ const ServerStatusChart = ({ dataSource = [] }) => {
             symbolSize: 14,
             symbol: "pin",
             loop: true,
-            color: "red",
+            color: "red"
           },
           lineStyle: {
             normal: {
               color: "#22AC38",
               width: 0,
-              curveness: 0.3,
-            },
+              curveness: 0.3
+            }
           },
           data: [
             {
               coords: [
                 [500, 400],
-                [400, 200],
-              ],
-            },
-          ],
-        },
-      ],
+                [400, 200]
+              ]
+            }
+          ]
+        }
+      ]
     });
     window.addEventListener("resize", function () {
       myChart.resize();

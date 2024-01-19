@@ -10,31 +10,31 @@ service.defaults.withCredentials = false;
 service.defaults.xsrfHeaderName = xsrfHeaderName;
 service.defaults.xsrfCookieName = xsrfHeaderName;
 // 加载请求拦截器
-requestInterce.forEach((item) => {
+requestInterce.forEach(item => {
   let { onFulfilled, onRejected } = item;
   if (!onFulfilled || typeof onFulfilled !== "function") {
-    onFulfilled = (config) => config;
+    onFulfilled = config => config;
   }
   if (!onRejected || typeof onRejected !== "function") {
-    onRejected = (error) => Promise.reject(error);
+    onRejected = error => Promise.reject(error);
   }
   service.interceptors.request.use(
-    (config) => onFulfilled(config),
-    (error) => onRejected(error)
+    config => onFulfilled(config),
+    error => onRejected(error)
   );
 });
 // 加载响应拦截器
 responseInterce.forEach((item: any) => {
   let { onFulfilled, onRejected } = item;
   if (!onFulfilled || typeof onFulfilled !== "function") {
-    onFulfilled = (response) => response;
+    onFulfilled = response => response;
   }
   if (!onRejected || typeof onRejected !== "function") {
-    onRejected = (error) => Promise.reject(error);
+    onRejected = error => Promise.reject(error);
   }
   service.interceptors.response.use(
-    (response) => onFulfilled(response),
-    (error) => onRejected(error)
+    response => onFulfilled(response),
+    error => onRejected(error)
   );
 });
 

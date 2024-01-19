@@ -30,10 +30,10 @@ const fetchinfo = {
         nice: 61270,
         sys: 140104620,
         idle: 15165295990,
-        irq: 0,
-      },
-    },
-  ],
+        irq: 0
+      }
+    }
+  ]
 };
 
 const SystemInfo: React.FC = () => {
@@ -44,7 +44,7 @@ const SystemInfo: React.FC = () => {
     platform: "linux",
     release: "3.10.0-1160.11.1.el7.x86_64",
     arch: "x64",
-    uptime: 11939391,
+    uptime: 11939391
   };
 
   const timer: any = useRef();
@@ -73,7 +73,7 @@ const SystemInfo: React.FC = () => {
       { id: "1", content: "CPU Intel(R) Xeon(R) Platinum 8280L 正常" },
       { id: "2", content: "最近5、10、15分钟平均负载 正常" },
       { id: "3", content: "内存 正常" },
-      { id: "4", content: "欢迎登陆" },
+      { id: "4", content: "欢迎登陆" }
     ];
     console.log("我发送一次");
     webSocketManager.postMessage({ type: "memStatus" });
@@ -131,12 +131,7 @@ const SystemInfo: React.FC = () => {
       <Col xs={24} sm={24} md={8} lg={8} xl={8} xxl={8}>
         <Card title={`内存使用率(${memPercentage}%)`} hoverable>
           <div className={styles.mem}>
-            <Progress
-              type="circle"
-              percent={memPercentage}
-              strokeColor={statusColor(memPercentage)}
-              format={(percent) => percent + "%"}
-            />
+            <Progress type="circle" percent={memPercentage} strokeColor={statusColor(memPercentage)} format={percent => percent + "%"} />
             <div className={styles.surplus}>剩余{bytes(OsInfo.freemem)}</div>
           </div>
         </Card>
