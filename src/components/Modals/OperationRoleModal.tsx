@@ -27,7 +27,7 @@ const RoleEditModal: FC<any> = ({ role, onCancel, onOk }: any) => {
   }, [role, form]);
 
   return (
-    <Modal visible title={`${role?.id ? "编辑" : "新增"}角色 `} onOk={() => form.submit()} onCancel={onCancel} width={800}>
+    <Modal open title={`${role?.id ? "编辑" : "新增"}角色 `} onOk={() => form.submit()} onCancel={onCancel} width={800}>
       <Form form={form} onFinish={onFinish} initialValues={{ ...role }} {...layout} autoComplete="off">
         <Row>
           <Col span={20}>

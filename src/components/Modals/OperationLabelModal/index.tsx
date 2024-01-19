@@ -26,7 +26,7 @@ const OperationLabelModal: FC<any> = ({ label, onCancel, onOk }) => {
   }, [form]);
 
   return (
-    <Modal visible forceRender title={`${label?.id ? "编辑" : "添加"}标签`} onOk={() => form.submit()} onCancel={onCancel} width={800} getContainer={false}>
+    <Modal open forceRender title={`${label?.id ? "编辑" : "添加"}标签`} onOk={() => form.submit()} onCancel={onCancel} width={800} getContainer={false}>
       <Form form={form} onFinish={onFinish} initialValues={{ ...label }} {...layout} autoComplete="off">
         <Row>
           <Col span={20}>

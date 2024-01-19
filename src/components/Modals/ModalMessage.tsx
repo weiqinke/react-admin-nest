@@ -17,7 +17,7 @@ const ModalMessage: FC<ModalMessageProps> = ({ title, onOk, onCancel, content, o
   useEffect(() => {}, []);
 
   return (
-    <Modal visible title={title || "提示"} cancelText={cancelText || "取消"} onOk={onOk} onCancel={onCancel} okText={okText || "确认"}>
+    <Modal open title={title || "提示"} cancelText={cancelText || "取消"} onOk={onOk} onCancel={onCancel} okText={okText || "确认"}>
       <PageHeader className="site-page-header" onBack={() => null} title="Title" subTitle="This is a subtitle" />
 
       <Menu selectedKeys={[]} mode="horizontal">

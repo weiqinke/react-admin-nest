@@ -63,7 +63,7 @@ const MenuEditModal: FC<any> = ({ isEdit, onOk, visible, initMenuItem, parentUid
   }, [initMenuItem, isEdit, visible, form]);
 
   return (
-    <Modal visible title={title} onOk={creatRoleSubmit} onCancel={onCancel} width={800} getContainer={false} forceRender>
+    <Modal open title={title} onOk={creatRoleSubmit} onCancel={onCancel} width={800} getContainer={false} forceRender>
       <Form form={form} onFinish={handleSubmit} initialValues={initMenuItem} {...layout} autoComplete="off">
         <Row>
           <Col span={20}>
