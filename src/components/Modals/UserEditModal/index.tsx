@@ -141,7 +141,7 @@ const UserEditModal: FC<any> = (props: any) => {
   }, [initUser, form]);
 
   return (
-    <Modal visible title={`${title}用户`} width={800} onCancel={onCancel} onOk={creatRoleSubmit} okText="确定" cancelText="取消" maskClosable={false}>
+    <Modal open title={`${title}用户`} width={800} onCancel={onCancel} onOk={creatRoleSubmit} okText="确定" cancelText="取消" maskClosable={false}>
       <Row>
         <Col span={24}>
           <div className={styles.avatar}>
