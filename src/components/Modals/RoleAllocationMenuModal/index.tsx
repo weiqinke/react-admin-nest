@@ -32,14 +32,13 @@ const RoleAllocationMenuModal: FC<any> = ({
     setAutoExpandParent(false);
   };
 
-  const onCheck = (checkedKeys: any, info: any) => {
-    const keys = checkedKeys.concat(info.halfCheckedKeys);
-    setCheckedKeys(keys);
+  const onCheck = (checkedKeysValue: React.Key[]) => {
+    setCheckedKeys(checkedKeysValue);
   };
 
   return (
     <Modal
-      visible
+      open
       title={title || "提示"}
       onOk={onOkSubmit}
       onCancel={onCancel}
