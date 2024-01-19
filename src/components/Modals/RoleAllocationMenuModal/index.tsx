@@ -2,7 +2,16 @@ import { giveRoleMenus } from "@/api/caravan/Rbac";
 import { message, Modal, Tree } from "antd";
 import React, { FC, useState } from "react";
 
-const RoleAllocationMenuModal: FC<any> = ({ treeData, onOk, onCancel, initMenus, okText, cancelText, roleCode, title }: any) => {
+const RoleAllocationMenuModal: FC<any> = ({
+  treeData,
+  onOk,
+  onCancel,
+  initMenus,
+  okText,
+  cancelText,
+  roleCode,
+  title,
+}: any) => {
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([...initMenus]);
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
@@ -24,8 +33,8 @@ const RoleAllocationMenuModal: FC<any> = ({ treeData, onOk, onCancel, initMenus,
   };
 
   const onCheck = (checkedKeys: any, info: any) => {
-    let checkedKey = checkedKeys.concat(info.halfCheckedKeys);
-    setCheckedKeys(checkedKey);
+    const keys = checkedKeys.concat(info.halfCheckedKeys);
+    setCheckedKeys(keys);
   };
 
   return (
@@ -46,7 +55,7 @@ const RoleAllocationMenuModal: FC<any> = ({ treeData, onOk, onCancel, initMenus,
           expandedKeys={expandedKeys}
           autoExpandParent={autoExpandParent}
           checkedKeys={checkedKeys}
-          onSelect={v => setSelectedKeys(v)}
+          onSelect={(v) => setSelectedKeys(v)}
           onCheck={onCheck}
           selectedKeys={selectedKeys}
           treeData={treeData}

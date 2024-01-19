@@ -9,7 +9,7 @@ const LoginFrequencyChart = ({ dataSource = [] }) => {
     const payload = {};
     const userData = {};
     const newData = [...dataSource].reverse();
-    newData.map(v => {
+    newData.map((v) => {
       const time = dayjs(v.created).format("MM-DD");
       if (!payload[time]) payload[time] = {};
       if (!payload[time][v.name]) payload[time][v.name] = 1;
@@ -22,41 +22,44 @@ const LoginFrequencyChart = ({ dataSource = [] }) => {
     const xAxisData = Object.keys(payload);
     const nameData = Object.keys(userData);
     const seriesData = [];
-    nameData.map(name => {
+    nameData.map((name) => {
       const data = [];
-      xAxisData.filter(time => data.push(userData[name][time] || 0));
+      xAxisData.filter((time) => data.push(userData[name][time] || 0));
       seriesData.push({
         name,
         type: "bar",
         stack: "login",
         emphasis: { focus: "series" },
-        data: data
+        data: data,
       });
     });
 
     const option = {
+      title: {
+        text: "最近15天登录趋势图",
+      },
       tooltip: {
         trigger: "axis",
-        axisPointer: { type: "shadow" }
+        axisPointer: { type: "shadow" },
       },
       legend: {
-        data: nameData
+        data: nameData,
       },
       grid: {
         left: "3%",
         right: "4%",
         bottom: "3%",
-        containLabel: true
+        containLabel: true,
       },
       xAxis: {
         type: "category",
-        data: xAxisData
+        data: xAxisData,
       },
       yAxis: { type: "value" },
-      series: seriesData
+      series: seriesData,
     };
 
-    var myChart = echarts.init(ref.current);
+    const myChart = echarts.init(ref.current);
     myChart.setOption(option);
     window.addEventListener("resize", function () {
       myChart.resize();

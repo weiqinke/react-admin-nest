@@ -18,7 +18,7 @@ const MenuEditModal: FC<any> = ({ isEdit, onOk, visible, initMenuItem, parentUid
 
   const creatRoleSubmit = async () => {
     const data = await form.validateFields();
-    var result: any = null;
+    let result: any = null;
     const payload = {
       parentUid,
       ...data,

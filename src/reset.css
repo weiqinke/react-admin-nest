@@ -1,0 +1,49 @@
+:root {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-height: 100vh;
+  min-width: 100vw;
+  overflow: hidden;
+}
+
+::-webkit-scrollbar {
+  /*滚动条整体样式*/
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  /*滚动条里面轨道*/
+  background-color: rgba(255, 255, 255, 0);
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
+  border-radius: 4px;
+  background-color: #c0c4cc;
+
+  &:hover {
+    background-color: #81858c;
+  }
+}
+
+::-webkit-resizer {
+  display: none;
+}
+
+::-webkit-scrollbar-corner {
+  display: none;
+}
+
+* {
+  /*火狐的样式*/
+  scrollbar-color: #999 #ccc;
+  scrollbar-width: thin;
+}

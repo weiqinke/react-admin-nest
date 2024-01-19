@@ -1,0 +1,48 @@
+.notice {
+  float: right;
+  padding: 0 20px;
+  padding-top: 10px;
+  margin-right: 10px;
+
+  cursor: pointer;
+  user-select: none;
+}
+
+.container {
+  :global {
+    .ant-tabs-tab {
+      width: 130px;
+      .ant-tabs-tab-btn {
+        margin: 0 auto;
+      }
+    }
+  }
+}
+.topNotice {
+  padding: 4px 8px 0px 8px;
+  user-select: none;
+}
+
+.bottomBar {
+  width: 100%;
+  border-top: 1px solid #f0f0f0;
+  border-radius: 0 0 2px 2px;
+  transition: all 0.3s;
+}
+
+.dobtn {
+  width: 49%;
+  padding: 12px 0;
+  float: left;
+  cursor: pointer;
+  text-align: center;
+}
+
+.doLeftBtn {
+  @extend .dobtn;
+  border-right: 1px solid #f0f0f0;
+}
+
+.tab {
+  padding: 0 12px;
+}

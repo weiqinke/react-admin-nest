@@ -4,16 +4,16 @@ import * as echarts from "echarts";
 const EchartsPie: FC = () => {
   useEffect(() => {
     const dom: any = document.getElementById("pie");
-    let myChart: any = echarts.init(dom);
+    const myChart: any = echarts.init(dom);
     myChart.setOption({
       tooltip: {
         trigger: "item",
-        formatter: "{a} <br/>{b} : {c} ({d}%)"
+        formatter: "{a} <br/>{b} : {c} ({d}%)",
       },
       legend: {
         orient: "vertical",
         left: "left",
-        data: ["直接访问", "邮件营销", "联盟广告", "视频广告", "搜索引擎"]
+        data: ["直接访问", "邮件营销", "联盟广告", "视频广告", "搜索引擎"],
       },
       series: [
         {
@@ -25,11 +25,11 @@ const EchartsPie: FC = () => {
             { value: 310, name: "邮件营销" },
             { value: 234, name: "联盟广告" },
             { value: 135, name: "视频广告" },
-            { value: 1548, name: "搜索引擎" }
+            { value: 1548, name: "搜索引擎" },
           ],
-          itemStyle: {}
-        }
-      ]
+          itemStyle: {},
+        },
+      ],
     });
     window.addEventListener("resize", function () {
       myChart.resize();

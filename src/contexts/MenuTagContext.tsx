@@ -1,19 +1,18 @@
 import { getMenuItemByID, getMenuItemByUrl } from "@/utils/menuUtils";
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const MenuTagContext = React.createContext({
   tags: [],
-  setTags: v => null,
-  addTag: (v, d) => {},
+  setTags: () => null,
+  addTag: () => {},
   activeUrl: "",
-  setActiveUrl: v => null,
+  setActiveUrl: () => null,
   tagPlanVisible: "",
-  setTagPlanVisible: v => null,
+  setTagPlanVisible: () => null,
   refresh: true,
-  setRefresh: v => null
+  setRefresh: () => null,
 });
-export default MenuTagContext;
 
 type MenuTagProps = {
   url: string;
@@ -34,10 +33,10 @@ export const MenuTagContextProvider = ({ children }) => {
   const addTag = (tag, id) => {
     const url = tag.join("/");
     const path = `/${url}`;
-    const isRepeat = tags.find(v => v.url === path);
+    const isRepeat = tags.find((v) => v.url === path);
     if (isRepeat) {
-      setTags(v => {
-        return v.map(d => {
+      setTags((v) => {
+        return v.map((d) => {
           d.active = d.url === path;
           return d;
         });
@@ -46,7 +45,7 @@ export const MenuTagContextProvider = ({ children }) => {
       const item = getMenuItemByID(id);
       // 如果没有设置该菜单，就不添加标签了
       if (!item) return;
-      const res = tags.map(v => {
+      const res = tags.map((v) => {
         v.active = false;
         return v;
       });
@@ -56,8 +55,8 @@ export const MenuTagContextProvider = ({ children }) => {
           url: path,
           closable: false,
           name: item.name,
-          active: true
-        }
+          active: true,
+        },
       ]);
     }
   };
@@ -71,19 +70,35 @@ export const MenuTagContextProvider = ({ children }) => {
           url,
           closable: false,
           name: initItem?.name,
-          active: true
-        }
+          active: true,
+        },
       ]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location?.pathname]);
 
   useEffect(() => {
     if (activeUrl) navigate(activeUrl);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeUrl]);
 
   return (
-    <MenuTagContext.Provider value={{ tags, setTags, addTag, activeUrl, setActiveUrl, tagPlanVisible, setTagPlanVisible, refresh, setRefresh }}>
+    <MenuTagContext.Provider
+      value={{
+        tags,
+        setTags,
+        addTag,
+        activeUrl,
+        setActiveUrl,
+        tagPlanVisible,
+        setTagPlanVisible,
+        refresh,
+        setRefresh,
+      }}
+    >
       {children}
     </MenuTagContext.Provider>
   );
 };
+
+export default MenuTagContext;

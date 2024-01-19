@@ -28,20 +28,39 @@ const BaseFrom: FC<any> = (props: any) => {
   }, [form, initFormItem]);
 
   return (
-    <Form form={form} initialValues={initFormItem} onValuesChange={onRequiredTypeChange} onFinish={onFinish} {...layout} className="formdom">
+    <Form
+      form={form}
+      initialValues={initFormItem}
+      onValuesChange={onRequiredTypeChange}
+      onFinish={onFinish}
+      {...layout}
+      className="formdom"
+    >
       <Col span={24} className="formitem">
-        <Form.Item label="昵称" name="nick" rules={[{ required: true, message: "请填写昵称!" }]}>
+        <Form.Item
+          label="昵称"
+          name="nick"
+          rules={[{ required: true, message: "请填写昵称!" }]}
+        >
           <Input placeholder="" autoComplete="off" />
         </Form.Item>
       </Col>
 
       <Col span={24} className="formitem">
-        <Form.Item label="邮箱" name="email" rules={[{ required: true, message: "请填写邮箱!" }]}>
+        <Form.Item
+          label="邮箱"
+          name="email"
+          rules={[{ required: true, message: "请填写邮箱!" }]}
+        >
           <Input placeholder="" autoComplete="off" />
         </Form.Item>
       </Col>
       <Col span={24} className="formitem">
-        <Form.Item label="电话" name="phone" rules={[{ required: true, message: "请填写电话!" }]}>
+        <Form.Item
+          label="电话"
+          name="phone"
+          rules={[{ required: true, message: "请填写电话!" }]}
+        >
           <Input placeholder="" autoComplete="off" />
         </Form.Item>
       </Col>

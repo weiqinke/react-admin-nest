@@ -22,11 +22,11 @@ const MenusAdmin: FC = () => {
     {
       title: "菜单名称",
       dataIndex: "name",
-      width: 300
+      width: 300,
     },
     {
       title: "路径",
-      dataIndex: "url"
+      dataIndex: "url",
     },
     {
       title: "类型",
@@ -36,23 +36,23 @@ const MenusAdmin: FC = () => {
         if (text === "menu") return <Tag color="#87d068">菜单</Tag>;
         if (text === "page") return <Tag color="#108ee9">页面</Tag>;
         return <Tag color="#f50">未知</Tag>;
-      }
+      },
     },
     {
       title: "图标",
       dataIndex: "icon",
-      responsive: ["xxl", "xl", "lg", "md"]
+      responsive: ["xxl", "xl", "lg", "md"],
     },
     {
       title: "排序",
       dataIndex: "sort",
-      responsive: ["xxl", "xl", "lg", "md"]
+      responsive: ["xxl", "xl", "lg", "md"],
     },
     {
       title: "备注",
       dataIndex: "remarks",
       responsive: ["xxl", "xl", "lg", "md"],
-      render: (text: any) => <span>{text.slice(0, 15)}</span>
+      render: (text: any) => <span>{text.slice(0, 15)}</span>,
     },
     {
       title: "操作",
@@ -90,8 +90,8 @@ const MenusAdmin: FC = () => {
             </Button>
           </div>
         );
-      }
-    }
+      },
+    },
   ];
 
   const addChildPage = (record: any) => {
@@ -104,12 +104,16 @@ const MenusAdmin: FC = () => {
     confirm({
       title: "提示",
       icon: <ExclamationCircleOutlined />,
-      content: <span style={{ color: "red", fontSize: "19px" }}>{`是否删除${record.name}菜单？`}</span>,
+      content: (
+        <span
+          style={{ color: "red", fontSize: "19px" }}
+        >{`是否删除${record.name}菜单？`}</span>
+      ),
       okText: "确定",
       okType: "danger",
       cancelText: "取消",
       onOk: async () => {
-        const result = await delMenuItem(record);
+        const result = await delMenuItem({ uid: record.menuUid });
         if (result.data.code === 200) {
           message.info("操作成功");
           getallmenusdata();
@@ -117,13 +121,13 @@ const MenusAdmin: FC = () => {
         }
         message.info("操作失败");
       },
-      onCancel() {}
+      onCancel() {},
     });
   };
 
   const bianjiMenuItem = (record: any) => {
     setFieldsValue({
-      ...record
+      ...record,
     });
     //编辑回显菜单
     setVisible(true);
@@ -172,7 +176,15 @@ const MenusAdmin: FC = () => {
         className="menutable"
         pagination={{ pageSize: 18 }}
       />
-      {visible && <MenuEditModal parentUid={parentUid} isEdit={isEdit} initMenuItem={initMenuItem} onOk={onOk} onCancel={() => setVisible(false)} />}
+      {visible && (
+        <MenuEditModal
+          parentUid={parentUid}
+          isEdit={isEdit}
+          initMenuItem={initMenuItem}
+          onOk={onOk}
+          onCancel={() => setVisible(false)}
+        />
+      )}
     </div>
   );
 };

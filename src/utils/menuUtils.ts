@@ -1,5 +1,4 @@
-import CreateIcon from "@/components/CreateIcon";
-import { toNumber } from "lodash";
+import { toNumber } from "lodash-es";
 
 export interface menuchild {
   authority: string;
@@ -16,9 +15,9 @@ const MENUS = "menus";
 /*****
  * 清除菜单中的空节点，当成一个菜单
  */
-export const ProjectParseMenuAsPre = menuList => {
-  const menus = [];
-  menuList.map(menuitem => {
+export const ProjectParseMenuAsPre = (menuList: any[]) => {
+  const menus: any[] = [];
+  menuList.map((menuitem: { children: any }) => {
     const { children } = menuitem;
     let newMenuItem: any = {};
     if (children && children.length > 0) {
@@ -39,7 +38,7 @@ export const ProjectParseMenuAsPre = menuList => {
   return menus;
 };
 
-export function getNextLevelMenu(list, url) {
+export function getNextLevelMenu(list: string | any[], url: any) {
   for (let index = 0; index < list.length; index++) {
     const element = list[index];
     if (element.url === url) {
@@ -49,7 +48,7 @@ export function getNextLevelMenu(list, url) {
   return [];
 }
 
-export function SaveMeUrl(list, parentUrl = "") {
+export function SaveMeUrl(list: string | any[], parentUrl = "") {
   for (let index = 0; index < list.length; index++) {
     const element = list[index];
     element.meUrl = parentUrl + "/" + element.url;
@@ -61,7 +60,7 @@ export function SaveMeUrl(list, parentUrl = "") {
 }
 
 //获取第一个菜单的详细信息，认为它就是首页
-export function getIndexUrlInfo(list) {
+export const getIndexUrlInfo: any = (list: string | any[]) => {
   let info = null;
   for (let index = 0; index < list.length; index++) {
     const element = list[index];
@@ -75,12 +74,12 @@ export function getIndexUrlInfo(list) {
     }
   }
   return info;
-}
+};
 
-const getUnbendMenus = (menus = []) => {
+const getUnbendMenus: any = (menus = []) => {
   const result = [];
   for (let i = 0; i < menus.length; i++) {
-    const item = menus[i];
+    const item: any = menus[i];
     result.push(item);
     if (item.children) {
       const data = getUnbendMenus(item.children);
@@ -91,11 +90,11 @@ const getUnbendMenus = (menus = []) => {
 };
 
 export const getOpenKeysByUrls = (urls = [], menus = []) => {
-  const openKeys = [];
-  let currentKey = [];
+  const openKeys: string[] = [];
+  let currentKey: string[] = [];
   const unbendMenus = getUnbendMenus(menus);
-  urls.filter(v => {
-    const data = unbendMenus.find(d => d.url === v);
+  urls.filter((v) => {
+    const data = unbendMenus.find((d: { url: any }) => d.url === v);
     if (data?.id) {
       const id = `${data?.id}`;
       openKeys.push(id);
@@ -105,20 +104,30 @@ export const getOpenKeysByUrls = (urls = [], menus = []) => {
   return [openKeys, currentKey];
 };
 
-export const saveMenus = menus => localStorage.setItem(MENUS, menus);
+export const saveMenus = (menus: string) => localStorage.setItem(MENUS, menus);
 
 export const getLocalStorageMenus = () => localStorage.getItem(MENUS) || "[]";
+
+export const getIndexUrl = () => {
+  const allMenusInfo = SaveMeUrl(
+    ProjectParseMenuAsPre(JSON.parse(getLocalStorageMenus())),
+    ""
+  );
+  //找到第一个url直接跳转过去吧
+  const indexTag = getIndexUrlInfo(allMenusInfo);
+  return { pathname: indexTag.meUrl };
+};
 
 /**
  * 筛选菜单，dontshow不在菜单中显示
  */
 export function getShowMenus(menulist: any[]) {
-  const menus: any[] = menulist.map((menuitem: menuchild) => {
+  const menus: any[] = menulist.map((menuitem: any) => {
     const { children, dontshow } = menuitem;
     if (dontshow === "0") return null;
-    var newMenuItem: any = {};
+    let newMenuItem: any = {};
     if (children && children.length > 0) {
-      var echild: any[] = getShowMenus(children);
+      const echild: any[] = getShowMenus(children);
       newMenuItem = { ...menuitem, children: echild };
     } else {
       if (children && children.length === 0) {
@@ -132,14 +141,13 @@ export function getShowMenus(menulist: any[]) {
     // 这里是为了兼容 antd Menu 组件新版写法
     newMenuItem.label = menuitem.name;
     newMenuItem.key = menuitem.id;
-    newMenuItem.icon = CreateIcon(menuitem.icon);
 
     delete newMenuItem.menuUid;
     delete newMenuItem.parentUid;
 
     return newMenuItem;
   });
-  return menus.filter(v => v);
+  return menus.filter((v) => v);
 }
 
 // localStorage 存
@@ -159,7 +167,7 @@ export function getLocalStorage(name: string) {
  */
 export function getTagByMenus(menulist: any[], prevActiveTagUrl: string) {
   let menuitem = null;
-  menulist.map(item => {
+  menulist.map((item) => {
     if (item.meUrl === prevActiveTagUrl) menuitem = item;
     if (item.children && item.children.length > 0) {
       const childitem = getTagByMenus(item.children, prevActiveTagUrl);
@@ -170,13 +178,13 @@ export function getTagByMenus(menulist: any[], prevActiveTagUrl: string) {
 }
 
 // 获取唯一的菜单
-export const getMenuItemByUrl = url => {
+export const getMenuItemByUrl = (url: any) => {
   const unbendMenus = getUnbendMenus(JSON.parse(getLocalStorageMenus()));
-  return unbendMenus.find(v => v.url === url);
+  return unbendMenus.find((v: { url: any }) => v.url === url);
 };
 
 // 根据 ID 获取唯一的菜单
-export const getMenuItemByID = id => {
+export const getMenuItemByID = (id: any) => {
   const unbendMenus = getUnbendMenus(JSON.parse(getLocalStorageMenus()));
-  return unbendMenus.find(v => v.id === toNumber(id));
+  return unbendMenus.find((v: { id: number }) => v.id === toNumber(id));
 };

@@ -1,27 +1,30 @@
+import { Alert, Layout, Spin } from "antd";
+import { Outlet } from "react-router-dom";
+import DefaultLayoutHeader from "@/components/Header/DefaultLayoutHeader";
+import WebMenu from "@/components/Menu/WebMenu";
+import { Suspense, useContext, useEffect } from "react";
 import Copyright from "@/components/Footer/Copyright";
-import DefaultLayoutHeader from "@/components/Headers/DefaultLayoutHeader";
-import { SuspendFallbackLoading } from "@/components/Loadings";
-import DefaultMenu from "@/components/Menus/DefaultMenu";
+import TagsView from "@/components/TagsView";
 import MenuTagContext from "@/contexts/MenuTagContext";
-import TagsView from "@/pages/TagsView";
-import { Layout } from "antd";
-import React, { Suspense, useContext, useEffect, useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
-import { TransitionGroup, CSSTransition } from 'react-transition-group'
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import FailContainer from "@/pages/FailPage/FailContainer";
 
 import styles from "./index.module.scss";
 
-const { Sider, Content } = Layout;
+const { Content, Sider } = Layout;
 
-const WorkLayout = () => {
+const SuspendFallbackLoading = () => (
+  <Spin tip="加载中...">
+    <Alert
+      message="加载中"
+      description="正在加载页面，不会太久，请稍等。"
+      type="info"
+    />
+  </Spin>
+);
+
+const DefaultLayout = () => {
   const { setTagPlanVisible, refresh } = useContext(MenuTagContext);
-
-  const [visible, setVisible] = useState(true);
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    setVisible(false);
-  }, []);
 
   useEffect(() => {
     const clickRemove = () => setTagPlanVisible(false);
@@ -29,33 +32,41 @@ const WorkLayout = () => {
     return () => {
       window.removeEventListener("click", clickRemove);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <Layout>
-      <Layout>
+    <Layout className={styles.layout}>
+      <ErrorBoundary fallbackRender={FailContainer}>
         <DefaultLayoutHeader />
-        <Layout>
-          <Sider className={styles.sider} trigger={null} collapsible collapsed={false} breakpoint="md">
-            <DefaultMenu />
-          </Sider>
-          <Content className={styles.pageContent}>
-            <TagsView />
+      </ErrorBoundary>
+      <Layout className={styles.content}>
+        <Sider
+          className={styles.sider}
+          trigger={null}
+          collapsible
+          collapsed={false}
+          breakpoint="md"
+        >
+          <WebMenu />
+        </Sider>
+
+        <Content className={styles.pageContent}>
+          <TagsView />
+          <ErrorBoundary fallbackRender={FailContainer}>
             <Suspense fallback={<SuspendFallbackLoading />}>
               <div className={styles.outletContainer}>
-                <div className={styles.pageOutlet}>{refresh ? <SuspendFallbackLoading /> : <TransitionGroup>
-                  <CSSTransition key={pathname} timeout={1000} classNames="fade">
-                  <Outlet />
-                  </CSSTransition>
-                </TransitionGroup>}</div>
+                <div className={styles.pageOutlet}>
+                  {refresh ? <SuspendFallbackLoading /> : <Outlet />}
+                </div>
                 <Copyright />
               </div>
             </Suspense>
-          </Content>
-        </Layout>
+          </ErrorBoundary>
+        </Content>
       </Layout>
     </Layout>
   );
 };
 
-export default WorkLayout;
+export default DefaultLayout;

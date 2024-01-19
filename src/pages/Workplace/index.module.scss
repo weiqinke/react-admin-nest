@@ -1,5 +1,4 @@
 $fork-me: "@/assets/github/fork.png";
-
 .baseStyle {
   display: flex;
   padding: 1rem;
@@ -40,7 +39,7 @@ $fork-me: "@/assets/github/fork.png";
 .githubCorner {
   position: absolute;
   top: 0;
-  right: 12px;
+  right: 6px;
   background-image: url($fork-me);
   background-size: 100% 100%;
   width: 120px;
@@ -58,6 +57,8 @@ $fork-me: "@/assets/github/fork.png";
 }
 
 .baseChart {
-  background-color: #fff;
   margin-top: 12px;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: #fff;
 }

@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 import { tupleStr } from "./core";
-const DEV_REACT_APP_SOCKET_URL = "http://localhost:3011/websocket";
-const PRO_REACT_APP_SOCKET_URL = "https://nest-admin.com/websocket";
+const DEV_REACT_APP_SOCKET_URL = "http://127.0.0.1:3011/nestws";
+const PRO_REACT_APP_SOCKET_URL = "https://nest-admin.com/nestws";
 // 项目中所有websocket事件名称
 const eventName = tupleStr(
   "paySignMoney",
@@ -10,7 +10,6 @@ const eventName = tupleStr(
   "NewPlacard",
   "QKSTART_REC",
   "MESSAGE",
-  "OsStatus",
   "WEBSOCKET_CHAT_SERVER_TO_CLIENT",
   "WEBSOCKET_CHAT_SENDER_TO_RECEIVER",
   "WEBSOCKET_CHAT_SERVER_ONLINE",
@@ -26,7 +25,7 @@ interface SocketEvent {
 type EventName = (typeof eventName)[number];
 type websocketEventFn = (e: SocketEvent) => void;
 
-function WebsocketManager() {
+function WebsocketManager(this: any) {
   this.socket;
   this.activeRoom;
   this.ConnectNum = 0;
@@ -37,20 +36,23 @@ function WebsocketManager() {
   this.websocketListeners = new Set<websocketEventFn>();
 }
 
-export const webSocketManager = new WebsocketManager();
+export const webSocketManager = new (WebsocketManager as any)();
 
 WebsocketManager.prototype.create = function () {
   if (this.socket) return null;
-  if (process.env.NODE_ENV === "production") {
+  if (NODE_ENV === "production") {
     this.SokcetUrl = PRO_REACT_APP_SOCKET_URL;
-  } else if (process.env.NODE_ENV === "development") {
+  } else if (NODE_ENV === "development") {
     this.SokcetUrl = DEV_REACT_APP_SOCKET_URL;
   } else {
     // 本地代理地址
     this.SokcetUrl = DEV_REACT_APP_SOCKET_URL;
   }
 
-  this.socket = io(this.SokcetUrl, { transports: ["websocket"] }).connect();
+  this.socket = io(this.SokcetUrl, {
+    transports: ["websocket"],
+  }).connect();
+
   this.StartBindEventHandler();
   this.activeRoom = this.selected;
   this.tellServerOnline();
@@ -62,7 +64,7 @@ WebsocketManager.prototype.postMessage = function (payload: SocketEvent) {
   if (this?.socket?.connected) {
     this.socket.emit(this.publicEventName, {
       ...payload,
-      id: this.MySocketID
+      id: this.MySocketID,
     });
   } else {
     console.error("===发送数据失败===");
@@ -75,12 +77,14 @@ WebsocketManager.prototype.addEventHandler = function (fn: websocketEventFn) {
   return () => this.websocketListeners.delete(fn);
 };
 
-WebsocketManager.prototype.removeEventHandler = function (fn: websocketEventFn) {
+WebsocketManager.prototype.removeEventHandler = function (
+  fn: websocketEventFn
+) {
   this.websocketListeners.delete(fn);
 };
 
 WebsocketManager.prototype.dispatchEventHandle = function (e: SocketEvent) {
-  this.websocketListeners.forEach(fn => fn(e));
+  this.websocketListeners.forEach((fn: (arg0: SocketEvent) => any) => fn(e));
 };
 
 WebsocketManager.prototype.close = function () {
@@ -89,7 +93,7 @@ WebsocketManager.prototype.close = function () {
     if (token) {
       this.socket.emit("client_take_disconnect", {
         id: this.MySocketID,
-        token
+        token,
       });
     }
     this.socket.disconnect();
@@ -111,7 +115,7 @@ WebsocketManager.prototype.checkID = function () {
     if (token) {
       webSocketManager.postMessage({
         type: "UserReconnect",
-        data: { token }
+        data: { token },
       });
       return;
     }
@@ -128,10 +132,10 @@ WebsocketManager.prototype.tellServerOnline = function () {
 };
 
 WebsocketManager.prototype.StartBindEventHandler = function () {
-  this.socket.on("msgToClient", (message: any) => {});
+  this.socket.on("msgToClient", () => {});
   this.socket.on("joinedRoom", (room: any) => (this.rooms[room] = true));
   this.socket.on("leftRoom", (room: any) => (this.rooms[room] = false));
-  this.socket.on("msgToClient", (room: any) => {});
+  this.socket.on("msgToClient", () => {});
   //主线事件包
   this.socket.on(this.publicEventName, (payload: any) => {
     // 汇总事件来了，可能需要解析具体包

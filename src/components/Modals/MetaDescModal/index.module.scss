@@ -1,0 +1,33 @@
+.container {
+  padding: 40px;
+  width: 300px;
+  margin: 0 auto;
+  user-select: none;
+  cursor: pointer;
+}
+
+.avatar {
+  text-align: center;
+  width: 100px;
+  height: 100px;
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
+
+.name {
+  text-align: center;
+  font-size: 22px;
+  margin-top: 15px;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.description {
+  margin-top: 8px;
+  text-align: center;
+}
+
+.area {
+  height: 30px;
+  line-height: 30px;
+}

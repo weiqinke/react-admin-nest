@@ -11,11 +11,11 @@ const MessageCenter: FC = () => {
       dataIndex: "hasRead",
       width: 12,
       className: "unread-row",
-      render: (hasRead: boolean) => !hasRead && <i className="unread-dot">●</i>
+      render: (hasRead: boolean) => !hasRead && <i className="unread-dot">●</i>,
     },
     { title: "标题内容", dataIndex: "content" },
     { title: "提交时间", dataIndex: "createdAt", width: 150 },
-    { title: "类型", dataIndex: "title", width: 130 }
+    { title: "类型", dataIndex: "title", width: 130 },
   ]);
 
   const handleAction = () => {};
@@ -30,7 +30,7 @@ const MessageCenter: FC = () => {
         columns={tableColumns}
         rowSelection={{
           selectedRowKeys,
-          onChange: (selectedKeys: any) => setSelectedRowKeys(selectedKeys)
+          onChange: (selectedKeys: any) => setSelectedRowKeys(selectedKeys),
         }}
         rowKey={(record: any) => record.uid}
       />

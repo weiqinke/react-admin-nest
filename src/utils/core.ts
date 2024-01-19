@@ -5,7 +5,9 @@ const SYSTEM_TOKEN = "token";
 export const getUserState = () => {
   const token = window.localStorage.getItem(SYSTEM_TOKEN);
   if (!token) return {};
-  return JSON.parse(decodeURIComponent(encodeURIComponent(window.atob(token.split(".")[1]))));
+  return JSON.parse(
+    decodeURIComponent(encodeURIComponent(window.atob(token.split(".")[1])))
+  );
 };
 
 /**
@@ -23,7 +25,8 @@ export const totalPercentage = (totalmem: number, freemem: number) => {
  * @param {Number} max 最大数
  * @return {Number}
  */
-export const randomNum = (min: number, max: number): number => Math.floor(min + Math.random() * (max - min + 1));
+export const randomNum = (min: number, max: number): number =>
+  Math.floor(min + Math.random() * (max - min + 1));
 
 /**
  * 生成guid
@@ -32,7 +35,20 @@ export const guid = (): string => {
   const S4 = () => {
     return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
   };
-  return S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
+  return (
+    S4() +
+    S4() +
+    "-" +
+    S4() +
+    "-" +
+    S4() +
+    "-" +
+    S4() +
+    "-" +
+    S4() +
+    S4() +
+    S4()
+  );
 };
 
 /**
@@ -52,7 +68,14 @@ export const getURLParams = (url: string): any => {
   if (!search) {
     return {};
   }
-  return JSON.parse('{"' + decodeURIComponent(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}');
+  return JSON.parse(
+    '{"' +
+      decodeURIComponent(search)
+        .replace(/"/g, '\\"')
+        .replace(/&/g, '","')
+        .replace(/=/g, '":"') +
+      '"}'
+  );
 };
 
 /**
@@ -67,7 +90,11 @@ export function paramsSerializer(params = {}) {
  * 判断数据类型
  */
 export const getType = (value: any): any => {
-  return value === undefined ? "undefined" : value === null ? "null" : value.constructor.name.toLowerCase();
+  return value === undefined
+    ? "undefined"
+    : value === null
+    ? "null"
+    : value.constructor.name.toLowerCase();
 };
 
 /**
@@ -87,7 +114,10 @@ export const deepClone = (source: any) => {
 /**
  * 加载第三方脚本
  */
-export const loadScript = (src: string, callback: (err: any, res: any) => void) => {
+export const loadScript = (
+  src: string,
+  callback: (err: any, res: any) => void
+) => {
   const existScript = document.getElementById(src);
   if (existScript) {
     callback(null, existScript);
@@ -141,7 +171,8 @@ async function test() {
 }
 ```
  */
-export const sleep = (interval: number) => new Promise(resolve => setTimeout(resolve, interval));
+export const sleep = (interval: number) =>
+  new Promise((resolve) => setTimeout(resolve, interval));
 
 /**
  * 十六进制颜色值转换为rgb
@@ -157,19 +188,23 @@ export const hexToRgb = (hex: string, opacity: number = 1) => {
     shortHex
       .slice(shortHex.startsWith("#") ? 1 : 0)
       .split("")
-      .map(x => x + x)
+      .map((x) => x + x)
       .join("");
-  const extendedHex = hex.slice(hex.startsWith("#") ? 1 : 0).length === 3 ? extendHex(hex) : hex;
-  return `rgb(${parseInt(extendedHex.slice(1), 16) >> 16}, ${(parseInt(extendedHex.slice(1), 16) & 0x00ff00) >> 8}, ${
-    parseInt(extendedHex.slice(1), 16) & 0x0000ff
-  }, ${opacity})`;
+  const extendedHex =
+    hex.slice(hex.startsWith("#") ? 1 : 0).length === 3 ? extendHex(hex) : hex;
+  return `rgb(${parseInt(extendedHex.slice(1), 16) >> 16}, ${
+    (parseInt(extendedHex.slice(1), 16) & 0x00ff00) >> 8
+  }, ${parseInt(extendedHex.slice(1), 16) & 0x0000ff}, ${opacity})`;
 };
 
 /**
  * 等待页面加载完成后执行
  * @param {*} fn
  */
-export const documentReady = (fn: (ev?: Event) => any, waitLoaded: boolean = false) => {
+export const documentReady = (
+  fn: (ev?: Event) => any,
+  waitLoaded: boolean = false
+) => {
   if (document.readyState !== "loading") {
     fn();
   } else if (waitLoaded) {
@@ -186,13 +221,13 @@ export const documentReady = (fn: (ev?: Event) => any, waitLoaded: boolean = fal
  */
 //
 export const bd_decrypt = (bd_lng: string = "0", bd_lat: string = "0") => {
-  var X_PI = (Math.PI * 3000.0) / 180.0;
-  var x = parseFloat(bd_lng) - 0.0065;
-  var y = parseFloat(bd_lat) - 0.006;
-  var z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * X_PI);
-  var theta = Math.atan2(y, x) - 0.000003 * Math.cos(x * X_PI);
-  var gg_lng = z * Math.cos(theta);
-  var gg_lat = z * Math.sin(theta);
+  const X_PI = (Math.PI * 3000.0) / 180.0;
+  const x = parseFloat(bd_lng) - 0.0065;
+  const y = parseFloat(bd_lat) - 0.006;
+  const z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * X_PI);
+  const theta = Math.atan2(y, x) - 0.000003 * Math.cos(x * X_PI);
+  const gg_lng = z * Math.cos(theta);
+  const gg_lat = z * Math.sin(theta);
   return { lng: gg_lng, lat: gg_lat };
 };
 /**
@@ -202,16 +237,16 @@ export const bd_decrypt = (bd_lng: string = "0", bd_lat: string = "0") => {
  */
 //
 export const bd_encrypt = (gg_lng: string = "0", gg_lat: string = "0") => {
-  var X_PI = (Math.PI * 3000.0) / 180.0;
-  var x: any = gg_lng,
+  const X_PI = (Math.PI * 3000.0) / 180.0;
+  const x: any = gg_lng,
     y: any = gg_lat;
-  var z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * X_PI);
-  var theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * X_PI);
-  var bd_lng = z * Math.cos(theta) + 0.0065;
-  var bd_lat = z * Math.sin(theta) + 0.006;
+  const z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * X_PI);
+  const theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * X_PI);
+  const bd_lng = z * Math.cos(theta) + 0.0065;
+  const bd_lat = z * Math.sin(theta) + 0.006;
   return {
     bd_lat: bd_lat,
-    bd_lng: bd_lng
+    bd_lng: bd_lng,
   };
 };
 

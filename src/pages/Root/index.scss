@@ -9,10 +9,9 @@
 
 .fade-enter-active {
   opacity: 1;
-  transition: transform 1s ease-in-out,;
+  transition: transform 1s ease-in-out;
   transform: translateX(0px);
 }
-
 
 .fade-exit {
   opacity: 0;

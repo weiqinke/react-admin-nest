@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import bytes from "bytes";
 import dayjs from "dayjs";
-import { Row, Col, Card, Progress, Empty } from "antd";
+import { Row, Col, Card, Progress } from "antd";
 
 import styles from "./index.module.scss";
 import { totalPercentage } from "@/utils/core";
+import { webSocketManager } from "@/utils/ws";
 
 const statusColor = (percentage: number) => {
   if (percentage < 40) return "#52c41a";
@@ -29,21 +30,13 @@ const fetchinfo = {
         nice: 61270,
         sys: 140104620,
         idle: 15165295990,
-        irq: 0
-      }
-    }
-  ]
+        irq: 0,
+      },
+    },
+  ],
 };
-interface OSINFO {
-  freemem: number;
-  totalmem: number;
-  release: string;
-  platform: string;
-  loadavg: number[];
-  arch: string;
-  uptime: string;
-}
-const SystemInfo: React.FC<{ OsInfo: OSINFO }> = () => {
+
+const SystemInfo: React.FC = () => {
   const OsInfo = {
     freemem: 20755597056,
     totalmem: 34359738368,
@@ -51,7 +44,7 @@ const SystemInfo: React.FC<{ OsInfo: OSINFO }> = () => {
     platform: "linux",
     release: "3.10.0-1160.11.1.el7.x86_64",
     arch: "x64",
-    uptime: 11939391
+    uptime: 11939391,
   };
 
   const timer: any = useRef();
@@ -80,13 +73,16 @@ const SystemInfo: React.FC<{ OsInfo: OSINFO }> = () => {
       { id: "1", content: "CPU Intel(R) Xeon(R) Platinum 8280L 正常" },
       { id: "2", content: "最近5、10、15分钟平均负载 正常" },
       { id: "3", content: "内存 正常" },
-      { id: "4", content: "欢迎登陆" }
+      { id: "4", content: "欢迎登陆" },
     ];
+    console.log("我发送一次");
+    webSocketManager.postMessage({ type: "memStatus" });
+
     setMessageList(message);
   }, []);
 
   return (
-    <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
+    <Row gutter={[16, 12]}>
       <Col xs={24} sm={24} md={8} lg={8} xl={8} xxl={8}>
         <Card title="系统参数" hoverable loading={loading}>
           <div className={styles.itemText}>
@@ -135,7 +131,12 @@ const SystemInfo: React.FC<{ OsInfo: OSINFO }> = () => {
       <Col xs={24} sm={24} md={8} lg={8} xl={8} xxl={8}>
         <Card title={`内存使用率(${memPercentage}%)`} hoverable>
           <div className={styles.mem}>
-            <Progress type="circle" percent={memPercentage} strokeColor={statusColor(memPercentage)} format={percent => percent + "%"} />
+            <Progress
+              type="circle"
+              percent={memPercentage}
+              strokeColor={statusColor(memPercentage)}
+              format={(percent) => percent + "%"}
+            />
             <div className={styles.surplus}>剩余{bytes(OsInfo.freemem)}</div>
           </div>
         </Card>

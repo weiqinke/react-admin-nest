@@ -1,5 +1,3 @@
-import { lazy } from "react";
-
 // export const AreaStackChart = lazy(() => import(/* webpackChunkName: "AreaStackChart'"*/ "./AreaStackChart"));
 
 // export const BarChart = lazy(() => import(/* webpackChunkName: "BarChart'"*/ "./BarChart"));
@@ -21,5 +19,23 @@ import PictorialBarChart from "./PictorialBarChart";
 import PieChart from "./PieChart";
 import ScatterChart from "./ScatterChart";
 import LoginFrequencyChart from "./LoginFrequencyChart";
+import ChinaChart from "./ChinaChart";
+import PieBorderRadius from "./PieBorderRadius";
+import DataFlowChart from "./DataFlowChart";
+import HomeSenseChart from "./HomeSenseChart";
+import ServerStatusChart from "./ServerStatusChart";
 
-export { AreaStackChart,BarChart ,LineChart,PictorialBarChart,PieChart,ScatterChart,LoginFrequencyChart};
+export {
+  AreaStackChart,
+  BarChart,
+  LineChart,
+  PictorialBarChart,
+  PieChart,
+  ScatterChart,
+  LoginFrequencyChart,
+  ChinaChart,
+  PieBorderRadius,
+  DataFlowChart,
+  HomeSenseChart,
+  ServerStatusChart,
+};

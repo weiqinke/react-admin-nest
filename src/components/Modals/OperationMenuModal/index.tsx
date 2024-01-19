@@ -38,7 +38,7 @@ const OperationMenuModal: FC<any> = (props: any) => {
   };
   const onCheck = (checkedKeys: any, info: any) => {
     setinfo(info);
-    let checkedKey = checkedKeys.concat(info.halfCheckedKeys);
+    const checkedKey = checkedKeys.concat(info.halfCheckedKeys);
     setCheckedKeys(checkedKey);
   };
 

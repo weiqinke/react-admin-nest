@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-duplicate-enum-values */
 import html2canvas from "html2canvas";
 
 const createBodyImg = async () => {
@@ -27,7 +28,7 @@ enum FileSizes {
   "K" = 1024,
   "M" = 1048576,
   "G" = 1073741824,
-  "T" = 1099511627776
+  "T" = 1099511627776,
 }
 
 // 文件图标
@@ -46,7 +47,7 @@ enum Icons {
   "png" = "iconimage",
   "gif" = "iconimage",
   "bmp" = "iconimage",
-  "file" = "iconcolorfile"
+  "file" = "iconcolorfile",
 }
 
 // 计算文件大小
@@ -106,4 +107,10 @@ function downloadByURI(data: string, fileName: string, header: string = "") {
 
 function downloadByBlob() {}
 
-export { calcFileSize, getFileIcon, downloadByURI, downloadByBlob, createBodyImg };
+export {
+  calcFileSize,
+  getFileIcon,
+  downloadByURI,
+  downloadByBlob,
+  createBodyImg,
+};

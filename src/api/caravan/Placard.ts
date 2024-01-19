@@ -1,6 +1,6 @@
 import { request } from "@/api/request";
 
-const BASE_URL = process.env.REACT_APP_API_URL;
+const BASE_URL = REACT_APP_API_URL;
 
 /** 获取系统通知接口 */
 export const findLastTypePlacard = (payload: any) => {
@@ -29,4 +29,9 @@ export const broadcastPlacard = (payload: any) => {
 /** 已读一个公告 */
 export const readOnePlacard = (payload: any) => {
   return request(`${BASE_URL}placard/readOnePlacard`, "PUT", payload);
+};
+
+/** 删除一个公告 */
+export const deleteOnePlacard = (payload: any) => {
+  return request(`${BASE_URL}placard`, "DELETE", payload);
 };

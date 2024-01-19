@@ -2,94 +2,119 @@ import React, { FC, useEffect, useRef } from "react";
 import * as echarts from "echarts";
 const BarChart: FC = () => {
   const ref = useRef();
+
+  /* { name:标题 , radius:[内圆直径,外圆直径] ,
+    startAngle:圆心角  value:数据 , 
+    color1: 颜色, color2: 颜色 } */
+  function getItem(data) {
+    return {
+      name: "景区资源",
+      type: "pie",
+      center: ["50%", "60%"],
+      radius: data.radius,
+      startAngle: data.startAngle,
+      avoidLabelOverlap: false,
+      label: {
+        show: true,
+        color: "#2196b0",
+        // position: 'center'
+      },
+      // 鼠标移入时文本状态
+      emphasis: {
+        label: {
+          show: true,
+          fontSize: 40,
+          fontWeight: "bold",
+        },
+      },
+      labelLine: {
+        show: true,
+        length: 60,
+        length2: 20,
+      },
+      data: [
+        {
+          value: data.value,
+          name: data.name,
+          itemStyle: {
+            // 渐变颜色
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              {
+                offset: 0,
+                color: data.color1,
+              },
+              {
+                offset: 1,
+                color: data.color2,
+              },
+            ]),
+          },
+        },
+        {
+          value: 100 - data.value,
+          name: data.name, //设置name防止legend错位
+          itemStyle: {
+            // 颜色设置为none,则该片段不渲染
+            color: "none",
+          },
+          label: { show: false },
+        },
+      ],
+    };
+  }
+
   useEffect(() => {
-    let myChart: any = echarts.init(ref.current);
+    const myChart: any = echarts.init(ref.current);
     myChart.setOption({
+      backgroundColor: "rgba(124,193,173,0.5)",
+      // 1.鼠标移入提示
       tooltip: {
-        trigger: "axis",
-        axisPointer: {
-          // 坐标轴指示器，坐标轴触发有效
-          type: "shadow" // 默认为直线，可选为：'line' | 'shadow'
-        }
+        trigger: "item",
       },
+      // 2.图例组件
       legend: {
-        data: ["直接访问", "邮件营销", "联盟广告", "视频广告", "搜索引擎", "百度", "谷歌", "必应", "其他"]
+        top: "5%",
+        left: "center",
+        // 文本样式
+        textStyle: {
+          color: "#1c91f5",
+        },
       },
-      grid: {
-        left: "3%",
-        right: "4%",
-        bottom: "3%",
-        containLabel: true
-      },
-      xAxis: [
-        {
-          type: "category",
-          data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
-        }
-      ],
-      yAxis: [
-        {
-          type: "value"
-        }
-      ],
+      // 3.图表内容
       series: [
-        {
-          name: "直接访问",
-          type: "bar",
-          data: [320, 332, 301, 334, 390, 330, 320]
-        },
-        {
-          name: "邮件营销",
-          type: "bar",
-          stack: "广告",
-          data: [120, 132, 101, 134, 90, 230, 210]
-        },
-        {
-          name: "联盟广告",
-          type: "bar",
-          stack: "广告",
-          data: [220, 182, 191, 234, 290, 330, 310]
-        },
-        {
-          name: "视频广告",
-          type: "bar",
-          stack: "广告",
-          data: [150, 232, 201, 154, 190, 330, 410]
-        },
-        {
-          name: "搜索引擎",
-          type: "bar",
-          data: [862, 1018, 964, 1026, 1679, 1600, 1570],
-          markLine: {
-            data: [[{ type: "min" }, { type: "max" }]]
-          }
-        },
-        {
-          name: "百度",
-          type: "bar",
-          barWidth: 5,
-          stack: "搜索引擎",
-          data: [620, 732, 701, 734, 1090, 1130, 1120]
-        },
-        {
-          name: "谷歌",
-          type: "bar",
-          stack: "搜索引擎",
-          data: [120, 132, 101, 134, 290, 230, 220]
-        },
-        {
-          name: "必应",
-          type: "bar",
-          stack: "搜索引擎",
-          data: [60, 72, 71, 74, 190, 130, 110]
-        },
-        {
-          name: "其他",
-          type: "bar",
-          stack: "搜索引擎",
-          data: [62, 82, 91, 84, 109, 110, 120]
-        }
-      ]
+        getItem({
+          name: "AAAA景区",
+          radius: ["30%", "35%"],
+          startAngle: -10,
+          value: 70,
+          color1: "#8915f9",
+          color2: "#3d13fd",
+        }),
+        getItem({
+          name: "免费景区",
+          radius: ["40%", "45%"],
+          startAngle: 50,
+          value: 50,
+          color1: "#f72f48",
+          color2: "#f44179",
+        }),
+        getItem({
+          name: "度假村",
+          radius: ["50%", "55%"],
+          startAngle: 260,
+          value: 50,
+          color1: "#1686f3",
+          color2: "#32b8fc",
+        }),
+        getItem({
+          name: "文化古城",
+          radius: ["60%", "65%"],
+          startAngle: 150,
+          value: 60,
+          color1: "#2648f7",
+          color2: "#2d8af9",
+        }),
+      ],
     });
     window.addEventListener("resize", function () {
       myChart.resize();
@@ -99,7 +124,7 @@ const BarChart: FC = () => {
     };
   }, []);
 
-  return <div ref={ref} style={{ height: 400, margin: 12 }}></div>;
+  return <div ref={ref} style={{ height: 400, margin: 0 }}></div>;
 };
 
 export default BarChart;

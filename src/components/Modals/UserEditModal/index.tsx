@@ -1,16 +1,30 @@
 import { UserOutlined } from "@ant-design/icons";
-import { Avatar, Col, Form, Input, message, Modal, Radio, Row, Upload } from "antd";
+import {
+  Avatar,
+  Col,
+  Form,
+  Input,
+  message,
+  Modal,
+  Radio,
+  Row,
+  Upload,
+} from "antd";
 import type { FC } from "react";
 import React, { useEffect, useState } from "react";
-import { addOneUser, editOneUser, saveUserAvatarUrl, updateUserAvatarUrl } from "@/api/caravan/Login";
-import { trim } from "lodash";
+import {
+  addOneUser,
+  editOneUser,
+  updateUserAvatarUrl,
+} from "@/api/caravan/Login";
+import { trim } from "lodash-es";
 
 import styles from "./index.module.scss";
 import axios from "axios";
 
 const layout = {
   labelCol: { span: 8 },
-  wrapperCol: { span: 16 }
+  wrapperCol: { span: 16 },
 };
 
 const UserEditModal: FC<any> = (props: any) => {
@@ -34,7 +48,7 @@ const UserEditModal: FC<any> = (props: any) => {
       return;
     }
     const formData = new FormData();
-    fileList.forEach(file => {
+    fileList.forEach((file) => {
       formData.append("files", file);
     });
     if (uploading) {
@@ -42,28 +56,35 @@ const UserEditModal: FC<any> = (props: any) => {
     }
     formData.append("userUid", uid);
     setuploading(true);
-    const avatar = await axios.post('https://freeimg.cn/api/v1/upload',{
-      file:fileList[0],
-      album_id:145
-    },{
-      headers:{
-        "Authorization": "Bearer 134|dfgG6kRMsd3SP6E0ZJvieEq98mOOhdaATYQRZruZ",
-        "Content-Type": "multipart/form-data"
-      }
-    }).then(result => {
-      setAvatarUrl("");
-      message.info(`头像上传${result?.data?.status?"成功":"失败"}`);
-      return result?.data?.data?.links?.url;
-    })
-    .catch(() => {
-      setAvatarUrl("");
-      message.info("头像修改失败");
-      return ''
-    });
+    const avatar = await axios
+      .post(
+        "https://freeimg.cn/api/v1/upload",
+        {
+          file: fileList[0],
+          album_id: 145,
+        },
+        {
+          headers: {
+            Authorization:
+              "Bearer 134|dfgG6kRMsd3SP6E0ZJvieEq98mOOhdaATYQRZruZ",
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      )
+      .then((result) => {
+        setAvatarUrl("");
+        message.info(`头像上传${result?.data?.status ? "成功" : "失败"}`);
+        return result?.data?.data?.links?.url;
+      })
+      .catch(() => {
+        setAvatarUrl("");
+        message.info("头像修改失败");
+        return "";
+      });
     updateUserAvatarUrl({
       uid,
-      avatar
-    }).finally(()=>onOk(true))
+      avatar,
+    }).finally(() => onOk(true));
   };
 
   const UpLoadProps = {
@@ -72,7 +93,11 @@ const UserEditModal: FC<any> = (props: any) => {
         message.error(`${file.name} 文件太大了`);
         return false;
       }
-      if (file.type !== "image/png" && file.type !== "image/jpeg" && file.type !== "image/jpg") {
+      if (
+        file.type !== "image/png" &&
+        file.type !== "image/jpeg" &&
+        file.type !== "image/jpg"
+      ) {
         message.error(`${file.name} 不是图片`);
         return false;
       }
@@ -81,7 +106,7 @@ const UserEditModal: FC<any> = (props: any) => {
       getBase64(file, (imageUrl: any) => setAvatarUrl(imageUrl));
       return false;
     },
-    fileList
+    fileList,
   };
 
   const handleSubmit = () => {};
@@ -96,7 +121,7 @@ const UserEditModal: FC<any> = (props: any) => {
         title,
         phone,
         email,
-        sex
+        sex,
       };
       if (password) payload.password = trim(password);
       result = await editOneUser(payload);
@@ -135,7 +160,16 @@ const UserEditModal: FC<any> = (props: any) => {
   }, [initUser, form]);
 
   return (
-    <Modal visible title={`${title}用户`} width={800} onCancel={onCancel} onOk={creatRoleSubmit} okText="确定" cancelText="取消" maskClosable={false}>
+    <Modal
+      visible
+      title={`${title}用户`}
+      width={800}
+      onCancel={onCancel}
+      onOk={creatRoleSubmit}
+      okText="确定"
+      cancelText="取消"
+      maskClosable={false}
+    >
       <Row>
         <Col span={24}>
           <div className={styles.avatar}>
@@ -145,7 +179,12 @@ const UserEditModal: FC<any> = (props: any) => {
           </div>
         </Col>
       </Row>
-      <Form form={form} initialValues={initUser} onFinish={handleSubmit} {...layout}>
+      <Form
+        form={form}
+        initialValues={initUser}
+        onFinish={handleSubmit}
+        {...layout}
+      >
         <Row>
           <Col span={20}>
             <Form.Item label="用户编号" name="id" rules={[{ required: false }]}>
@@ -154,12 +193,24 @@ const UserEditModal: FC<any> = (props: any) => {
           </Col>
           <Col span={20}>
             <Form.Item label="账号" name="name" rules={[{ required: true }]}>
-              <Input autoComplete="off" placeholder="请输入账号" readOnly={isreadOnly} />
+              <Input
+                autoComplete="off"
+                placeholder="请输入账号"
+                readOnly={isreadOnly}
+              />
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item label="密码" name="password" rules={[{ required: !isreadOnly }]}>
-              <Input placeholder="请输入密码" type={type} onChange={setInputType} />
+            <Form.Item
+              label="密码"
+              name="password"
+              rules={[{ required: !isreadOnly }]}
+            >
+              <Input
+                placeholder="请输入密码"
+                type={type}
+                onChange={setInputType}
+              />
             </Form.Item>
           </Col>
           <Col span={20}>
@@ -176,17 +227,29 @@ const UserEditModal: FC<any> = (props: any) => {
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item label="联系电话" name="phone" rules={[{ required: true }]}>
+            <Form.Item
+              label="联系电话"
+              name="phone"
+              rules={[{ required: true }]}
+            >
               <Input maxLength={11} />
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item label="电子邮箱" name="email" rules={[{ required: true }]}>
+            <Form.Item
+              label="电子邮箱"
+              name="email"
+              rules={[{ required: true }]}
+            >
               <Input />
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item label="联系地址" name="group" rules={[{ required: false }]}>
+            <Form.Item
+              label="联系地址"
+              name="group"
+              rules={[{ required: false }]}
+            >
               <Input />
             </Form.Item>
           </Col>

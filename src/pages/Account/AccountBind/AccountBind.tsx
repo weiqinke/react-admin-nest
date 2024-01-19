@@ -1,7 +1,10 @@
-import { AlipayCircleOutlined, DingdingOutlined, TaobaoCircleOutlined } from "@ant-design/icons";
+import {
+  AlipayCircleOutlined,
+  DingdingOutlined,
+  TaobaoCircleOutlined,
+} from "@ant-design/icons";
 import { Divider, List } from "antd";
 import React, { useEffect } from "react";
-import "./AccountBind.less";
 
 const AccountBind: React.FC = function () {
   useEffect(() => {}, []);

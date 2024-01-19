@@ -1,6 +1,5 @@
 import { Divider, Tag } from "antd";
 import React, { useEffect } from "react";
-import "./AccountSetting.less";
 
 const AccountSetting: React.FC = function () {
   useEffect(() => {}, []);

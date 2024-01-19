@@ -1,0 +1,38 @@
+.contextmenuDom {
+  user-select: none;
+  position: fixed;
+  // 用了wangeditor 需要比编辑器更高层级
+  z-index: 20000;
+  list-style: none;
+  padding: 0px;
+  margin: 0px;
+  width: 112px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: -4px 4px 16px 1px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+
+  li:first-child {
+    border-radius: 8px 8px 0px 0px;
+  }
+
+  li {
+    &:first-of-type {
+      border-radius: 8px 8px 0px 0px;
+    }
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    height: 40px;
+    line-height: 40px;
+    &:hover {
+      background-color: #41b3a3;
+      color: #313653;
+      transition: opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1),
+        width 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    }
+  }
+  li:last-child {
+    border-radius: 0px 0px 8px 8px;
+  }
+}

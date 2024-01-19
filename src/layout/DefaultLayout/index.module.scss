@@ -1,3 +1,12 @@
+.layout {
+  width: 100vw;
+  background-color: #f0f2f5;
+}
+
+.content {
+  background-color: #f0f2f5;
+}
+
 .sider {
   height: calc(100vh - 50px);
   overflow: auto;
@@ -16,4 +25,5 @@
 
 .pageOutlet {
   min-height: calc(100vh - 70px);
+  border-left: 4px solid #fff;
 }

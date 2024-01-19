@@ -1,17 +1,15 @@
-import { GlobalContextProvider } from "@/contexts/GlobalContext";
-import { IntlContextProvider } from "@/contexts/IntlContextProvider";
-import { MenuTagContextProvider } from "@/contexts/MenuTagContext";
-import { ProjectContextProvider } from "@/contexts/ProjectContext";
 import ProjectRouter from "@/router";
-import { webSocketManager } from "@/utils/ws";
-import React, { useEffect } from "react";
+import { RouterProvider } from "react-router-dom";
+import { ProjectContextProvider } from "@/contexts/ProjectContext";
+import { MenuTagContextProvider } from "@/contexts/MenuTagContext";
 
 import "./index.scss";
+import { ConfigProvider } from "antd";
+import { webSocketManager } from "@/utils/ws";
+import { useEffect } from "react";
 
 const Root = () => {
-  // 根节点可以分成两块
-  // 第一块：判断当前环境，判断用户是否登录
-  // 第二块：渲染登录界面或者首页
+  const router = ProjectRouter();
 
   useEffect(() => {
     webSocketManager.create();
@@ -20,7 +18,7 @@ const Root = () => {
         name: "qkstartCar",
         type: "123",
         message: "",
-        data: []
+        data: [],
       });
       webSocketManager.socket.disconnect();
       webSocketManager.close();
@@ -28,15 +26,24 @@ const Root = () => {
   }, []);
 
   return (
-    <GlobalContextProvider>
+    <ConfigProvider
+      theme={{
+        components: {
+          Menu: {
+            darkItemSelectedBg: "#41b3a3",
+            // darkPopupBg: "#7cc1ad",
+            // darkSubMenuItemBg: "#7cc1ad",
+            // darkItemBg: "#7cc1ad",
+          },
+        },
+      }}
+    >
       <ProjectContextProvider>
         <MenuTagContextProvider>
-          <IntlContextProvider>
-            <ProjectRouter />
-          </IntlContextProvider>
+          <RouterProvider router={router} />
         </MenuTagContextProvider>
       </ProjectContextProvider>
-    </GlobalContextProvider>
+    </ConfigProvider>
   );
 };
 
