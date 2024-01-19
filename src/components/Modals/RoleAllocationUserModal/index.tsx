@@ -42,7 +42,7 @@ const RoleAllocationUserModal: FC<any> = ({
 
   return (
     <Modal
-      visible
+      open
       title={title || "提示"}
       onOk={onSubmit}
       onCancel={onCancel}

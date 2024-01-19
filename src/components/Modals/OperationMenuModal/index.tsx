@@ -3,7 +3,15 @@ import React, { FC, useEffect, useState } from "react";
 import { giveRoleMenus } from "@/api/caravan/Rbac";
 
 const OperationMenuModal: FC<any> = (props: any) => {
-  const { title, pendingCallback, changeMenu, allMenu, okText, cancelText, roleCode } = props;
+  const {
+    title,
+    pendingCallback,
+    changeMenu,
+    allMenu,
+    okText,
+    cancelText,
+    roleCode,
+  } = props;
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
@@ -38,13 +46,12 @@ const OperationMenuModal: FC<any> = (props: any) => {
   };
   const onCheck = (checkedKeys: any, info: any) => {
     setinfo(info);
-    const checkedKey = checkedKeys.concat(info.halfCheckedKeys);
-    setCheckedKeys(checkedKey);
+    setCheckedKeys(checkedKeys);
   };
 
   return (
     <Modal
-      visible
+      open
       title={title || "提示"}
       onOk={onOkSubmit}
       onCancel={CancelSubmit}
