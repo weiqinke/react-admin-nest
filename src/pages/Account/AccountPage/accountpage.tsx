@@ -4,7 +4,7 @@ const AccountPage: FC = () => {
   const [form] = Form.useForm();
   const handleUpdateUser = () => {};
   const userInfo: any = {
-    loginName: "",
+    loginName: ""
   };
   useEffect(() => {}, []);
 
@@ -20,10 +20,9 @@ const AccountPage: FC = () => {
           initialValue={userInfo.loginName}
           rules={[
             {
-              required: true,
-            },
-          ]}
-        >
+              required: true
+            }
+          ]}>
           <Input readOnly disabled />
         </Form.Item>
         <Form.Item
@@ -32,14 +31,13 @@ const AccountPage: FC = () => {
           rules={[
             {
               required: true,
-              message: "请输入新密码",
+              message: "请输入新密码"
             },
             {
               pattern: /.{6,}/,
-              message: "新密码至少6位",
-            },
-          ]}
-        >
+              message: "新密码至少6位"
+            }
+          ]}>
           <Input type="password" maxLength={32} />
         </Form.Item>
         <br />

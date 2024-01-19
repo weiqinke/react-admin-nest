@@ -11,7 +11,7 @@ const MenuTagContext = React.createContext({
   tagPlanVisible: "",
   setTagPlanVisible: () => null,
   refresh: true,
-  setRefresh: () => null,
+  setRefresh: () => null
 });
 
 type MenuTagProps = {
@@ -33,10 +33,10 @@ export const MenuTagContextProvider = ({ children }) => {
   const addTag = (tag, id) => {
     const url = tag.join("/");
     const path = `/${url}`;
-    const isRepeat = tags.find((v) => v.url === path);
+    const isRepeat = tags.find(v => v.url === path);
     if (isRepeat) {
-      setTags((v) => {
-        return v.map((d) => {
+      setTags(v => {
+        return v.map(d => {
           d.active = d.url === path;
           return d;
         });
@@ -45,7 +45,7 @@ export const MenuTagContextProvider = ({ children }) => {
       const item = getMenuItemByID(id);
       // 如果没有设置该菜单，就不添加标签了
       if (!item) return;
-      const res = tags.map((v) => {
+      const res = tags.map(v => {
         v.active = false;
         return v;
       });
@@ -55,8 +55,8 @@ export const MenuTagContextProvider = ({ children }) => {
           url: path,
           closable: false,
           name: item.name,
-          active: true,
-        },
+          active: true
+        }
       ]);
     }
   };
@@ -70,8 +70,8 @@ export const MenuTagContextProvider = ({ children }) => {
           url,
           closable: false,
           name: initItem?.name,
-          active: true,
-        },
+          active: true
+        }
       ]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -93,9 +93,8 @@ export const MenuTagContextProvider = ({ children }) => {
         tagPlanVisible,
         setTagPlanVisible,
         refresh,
-        setRefresh,
-      }}
-    >
+        setRefresh
+      }}>
       {children}
     </MenuTagContext.Provider>
   );

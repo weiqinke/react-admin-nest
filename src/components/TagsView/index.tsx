@@ -9,15 +9,7 @@ import Contextmenu from "./Contextmenu";
 import MenuTag from "./MenuTag";
 
 const TagsView: FC = () => {
-  const {
-    tags,
-    setTags,
-    activeUrl,
-    setActiveUrl,
-    tagPlanVisible,
-    setTagPlanVisible,
-    setRefresh,
-  } = useContext(MenuTagContext);
+  const { tags, setTags, activeUrl, setActiveUrl, tagPlanVisible, setTagPlanVisible, setRefresh } = useContext(MenuTagContext);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -28,8 +20,8 @@ const TagsView: FC = () => {
   // 切换标签时触发事件，切换页面地址
   const onChange = (url: string) => {
     setTagPlanVisible(false);
-    setTags((prev) => {
-      return prev.map((v) => {
+    setTags(prev => {
+      return prev.map(v => {
         v.active = v.url === url;
         return v;
       });
@@ -44,7 +36,7 @@ const TagsView: FC = () => {
     if (tags && tags.length <= 1) {
       return message.success({
         content: "请保留至少一个标签",
-        duration: 0.5,
+        duration: 0.5
       });
     }
     removeTag(item);
@@ -62,7 +54,7 @@ const TagsView: FC = () => {
 
   // 关闭其他标签
   const handleCloseOtherTags = () => {
-    const item = tags.find((v) => v.url === contextMenuTag.url);
+    const item = tags.find(v => v.url === contextMenuTag.url);
     item.active = true;
     setActiveUrl(item.url);
     setTags([item]);
@@ -71,8 +63,8 @@ const TagsView: FC = () => {
 
   // 关闭左侧标签
   const handleCloseLeftTags = () => {
-    const index = tags.findIndex((v) => v.url === contextMenuTag.url);
-    const activeIndex = tags.findIndex((v) => v.active);
+    const index = tags.findIndex(v => v.url === contextMenuTag.url);
+    const activeIndex = tags.findIndex(v => v.active);
     const arr = tags.slice(index);
     if (activeIndex < index) {
       setActiveUrl(arr[0]["url"]);
@@ -83,9 +75,9 @@ const TagsView: FC = () => {
 
   // 关闭右侧标签
   const handleCloseRightTags = () => {
-    const index = tags.findIndex((v) => v.url === contextMenuTag.url);
+    const index = tags.findIndex(v => v.url === contextMenuTag.url);
     // 如果右侧的菜单有选中值 就把最后一个当作 active
-    const activeIndex = tags.findIndex((v) => v.active);
+    const activeIndex = tags.findIndex(v => v.active);
     setTagPlanVisible(false);
     const arr = tags.slice(0, index + 1);
     if (activeIndex > index) {
@@ -105,7 +97,7 @@ const TagsView: FC = () => {
   const removeTag = ({ url, active }) => {
     // 只剩下一个了，别删除了
     if (tags.length <= 1) return;
-    const tagList = tags.filter((tag) => tag.url !== url);
+    const tagList = tags.filter(tag => tag.url !== url);
     // 如果删除的是选中的
     if (active) {
       tagList[tagList.length - 1]["active"] = true;
@@ -123,8 +115,8 @@ const TagsView: FC = () => {
           url,
           closable: false,
           name: initItem?.name,
-          active: true,
-        },
+          active: true
+        }
       ]);
     }
   }, [location?.pathname]);
@@ -142,15 +134,12 @@ const TagsView: FC = () => {
         items={tags.map((tag: any) => {
           return {
             label: (
-              <div
-                className={styles.tagitem}
-                onContextMenu={(e) => contextTag(e, tag)}
-              >
+              <div className={styles.tagitem} onContextMenu={e => contextTag(e, tag)}>
                 <MenuTag tag={tag} onClose={onClose} />
               </div>
             ),
             key: tag.url,
-            closable: true,
+            closable: true
           };
         })}
       />

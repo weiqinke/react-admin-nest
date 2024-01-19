@@ -9,28 +9,28 @@ const ScatterChart: FC = () => {
     { name: "系列二", value: 68, max: 100 },
     { name: "系列三", value: 43, max: 100 },
     { name: "系列四", value: 28, max: 100 },
-    { name: "系列五", value: 56, max: 100 },
+    { name: "系列五", value: 56, max: 100 }
   ];
   // 头部数据
-  const topData = dataList.map((item) => {
+  const topData = dataList.map(item => {
     return { name: "", value: item.max, symbolPosition: "end" };
   });
   // 底部立体柱子
-  const bottomBar = dataList.map((item) => {
+  const bottomBar = dataList.map(item => {
     return {
-      value: item.value,
+      value: item.value
     };
   });
   // 底下圆片
-  const bottomCircle = dataList.map((item) => {
+  const bottomCircle = dataList.map(item => {
     return { name: "", value: item.max };
   });
   // 中间圆片
-  const middleCircle = dataList.map((item) => {
+  const middleCircle = dataList.map(item => {
     return { name: "", value: item.value, symbolPosition: "end" };
   });
   // 上边的柱子
-  const upBar = dataList.map((item) => {
+  const upBar = dataList.map(item => {
     return { name: item.name, value: item.max - item.value };
   });
 
@@ -48,47 +48,47 @@ const ScatterChart: FC = () => {
           color: "rgba(89,211,255,1)",
           fontSize: 18,
           width: 300,
-          height: 40,
+          height: 40
         },
         formatter: "{c}" + "%",
-        extraCssText: "box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);",
+        extraCssText: "box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);"
         // 自定义的 CSS 样式
       },
       grid: {
         bottom: "15%",
         top: "25%",
         right: "0%",
-        left: "0%",
+        left: "0%"
       },
       xAxis: {
         data: ["系列一", "系列二", "系列三", "系列四", "系列五"],
         axisTick: {
-          show: false,
+          show: false
         },
         axisLine: {
-          show: false,
+          show: false
         },
         axisLabel: {
           show: true,
           textStyle: {
-            color: "#fff",
+            color: "#fff"
           },
-          margin: 30, //刻度标签与轴线之间的距离。
-        },
+          margin: 30 //刻度标签与轴线之间的距离。
+        }
       },
       yAxis: {
         splitLine: {
-          show: false,
+          show: false
         },
         axisTick: {
-          show: false,
+          show: false
         },
         axisLine: {
-          show: false,
+          show: false
         },
         axisLabel: {
-          show: false,
-        },
+          show: false
+        }
       },
       series: [
         // 头
@@ -108,18 +108,18 @@ const ScatterChart: FC = () => {
                 [
                   {
                     offset: 0,
-                    color: "rgba(54,127,223,1)",
+                    color: "rgba(54,127,223,1)"
                   },
                   {
                     offset: 1,
-                    color: "rgba(94,162,254,1)",
-                  },
+                    color: "rgba(94,162,254,1)"
+                  }
                 ],
                 false
-              ),
-            },
+              )
+            }
           },
-          data: topData,
+          data: topData
         },
         //底部立体柱
         {
@@ -141,16 +141,16 @@ const ScatterChart: FC = () => {
                   {
                     //第一节下面
                     offset: 0,
-                    color: "rgba(0,255,245,0.5)",
+                    color: "rgba(0,255,245,0.5)"
                   },
                   {
                     offset: 1,
-                    color: "#43bafe",
-                  },
-                ],
-              },
-            },
-          },
+                    color: "#43bafe"
+                  }
+                ]
+              }
+            }
+          }
         },
         //最底下的圆片
         {
@@ -164,16 +164,16 @@ const ScatterChart: FC = () => {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 {
                   offset: 0,
-                  color: "rgba(89,211,255,1)",
+                  color: "rgba(89,211,255,1)"
                 },
                 {
                   offset: 1,
-                  color: "rgba(23,237,194,1)",
-                },
-              ]),
-            },
+                  color: "rgba(23,237,194,1)"
+                }
+              ])
+            }
           },
-          data: bottomCircle,
+          data: bottomCircle
         },
         // 中间圆片
         {
@@ -191,19 +191,19 @@ const ScatterChart: FC = () => {
                 [
                   {
                     offset: 0,
-                    color: "rgba(89,211,255,1)",
+                    color: "rgba(89,211,255,1)"
                   },
                   {
                     offset: 1,
-                    color: "rgba(23,237,194,1)",
-                  },
+                    color: "rgba(23,237,194,1)"
+                  }
                 ],
                 false
-              ),
-            },
+              )
+            }
           },
           z: 112,
-          data: middleCircle,
+          data: middleCircle
         },
         //上部立体柱
         {
@@ -213,8 +213,8 @@ const ScatterChart: FC = () => {
           itemStyle: {
             normal: {
               color: "#3E8BE6",
-              opacity: 0.7,
-            },
+              opacity: 0.7
+            }
           },
           label: {
             show: true,
@@ -225,13 +225,13 @@ const ScatterChart: FC = () => {
             formatter: function (item) {
               const a = 100;
               return a - item.value + "%";
-            },
+            }
           },
           silent: true,
           barWidth: 50,
-          data: upBar,
-        },
-      ],
+          data: upBar
+        }
+      ]
     });
     window.addEventListener("resize", function () {
       myChart.resize();

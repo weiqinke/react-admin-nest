@@ -12,7 +12,7 @@ const LineChart: FC = () => {
   const CubeLeft = echarts.graphic.extendShape({
     shape: {
       x: 0,
-      y: 0,
+      y: 0
     },
     buildPath: function (ctx, shape) {
       // 会canvas的应该都能看得懂，shape是从custom传入的
@@ -22,19 +22,14 @@ const LineChart: FC = () => {
       const c1 = [shape.x - offsetX, shape.y - offsetY];
       const c2 = [xAxisPoint[0] - offsetX, xAxisPoint[1] - offsetY];
       const c3 = [xAxisPoint[0], xAxisPoint[1]];
-      ctx
-        .moveTo(c0[0], c0[1])
-        .lineTo(c1[0], c1[1])
-        .lineTo(c2[0], c2[1])
-        .lineTo(c3[0], c3[1])
-        .closePath();
-    },
+      ctx.moveTo(c0[0], c0[1]).lineTo(c1[0], c1[1]).lineTo(c2[0], c2[1]).lineTo(c3[0], c3[1]).closePath();
+    }
   });
   // 绘制右侧面
   const CubeRight = echarts.graphic.extendShape({
     shape: {
       x: 0,
-      y: 0,
+      y: 0
     },
     buildPath: function (ctx, shape) {
       const xAxisPoint = shape.xAxisPoint;
@@ -42,32 +37,22 @@ const LineChart: FC = () => {
       const c2 = [xAxisPoint[0], xAxisPoint[1]];
       const c3 = [xAxisPoint[0] + offsetX, xAxisPoint[1] - offsetY];
       const c4 = [shape.x + offsetX, shape.y - offsetY];
-      ctx
-        .moveTo(c1[0], c1[1])
-        .lineTo(c2[0], c2[1])
-        .lineTo(c3[0], c3[1])
-        .lineTo(c4[0], c4[1])
-        .closePath();
-    },
+      ctx.moveTo(c1[0], c1[1]).lineTo(c2[0], c2[1]).lineTo(c3[0], c3[1]).lineTo(c4[0], c4[1]).closePath();
+    }
   });
   // 绘制顶面
   const CubeTop = echarts.graphic.extendShape({
     shape: {
       x: 0,
-      y: 0,
+      y: 0
     },
     buildPath: function (ctx, shape) {
       const c1 = [shape.x, shape.y];
       const c2 = [shape.x + offsetX, shape.y - offsetY]; //右点
       const c3 = [shape.x, shape.y - offsetX];
       const c4 = [shape.x - offsetX, shape.y - offsetY];
-      ctx
-        .moveTo(c1[0], c1[1])
-        .lineTo(c2[0], c2[1])
-        .lineTo(c3[0], c3[1])
-        .lineTo(c4[0], c4[1])
-        .closePath();
-    },
+      ctx.moveTo(c1[0], c1[1]).lineTo(c2[0], c2[1]).lineTo(c3[0], c3[1]).lineTo(c4[0], c4[1]).closePath();
+    }
   });
   // 注册三个面图形
   echarts.graphic.registerShape("CubeLeft", CubeLeft);
@@ -80,7 +65,7 @@ const LineChart: FC = () => {
       backgroundColor: "#012366",
       tooltip: {
         trigger: "axis",
-        formatter: (params) => params[0].name + ":" + params[0].value,
+        formatter: params => params[0].name + ":" + params[0].value
       },
       legend: {
         show: true,
@@ -88,21 +73,21 @@ const LineChart: FC = () => {
         itemWidth: 30,
         itemHeight: 11,
         itemStyle: {
-          color: "rgb(12,160,254)",
+          color: "rgb(12,160,254)"
         },
         textStyle: {
           fontSize: 22,
-          color: "rgb(233,240,255)",
+          color: "rgb(233,240,255)"
         },
         data: ["进港货量"],
-        right: "center", //组件离容器左侧的距离，可以是left,center,right，也可以是像素px和百分比10%
+        right: "center" //组件离容器左侧的距离，可以是left,center,right，也可以是像素px和百分比10%
       },
       //图表大小位置限制
       grid: {
         x: "13%",
         x2: "14%",
         y: "20%",
-        y2: "20%",
+        y2: "20%"
       },
       xAxis: {
         data: ["欧洲", "日韩", "中东", "南美", "东南亚", "西南太平洋"],
@@ -111,28 +96,28 @@ const LineChart: FC = () => {
           show: false,
           lineStyle: {
             width: 1,
-            color: "#214776",
+            color: "#214776"
           },
           textStyle: {
             color: "#fff",
-            fontSize: 20,
-          },
+            fontSize: 20
+          }
         },
         type: "category",
         axisLabel: {
           textStyle: {
             color: "rgba(233, 240, 255, 1)",
             fontWeight: 500,
-            fontSize: "20",
-          },
+            fontSize: "20"
+          }
         },
         axisTick: {
           textStyle: {
             color: "#fff",
-            fontSize: "16",
+            fontSize: "16"
           },
-          show: false,
-        },
+          show: false
+        }
       },
       yAxis: [
         {
@@ -140,69 +125,69 @@ const LineChart: FC = () => {
           nameTextStyle: {
             color: "rgb(233,240,255)",
             fontSize: 22,
-            padding: 10,
+            padding: 10
           },
           min: 0, //最小
           max: 30, //最大
           interval: 5, //相差
           type: "value",
           splitLine: {
-            show: false,
+            show: false
           },
           axisTick: {
             show: true,
             inside: true,
-            length: 7,
+            length: 7
           },
           axisLine: {
             show: true,
             lineStyle: {
-              color: "rgb(195,213,248)",
-            },
+              color: "rgb(195,213,248)"
+            }
           },
           //坐标值标注
           axisLabel: {
             show: true,
             textStyle: {
               color: "rgba(195, 213, 248, 1)",
-              fontSize: 22,
-            },
-          },
+              fontSize: 22
+            }
+          }
         },
         {
           name: "吨",
           nameTextStyle: {
             color: "rgb(233,240,255)",
             fontSize: 22,
-            padding: 10,
+            padding: 10
           },
           min: 0, //最小
           max: 6000, //最大
           interval: 1000, //相差
           type: "value",
           splitLine: {
-            show: false,
+            show: false
           },
           axisTick: {
             show: true,
             inside: true,
-            length: 7,
+            length: 7
           },
           axisLine: {
             show: true,
             lineStyle: {
-              color: "rgb(195,213,248)",
-            },
+              color: "rgb(195,213,248)"
+            }
           },
           //坐标值标注
           axisLabel: {
             show: true,
             textStyle: {
               color: "rgba(195, 213, 248, 1)",
-              fontSize: 22,
-            },
-          },
-        },
+              fontSize: 22
+            }
+          }
+        }
       ],
       series: [
         {
@@ -210,7 +195,7 @@ const LineChart: FC = () => {
           type: "line",
           showAllSymbol: true,
           lineStyle: {
-            color: "#00D8FF",
+            color: "#00D8FF"
           },
           showSymbol: true,
           symbol: "circle",
@@ -219,11 +204,11 @@ const LineChart: FC = () => {
             normal: {
               color: "#121E43",
               borderColor: "#00D8FF",
-              borderWidth: 3,
-            },
+              borderWidth: 3
+            }
           },
           data: ["20", "25", "24", "27", "14", "18"],
-          yAxisIndex: 0,
+          yAxisIndex: 0
         },
         {
           yAxisIndex: 1,
@@ -241,20 +226,20 @@ const LineChart: FC = () => {
                     yValue: api.value(1),
                     x: location[0],
                     y: location[1],
-                    xAxisPoint: api.coord([api.value(0), 0]),
+                    xAxisPoint: api.coord([api.value(0), 0])
                   },
                   style: {
                     fill: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                       {
                         offset: 0,
-                        color: "rgba(60, 122, 185, 1)",
+                        color: "rgba(60, 122, 185, 1)"
                       },
                       {
                         offset: 1,
-                        color: "rgba(51, 152, 188, 1)",
-                      },
-                    ]),
-                  },
+                        color: "rgba(51, 152, 188, 1)"
+                      }
+                    ])
+                  }
                 },
                 {
                   type: "CubeRight",
@@ -265,20 +250,20 @@ const LineChart: FC = () => {
                     yValue: api.value(1),
                     x: location[0],
                     y: location[1],
-                    xAxisPoint: api.coord([api.value(0), 0]),
+                    xAxisPoint: api.coord([api.value(0), 0])
                   },
                   style: {
                     fill: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                       {
                         offset: 0,
-                        color: "rgba(77, 172, 255, 1)",
+                        color: "rgba(77, 172, 255, 1)"
                       },
                       {
                         offset: 1,
-                        color: "rgba(68, 217, 252, 1)",
-                      },
-                    ]),
-                  },
+                        color: "rgba(68, 217, 252, 1)"
+                      }
+                    ])
+                  }
                 },
                 {
                   type: "CubeTop",
@@ -288,36 +273,36 @@ const LineChart: FC = () => {
                     yValue: api.value(1),
                     x: location[0],
                     y: location[1],
-                    xAxisPoint: api.coord([api.value(0), 0]),
+                    xAxisPoint: api.coord([api.value(0), 0])
                   },
                   style: {
                     fill: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                       {
                         offset: 0,
-                        color: "rgba(56, 227, 255, 1)",
+                        color: "rgba(56, 227, 255, 1)"
                       },
                       {
                         offset: 1,
-                        color: "rgba(56, 227, 255, 1)",
-                      },
-                    ]),
-                  },
-                },
-              ],
+                        color: "rgba(56, 227, 255, 1)"
+                      }
+                    ])
+                  }
+                }
+              ]
             };
           },
-          data: data,
+          data: data
         },
         {
           type: "bar",
           yAxisIndex: 1,
           itemStyle: {
-            color: "transparent",
+            color: "transparent"
           },
           tooltip: {},
-          data: data,
-        },
-      ],
+          data: data
+        }
+      ]
     });
     window.addEventListener("resize", function () {
       myChart.resize();

@@ -1,13 +1,5 @@
 import { Row, Col } from "antd";
-import {
-  BarChart,
-  HomeSenseChart,
-  LineChart,
-  PictorialBarChart,
-  PieChart,
-  ScatterChart,
-  ServerStatusChart,
-} from "@/components/Echarts";
+import { BarChart, HomeSenseChart, LineChart, PictorialBarChart, PieChart, ScatterChart, ServerStatusChart } from "@/components/Echarts";
 
 const AreaChart = () => {
   return (

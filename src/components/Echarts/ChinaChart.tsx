@@ -7,14 +7,14 @@ const ChinaChart = () => {
 
   useEffect(() => {
     const myChart = echarts.init(ref.current);
-    axios.get("https://nest-admin.com/china.json").then((res) => {
+    axios.get("https://nest-admin.com/china.json").then(res => {
       echarts.registerMap("china", res.data);
       myChart.setOption({
         backgroundColor: "rgba(124,193,173,0.5)",
         // 进行相关配置
         tooltip: {
           borderColor: "#7cc1ad", //边框颜色
-          borderWidth: 1,
+          borderWidth: 1
         }, // 鼠标移到图里面的浮动提示框
         dataRange: {
           show: false,
@@ -22,7 +22,7 @@ const ChinaChart = () => {
           max: 200000000,
           text: ["High", "Low"],
           realtime: true,
-          calculable: true,
+          calculable: true
           // color: ["#52dbdf", "#FF9B52", "#FFD068"],
         },
         geo: {
@@ -33,7 +33,7 @@ const ChinaChart = () => {
           label: {
             show: true, // 是否显示对应地名
             color: "#000",
-            fontSize: 11,
+            fontSize: 11
           },
           itemStyle: {
             areaColor: null,
@@ -41,13 +41,13 @@ const ChinaChart = () => {
             shadowOffsetY: 0,
             shadowBlur: 1,
             borderWidth: 0,
-            shadowColor: "rgba(0, 0, 0, 0.5)",
-          },
+            shadowColor: "rgba(0, 0, 0, 0.5)"
+          }
         },
         series: [
           {
             type: "scatter",
-            coordinateSystem: "geo", // 对应上方配置
+            coordinateSystem: "geo" // 对应上方配置
           },
           {
             name: "访问次数", // 浮动框的标题
@@ -87,10 +87,10 @@ const ChinaChart = () => {
               { name: "新疆", value: 25852345 },
               { name: "香港", value: 7508112 },
               { name: "澳门", value: 683567 },
-              { name: "台湾", value: 23420442 },
-            ],
-          },
-        ],
+              { name: "台湾", value: 23420442 }
+            ]
+          }
+        ]
       });
     });
     window.addEventListener("resize", function () {

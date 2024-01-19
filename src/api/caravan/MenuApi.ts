@@ -23,6 +23,6 @@ export const delMenuItem = (payload: any) => {
 };
 
 /** 删除菜单接口 */
-export const getAllMenus = (payload) => {
+export const getAllMenus = payload => {
   return request(`${BASE_URL}menus/getAllMenus`, "GET", payload);
 };

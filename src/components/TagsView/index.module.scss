@@ -43,7 +43,8 @@
     &:hover {
       background-color: #41b3a3;
       color: #313653;
-      transition: opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1),
+      transition:
+        opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1),
         width 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
     }
   }

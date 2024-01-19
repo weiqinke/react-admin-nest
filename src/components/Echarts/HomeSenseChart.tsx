@@ -13,32 +13,32 @@ const HomeSenseChart = () => {
     基站1: [116.415, 39.915],
     基站2: [116.448, 39.935],
     基站3: [116.455, 39.915],
-    控制中心: [116.435, 39.925],
+    控制中心: [116.435, 39.925]
   };
   const l1 = {
-    主卧: [116.409, 39.928],
+    主卧: [116.409, 39.928]
   };
   const l2 = {
-    书房控制: [116.428, 39.939],
+    书房控制: [116.428, 39.939]
   };
 
   const l3 = {
-    卫生间控制: [116.448, 39.939],
+    卫生间控制: [116.448, 39.939]
   };
   const l4 = {
-    客厅控制: [116.426, 39.918],
+    客厅控制: [116.426, 39.918]
   };
   const l5 = {
-    次卧控制: [116.448, 39.92],
+    次卧控制: [116.448, 39.92]
   };
   const l6 = {
-    楼梯控制: [116.443, 39.911],
+    楼梯控制: [116.443, 39.911]
   };
   const l7 = {
-    厨房控制: [116.448, 39.905],
+    厨房控制: [116.448, 39.905]
   };
   const zhuwo = {
-    主卧控制: [116.409, 39.928],
+    主卧控制: [116.409, 39.928]
   };
 
   //geoCoordMap把所有可能出现的传感器加到数组里面
@@ -52,28 +52,28 @@ const HomeSenseChart = () => {
     客厅3: [116.4516, 39.9306],
     次卧: [116.4516, 39.92],
     楼梯: [116.447, 39.911],
-    厨房: [116.4516, 39.905],
+    厨房: [116.4516, 39.905]
   };
   const geoCoordMap001 = {
     客厅1: [116.41, 39.9036],
     客厅2: [116.43, 39.918],
     主卧1: [116.409, 39.921],
-    主卧2: [116.409, 39.935],
+    主卧2: [116.409, 39.935]
   };
   const geoCoordMap002 = {
     书房: [116.432, 39.939],
     卫生间: [116.4516, 39.939],
-    客厅3: [116.4516, 39.9306],
+    客厅3: [116.4516, 39.9306]
   };
   const geoCoordMap003 = {
     次卧: [116.4516, 39.92],
     楼梯: [116.447, 39.911],
-    厨房: [116.4516, 39.905],
+    厨房: [116.4516, 39.905]
   };
   const geoCoordMap004 = {
     基站1: [116.415, 39.915],
     基站2: [116.448, 39.935],
-    基站3: [116.455, 39.915],
+    基站3: [116.455, 39.915]
   };
   //温度
   const d1 = {
@@ -89,7 +89,7 @@ const HomeSenseChart = () => {
     厨房: 38,
     基站1: 40,
     基站2: 45,
-    基站3: 37,
+    基站3: 37
   };
 
   //湿度
@@ -103,7 +103,7 @@ const HomeSenseChart = () => {
     客厅3: 56,
     次卧: 39,
     楼梯: 29,
-    厨房: 68,
+    厨房: 68
   };
   //振动
   const d3 = {
@@ -116,7 +116,7 @@ const HomeSenseChart = () => {
     客厅3: 0,
     次卧: 3,
     楼梯: 2,
-    厨房: 0,
+    厨房: 0
   };
   //烟雾
   const d4 = {
@@ -129,7 +129,7 @@ const HomeSenseChart = () => {
     客厅3: 56,
     次卧: 39,
     楼梯: 29,
-    厨房: 68,
+    厨房: 68
   };
   //光线
   const d5 = {
@@ -142,7 +142,7 @@ const HomeSenseChart = () => {
     客厅3: 56,
     次卧: 39,
     楼梯: 29,
-    厨房: 68,
+    厨房: 68
   };
   //
   // var d6 = {
@@ -175,122 +175,73 @@ const HomeSenseChart = () => {
   const database = [
     {
       name: "基站1",
-      value: 0,
+      value: 0
     },
     {
       name: "基站2",
-      value: 0,
+      value: 0
     },
     {
       name: "基站3",
-      value: 0,
+      value: 0
     },
     {
       name: "控制中心",
-      value: 0,
-    },
+      value: 0
+    }
   ];
   const da1 = [
     {
       name: "主卧",
-      value: 0,
-    },
+      value: 0
+    }
   ];
   const da2 = [
     {
       name: "书房控制",
-      value: 0,
-    },
+      value: 0
+    }
   ];
   const da3 = [
     {
       name: "卫生间控制",
-      value: 0,
-    },
+      value: 0
+    }
   ];
   const da4 = [
     {
       name: "客厅控制",
-      value: 0,
-    },
+      value: 0
+    }
   ];
   const da5 = [
     {
       name: "次卧控制",
-      value: 0,
-    },
+      value: 0
+    }
   ];
   const da6 = [
     {
       name: "楼梯控制",
-      value: 0,
-    },
+      value: 0
+    }
   ];
   const da7 = [
     {
       name: "厨房控制",
-      value: 0,
-    },
+      value: 0
+    }
   ];
 
   const colors = [
-    [
-      "#1DE9B6",
-      "#F46E36",
-      "#04B9FF",
-      "#5DBD32",
-      "#FFC809",
-      "#FB95D5",
-      "#BDA29A",
-      "#6E7074",
-      "#546570",
-      "#C4CCD3",
-    ],
-    [
-      "#37A2DA",
-      "#67E0E3",
-      "#32C5E9",
-      "#9FE6B8",
-      "#FFDB5C",
-      "#FF9F7F",
-      "#FB7293",
-      "#E062AE",
-      "#E690D1",
-      "#E7BCF3",
-      "#9D96F5",
-      "#8378EA",
-      "#8378EA",
-    ],
-    [
-      "#DD6B66",
-      "#759AA0",
-      "#E69D87",
-      "#8DC1A9",
-      "#EA7E53",
-      "#EEDD78",
-      "#73A373",
-      "#73B9BC",
-      "#7289AB",
-      "#91CA8C",
-      "#F49F42",
-    ],
+    ["#1DE9B6", "#F46E36", "#04B9FF", "#5DBD32", "#FFC809", "#FB95D5", "#BDA29A", "#6E7074", "#546570", "#C4CCD3"],
+    ["#37A2DA", "#67E0E3", "#32C5E9", "#9FE6B8", "#FFDB5C", "#FF9F7F", "#FB7293", "#E062AE", "#E690D1", "#E7BCF3", "#9D96F5", "#8378EA", "#8378EA"],
+    ["#DD6B66", "#759AA0", "#E69D87", "#8DC1A9", "#EA7E53", "#EEDD78", "#73A373", "#73B9BC", "#7289AB", "#91CA8C", "#F49F42"]
   ];
   const colorIndex = 0;
 
-  const year = [
-    "温度（℃）",
-    "湿度（%）",
-    "振动(g)",
-    "烟雾（百ppm）",
-    "光线（百lx）",
-  ];
-  const year1 = [
-    "空调调温",
-    "加湿器/窗户协调",
-    "门锁锁定",
-    "紧急消防",
-    "照明系统",
-  ];
+  const year = ["温度（℃）", "湿度（%）", "振动(g)", "烟雾（百ppm）", "光线（百lx）"];
+  const year1 = ["空调调温", "加湿器/窗户协调", "门锁锁定", "紧急消防", "照明系统"];
 
   const mapData = [[], [], [], [], []];
 
@@ -300,42 +251,18 @@ const HomeSenseChart = () => {
   const rong = [];
   const barData = [];
   const lineData1 = [
-    [
-      10, 12, 13, 12, 14, 14, 16, 17, 18, 20, 22, 26, 27, 26, 23, 20, 18, 18,
-      16, 16, 14, 13, 12, 10,
-    ],
-    [
-      68, 67, 66, 63, 61, 55, 53, 48, 46, 44, 42, 42, 36, 34, 36, 37, 38, 42,
-      46, 44, 58, 62, 66, 68,
-    ],
+    [10, 12, 13, 12, 14, 14, 16, 17, 18, 20, 22, 26, 27, 26, 23, 20, 18, 18, 16, 16, 14, 13, 12, 10],
+    [68, 67, 66, 63, 61, 55, 53, 48, 46, 44, 42, 42, 36, 34, 36, 37, 38, 42, 46, 44, 58, 62, 66, 68],
     [1, 1, 1, 1, 1, 1, 1, 2, 3, 2, 1, 1, 1, 1, 1, 1, 3, 3, 1, 3, 3, 1, 1, 1],
-    [
-      56, 59, 60, 62, 56, 50, 40, 42, 38, 38, 39, 38, 40, 42, 38, 37, 34, 35,
-      38, 44, 46, 50, 54, 56,
-    ],
-    [
-      1, 1, 2, 1, 5, 10, 20, 24, 30, 32, 32, 34, 38, 40, 40, 38, 32, 25, 32, 32,
-      5, 1, 1, 1,
-    ],
+    [56, 59, 60, 62, 56, 50, 40, 42, 38, 38, 39, 38, 40, 42, 38, 37, 34, 35, 38, 44, 46, 50, 54, 56],
+    [1, 1, 2, 1, 5, 10, 20, 24, 30, 32, 32, 34, 38, 40, 40, 38, 32, 25, 32, 32, 5, 1, 1, 1]
   ];
   const lineData2 = [
-    [
-      11, 12, 14, 12, 15, 13, 16, 16, 16, 21, 22, 24, 22, 24, 23, 21, 19, 18,
-      15, 14, 15, 13, 12, 11,
-    ],
-    [
-      62, 64, 66, 65, 62, 58, 54, 49, 45, 44, 41, 40, 32, 36, 36, 39, 38, 40,
-      46, 48, 52, 60, 63, 61,
-    ],
+    [11, 12, 14, 12, 15, 13, 16, 16, 16, 21, 22, 24, 22, 24, 23, 21, 19, 18, 15, 14, 15, 13, 12, 11],
+    [62, 64, 66, 65, 62, 58, 54, 49, 45, 44, 41, 40, 32, 36, 36, 39, 38, 40, 46, 48, 52, 60, 63, 61],
     [1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 3, 1, 1, 1, 3, 2, 1, 1, 3, 1, 2, 1],
-    [
-      58, 59, 62, 62, 54, 50, 44, 42, 34, 33, 35, 38, 40, 44, 38, 35, 32, 35,
-      33, 40, 46, 53, 56, 54,
-    ],
-    [
-      1, 1, 1, 1, 6, 12, 20, 22, 30, 33, 32, 35, 38, 42, 40, 37, 34, 28, 32, 33,
-      10, 1, 1, 1,
-    ],
+    [58, 59, 62, 62, 54, 50, 44, 42, 34, 33, 35, 38, 40, 44, 38, 35, 32, 35, 33, 40, 46, 53, 56, 54],
+    [1, 1, 1, 1, 6, 12, 20, 22, 30, 33, 32, 35, 38, 42, 40, 37, 34, 28, 32, 33, 10, 1, 1, 1]
   ];
 
   const tian = [[], [], [], [], []];
@@ -348,28 +275,28 @@ const HomeSenseChart = () => {
     line1.push({
       year: "温度",
       name: key,
-      value: d1[key],
+      value: d1[key]
     });
   }
   for (var key in geoCoordMap002) {
     line2.push({
       year: "温度",
       name: key,
-      value: d1[key],
+      value: d1[key]
     });
   }
   for (var key in geoCoordMap003) {
     line3.push({
       year: "温度",
       name: key,
-      value: d1[key],
+      value: d1[key]
     });
   }
   for (var key in geoCoordMap004) {
     line4.push({
       year: "温度",
       name: key,
-      value: d1[key],
+      value: d1[key]
     });
   }
 
@@ -377,27 +304,27 @@ const HomeSenseChart = () => {
     mapData[0].push({
       year: "温度",
       name: key,
-      value: d1[key],
+      value: d1[key]
     });
     mapData[1].push({
       year: "湿度",
       name: key,
-      value: d2[key],
+      value: d2[key]
     });
     mapData[2].push({
       year: "振动",
       name: key,
-      value: d3[key],
+      value: d3[key]
     });
     mapData[3].push({
       year: "烟雾",
       name: key,
-      value: d4[key],
+      value: d4[key]
     });
     mapData[4].push({
       year: "光线",
       name: key,
-      value: d5[key],
+      value: d5[key]
     });
   }
   const jian = [];
@@ -480,7 +407,7 @@ const HomeSenseChart = () => {
         if (geoCoord) {
           res.push({
             name: data[i].name,
-            value: geoCoord.concat(data[i].value),
+            value: geoCoord.concat(data[i].value)
           });
         }
       }
@@ -493,7 +420,7 @@ const HomeSenseChart = () => {
         if (geoCoord1) {
           res.push({
             name: database[i].name,
-            value: geoCoord1.concat(database[i].value),
+            value: geoCoord1.concat(database[i].value)
           });
         }
       }
@@ -508,7 +435,7 @@ const HomeSenseChart = () => {
         if (g1) {
           res.push({
             name: da1[i].name,
-            value: g1.concat(da1[i].value),
+            value: g1.concat(da1[i].value)
           });
         }
       }
@@ -523,7 +450,7 @@ const HomeSenseChart = () => {
         if (g2) {
           res.push({
             name: da2[i].name,
-            value: g2.concat(da2[i].value),
+            value: g2.concat(da2[i].value)
           });
         }
       }
@@ -538,7 +465,7 @@ const HomeSenseChart = () => {
         if (g3) {
           res.push({
             name: da3[i].name,
-            value: g3.concat(da3[i].value),
+            value: g3.concat(da3[i].value)
           });
         }
       }
@@ -553,7 +480,7 @@ const HomeSenseChart = () => {
         if (g4) {
           res.push({
             name: da4[i].name,
-            value: g4.concat(da4[i].value),
+            value: g4.concat(da4[i].value)
           });
         }
       }
@@ -568,7 +495,7 @@ const HomeSenseChart = () => {
         if (g5) {
           res.push({
             name: da5[i].name,
-            value: g5.concat(da5[i].value),
+            value: g5.concat(da5[i].value)
           });
         }
       }
@@ -583,7 +510,7 @@ const HomeSenseChart = () => {
         if (g6) {
           res.push({
             name: da6[i].name,
-            value: g6.concat(da6[i].value),
+            value: g6.concat(da6[i].value)
           });
         }
       }
@@ -598,7 +525,7 @@ const HomeSenseChart = () => {
         if (g7) {
           res.push({
             name: da7[i].name,
-            value: g7.concat(da7[i].value),
+            value: g7.concat(da7[i].value)
           });
         }
       }
@@ -617,11 +544,11 @@ const HomeSenseChart = () => {
           res.push([
             {
               coord: fromCoord,
-              value: dataItem.value,
+              value: dataItem.value
             },
             {
-              coord: toCoord,
-            },
+              coord: toCoord
+            }
           ]);
         }
       }
@@ -639,11 +566,11 @@ const HomeSenseChart = () => {
           res.push([
             {
               coord: fromCoord,
-              value: dataItem.value,
+              value: dataItem.value
             },
             {
-              coord: toCoord,
-            },
+              coord: toCoord
+            }
           ]);
         }
       }
@@ -664,35 +591,35 @@ const HomeSenseChart = () => {
         label: {
           normal: {
             textStyle: {
-              color: "#ddd",
-            },
+              color: "#ddd"
+            }
           },
           emphasis: {
             textStyle: {
-              color: "#fff",
-            },
-          },
+              color: "#fff"
+            }
+          }
         },
         symbolSize: 10,
         lineStyle: {
-          color: "#555",
+          color: "#555"
         },
         checkpointStyle: {
           borderColor: "#87CEEB",
-          borderWidth: 2,
+          borderWidth: 2
         },
         controlStyle: {
           showNextBtn: true,
           showPrevBtn: true,
           normal: {
             color: "#666",
-            borderColor: "#666",
+            borderColor: "#666"
           },
           emphasis: {
             color: "#aaa",
-            borderColor: "#aaa",
-          },
-        },
+            borderColor: "#aaa"
+          }
+        }
       },
       baseOption: {
         animation: true,
@@ -706,7 +633,7 @@ const HomeSenseChart = () => {
             left: "65%",
             top: "34.5%",
             bottom: "44.5%",
-            width: "20%",
+            width: "20%"
           },
           {
             gridindex: 1,
@@ -714,8 +641,8 @@ const HomeSenseChart = () => {
             right: "3%",
             top: "65%",
             bottom: "10%",
-            containLabel: true,
-          },
+            containLabel: true
+          }
         ],
         tooltip: {
           trigger: "axis", // hover触发器
@@ -723,31 +650,31 @@ const HomeSenseChart = () => {
             // 坐标轴指示器，坐标轴触发有效
             type: "shadow", // 默认为直线，可选为：'line' | 'shadow'
             shadowStyle: {
-              color: "#aaa", //hover颜色
-            },
-          },
+              color: "#aaa" //hover颜色
+            }
+          }
         },
         toolbox: {
           show: true,
           feature: {
             mark: {
-              show: true,
+              show: true
             },
             dataView: {
               show: true,
-              readOnly: false,
+              readOnly: false
             },
             magicType: {
               show: true,
-              type: ["bar", "line"],
+              type: ["bar", "line"]
             },
             restore: {
-              show: true,
+              show: true
             },
             saveAsImage: {
-              show: true,
-            },
-          },
+              show: true
+            }
+          }
         },
         legend: [
           {
@@ -755,16 +682,16 @@ const HomeSenseChart = () => {
             x: "75%",
             y: "60%",
             textStyle: {
-              color: "#fff",
-            },
+              color: "#fff"
+            }
           },
           {
             data: ["基站", "传感器", "传输路线"],
             top: "10%",
             left: "35%",
             textStyle: {
-              color: "#fff",
-            },
+              color: "#fff"
+            }
           },
 
           {
@@ -775,27 +702,27 @@ const HomeSenseChart = () => {
 
             data: [
               {
-                name: "主卧",
+                name: "主卧"
               },
               {
-                name: "书房控制",
+                name: "书房控制"
               },
               {
-                name: "卫生间控制",
+                name: "卫生间控制"
               },
               {
-                name: "客厅控制",
+                name: "客厅控制"
               },
               {
-                name: "次卧控制",
+                name: "次卧控制"
               },
 
               {
-                name: "楼梯控制",
+                name: "楼梯控制"
               },
               {
-                name: "厨房控制",
-              },
+                name: "厨房控制"
+              }
             ],
             selected: {
               主卧: false,
@@ -804,14 +731,14 @@ const HomeSenseChart = () => {
               次卧控制: false,
               楼梯控制: false,
               厨房控制: false,
-              卫生间控制: false,
+              卫生间控制: false
               // 	'': false
             },
 
             textStyle: {
-              color: "#fff",
-            },
-          },
+              color: "#fff"
+            }
+          }
         ],
 
         //地图样式
@@ -823,8 +750,8 @@ const HomeSenseChart = () => {
           center: [116.453, 39.92],
           label: {
             emphasis: {
-              show: false,
-            },
+              show: false
+            }
           },
           itemStyle: {
             normal: {
@@ -838,30 +765,30 @@ const HomeSenseChart = () => {
                 colorStops: [
                   {
                     offset: 0,
-                    color: "rgba(147, 235, 248, 0)", // 0% 处的颜色
+                    color: "rgba(147, 235, 248, 0)" // 0% 处的颜色
                   },
                   {
                     offset: 1,
-                    color: "rgba(147, 235, 248, .2)", // 100% 处的颜色
-                  },
+                    color: "rgba(147, 235, 248, .2)" // 100% 处的颜色
+                  }
                 ],
-                globalCoord: false, // 缺省为 false
+                globalCoord: false // 缺省为 false
               },
               shadowColor: "rgba(128, 217, 248, 1)",
               // shadowColor: 'rgba(255, 255, 255, 1)',
               shadowOffsetX: -2,
               shadowOffsetY: 2,
-              shadowBlur: 10,
+              shadowBlur: 10
             },
             emphasis: {
               areaColor: "#389BB7",
-              borderWidth: 0,
-            },
-          },
-        },
+              borderWidth: 0
+            }
+          }
+        }
       },
 
-      options: [],
+      options: []
     };
 
     for (let n = 0; n < year.length; n++) {
@@ -877,8 +804,8 @@ const HomeSenseChart = () => {
             top: "5%",
             textStyle: {
               color: "#fff",
-              fontSize: 25,
-            },
+              fontSize: 25
+            }
           },
           {
             id: "statistic",
@@ -887,8 +814,8 @@ const HomeSenseChart = () => {
             top: "5%",
             textStyle: {
               color: "#fff",
-              fontSize: 25,
-            },
+              fontSize: 25
+            }
           },
           {
             text: "平均值：" + jian[n] / count[n],
@@ -896,8 +823,8 @@ const HomeSenseChart = () => {
             top: "14.5%",
             textStyle: {
               color: "#90ee90",
-              fontSize: 15,
-            },
+              fontSize: 15
+            }
           },
           {
             text: "最大值：" + datamax[n],
@@ -905,8 +832,8 @@ const HomeSenseChart = () => {
             top: "14.5%",
             textStyle: {
               color: "#FF4500",
-              fontSize: 15,
-            },
+              fontSize: 15
+            }
           },
           {
             text: "最小值：" + datamin[n],
@@ -914,8 +841,8 @@ const HomeSenseChart = () => {
             top: "14.5%",
             textStyle: {
               color: "#87CEFF",
-              fontSize: 15,
-            },
+              fontSize: 15
+            }
           },
           {
             text: "未使用的传感器：" + (mapData[n].length - count[n]), //+'\n'+fei[n],
@@ -923,10 +850,10 @@ const HomeSenseChart = () => {
             top: "17.5%",
             textStyle: {
               color: "#FF7F00",
-              fontSize: 15,
+              fontSize: 15
             },
 
-            extraCssText: "width:120px; white-space:pre-wrap", //额外样式使\n生效
+            extraCssText: "width:120px; white-space:pre-wrap" //额外样式使\n生效
           },
           {
             text: "数据异常传感器：" + count3[n],
@@ -934,10 +861,10 @@ const HomeSenseChart = () => {
             top: "17.5%",
             textStyle: {
               color: "#9370DB",
-              fontSize: 15,
+              fontSize: 15
             },
 
-            extraCssText: "width:120px; white-space:pre-wrap", //额外样式使\n生效
+            extraCssText: "width:120px; white-space:pre-wrap" //额外样式使\n生效
           },
           {
             text: "(数据正常范围：" + li[n] + "~" + zhu[n] + ")",
@@ -945,10 +872,10 @@ const HomeSenseChart = () => {
             top: "20.5%",
             textStyle: {
               color: "#FFA54F",
-              fontSize: 15,
+              fontSize: 15
             },
 
-            extraCssText: "width:120px; white-space:pre-wrap", //额外样式使\n生效
+            extraCssText: "width:120px; white-space:pre-wrap" //额外样式使\n生效
           },
           {
             text: "未使用的传感器：" + fei[n], //+'\n'+fei[n],
@@ -956,10 +883,10 @@ const HomeSenseChart = () => {
             top: "23.5%",
             textStyle: {
               color: "#FF7F00",
-              fontSize: 15,
+              fontSize: 15
             },
 
-            extraCssText: "width:120px; white-space:pre-wrap", //额外样式使\n生效
+            extraCssText: "width:120px; white-space:pre-wrap" //额外样式使\n生效
           },
           {
             text: "数据异常传感器：" + rong[n],
@@ -967,11 +894,11 @@ const HomeSenseChart = () => {
             top: "26.5%",
             textStyle: {
               color: "#9370DB",
-              fontSize: 15,
+              fontSize: 15
             },
 
-            extraCssText: "width:120px; white-space:pre-wrap", //额外样式使\n生效
-          },
+            extraCssText: "width:120px; white-space:pre-wrap" //额外样式使\n生效
+          }
         ],
         visualMap: {
           min: li[n],
@@ -979,14 +906,14 @@ const HomeSenseChart = () => {
           calculable: true,
           text: ["High", "Low"],
           inRange: {
-            color: ["#50a3ba", "#eac736", "#d94e5d"],
+            color: ["#50a3ba", "#eac736", "#d94e5d"]
           },
           padding: 5,
           right: "5%",
           bottom: "40%",
           textStyle: {
-            color: "#fff",
-          },
+            color: "#fff"
+          }
         },
         //             brush: {
         //     outOfBrush: {
@@ -1010,20 +937,20 @@ const HomeSenseChart = () => {
             min: 0,
             boundaryGap: false,
             splitLine: {
-              show: false,
+              show: false
             },
             axisLine: {
-              show: false,
+              show: false
             },
             axisTick: {
-              show: false,
+              show: false
             },
             axisLabel: {
               margin: 2,
               textStyle: {
-                color: "#fff",
-              },
-            },
+                color: "#fff"
+              }
+            }
           },
           {
             gridIndex: 1,
@@ -1032,8 +959,8 @@ const HomeSenseChart = () => {
             axisLabel: {
               margin: 2,
               textStyle: {
-                color: "#fff",
-              },
+                color: "#fff"
+              }
             },
             data: [
               "0时",
@@ -1059,9 +986,9 @@ const HomeSenseChart = () => {
               "20时",
               "21时",
               "22时",
-              "23时",
-            ],
-          },
+              "23时"
+            ]
+          }
         ],
         yAxis: [
           {
@@ -1071,22 +998,22 @@ const HomeSenseChart = () => {
             axisLine: {
               show: true,
               lineStyle: {
-                color: "#ddd",
-              },
+                color: "#ddd"
+              }
             },
             axisTick: {
               show: false,
               lineStyle: {
-                color: "#ddd",
-              },
+                color: "#ddd"
+              }
             },
             axisLabel: {
               interval: 0,
               textStyle: {
-                color: "#ddd",
-              },
+                color: "#ddd"
+              }
             },
-            data: categoryData[n],
+            data: categoryData[n]
           },
           {
             gridIndex: 1,
@@ -1094,10 +1021,10 @@ const HomeSenseChart = () => {
             axisLabel: {
               formatter: "{value} ",
               textStyle: {
-                color: "#ddd",
-              },
-            },
-          },
+                color: "#ddd"
+              }
+            }
+          }
         ],
 
         series: [
@@ -1111,27 +1038,27 @@ const HomeSenseChart = () => {
             showLegendSymbol: true, // 存在legend时显示
             label: {
               normal: {
-                show: false,
+                show: false
               },
               emphasis: {
                 show: false,
                 textStyle: {
-                  color: "#fff",
-                },
-              },
+                  color: "#fff"
+                }
+              }
             },
             roam: true,
             itemStyle: {
               normal: {
                 areaColor: "#031525",
-                borderColor: "#FFFFFF",
+                borderColor: "#FFFFFF"
               },
               emphasis: {
-                areaColor: "#2B91B7",
-              },
+                areaColor: "#2B91B7"
+              }
             },
             animation: false,
-            data: mapData,
+            data: mapData
           },
           //地图中闪烁的点
           {
@@ -1150,24 +1077,24 @@ const HomeSenseChart = () => {
             },
             showEffectOn: "render",
             rippleEffect: {
-              brushType: "stroke",
+              brushType: "stroke"
             },
             hoverAnimation: true,
             label: {
               normal: {
                 formatter: "{b}",
                 position: "right",
-                show: true,
-              },
+                show: true
+              }
             },
             itemStyle: {
               normal: {
                 color: colors[colorIndex][n],
                 shadowBlur: 10,
-                shadowColor: colors[colorIndex][n],
-              },
+                shadowColor: colors[colorIndex][n]
+              }
             },
-            zlevel: 1,
+            zlevel: 1
           },
           {
             //基站点显示
@@ -1185,30 +1112,30 @@ const HomeSenseChart = () => {
             symbolSize: 10,
             showEffectOn: "render",
             rippleEffect: {
-              brushType: "stroke",
+              brushType: "stroke"
             },
             hoverAnimation: true,
             label: {
               normal: {
                 formatter: "{b}",
                 position: "right",
-                show: true,
-              },
+                show: true
+              }
             },
 
             itemStyle: {
               normal: {
                 color: colors[colorIndex][n],
                 shadowBlur: 10,
-                shadowColor: "#2f4554",
+                shadowColor: "#2f4554"
               },
               emphasis: {
                 color: "#fff",
                 shadowBlur: 10,
-                shadowColor: "#cfff",
-              },
+                shadowColor: "#cfff"
+              }
             },
-            zlevel: 1,
+            zlevel: 1
           },
           {
             name: "主卧",
@@ -1232,28 +1159,28 @@ const HomeSenseChart = () => {
               normal: {
                 formatter: "{b}" + year1[n] + "：开",
                 position: "bottom",
-                show: true,
+                show: true
               },
               emphasis: {
                 formatter: "{b}" + year[n] + "：" + tian[n][0],
                 position: "bottom",
-                show: true,
-              },
+                show: true
+              }
             },
 
             itemStyle: {
               normal: {
                 color: "#2f4554",
                 shadowBlur: 10,
-                shadowColor: "#2f4554",
+                shadowColor: "#2f4554"
               },
               emphasis: {
                 color: "#c23531",
                 shadowBlur: 10,
-                shadowColor: "#c23531",
-              },
+                shadowColor: "#c23531"
+              }
             },
-            zlevel: 1,
+            zlevel: 1
           },
           {
             name: "书房控制",
@@ -1277,28 +1204,28 @@ const HomeSenseChart = () => {
               normal: {
                 formatter: "{b}" + year1[n] + "：开",
                 position: "bottom",
-                show: true,
+                show: true
               },
               emphasis: {
                 formatter: "{b}" + year[n] + "：" + tian[n][2],
                 position: "bottom",
-                show: true,
-              },
+                show: true
+              }
             },
 
             itemStyle: {
               normal: {
                 color: "#2f4554",
                 shadowBlur: 10,
-                shadowColor: "#2f4554",
+                shadowColor: "#2f4554"
               },
               emphasis: {
                 color: "#c23531",
                 shadowBlur: 10,
-                shadowColor: "#c23531",
-              },
+                shadowColor: "#c23531"
+              }
             },
-            zlevel: 1,
+            zlevel: 1
           },
           {
             name: "卫生间控制",
@@ -1322,28 +1249,28 @@ const HomeSenseChart = () => {
               normal: {
                 formatter: "{b}" + year1[n] + "：开",
                 position: "bottom",
-                show: true,
+                show: true
               },
               emphasis: {
                 formatter: "{b}" + year[n] + "：" + tian[n][0],
                 position: "bottom",
-                show: true,
-              },
+                show: true
+              }
             },
 
             itemStyle: {
               normal: {
                 color: "#2f4554",
                 shadowBlur: 10,
-                shadowColor: "#2f4554",
+                shadowColor: "#2f4554"
               },
               emphasis: {
                 color: "#c23531",
                 shadowBlur: 10,
-                shadowColor: "#c23531",
-              },
+                shadowColor: "#c23531"
+              }
             },
-            zlevel: 1,
+            zlevel: 1
           },
           {
             name: "客厅控制",
@@ -1367,28 +1294,28 @@ const HomeSenseChart = () => {
               normal: {
                 formatter: "{b}" + year1[n] + "：开",
                 position: "bottom",
-                show: true,
+                show: true
               },
               emphasis: {
                 formatter: "{b}" + year[n] + "：" + tian[n][0],
                 position: "bottom",
-                show: true,
-              },
+                show: true
+              }
             },
 
             itemStyle: {
               normal: {
                 color: "#2f4554",
                 shadowBlur: 10,
-                shadowColor: "#2f4554",
+                shadowColor: "#2f4554"
               },
               emphasis: {
                 color: "#c23531",
                 shadowBlur: 10,
-                shadowColor: "#c23531",
-              },
+                shadowColor: "#c23531"
+              }
             },
-            zlevel: 1,
+            zlevel: 1
           },
           {
             name: "次卧控制",
@@ -1412,28 +1339,28 @@ const HomeSenseChart = () => {
               normal: {
                 formatter: "{b}" + year1[n] + "：开",
                 position: "bottom",
-                show: true,
+                show: true
               },
               emphasis: {
                 formatter: "{b}" + year[n] + "：" + tian[n][0],
                 position: "bottom",
-                show: true,
-              },
+                show: true
+              }
             },
 
             itemStyle: {
               normal: {
                 color: "#2f4554",
                 shadowBlur: 10,
-                shadowColor: "#2f4554",
+                shadowColor: "#2f4554"
               },
               emphasis: {
                 color: "#c23531",
                 shadowBlur: 10,
-                shadowColor: "#c23531",
-              },
+                shadowColor: "#c23531"
+              }
             },
-            zlevel: 1,
+            zlevel: 1
           },
           {
             name: "楼梯控制",
@@ -1457,28 +1384,28 @@ const HomeSenseChart = () => {
               normal: {
                 formatter: "{b}" + year1[n] + "：开",
                 position: "bottom",
-                show: true,
+                show: true
               },
               emphasis: {
                 formatter: "{b}" + year[n] + "：" + tian[n][0],
                 position: "bottom",
-                show: true,
-              },
+                show: true
+              }
             },
 
             itemStyle: {
               normal: {
                 color: "#2f4554",
                 shadowBlur: 10,
-                shadowColor: "#2f4554",
+                shadowColor: "#2f4554"
               },
               emphasis: {
                 color: "#c23531",
                 shadowBlur: 10,
-                shadowColor: "#c23531",
-              },
+                shadowColor: "#c23531"
+              }
             },
-            zlevel: 1,
+            zlevel: 1
           },
           {
             name: "厨房控制",
@@ -1502,28 +1429,28 @@ const HomeSenseChart = () => {
               normal: {
                 formatter: "{b}" + year1[n] + "：开",
                 position: "bottom",
-                show: true,
+                show: true
               },
               emphasis: {
                 formatter: "{b}" + year[n] + "：" + tian[n][0],
                 position: "bottom",
-                show: true,
-              },
+                show: true
+              }
             },
 
             itemStyle: {
               normal: {
                 color: "#2f4554",
                 shadowBlur: 10,
-                shadowColor: "#2f4554",
+                shadowColor: "#2f4554"
               },
               emphasis: {
                 color: "#c23531",
                 shadowBlur: 10,
-                shadowColor: "#c23531",
-              },
+                shadowColor: "#c23531"
+              }
             },
-            zlevel: 1,
+            zlevel: 1
           },
           //线条聚点
           {
@@ -1535,18 +1462,18 @@ const HomeSenseChart = () => {
               period: 4, //箭头指向速度，值越小速度越快
               trailLength: 0.02, //特效尾迹长度[0,1]值越大，尾迹越长重
               symbol: "arrow", //箭头图标
-              symbolSize: 3, //图标大小
+              symbolSize: 3 //图标大小
             },
             lineStyle: {
               normal: {
                 color: colors[colorIndex][n],
                 width: 0.1, //尾迹线条宽度
                 opacity: 0.5, //尾迹线条透明度
-                curveness: 0.3, //尾迹线条曲直度
-              },
+                curveness: 0.3 //尾迹线条曲直度
+              }
             },
             //调用聚点随机
-            data: convertToLineData(line1, geoGpsMap[Math.ceil(1)]),
+            data: convertToLineData(line1, geoGpsMap[Math.ceil(1)])
           },
           {
             name: "传输路线",
@@ -1557,18 +1484,18 @@ const HomeSenseChart = () => {
               period: 4, //箭头指向速度，值越小速度越快
               trailLength: 0.02, //特效尾迹长度[0,1]值越大，尾迹越长重
               symbol: "arrow", //箭头图标
-              symbolSize: 3, //图标大小
+              symbolSize: 3 //图标大小
             },
             lineStyle: {
               normal: {
                 color: colors[colorIndex][n],
                 width: 0.1, //尾迹线条宽度
                 opacity: 0.5, //尾迹线条透明度
-                curveness: 0.3, //尾迹线条曲直度
-              },
+                curveness: 0.3 //尾迹线条曲直度
+              }
             },
             //调用聚点随机
-            data: convertToLineData(line2, geoGpsMap[Math.ceil(2)]),
+            data: convertToLineData(line2, geoGpsMap[Math.ceil(2)])
           },
           {
             name: "传输路线",
@@ -1579,18 +1506,18 @@ const HomeSenseChart = () => {
               period: 4, //箭头指向速度，值越小速度越快
               trailLength: 0.02, //特效尾迹长度[0,1]值越大，尾迹越长重
               symbol: "arrow", //箭头图标
-              symbolSize: 3, //图标大小
+              symbolSize: 3 //图标大小
             },
             lineStyle: {
               normal: {
                 color: colors[colorIndex][n],
                 width: 0.1, //尾迹线条宽度
                 opacity: 0.5, //尾迹线条透明度
-                curveness: 0.3, //尾迹线条曲直度
-              },
+                curveness: 0.3 //尾迹线条曲直度
+              }
             },
             //调用聚点随机
-            data: convertToLineData(line3, geoGpsMap[Math.ceil(3)]),
+            data: convertToLineData(line3, geoGpsMap[Math.ceil(3)])
           },
           {
             name: "传输路线",
@@ -1601,18 +1528,18 @@ const HomeSenseChart = () => {
               period: 4, //箭头指向速度，值越小速度越快
               trailLength: 0.02, //特效尾迹长度[0,1]值越大，尾迹越长重
               symbol: "arrow", //箭头图标
-              symbolSize: 3, //图标大小
+              symbolSize: 3 //图标大小
             },
             lineStyle: {
               normal: {
                 color: colors[colorIndex][n],
                 width: 0.1, //尾迹线条宽度
                 opacity: 0.5, //尾迹线条透明度
-                curveness: 0.3, //尾迹线条曲直度
-              },
+                curveness: 0.3 //尾迹线条曲直度
+              }
             },
             //调用聚点随机
-            data: convertToLineData001(line4, geoGpsMap[Math.ceil(4)]),
+            data: convertToLineData001(line4, geoGpsMap[Math.ceil(4)])
           },
           //柱状图
           {
@@ -1621,10 +1548,10 @@ const HomeSenseChart = () => {
             symbol: "none",
             itemStyle: {
               normal: {
-                color: colors[colorIndex][n],
-              },
+                color: colors[colorIndex][n]
+              }
             },
-            data: barData[n],
+            data: barData[n]
           },
           {
             xAxisIndex: 1,
@@ -1634,8 +1561,8 @@ const HomeSenseChart = () => {
             type: "line",
             lineStyle: {
               normal: {
-                color: "#4ea397",
-              },
+                color: "#4ea397"
+              }
             },
             data: lineData1[n],
             markPoint: {
@@ -1643,28 +1570,28 @@ const HomeSenseChart = () => {
                 {
                   type: "max",
                   name: "最大值",
-                  symbolSize: 40,
+                  symbolSize: 40
                 },
                 {
                   type: "min",
                   name: "最小值",
-                  symbolSize: 20,
-                },
+                  symbolSize: 20
+                }
               ],
               itemStyle: {
                 normal: {
-                  color: "#d0648a",
-                },
-              },
+                  color: "#d0648a"
+                }
+              }
             },
             markLine: {
               data: [
                 {
                   type: "average",
-                  name: "平均值",
-                },
-              ],
-            },
+                  name: "平均值"
+                }
+              ]
+            }
           },
           {
             xAxisIndex: 1,
@@ -1674,8 +1601,8 @@ const HomeSenseChart = () => {
             type: "line",
             lineStyle: {
               normal: {
-                color: "#4ea397",
-              },
+                color: "#4ea397"
+              }
             },
             data: lineData2[n],
             markPoint: {
@@ -1683,33 +1610,33 @@ const HomeSenseChart = () => {
                 {
                   type: "max",
                   name: "最大值",
-                  symbolSize: 40,
+                  symbolSize: 40
                 },
                 {
                   type: "min",
                   name: "最小值",
-                  symbolSize: 20,
-                },
+                  symbolSize: 20
+                }
               ],
               itemStyle: {
                 normal: {
-                  color: "#d0648a",
-                },
-              },
+                  color: "#d0648a"
+                }
+              }
             },
             markLine: {
               data: [
                 {
                   type: "average",
-                  name: "平均值",
-                },
-              ],
-            },
-          },
-        ],
+                  name: "平均值"
+                }
+              ]
+            }
+          }
+        ]
       });
     }
-    axios.get("https://nest-admin.com/home.json").then((res) => {
+    axios.get("https://nest-admin.com/home.json").then(res => {
       echarts.registerMap("home", res.data);
       myChart.setOption(optionXyMap01);
     });

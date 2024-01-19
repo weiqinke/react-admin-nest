@@ -12,7 +12,7 @@ const TypingCard = (props: any) => {
       source: sourceEl,
       output: outputEl,
       delay: 30,
-      stopFlag: false,
+      stopFlag: false
     });
     typing.start();
     return () => {
@@ -22,11 +22,7 @@ const TypingCard = (props: any) => {
 
   return (
     <Card bordered={false} className="card-item" title={title}>
-      <div
-        ref={sourceEl}
-        style={{ display: "none" }}
-        dangerouslySetInnerHTML={{ __html: source }}
-      />
+      <div ref={sourceEl} style={{ display: "none" }} dangerouslySetInnerHTML={{ __html: source }} />
       <div ref={outputEl} style={{ fontSize: "1.5rem" }} />
     </Card>
   );

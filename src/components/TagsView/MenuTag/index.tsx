@@ -6,7 +6,7 @@ const MenuTag = ({ tag, onClose }) => {
     <div className={className}>
       <span className={`${tag?.active ? styles.activeRound : styles.round}`} />
       <span className={styles.name}>{tag.name}</span>
-      <span className={styles.close} onClick={(e) => onClose(e, tag)}></span>
+      <span className={styles.close} onClick={e => onClose(e, tag)}></span>
     </div>
   );
 };

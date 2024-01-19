@@ -8,9 +8,8 @@ const BMapPage = () => {
         zoom="11"
         style={{
           height: "calc(100vh - 120px)",
-          width: "100%",
-        }}
-      ></Map>
+          width: "100%"
+        }}></Map>
     </div>
   );
 };

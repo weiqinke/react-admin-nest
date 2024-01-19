@@ -10,9 +10,7 @@ import viteCompression from "vite-plugin-compression";
 import { createHtmlPlugin } from "vite-plugin-html";
 
 const isDev = process.env.NODE_ENV === "development";
-const httpUrl = isDev
-  ? "http://localhost:3011/api/"
-  : "https://nest-admin.com/nest3011/api/";
+const httpUrl = isDev ? "http://localhost:3011/api/" : "https://nest-admin.com/nest3011/api/";
 
 export default defineConfig({
   plugins: [
@@ -32,18 +30,18 @@ export default defineConfig({
         data: {
           // 查找.env.test文件里面的VITE_PROJECT_TITLE，请以VITE_标识开头
           title: "编程的奇思妙想" || name,
-          injectScript: `<script type="module" crossorigin src="/src/main.tsx"></script>`,
+          injectScript: `<script type="module" crossorigin src="/src/main.tsx"></script>`
         },
         tags: [
           {
             injectTo: "body-prepend",
             tag: "div",
             attrs: {
-              id: "tag",
-            },
-          },
-        ],
-      },
+              id: "tag"
+            }
+          }
+        ]
+      }
     }),
     // 构建压缩文件
     viteCompression({
@@ -56,13 +54,13 @@ export default defineConfig({
       // 压缩算法 可选 'gzip' | 'brotliCompress' | 'deflate' | 'deflateRaw'
       algorithm: "gzip",
       // 压缩后的文件格式
-      ext: ".gz",
+      ext: ".gz"
     }),
     visualizer({
       emitFile: false,
       filename: "analysis-chart.html", // 分析图生成的文件名
-      open: true, // 如果存在本地服务端口，将在打包后自动展示
-    }),
+      open: true // 如果存在本地服务端口，将在打包后自动展示
+    })
   ],
   define: {
     REACT_APP_API_URL: JSON.stringify(httpUrl),
@@ -71,14 +69,14 @@ export default defineConfig({
       devDependencies,
       name,
       version,
-      lastBuildTime: dayjs(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+      lastBuildTime: dayjs(new Date()).format("YYYY-MM-DD HH:mm:ss")
     }),
-    NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+    NODE_ENV: JSON.stringify(process.env.NODE_ENV)
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
+      "@": path.resolve(__dirname, "./src")
+    }
   },
   preview: {
     proxy: {
@@ -91,18 +89,18 @@ export default defineConfig({
       //     return proxy;
       //   },
       // },
-    },
+    }
   },
   server: {
-    hmr: {},
+    hmr: {}
   },
   build: {
     minify: "terser", // 必须开启：使用 terserOptions 才有效果
     terserOptions: {
       compress: {
         drop_console: process.env.NODE_ENV === "production" ? true : false,
-        drop_debugger: process.env.NODE_ENV === "production" ? true : false,
-      },
+        drop_debugger: process.env.NODE_ENV === "production" ? true : false
+      }
     },
     rollupOptions: {
       // 静态资源分类打包
@@ -115,14 +113,10 @@ export default defineConfig({
         manualChunks(id) {
           // 静态资源分拆打包
           if (id.includes("node_modules")) {
-            return id
-              .toString()
-              .split("node_modules/")[1]
-              .split("/")[0]
-              .toString();
+            return id.toString().split("node_modules/")[1].split("/")[0].toString();
           }
-        },
-      },
-    },
-  },
+        }
+      }
+    }
+  }
 });

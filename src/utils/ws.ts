@@ -50,7 +50,7 @@ WebsocketManager.prototype.create = function () {
   }
 
   this.socket = io(this.SokcetUrl, {
-    transports: ["websocket"],
+    transports: ["websocket"]
   }).connect();
 
   this.StartBindEventHandler();
@@ -64,7 +64,7 @@ WebsocketManager.prototype.postMessage = function (payload: SocketEvent) {
   if (this?.socket?.connected) {
     this.socket.emit(this.publicEventName, {
       ...payload,
-      id: this.MySocketID,
+      id: this.MySocketID
     });
   } else {
     console.error("===发送数据失败===");
@@ -77,9 +77,7 @@ WebsocketManager.prototype.addEventHandler = function (fn: websocketEventFn) {
   return () => this.websocketListeners.delete(fn);
 };
 
-WebsocketManager.prototype.removeEventHandler = function (
-  fn: websocketEventFn
-) {
+WebsocketManager.prototype.removeEventHandler = function (fn: websocketEventFn) {
   this.websocketListeners.delete(fn);
 };
 
@@ -93,7 +91,7 @@ WebsocketManager.prototype.close = function () {
     if (token) {
       this.socket.emit("client_take_disconnect", {
         id: this.MySocketID,
-        token,
+        token
       });
     }
     this.socket.disconnect();
@@ -115,7 +113,7 @@ WebsocketManager.prototype.checkID = function () {
     if (token) {
       webSocketManager.postMessage({
         type: "UserReconnect",
-        data: { token },
+        data: { token }
       });
       return;
     }

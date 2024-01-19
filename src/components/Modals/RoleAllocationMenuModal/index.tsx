@@ -2,16 +2,7 @@ import { giveRoleMenus } from "@/api/caravan/Rbac";
 import { message, Modal, Tree } from "antd";
 import React, { FC, useState } from "react";
 
-const RoleAllocationMenuModal: FC<any> = ({
-  treeData,
-  onOk,
-  onCancel,
-  initMenus,
-  okText,
-  cancelText,
-  roleCode,
-  title,
-}: any) => {
+const RoleAllocationMenuModal: FC<any> = ({ treeData, onOk, onCancel, initMenus, okText, cancelText, roleCode, title }: any) => {
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([...initMenus]);
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
@@ -37,15 +28,7 @@ const RoleAllocationMenuModal: FC<any> = ({
   };
 
   return (
-    <Modal
-      open
-      title={title || "提示"}
-      onOk={onOkSubmit}
-      onCancel={onCancel}
-      okText={okText || "确认"}
-      cancelText={cancelText || "取消"}
-      width={800}
-    >
+    <Modal open title={title || "提示"} onOk={onOkSubmit} onCancel={onCancel} okText={okText || "确认"} cancelText={cancelText || "取消"} width={800}>
       <div>
         <Tree
           checkable
@@ -54,7 +37,7 @@ const RoleAllocationMenuModal: FC<any> = ({
           expandedKeys={expandedKeys}
           autoExpandParent={autoExpandParent}
           checkedKeys={checkedKeys}
-          onSelect={(v) => setSelectedKeys(v)}
+          onSelect={v => setSelectedKeys(v)}
           onCheck={onCheck}
           selectedKeys={selectedKeys}
           treeData={treeData}
