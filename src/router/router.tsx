@@ -5,7 +5,7 @@ import DefaultLayout from "@/layout/DefaultLayout";
 import ProjectLayout from "@/layout/ProjectLayout";
 import Login from "@/pages/Login";
 import Account from "@/pages/Account";
-
+const BMap = lazy(() => import(/* webpackChunkName: "BMap'"*/ "@/pages/BMap"));
 const About = lazy(
   () => import(/* webpackChunkName: "About'"*/ "@/pages/About")
 );
@@ -81,7 +81,10 @@ const RouterPages: any = [
             title: "工作台",
           },
           {
-            path: "charts",
+            path: "bmap",
+            component: <BMap />,
+            auth: true,
+            title: "百度地图",
           },
           {
             path: "charts",
