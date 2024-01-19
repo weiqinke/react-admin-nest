@@ -13,7 +13,7 @@ const MenusAdmin: FC = () => {
   const [parentUid, setparentUid] = useState("-1");
   const [visible, setVisible] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  const [initMenuItem, setInitMenuItem] = useState(false);
+  const [initMenuItem, setInitMenuItem] = useState();
 
   const [form] = Form.useForm();
   const { setFieldsValue } = form;
@@ -62,27 +62,14 @@ const MenusAdmin: FC = () => {
         return (
           <div>
             {record.type === "page" ? null : (
-              <Button
-                type="link"
-                onClick={() => {
-                  addChildPage(record);
-                }}>
+              <Button type="link" onClick={() => addmenuItem(record.menuUid)}>
                 添加子页面
               </Button>
             )}
-
-            <Button
-              type="link"
-              onClick={() => {
-                bianjiMenuItem(record);
-              }}>
+            <Button type="link" onClick={() => bianjiMenuItem(record)}>
               编辑
             </Button>
-            <Button
-              type="link"
-              onClick={() => {
-                removeMenuitem(record);
-              }}>
+            <Button type="link" onClick={() => removeMenuitem(record)}>
               删除
             </Button>
           </div>
@@ -90,12 +77,6 @@ const MenusAdmin: FC = () => {
       }
     }
   ];
-
-  const addChildPage = (record: any) => {
-    // 显示弹窗，并且给菜单父级id赋值
-    setparentUid(record.menuUid);
-    setVisible(true);
-  };
 
   const removeMenuitem = (record: any) => {
     confirm({
@@ -119,9 +100,7 @@ const MenusAdmin: FC = () => {
   };
 
   const bianjiMenuItem = (record: any) => {
-    setFieldsValue({
-      ...record
-    });
+    setFieldsValue({ ...record });
     //编辑回显菜单
     setVisible(true);
     setIsEdit(true);
@@ -129,8 +108,9 @@ const MenusAdmin: FC = () => {
     setparentUid(record.parentUid);
   };
 
-  const addmenuItem = () => {
-    setparentUid("-1");
+  const addmenuItem = pid => {
+    setparentUid(pid);
+    setInitMenuItem({});
     setVisible(true);
   };
 
@@ -157,7 +137,7 @@ const MenusAdmin: FC = () => {
         <Button type="primary" onClick={getallmenusdata}>
           查询菜单
         </Button>
-        <Button type="primary" onClick={addmenuItem}>
+        <Button type="primary" onClick={() => addmenuItem("-1")}>
           添加菜单
         </Button>
       </Space>
