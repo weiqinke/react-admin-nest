@@ -1,7 +1,8 @@
 {
-  "name": "react-vite",
-  "private": true,
-  "version": "1.0.2",
+  "name": "nest-admin-web",
+  "version": "2.0.0",
+  "description": "",
+  "author": "qkstart@foxmail.com",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
@@ -53,5 +54,6 @@
     "vite": "^5.0.8",
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-html": "^3.2.2"
-  }
+  },
+  "license": "MIT"
 }
