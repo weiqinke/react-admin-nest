@@ -20,7 +20,7 @@ const TagsView: FC = () => {
   // 切换标签时触发事件，切换页面地址
   const onChange = (url: string) => {
     setTagPlanVisible(false);
-    setTags(prev => {
+    setTags((prev: any) => {
       return prev.map(v => {
         v.active = v.url === url;
         return v;
@@ -121,6 +121,11 @@ const TagsView: FC = () => {
     }
   }, [location?.pathname]);
 
+  const onClick = tag => {
+    if (tag.active) return;
+    onChange(tag.url);
+  };
+
   useEffect(() => {
     if (activeUrl) navigate(activeUrl);
   }, [activeUrl]);
@@ -130,11 +135,12 @@ const TagsView: FC = () => {
       <Tabs
         tabBarStyle={{ margin: 0 }}
         onChange={onChange}
+        onClick={onClick}
         tabBarExtraContent={<span></span>}
         items={tags.map((tag: any) => {
           return {
             label: (
-              <div className={styles.tagitem} onContextMenu={e => contextTag(e, tag)}>
+              <div className={styles.tagitem} onContextMenu={e => contextTag(e, tag)} onClick={() => onClick(tag)}>
                 <MenuTag tag={tag} onClose={onClose} />
               </div>
             ),

@@ -70,7 +70,7 @@ export const getAccountLog = (payload: any) => {
 };
 /** 获取我自己的信息 */
 export const getmyuserinfo = () => {
-  return request(`${BASE_URL}user/getmyuserinfo`, "POST", {});
+  return request(`${BASE_URL}user/getmyuserinfo`, "GET", {});
 };
 
 /** 获取一个用户的信息 */

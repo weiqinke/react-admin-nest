@@ -1,0 +1,441 @@
+.container {
+  background: #3474de;
+  height: 300px;
+  position: relative;
+}
+
+.content {
+  --frame: #070b32;
+  --bush: #181b38;
+  --dot1: radial-gradient(circle at 50% 50%, var(--bush) 0 0.25vmin, #fff0 calc(0.25vmin + 1px) 100%);
+  --dot2: radial-gradient(circle at 50% 50%, var(--bush) 0 0.5vmin, #fff0 calc(0.5vmin + 1px) 100%);
+  --dot3: radial-gradient(circle at 50% 50%, var(--bush) 0 1.15vmin, #fff0 calc(1.15vmin + 1px) 100%);
+  --glass: 337deg;
+  --luz1: hsl(var(--glass) 60% 50% / 60%);
+  --luz2: hsl(var(--glass) 54% 32%);
+  --luz3: hsl(var(--glass) 54% 25%);
+  transition: --glass 3s;
+  width: 80vmin;
+  height: 100vh;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: start-glass 3s var(--cbz) 0s 1;
+}
+.content:before {
+  content: "";
+  position: absolute;
+  width: 100vw;
+  height: 100%;
+  background: linear-gradient(180deg, #000, #080212, #341c5e, #50587e, #0079d9, #39a7ff, #70c6ed 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 300%;
+  background-position: 0% 10%;
+  transform: translateZ(-100vmin);
+  transition: all 3s var(--cbz) 0s;
+  animation: start-bg 3s var(--cbz) 0s 1;
+}
+
+.content:after {
+  content: "";
+  position: absolute;
+  width: 100vw;
+  height: 200%;
+  --s1: radial-gradient(0.1vmin 0.1vmin at 50% 50%, #ffffff, #fff0);
+  --s2: radial-gradient(0.2vmin 0.2vmin at 50% 50%, #ffffff, #fff0);
+  background-image: var(--s1), var(--s1), var(--s1), var(--s2), var(--s2), var(--s1), var(--s2), var(--s1), var(--s2), var(--s1), var(--s2), var(--s1), var(--s2),
+    var(--s1), var(--s1), var(--s2), var(--s2), var(--s1), var(--s1), var(--s2), var(--s1), var(--s1);
+  background-repeat: repeat-x;
+  background-size:
+    26% 25%,
+    43.33% 33.33%,
+    50% 80%,
+    20% 20%,
+    33.33% 75.33%,
+    26% 73%,
+    39.33% 22%,
+    33.33% 26%,
+    31% 32%,
+    14.33% 35.33%,
+    18.33% 62.33%,
+    39.33% 86.33%,
+    29.33% 69%,
+    12.33% 30.33%,
+    29.33% 41.33%,
+    22.33% 46.33%,
+    35.33% 27.33%,
+    22.33% 39.33%,
+    20.33% 44.33%,
+    33.33% 56.33%;
+  filter: drop-shadow(0px 0px 2px #fff) drop-shadow(0px 0px 5px #fff);
+  background-position: -8% -10%;
+  transform: translateZ(-100vmin);
+  transition: all 3s var(--cbz) 0s;
+  top: -16vmin;
+  animation: start-stars 3s var(--cbz) 0s 1;
+}
+
+.box {
+  position: relative;
+  margin: auto;
+  width: 600px;
+  height: 300px;
+  scale: (0.6);
+}
+
+/*sun*/
+.sun {
+  position: absolute;
+  background: #fff054;
+  top: 15%;
+  right: 0%;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  box-shadow: 0px 0px 30px 15px #fff9ba;
+  animation: pulse 2s infinite;
+  animation-iteration-count: infinite;
+}
+
+.face {
+  position: absolute;
+}
+.face:before,
+.face:after {
+  content: "";
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  background: #000000;
+  border-radius: 50%;
+  z-index: 5;
+}
+.face:before {
+  top: 20px;
+  left: 60px;
+}
+.face:after {
+  top: 20px;
+  left: 100px;
+}
+
+.smile {
+  position: absolute;
+  top: 27px;
+  left: 79px;
+  width: 10px;
+  height: 10px;
+  border: 3px solid;
+  border-radius: 50%;
+  border-color: transparent #000 #000 transparent;
+  transform: rotate(45deg);
+}
+
+.pupilleft {
+  position: absolute;
+  border-radius: 50%;
+  height: 3px;
+  width: 3px;
+  left: 63px;
+  top: 20px;
+  background: #ffffff;
+  z-index: 7;
+}
+
+.pupilright {
+  position: absolute;
+  border-radius: 50%;
+  height: 3px;
+  width: 3px;
+  left: 104px;
+  top: 20px;
+  background: #ffffff;
+  z-index: 7;
+}
+
+/*ray*/
+.ray {
+  position: absolute;
+  margin: auto;
+  width: 150px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  animation: spin 15s linear infinite;
+}
+
+.beam {
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0), #fff054 40%, #fff054);
+  margin-left: 10px;
+  border-radius: 50% 50% 0 0;
+  position: absolute;
+  opacity: 0.2;
+}
+
+.r1 {
+  height: 120px;
+  width: 40px;
+  transform: rotate(180deg);
+  top: -120px;
+  left: 42px;
+}
+
+.r2 {
+  height: 120px;
+  width: 30px;
+  transform: rotate(210deg);
+  top: -100px;
+  right: -5px;
+}
+
+.r3 {
+  height: 120px;
+  width: 50px;
+  transform: rotate(255deg);
+  top: -30px;
+  right: -65px;
+}
+
+.r4 {
+  height: 120px;
+  width: 24px;
+  transform: rotate(300deg);
+  top: 60px;
+  left: 150px;
+}
+
+.r5 {
+  height: 120px;
+  width: 40px;
+  top: 135px;
+  left: 40px;
+}
+
+.r6 {
+  height: 120px;
+  width: 30px;
+  transform: rotate(-35deg);
+  top: 115px;
+  right: -12px;
+}
+
+.r7 {
+  height: 120px;
+  width: 45px;
+  transform: rotate(45deg);
+  top: 100px;
+  left: -45px;
+}
+
+.r8 {
+  height: 130px;
+  width: 20px;
+  transform: rotate(75deg);
+  top: 40px;
+  left: -70px;
+}
+
+.r9 {
+  height: 120px;
+  width: 50px;
+  transform: rotate(-255deg);
+  top: -30px;
+  left: -80px;
+}
+
+.r10 {
+  height: 130px;
+  width: 20px;
+  transform: rotate(150deg);
+  top: -110px;
+  left: -20px;
+}
+
+/*cloud*/
+.cloud {
+  position: absolute;
+  background: #f4f4f4;
+  width: 250px;
+  height: 100px;
+  top: 52%;
+  right: 0%;
+  border-radius: 100px;
+}
+
+.cloudright {
+  width: 100px;
+  height: 100px;
+  top: -50%;
+  right: 15%;
+  background: #f4f4f4;
+  border-radius: 50%;
+  position: absolute;
+}
+
+.cloudleft {
+  width: 110px;
+  height: 110px;
+  top: -65%;
+  left: 15%;
+  border-radius: 200px;
+  background: #f4f4f4;
+  position: absolute;
+}
+
+.cloudbottom {
+  width: 120px;
+  height: 120px;
+  bottom: -25%;
+  right: 21%;
+  border-radius: 100px;
+  background: #f4f4f4;
+  position: absolute;
+}
+
+.eyeleft {
+  position: absolute;
+  background: black;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  top: 40%;
+  left: 30%;
+  z-index: 4;
+}
+
+.eyeright {
+  position: absolute;
+  background: black;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  top: 40%;
+  right: 30%;
+  z-index: 4;
+}
+
+.pupil {
+  position: absolute;
+  border-radius: 50%;
+  height: 5px;
+  width: 5px;
+  right: 13%;
+  background: #ffffff;
+}
+
+.mouth {
+  position: absolute;
+  top: 59%;
+  right: 46%;
+  width: 10px;
+  height: 10px;
+  border: 3px solid;
+  border-radius: 50%;
+  border-color: #000 transparent transparent #000;
+  transform: rotate(45deg);
+}
+
+.raindropleft {
+  position: absolute;
+  top: 70%;
+  left: 25%;
+  width: 5px;
+  height: 5px;
+  border-radius: 0 50% 50% 50%;
+  background: #b5dbe0;
+  border: 3px solid #b5dbe0;
+  transform: rotate(45deg);
+}
+
+.tearleft {
+  position: absolute;
+  top: 65px;
+  left: 25%;
+  width: 3px;
+  height: 3px;
+  border-radius: 0 50% 50% 50%;
+  background: #b5dbe0;
+  border: 3px solid #b5dbe0;
+  transform: rotate(45deg);
+  animation: falling 3s infinite;
+}
+
+.tearright {
+  position: absolute;
+  top: 65px;
+  right: 25%;
+  width: 3px;
+  height: 3px;
+  border-radius: 0 50% 50% 50%;
+  background: #b5dbe0;
+  border: 3px solid #b5dbe0;
+  transform: rotate(45deg);
+  animation: falling 5s infinite;
+}
+
+.rain {
+  width: 8px;
+  height: 8px;
+  background: #b5dbe0;
+  border-radius: 0 50% 50% 50%;
+  transform: rotate(45deg);
+}
+
+.drop {
+  position: absolute;
+  z-index: 1;
+  opacity: 0;
+}
+
+.raining {
+  animation: raining 3s infinite ease-in;
+}
+
+/*animations*/
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: rotate(360deg);
+    opacity: 1;
+  }
+}
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    animation-timing-function: ease-in;
+  }
+  50% {
+    transform: scale(1.2);
+    animation-timing-function: ease-out;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes raining {
+  0% {
+    top: 60%;
+    z-index: -10;
+    opacity: 1;
+  }
+  100% {
+    top: 600px;
+    opacity: 0;
+  }
+}
+
+@keyframes falling {
+  from {
+    opacity: 1;
+    transform: translate(0px, 0px), rotate(45deg);
+  }
+  to {
+    opacity: 0;
+    transform: translate(0px, 50px);
+  }
+}

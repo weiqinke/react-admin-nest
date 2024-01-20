@@ -1,0 +1,26 @@
+.container {
+  position: absolute;
+  bottom: -20px;
+  left: 24px;
+  z-index: 9;
+  height: 130px;
+  user-select: none;
+  cursor: pointer;
+}
+
+.userAvatar {
+  float: left;
+}
+
+.info {
+  float: left;
+  margin: 42px 0 0 20px;
+  color: #fff;
+}
+
+.title {
+  font-size: 22px;
+}
+.desc {
+  margin-top: 6px;
+}
