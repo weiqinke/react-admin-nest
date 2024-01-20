@@ -5,6 +5,7 @@ import DefaultLayout from "@/layout/DefaultLayout";
 import ProjectLayout from "@/layout/ProjectLayout";
 import Login from "@/pages/Login";
 import Account from "@/pages/Account";
+import UserProfile from "@/pages/UserProfile";
 const BMap = lazy(() => import(/* webpackChunkName: "BMap'"*/ "@/pages/BMap"));
 const About = lazy(() => import(/* webpackChunkName: "About'"*/ "@/pages/About"));
 const AnimateCard = lazy(() => import(/* webpackChunkName: "AnimateCard'"*/ "@/pages/AnimateCard"));
@@ -140,6 +141,13 @@ const RouterPages: any = [
             auth: true,
             title: "个人信息"
           },
+          {
+            path: "profile",
+            component: <UserProfile />,
+            auth: true,
+            title: "个人中心"
+          },
+
           {
             path: "",
             component: <About />,

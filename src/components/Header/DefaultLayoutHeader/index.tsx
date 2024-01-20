@@ -9,9 +9,11 @@ import { getPlacardListByType, readOnePlacard } from "@/api/caravan/Placard";
 import html2canvas from "html2canvas";
 
 import styles from "./index.module.scss";
+import MenuTagContext from "@/contexts/MenuTagContext";
 
 const DefaultLayoutHeader = () => {
   const { username, setValue } = useContext(ProjectContext);
+  const { addTag } = useContext(MenuTagContext);
   const navigate = useNavigate();
 
   const [readPlacard, setReadPlacard] = useState(false);
@@ -48,7 +50,11 @@ const DefaultLayoutHeader = () => {
     }
   ];
   const onClick: MenuProps["onClick"] = ({ key }) => {
-    if (key === "1") return navigate("/account");
+    if (key === "1") {
+      addTag(["profile"], 145);
+
+      return navigate("/profile");
+    }
     if (key === "2") return toggleLanguage();
     if (key === "3") return logout();
   };

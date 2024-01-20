@@ -84,7 +84,6 @@ const WebsocketAdmin: FC = () => {
   useEffect(() => {
     const removeHandler = webSocketManager.addEventHandler(payload => {
       if (payload?.type === "PageViewBlob") {
-        console.log("payload: ", payload);
         const Bdata = payload.data.blob;
         setImgSrc(ceatt(Bdata));
       }

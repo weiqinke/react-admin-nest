@@ -1,0 +1,24 @@
+.page {
+  padding: 0;
+}
+
+.cover {
+  max-height: 300px;
+  position: relative;
+}
+
+.segm {
+  width: 100%;
+  vertical-align: right;
+  padding: 6px;
+  background-color: rgba(163, 163, 163, 0.54);
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+.right {
+  float: right;
+}
