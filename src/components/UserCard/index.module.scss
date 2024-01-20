@@ -1,0 +1,82 @@
+$base-url: "@/assets/header/user-poster.png";
+$avatarbg: "@/assets/user/avatarbg.png";
+
+.usercard {
+  width: 100%;
+  .antskeleton {
+    width: 100% !important;
+  }
+  .antskeletonimage {
+    width: 100% !important;
+  }
+  .antcardcover {
+    max-height: 200px;
+    overflow: hidden;
+  }
+}
+
+.userCardBg {
+  width: 100%;
+  min-height: 100px;
+  position: relative;
+  // background-image: url($base-url);
+  background: linear-gradient(135deg, #292a3a, #536976);
+}
+
+.avatarbg {
+  width: 150px;
+  height: 150px;
+  position: absolute;
+  top: -50px;
+  transform: translateX(-50%);
+  left: 50%;
+  background: url($avatarbg) no-repeat;
+  background-size: 100% 100%;
+}
+
+.avatar {
+  position: absolute;
+  top: -50px;
+  transform: translateX(-50%);
+  left: 50%;
+}
+
+.img {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: absolute;
+  transform: translate(-50%, -9%);
+  left: 50%;
+}
+
+.cover {
+  position: relative;
+  background: #fff;
+  &:before {
+    content: "";
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    position: absolute;
+  }
+}
+
+.userinfo {
+  position: relative;
+  padding-top: 38px;
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  .info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+}
