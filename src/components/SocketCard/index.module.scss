@@ -1,0 +1,114 @@
+.container {
+  margin-top: 54px;
+  position: relative;
+  width: 270px;
+  height: 100px;
+  background-color: #ccc;
+  border-radius: 20px;
+  box-shadow: 0 35px 80px rgba(0, 0, 0, 0.15);
+  transition: 0.5s linear;
+  user-select: none;
+  cursor: pointer;
+  &:hover {
+    height: 150px;
+    .imgbox {
+      width: 100px;
+      height: 100px;
+    }
+    .content {
+      .details {
+        transform: translateY(0px);
+      }
+    }
+  }
+}
+
+.imgbox {
+  width: 80px;
+  height: 80px;
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 20px;
+  box-shadow: 0 35px 80px rgba(0, 0, 0, 0.35);
+  background-color: #000;
+  overflow: hidden;
+  transition: 0.5s linear;
+  &:hover {
+    width: 130px;
+    height: 130px;
+  }
+}
+
+.img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: url("/src/assets/header/user-poster.png") no-repeat;
+  background-size: 100% 100%;
+}
+
+.content {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.details {
+  padding: 0px 40px 10px 40px;
+  text-align: center;
+  width: 100%;
+  transition: 0.5s linear;
+  transform: translateY(35px);
+  & {
+    h2 {
+      font-size: 1.25em;
+      font-weight: 600;
+      color: #555;
+      line-height: 1.2em;
+      span {
+        font-size: 0.75em;
+        font-size: 500;
+        opacity: 0.5;
+      }
+    }
+  }
+}
+
+.data {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+
+  & {
+    h3 {
+      font-size: 1em;
+      font-weight: 600;
+      color: #555;
+      line-height: 1.2em;
+      span {
+        font-size: 0.85em;
+        font-size: 400;
+        opacity: 0.5;
+      }
+    }
+  }
+}
+
+.actionBtn {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn {
+  align-self: center; /* 子元素自身在交叉轴上居中对齐 */
+}
