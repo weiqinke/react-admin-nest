@@ -39,7 +39,6 @@ const getOnlineUsers = async (payload: any) => {
   const { OnlineUser } = data;
   switch (func_call) {
     case "getOnlineUsers":
-      // console.log(OnlineUser, '在线列表');
       return OnlineUser;
   }
 };

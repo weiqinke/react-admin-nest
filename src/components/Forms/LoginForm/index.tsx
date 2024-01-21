@@ -1,22 +1,53 @@
-import { accountlogin, getUserMenus } from "@/api/caravan/Login";
+import { accountlogin, getUserMenus, userTokenByOAuth2Code } from "@/api/caravan/Login";
 import ProjectContext from "@/contexts/ProjectContext";
-import { getUserState } from "@/utils/core";
+import { getUrlParam, getUserState } from "@/utils/core";
 import { saveMenus } from "@/utils/menuUtils";
 import { getIndexUrlInfo, ProjectParseMenuAsPre, SaveMeUrl } from "@/utils/menuUtils";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Input, message } from "antd";
+import { Button, Checkbox, Divider, Form, Input, Spin, message } from "antd";
 import CaptchaMini from "captcha-mini";
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { webSocketManager } from "@/utils/ws";
 import styles from "./index.module.scss";
 import MenuTagContext from "@/contexts/MenuTagContext";
+import IconFont from "@/components/IconFont";
 
 const LoginForm = () => {
   const navigate = useNavigate();
   const { setValue } = useContext(ProjectContext);
   const { setTags } = useContext(MenuTagContext);
   const inputRef = useRef();
+
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const code = getUrlParam("code");
+    const state = getUrlParam("state");
+    if (code) {
+      setLoading(true);
+      userTokenByOAuth2Code({
+        code,
+        state
+      })
+        .then(res => {
+          // debugger;
+          if (res.data.code === 200) {
+            const { avatar, nick, token } = res.data.data;
+            localStorage.setItem("nick", nick);
+            localStorage.setItem("loginState", "1");
+            localStorage.setItem("token", token);
+            localStorage.setItem("nick", nick);
+            localStorage.setItem("avatar", avatar || "");
+            setValue(getUserState());
+            getMenuData();
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, []);
 
   useEffect(() => {
     if (!inputRef.current) return;
@@ -37,47 +68,52 @@ const LoginForm = () => {
   }, []);
 
   const onFinish = values => {
-    accountlogin({ ...values, logintype: "web" }).then(r => {
-      if (r.data.code === 200) {
-        const { avatar, nick, token } = r.data.data;
-        localStorage.setItem("nick", nick);
-        localStorage.setItem("loginState", "1");
-        localStorage.setItem("token", token);
-        localStorage.setItem("nick", nick);
-        localStorage.setItem("avatar", avatar);
-        setValue(getUserState());
-        getMenuData();
-      }
-    });
+    setLoading(true);
+    accountlogin({ ...values, logintype: "web" })
+      .then(r => {
+        if (r.data.code === 200) {
+          const { avatar, nick, token } = r.data.data;
+          localStorage.setItem("nick", nick);
+          localStorage.setItem("loginState", "1");
+          localStorage.setItem("token", token);
+          localStorage.setItem("nick", nick);
+          localStorage.setItem("avatar", avatar);
+          setValue(getUserState());
+          getMenuData();
+        } else {
+          setLoading(false);
+        }
+      })
+      .catch(() => setLoading(false));
   };
 
   const getMenuData = () => {
-    getUserMenus({ version: 2 }).then(r => {
-      if (r.data.code === 200) {
-        const cacheMenu = r.data.data;
-        if (!cacheMenu) return message.info("暂未分配权限，请通知管理员分配权限");
-        saveMenus(JSON.stringify(cacheMenu));
-        webSocketManager.postMessage({
-          type: "ResetUserName",
-          data: {
-            token: localStorage.getItem("token")
-          }
-        });
-        const allMenusInfo = SaveMeUrl(ProjectParseMenuAsPre(cacheMenu.concat()), "");
-        //找到第一个url直接跳转过去吧
-        const indexTag = getIndexUrlInfo(allMenusInfo);
-        const { meUrl } = indexTag;
-        const from = { pathname: meUrl };
-        setTags([]);
-        navigate(from);
-        // 登录以后，还要把socket名字改掉
-      }
-    });
+    getUserMenus({ version: 2 })
+      .then(r => {
+        if (r.data.code === 200) {
+          const cacheMenu = r.data.data;
+          if (!cacheMenu) return message.info("暂未分配权限，请通知管理员分配权限");
+          saveMenus(JSON.stringify(cacheMenu));
+          webSocketManager.postMessage({
+            type: "ResetUserName",
+            data: {
+              token: localStorage.getItem("token")
+            }
+          });
+          const allMenusInfo = SaveMeUrl(ProjectParseMenuAsPre(cacheMenu.concat()), "");
+          //找到第一个url直接跳转过去吧
+          const indexTag = getIndexUrlInfo(allMenusInfo);
+          const { meUrl } = indexTag;
+          const from = { pathname: meUrl };
+          setTags([]);
+          navigate(from);
+          // 登录以后，还要把socket名字改掉
+        }
+      })
+      .finally(() => setLoading(false));
   };
 
-  const onFinishFailed = errorInfo => {
-    console.log("Failed:", errorInfo);
-  };
+  const onFinishFailed = () => {};
 
   const initialValues = { remember: true, name: "qkstart", password: "123456" };
 
@@ -93,38 +129,70 @@ const LoginForm = () => {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>欢迎登录</h1>
-      <Form name="basic" initialValues={initialValues} onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete="off">
-        <Form.Item name="name" rules={[{ required: true, message: "请输入用户名!" }]}>
-          <Input placeholder="qkstart" prefix={<UserOutlined />} />
-        </Form.Item>
-
-        <Form.Item name="password" rules={[{ required: true, message: "请输入密码!" }]}>
-          <Input type="password" placeholder="123456" prefix={<LockOutlined />} />
-        </Form.Item>
-
-        <Form.Item className={styles.captchaLogin}>
-          <Form.Item name="captcha" rules={[{ required: true, message: "请输入验证码!" }]} noStyle>
-            <Input placeholder="请输入验证码" className={styles.captchaInput} />
+      <Spin spinning={loading} delay={500}>
+        <Form name="basic" initialValues={initialValues} onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete="off">
+          <Form.Item name="name" rules={[{ required: true, message: "请输入用户名!" }]}>
+            <Input placeholder="qkstart" prefix={<UserOutlined />} />
           </Form.Item>
-          <canvas width="140" height="32" id="captchaLogin" ref={inputRef} className={styles.captchaContainer} title="看不清？点击换一张。"></canvas>
-        </Form.Item>
 
-        <div className={styles.other}>
-          <Form.Item name="remember" valuePropName="checked" noStyle wrapperCol={12}>
-            <Checkbox>记住登录状态</Checkbox>
+          <Form.Item name="password" rules={[{ required: true, message: "请输入密码!" }]}>
+            <Input type="password" placeholder="123456" prefix={<LockOutlined />} />
           </Form.Item>
-          <Form.Item noStyle wrapperCol={12}>
-            <span className={styles.forgetPassword}>忘记密码</span>
+
+          <Form.Item className={styles.captchaLogin}>
+            <Form.Item name="captcha" rules={[{ required: true, message: "请输入验证码!" }]} noStyle>
+              <Input placeholder="请输入验证码" className={styles.captchaInput} />
+            </Form.Item>
+            <canvas width="140" height="32" id="captchaLogin" ref={inputRef} className={styles.captchaContainer} title="看不清？点击换一张。"></canvas>
           </Form.Item>
-        </div>
-        <div className={styles.submit}>
-          <Form.Item noStyle>
-            <Button block type="primary" htmlType="submit">
-              登录
+
+          <div className={styles.other}>
+            <Form.Item name="remember" valuePropName="checked" noStyle>
+              <Checkbox>记住登录状态</Checkbox>
+            </Form.Item>
+            <Form.Item noStyle>
+              <span className={styles.forgetPassword}>忘记密码</span>
+            </Form.Item>
+          </div>
+          <div className={styles.submit}>
+            <Form.Item noStyle>
+              <Button block type="primary" htmlType="submit">
+                登录
+              </Button>
+            </Form.Item>
+          </div>
+        </Form>
+
+        <Divider plain style={{ borderWidth: 13 }}>
+          或者使用第三方登录
+        </Divider>
+        <div className={styles.ohter}>
+          <div className={styles.type}>
+            <Button
+              type="link"
+              href="https://gitee.com/oauth/authorize?client_id=7cb714b21edaa2130a98b69a108b833f61d3b04cfde1fd64cb387abcd6a378c2&state=gitee&redirect_uri=https%3A%2F%2Fnest-admin.com%2Flogin&response_type=code">
+              <IconFont type="icon-GitHub" />
+              Github
             </Button>
-          </Form.Item>
+          </div>
+          <div className={styles.type}>
+            <Button
+              type="link"
+              href="https://gitee.com/oauth/authorize?client_id=7cb714b21edaa2130a98b69a108b833f61d3b04cfde1fd64cb387abcd6a378c2&state=gitee&redirect_uri=https%3A%2F%2Fnest-admin.com%2Flogin&response_type=code">
+              <IconFont type="icon-gitee2" />
+              Gitee
+            </Button>
+          </div>
+          <div className={styles.type}>
+            <Button
+              type="link"
+              href="https://gitee.com/oauth/authorize?client_id=7cb714b21edaa2130a98b69a108b833f61d3b04cfde1fd64cb387abcd6a378c2&state=gitee&redirect_uri=https%3A%2F%2Fnest-admin.com%2Flogin&response_type=code">
+              <IconFont type="icon-qq" />
+              QQ
+            </Button>
+          </div>
         </div>
-      </Form>
+      </Spin>
     </div>
   );
 };

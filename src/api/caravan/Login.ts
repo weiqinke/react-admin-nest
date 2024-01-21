@@ -24,6 +24,11 @@ export const accountlogin = payload => {
   return request(`${BASE_URL}user/accountlogin`, "POST", payload);
 };
 
+/** 获取通知列表接口 */
+export const userTokenByOAuth2Code = payload => {
+  return request(`${BASE_URL}user/userTokenByOAuth2Code`, "GET", payload);
+};
+
 /** 获取菜单接口 */
 export const getUserMenus = payload => {
   return request(`${BASE_URL}menus/getUserMenus`, "get", payload);
