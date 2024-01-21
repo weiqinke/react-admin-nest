@@ -1,19 +1,24 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-
-import styles from "./index.module.scss";
 import { webSocketManager } from "@/utils/ws";
-import { Card, Button, message, Row, Col, Modal, Image } from "antd";
+import { message, Modal, Image } from "antd";
 import { MetaDescModal } from "@/components/Modals";
 import { getUserInfoByUid } from "@/api/caravan/User";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-
 import prewImg from "@/assets/prewview.png";
+import Waterfall from "@/components/Weaterfall";
+
+import styles from "./index.module.scss";
+import SocketCard from "@/components/SocketCard";
 
 const WebsocketAdmin: FC = () => {
+  const imgMinWidth = 280; // 允许瀑布流单列最低宽度，可能再低就变形和会重叠
   const timer = useRef();
+  const scrollRef = useRef();
+  const domRef = useRef<HTMLDivElement>();
   const [socketUsers, setSocketUsers] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
   const [imgSrc, setImgSrc] = useState(prewImg);
+  const [itemNum, setItemNum] = useState<number>(3);
   const getOnlintUsers = () => {
     webSocketManager.postMessage({
       type: "GetAllOnLineClient"
@@ -91,8 +96,25 @@ const WebsocketAdmin: FC = () => {
     return removeHandler;
   }, []);
 
+  const resize = () => {
+    const winW = domRef.current.clientWidth;
+    const value = Math.floor(winW / imgMinWidth); // 当每一个项的宽度都是固定的时候，需要计算出浏览器一行可以排列几个。
+    setItemNum(value);
+  };
+  useEffect(() => {
+    resize();
+    window.addEventListener("resize", resize);
+    return () => {
+      window && window.removeEventListener("resize", resize);
+    };
+  }, []);
+
+  const getList = () => {
+    return socketUsers;
+  };
+
   return (
-    <div className={styles.websocketAdmin}>
+    <div className={styles.websocketAdmin} ref={domRef}>
       <div className={styles.imgbg}>
         <Image
           width={300}
@@ -102,38 +124,24 @@ const WebsocketAdmin: FC = () => {
           }}
         />
       </div>
+      {/* socketUsers */}
+      {socketUsers.length && (
+        <Waterfall
+          scrollRef={scrollRef}
+          getList={getList}
+          key={itemNum}
+          cols={itemNum}
+          imgMinWidth={imgMinWidth}
+          itemRender={(item, i) => {
+            return (
+              <div style={{ height: 147 }} key={i}>
+                <SocketCard userInfo={item} ForcedOffline={ForcedOffline} loadUserInfo={loadUserInfo} getUserView={getUserView} />
+              </div>
+            );
+          }}
+        />
+      )}
 
-      <Row gutter={16}>
-        {socketUsers.map(item => {
-          const isMe = webSocketManager.MySocketID === item.id;
-          return (
-            <Col span={6} key={item.id}>
-              <Card
-                size="small"
-                title={
-                  <div style={{ textAlign: "center" }}>
-                    {item.nick || item.name}
-                    {isMe ? "(自己)" : ""}
-                  </div>
-                }>
-                <div style={{ textAlign: isMe ? "center" : "left" }}>
-                  <Button type="link" onClick={() => loadUserInfo(item)}>
-                    查看详情
-                  </Button>
-                  {!isMe && (
-                    <Button danger type="link" onClick={() => ForcedOffline(item)}>
-                      强制下线
-                    </Button>
-                  )}
-                  <Button type="link" onClick={() => getUserView(item)}>
-                    查看用户界面
-                  </Button>
-                </div>
-              </Card>
-            </Col>
-          );
-        })}
-      </Row>
       {userInfo && <MetaDescModal userInfo={userInfo} onOk={() => setUserInfo(null)} />}
     </div>
   );
