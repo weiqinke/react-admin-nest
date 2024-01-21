@@ -2,10 +2,29 @@ import qs from "qs";
 
 const SYSTEM_TOKEN = "token";
 
+function atou(str) {
+  return decodeURIComponent(escape(atob(str)));
+}
 export const getUserState = () => {
   const token = window.localStorage.getItem(SYSTEM_TOKEN);
   if (!token) return {};
-  return JSON.parse(decodeURIComponent(encodeURIComponent(window.atob(token.split(".")[1]))));
+  const result = token.replace("_", "/").replace("-", "+"); // 添加这一行
+  const payload = result.split(".")[1];
+  const userPayload = atou(payload);
+  return JSON.parse(userPayload);
+};
+
+export const getUrlParam = name => {
+  //构造一个含有目标参数的正则表达式对象
+  const reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+  //匹配目标参数
+  const r = window.location.search.substr(1).match(reg);
+  //返回参数
+  if (r != null) {
+    return decodeURIComponent(r[2]);
+  } else {
+    return null;
+  }
 };
 
 /**

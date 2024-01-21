@@ -15,6 +15,11 @@ export const getNoticeList2 = payload => {
   return request(`${BASE_URL}`, "GET", payload);
 };
 
+/** OAuth2 获取code */
+export const userTokenByOAuth2Code = payload => {
+  return request(`${BASE_URL}user/userTokenByOAuth2Code`, "GET", payload);
+};
+
 /** 登录接口 */
 export const apiLogin = payload => {
   return request(`${BASE_URL}user/login`, "POST", payload);
