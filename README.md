@@ -12,7 +12,7 @@ English | [简体中文](./README.zh_CN.md)
 $ git clone https://gitee.com/weiqinke/react-admin-nest.git
 $ cd react-admin-nest
 $ npm install
-$ npm start
+$ npm dev
 ```
 
 ## 🔨 Build
