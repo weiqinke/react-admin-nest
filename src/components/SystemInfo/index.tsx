@@ -75,6 +75,7 @@ const SystemInfo: React.FC = () => {
       { id: "3", content: "内存 正常" },
       { id: "4", content: "欢迎登陆" }
     ];
+    console.log("我发送一次");
     webSocketManager.postMessage({ type: "memStatus" });
 
     setMessageList(message);
