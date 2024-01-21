@@ -26,9 +26,11 @@ const SocketCard = ({ userInfo, loadUserInfo, getUserView, ForcedOffline }) => {
             <Button className={styles.btn} type="link" size="small" onClick={() => getUserView(userInfo)}>
               查看用户界面
             </Button>
-            <Button danger className={styles.btn} type="link" size="small" onClick={() => ForcedOffline(userInfo)}>
-              强制下线
-            </Button>
+            {!isMe && (
+              <Button danger className={styles.btn} type="link" size="small" onClick={() => ForcedOffline(userInfo)}>
+                强制下线
+              </Button>
+            )}
           </div>
         </div>
       </div>
