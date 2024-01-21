@@ -2,10 +2,16 @@ import qs from "qs";
 
 const SYSTEM_TOKEN = "token";
 
+function atou(str) {
+  return decodeURIComponent(escape(atob(str)));
+}
 export const getUserState = () => {
   const token = window.localStorage.getItem(SYSTEM_TOKEN);
   if (!token) return {};
-  return JSON.parse(decodeURIComponent(encodeURIComponent(window.atob(token.split(".")[1]))));
+  const result = token.replace("_", "/").replace("-", "+"); // 添加这一行
+  const payload = result.split(".")[1];
+  const userPayload = atou(payload);
+  return JSON.parse(userPayload);
 };
 
 /**
@@ -135,9 +141,7 @@ export const tupleNum = <T extends number[]>(...args: T) => args;
  * @example
 ```
 async function test() {
-  console.log('Hello')
   await sleep(1000)
-  console.log('world!')
 }
 ```
  */
@@ -214,3 +218,16 @@ export const bd_encrypt = (gg_lng: string = "0", gg_lat: string = "0") => {
 };
 
 export const isTagVisible = (v: string) => v === "0";
+
+export const getUrlParam = name => {
+  //构造一个含有目标参数的正则表达式对象
+  const reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+  //匹配目标参数
+  const r = window.location.search.substr(1).match(reg);
+  //返回参数
+  if (r != null) {
+    return decodeURIComponent(r[2]);
+  } else {
+    return null;
+  }
+};

@@ -1,6 +1,6 @@
 .container {
   width: 324px;
-  height: 366px;
+  min-height: 366px;
   padding: 12px;
   position: absolute;
   top: 50%;
@@ -20,7 +20,7 @@
 
 .title {
   text-align: center;
-  padding: 12px;
+  padding: 0px 12px;
 }
 
 .forgetPassword {
@@ -49,4 +49,23 @@
 
 .captchaInput {
   width: 50%;
+}
+
+.ohter {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  // justify-content: center;
+
+  &:first-child {
+    margin-left: auto;
+  }
+
+  &:last-child {
+    margin-right: auto;
+  }
+}
+
+.type {
+  display: block;
 }
