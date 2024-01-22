@@ -127,13 +127,8 @@ export function getShowMenus(menulist: any[]) {
       const echild: any[] = getShowMenus(children);
       newMenuItem = { ...menuitem, children: echild };
     } else {
-      if (children && children.length === 0) {
-        newMenuItem = { ...menuitem, children: null };
-        delete newMenuItem.children;
-      } else {
-        newMenuItem = { ...menuitem, children: null };
-        delete newMenuItem.children;
-      }
+      newMenuItem = { ...menuitem, children: null,type:"page" };
+      delete newMenuItem.children;
     }
     // 这里是为了兼容 antd Menu 组件新版写法
     newMenuItem.label = menuitem.name;
