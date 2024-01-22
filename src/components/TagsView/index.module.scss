@@ -59,6 +59,10 @@
   :global {
     .ant-tabs-nav-list {
       padding: 0;
+
+      &:last-child{
+        margin-right: auto;
+      }
       .ant-tabs-tab {
         background: #fafafa;
         border: 1px solid #e8e8e8;
