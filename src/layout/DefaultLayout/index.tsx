@@ -1,13 +1,14 @@
-import { Alert, Layout, Spin } from "antd";
-import { Outlet } from "react-router-dom";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import Copyright from "@/components/Footer/Copyright";
 import DefaultLayoutHeader from "@/components/Header/DefaultLayoutHeader";
 import WebMenu from "@/components/Menu/WebMenu";
-import { Suspense, useContext, useEffect } from "react";
-import Copyright from "@/components/Footer/Copyright";
 import TagsView from "@/components/TagsView";
 import MenuTagContext from "@/contexts/MenuTagContext";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
 import FailContainer from "@/pages/FailPage/FailContainer";
+import { Alert, Layout, Spin } from "antd";
+import { throttle } from "lodash-es";
+import { Suspense, useContext, useEffect, useState } from "react";
+import { Outlet } from "react-router-dom";
 
 import styles from "./index.module.scss";
 
@@ -22,6 +23,8 @@ const SuspendFallbackLoading = () => (
 const DefaultLayout = () => {
   const { setTagPlanVisible, refresh } = useContext(MenuTagContext);
 
+  const [collapsed, setCollapsed] = useState(false);
+
   useEffect(() => {
     const clickRemove = () => setTagPlanVisible(false);
     window.addEventListener("click", clickRemove);
@@ -31,13 +34,29 @@ const DefaultLayout = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const resize = throttle(
+    () => {
+      const winW = document.body.clientWidth;
+      setCollapsed(winW < 600);
+    },
+    500,
+    { trailing: true, leading: false }
+  );
+  useEffect(() => {
+    resize();
+    window.addEventListener("resize", resize);
+    return () => {
+      window && window.removeEventListener("resize", resize);
+    };
+  }, []);
+
   return (
     <Layout className={styles.layout}>
       <ErrorBoundary fallbackRender={FailContainer}>
         <DefaultLayoutHeader />
       </ErrorBoundary>
       <Layout className={styles.content}>
-        <Sider className={styles.sider} trigger={null} collapsible collapsed={false} breakpoint="md">
+        <Sider className={styles.sider} trigger={null} collapsible collapsed={collapsed} breakpoint="md">
           <WebMenu />
         </Sider>
 
