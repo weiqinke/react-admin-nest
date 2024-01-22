@@ -1,17 +1,29 @@
+import IconFont from "@/components/IconFont";
 import MenuTagContext from "@/contexts/MenuTagContext";
 import { getLocalStorageMenus, getOpenKeysByUrls, getShowMenus, setLocalStorage } from "@/utils/menuUtils";
+import { AppstoreOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
 import { toNumber } from "lodash-es";
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+
+const createIcon = item => {
+  item.icon = item.icon ? <IconFont type={item.icon} /> : <AppstoreOutlined />;
+};
+const createMenuIcon = item => {
+  return item.map(v => {
+    createIcon(v);
+    if (v.children) createMenuIcon(v.children);
+    return v;
+  });
+};
 
 const WebMenu = () => {
   const { addTag } = useContext(MenuTagContext);
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const menusList = JSON.parse(getLocalStorageMenus() || "");
-  const newmenus = getShowMenus(menusList.concat());
-
+  const newmenus = createMenuIcon(getShowMenus(menusList.concat()));
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [openKeys, setOpenkeys] = useState([]);
 
@@ -57,7 +69,7 @@ const WebMenu = () => {
 
   return (
     <div style={{ width: "100%" }}>
-      <Menu mode="inline" theme="dark" onClick={onClick} selectedKeys={selectedKeys} openKeys={openKeys} onOpenChange={onOpenChange} items={newmenus} />
+      <Menu mode="inline" theme="dark" onClick={onClick} selectedKeys={selectedKeys} openKeys={openKeys} onOpenChange={onOpenChange} items={newmenus} inlineIndent={12} />
     </div>
   );
 };
