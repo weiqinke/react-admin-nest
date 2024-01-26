@@ -1,18 +1,17 @@
 import { accountlogin, getUserMenus, userTokenByOAuth2Code } from "@/api/caravan/Login";
+import MenuTagContext from "@/contexts/MenuTagContext";
 import ProjectContext from "@/contexts/ProjectContext";
 import { getUrlParam, getUserState } from "@/utils/core";
-import { saveMenus } from "@/utils/menuUtils";
-import { getIndexUrlInfo, ProjectParseMenuAsPre, SaveMeUrl } from "@/utils/menuUtils";
+import { ProjectParseMenuAsPre, SaveMeUrl, getIndexUrlInfo, saveMenus } from "@/utils/menuUtils";
+import { webSocketManager } from "@/utils/ws";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Divider, Form, Input, Spin, message } from "antd";
 import CaptchaMini from "captcha-mini";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { webSocketManager } from "@/utils/ws";
-import MenuTagContext from "@/contexts/MenuTagContext";
 
-import styles from "./index.module.scss";
 import IconFont from "@/components/IconFont";
+import styles from "./index.module.scss";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -164,11 +163,9 @@ const LoginForm = () => {
         </Divider>
         <div className={styles.ohter}>
           <div className={styles.type}>
-            <Button
-              type="link"
-              href="https://gitee.com/oauth/authorize?client_id=7cb714b21edaa2130a98b69a108b833f61d3b04cfde1fd64cb387abcd6a378c2&state=gitee&redirect_uri=https%3A%2F%2Fnest-admin.com%2Flogin&response_type=code">
-              <IconFont type="icon-GitHub" />
-              Github
+            <Button type="link" href="http://ssr.nest-admin.com">
+              <IconFont type="icon-cib-next-js" />
+              SSR
             </Button>
           </div>
           <div className={styles.type}>
@@ -180,11 +177,9 @@ const LoginForm = () => {
             </Button>
           </div>
           <div className={styles.type}>
-            <Button
-              type="link"
-              href="https://gitee.com/oauth/authorize?client_id=7cb714b21edaa2130a98b69a108b833f61d3b04cfde1fd64cb387abcd6a378c2&state=gitee&redirect_uri=https%3A%2F%2Fnest-admin.com%2Flogin&response_type=code">
-              <IconFont type="icon-qq" />
-              QQ
+            <Button type="link" href="http://webpack.nest-admin.com">
+              <IconFont type="icon-webpack" />
+              Webpack
             </Button>
           </div>
         </div>
