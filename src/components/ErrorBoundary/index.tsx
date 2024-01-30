@@ -140,4 +140,4 @@ function useErrorHandler<P = Error>(givenError?: P | null | undefined): React.Di
   return setError;
 }
 
-export { ErrorBoundary, withErrorBoundary, useErrorHandler };
+export { ErrorBoundary, useErrorHandler, withErrorBoundary };

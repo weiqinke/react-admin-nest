@@ -50,12 +50,12 @@ const Workplace = () => {
         </Col>
       </Row>
       <Row gutter={8}>
-        <Col span={16}>
+        <Col xs={24} sm={24} md={24} lg={16} xl={16} xxl={16}>
           <div className={styles.baseChart}>
             <ChinaChart />
           </div>
         </Col>
-        <Col span={8}>
+        <Col xs={24} sm={24} md={24} lg={8} xl={8} xxl={8}>
           <div className={styles.baseChart}>
             <DataFlowChart />
           </div>

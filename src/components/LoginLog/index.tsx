@@ -2,7 +2,7 @@ import { findAccountLogs } from "@/api/caravan/Login";
 import { LoginFrequencyChart } from "@/components/Echarts";
 import { Table } from "antd";
 import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const LoginLog = () => {
   const columns: any = [
@@ -13,33 +13,35 @@ const LoginLog = () => {
     {
       title: "浏览器版本",
       dataIndex: "bowser",
-      responsive: ["md", "lg", "xl", "xxl"]
+      responsive: ["lg", "xl", "xxl"]
     },
     {
       title: "来源",
       dataIndex: "host",
-      responsive: ["md", "lg", "xl", "xxl"]
+      responsive: ["lg", "xl", "xxl"]
     },
     {
       title: "登录设备",
       dataIndex: "os",
-      responsive: ["md", "lg", "xl", "xxl"]
+      responsive: ["lg", "xl", "xxl"]
     },
     {
       title: "国家",
-      dataIndex: "country"
+      dataIndex: "country",
+      responsive: ["md", "lg", "xl", "xxl"]
     },
     {
       title: "省份",
-      dataIndex: "province"
+      dataIndex: "province",
+      responsive: ["lg", "xl", "xxl"]
     },
     {
       title: "市区",
       dataIndex: "city",
-      responsive: ["md", "lg", "xl", "xxl"]
+      responsive: ["lg", "xl", "xxl"]
     },
     {
-      title: "登陆时间",
+      title: "登录时间",
       dataIndex: "created",
       render: item => {
         return <span>{dayjs(item).format("YYYY-MM-DD HH:mm")}</span>;

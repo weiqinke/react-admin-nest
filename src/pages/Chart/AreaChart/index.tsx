@@ -1,29 +1,29 @@
-import { Row, Col } from "antd";
 import { BarChart, HomeSenseChart, LineChart, PictorialBarChart, PieChart, ScatterChart, ServerStatusChart } from "@/components/Echarts";
+import { Col, Row } from "antd";
 
 const AreaChart = () => {
   return (
     <div style={{ padding: 6 }}>
       <Row gutter={[12, 12]}>
-        <Col span={8}>
+        <Col xs={24} sm={24} md={12} xl={8} lg={8}>
           <BarChart />
         </Col>
-        <Col span={8}>
+        <Col xs={24} sm={24} md={12} xl={8} lg={8}>
           <LineChart />
         </Col>
-        <Col span={8}>
+        <Col xs={24} sm={24} md={12} xl={8} lg={8}>
           <PieChart />
         </Col>
-        <Col span={8}>
+        <Col xs={24} sm={24} md={12} xl={8} lg={8}>
           <ScatterChart />
         </Col>
-        <Col span={8}>
+        <Col xs={24} sm={24} md={12} xl={8} lg={8}>
           <ServerStatusChart />
         </Col>
-        <Col span={8}>
+        <Col xs={24} sm={24} md={12} xl={8} lg={8}>
           <PictorialBarChart />
         </Col>
-        <Col span={24}>
+        <Col xs={24} sm={24} md={12} xl={8} lg={8}>
           <HomeSenseChart />
         </Col>
       </Row>
