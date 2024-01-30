@@ -1,16 +1,16 @@
-import StarrySky from "@/components/StarrySky";
-import FineDay from "@/components/FineDay";
-import AvatarData from "@/components/AvatarData";
-import { useEffect, useState } from "react";
 import { getmyuserinfo } from "@/api/caravan/User";
+import AvatarData from "@/components/AvatarData";
+import FineDay from "@/components/FineDay";
+import StarrySky from "@/components/StarrySky";
+import { useEffect, useState } from "react";
 
-import styles from "./index.module.scss";
-import { Avatar, Button, Card, Col, Divider, Image, Typography, Flex, List, Row, Segmented } from "antd";
-import IconFont from "../IconFont";
-import { MoreOutlined, AntDesignOutlined, MessageOutlined, ShareAltOutlined, WechatOutlined, GithubOutlined, QqOutlined, InstagramOutlined } from "@ant-design/icons";
+import { AntDesignOutlined, GithubOutlined, InstagramOutlined, MessageOutlined, MoreOutlined, QqOutlined, ShareAltOutlined, WechatOutlined } from "@ant-design/icons";
+import { Avatar, Button, Card, Col, Divider, Flex, Image, List, Row, Segmented, Typography } from "antd";
 import Message from "antd/es/message";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
+import IconFont from "../IconFont";
+import styles from "./index.module.scss";
 
 const { Text, Title } = Typography;
 
@@ -103,7 +103,7 @@ const UserInfoCard = () => {
         </div>
       </div>
       <Row gutter={[16, 16]}>
-        <Col span={8}>
+        <Col xs={24} sm={24} md={24} lg={8} xl={8} xxl={8}>
           <Flex gap={16} vertical>
             <Card>
               <Flex align="middle" justify="space-evenly">
@@ -128,8 +128,8 @@ const UserInfoCard = () => {
             </Card>
           </Flex>
         </Col>
-        <Col span={16}>
-          <Flex gap={16} vertical>
+        <Col xs={24} sm={24} md={24} lg={16} xl={16} xxl={16}>
+          <Flex gap={24} vertical>
             <Card
               title={
                 <Flex justify={"space-between"} align="center" gap={16}>

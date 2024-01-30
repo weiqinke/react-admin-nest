@@ -1,7 +1,7 @@
 import "animate.css";
 
-import styles from "./index.module.scss";
 import { Col, Row } from "antd";
+import styles from "./index.module.scss";
 
 const AnimateCard = () => {
   const animateList = [
@@ -128,7 +128,7 @@ const AnimateCard = () => {
       <Row gutter={[12, 12]}>
         {animateList.map(v => {
           return (
-            <Col span={4} onMouseLeave={event => onMouseOut(event)} key={v}>
+            <Col xs={12} sm={12} md={8} lg={4} xl={4} xxl={4} onMouseLeave={event => onMouseOut(event)} key={v}>
               <div data-sorce="1" onMouseEnter={event => onMouseOver(event, v)} className="animateContainer">
                 {v}
               </div>
