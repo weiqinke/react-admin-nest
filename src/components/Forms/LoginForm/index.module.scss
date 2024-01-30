@@ -1,4 +1,5 @@
 .container {
+  user-select: none;
   width: 324px;
   min-height: 366px;
   padding: 12px;
@@ -68,4 +69,34 @@
 
 .type {
   display: block;
+}
+
+.changeQR{
+  cursor: pointer;
+  position: absolute;
+  width: 0;
+  height: 0;
+  top: 0px;
+  right: 0px;
+  border-top-left-radius: 8px;
+  border-bottom: 30px solid transparent;
+  border-right: 30px solid transparent;
+  border-top: 30px solid rgba(7, 67, 36, 0.8);
+  border-left: 30px solid rgba(7, 67, 36, 0.8);
+  transform: rotate(90deg);
+}
+
+.code{
+  float: right;
+  margin-top: -22px;
+  margin-right: -10px;
+  width: 30px;
+  height: 30px;
+  background: url("/src/assets/qrcode-mini.png") no-repeat ;
+  background-size: 100%;
+}
+
+.card{
+  text-align: center;
+  margin-top: 45px;
 }
