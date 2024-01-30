@@ -5,11 +5,13 @@ import { getUrlParam, getUserState } from "@/utils/core";
 import { ProjectParseMenuAsPre, SaveMeUrl, getIndexUrlInfo, saveMenus } from "@/utils/menuUtils";
 import { webSocketManager } from "@/utils/ws";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Divider, Form, Input, Spin, message } from "antd";
+import { Button, Checkbox, Divider, Form, Image, Input, Spin, Tooltip, message } from "antd";
 import CaptchaMini from "captcha-mini";
 import { useContext, useEffect, useRef, useState } from "react";
+import ReactCardFlip from "react-card-flip";
 import { useNavigate } from "react-router-dom";
 
+import qrimg from "@/assets/qrcode.png";
 import IconFont from "@/components/IconFont";
 import styles from "./index.module.scss";
 
@@ -20,6 +22,7 @@ const LoginForm = () => {
   const inputRef = useRef();
 
   const [loading, setLoading] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
     const code = getUrlParam("code");
@@ -121,69 +124,85 @@ const LoginForm = () => {
     });
   }, []);
 
+  useEffect(() => {
+    console.log("isFlipped: ", isFlipped);
+  }, [isFlipped]);
+
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>欢迎登录</h1>
-      <Spin spinning={loading} delay={500}>
-        <Form name="basic" initialValues={initialValues} onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete="off">
-          <Form.Item name="name" rules={[{ required: true, message: "请输入用户名!" }]}>
-            <Input placeholder="qkstart" prefix={<UserOutlined />} />
-          </Form.Item>
+      <div className={styles.changeQR} onClick={() => setIsFlipped(v => !v)}>
+        <Tooltip placement="left" title={`${isFlipped ? "密码" : "扫码"}登录`}>
+          <div className={styles.code} />
+        </Tooltip>
+      </div>
+      <h1 className={styles.title}>Nest-Admin</h1>
+      <ReactCardFlip isFlipped={isFlipped}>
+        <div>
+          <Spin spinning={loading} delay={500}>
+            <Form name="basic" initialValues={initialValues} onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete="off">
+              <Form.Item name="name" rules={[{ required: true, message: "请输入用户名!" }]}>
+                <Input placeholder="qkstart" prefix={<UserOutlined />} />
+              </Form.Item>
 
-          <Form.Item name="password" rules={[{ required: true, message: "请输入密码!" }]}>
-            <Input type="password" placeholder="123456" prefix={<LockOutlined />} />
-          </Form.Item>
+              <Form.Item name="password" rules={[{ required: true, message: "请输入密码!" }]}>
+                <Input type="password" placeholder="123456" prefix={<LockOutlined />} />
+              </Form.Item>
 
-          <Form.Item className={styles.captchaLogin}>
-            <Form.Item name="captcha" rules={[{ required: true, message: "请输入验证码!" }]} noStyle>
-              <Input placeholder="请输入验证码" className={styles.captchaInput} />
-            </Form.Item>
-            <canvas width="140" height="32" id="captchaLogin" ref={inputRef} className={styles.captchaContainer} title="看不清？点击换一张。"></canvas>
-          </Form.Item>
+              <Form.Item className={styles.captchaLogin}>
+                <Form.Item name="captcha" rules={[{ required: true, message: "请输入验证码!" }]} noStyle>
+                  <Input placeholder="请输入验证码" className={styles.captchaInput} />
+                </Form.Item>
+                <canvas width="140" height="32" id="captchaLogin" ref={inputRef} className={styles.captchaContainer} title="看不清？点击换一张。"></canvas>
+              </Form.Item>
 
-          <div className={styles.other}>
-            <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox>记住登录状态</Checkbox>
-            </Form.Item>
-            <Form.Item noStyle>
-              <span className={styles.forgetPassword}>忘记密码</span>
-            </Form.Item>
-          </div>
-          <div className={styles.submit}>
-            <Form.Item noStyle>
-              <Button block type="primary" htmlType="submit">
-                登录
-              </Button>
-            </Form.Item>
-          </div>
-        </Form>
+              <div className={styles.other}>
+                <Form.Item name="remember" valuePropName="checked" noStyle>
+                  <Checkbox>记住登录状态</Checkbox>
+                </Form.Item>
+                <Form.Item noStyle>
+                  <span className={styles.forgetPassword}>忘记密码</span>
+                </Form.Item>
+              </div>
+              <div className={styles.submit}>
+                <Form.Item noStyle>
+                  <Button block type="primary" htmlType="submit">
+                    登录
+                  </Button>
+                </Form.Item>
+              </div>
+            </Form>
 
-        <Divider plain style={{ borderWidth: 13 }}>
-          或者使用第三方登录
-        </Divider>
-        <div className={styles.ohter}>
-          <div className={styles.type}>
-            <Button type="link" href="http://ssr.nest-admin.com">
-              <IconFont type="icon-cib-next-js" />
-              SSR
-            </Button>
-          </div>
-          <div className={styles.type}>
-            <Button
-              type="link"
-              href="https://gitee.com/oauth/authorize?client_id=7cb714b21edaa2130a98b69a108b833f61d3b04cfde1fd64cb387abcd6a378c2&state=gitee&redirect_uri=https%3A%2F%2Fnest-admin.com%2Flogin&response_type=code">
-              <IconFont type="icon-gitee2" />
-              Gitee
-            </Button>
-          </div>
-          <div className={styles.type}>
-            <Button type="link" href="http://webpack.nest-admin.com">
-              <IconFont type="icon-webpack" />
-              Webpack
-            </Button>
-          </div>
+            <Divider plain style={{ borderWidth: 13 }}>
+              或者使用第三方登录
+            </Divider>
+            <div className={styles.ohter}>
+              <div className={styles.type}>
+                <Button type="link" href="http://ssr.nest-admin.com">
+                  <IconFont type="icon-cib-next-js" />
+                  SSR
+                </Button>
+              </div>
+              <div className={styles.type}>
+                <Button
+                  type="link"
+                  href="https://gitee.com/oauth/authorize?client_id=7cb714b21edaa2130a98b69a108b833f61d3b04cfde1fd64cb387abcd6a378c2&state=gitee&redirect_uri=https%3A%2F%2Fnest-admin.com%2Flogin&response_type=code">
+                  <IconFont type="icon-gitee2" />
+                  Gitee
+                </Button>
+              </div>
+              <div className={styles.type}>
+                <Button type="link" href="http://webpack.nest-admin.com">
+                  <IconFont type="icon-webpack" />
+                  Webpack
+                </Button>
+              </div>
+            </div>
+          </Spin>
         </div>
-      </Spin>
+        <div className={styles.card}>
+          <Image width={200} src={qrimg} />
+        </div>
+      </ReactCardFlip>
     </div>
   );
 };
