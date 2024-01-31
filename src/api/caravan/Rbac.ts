@@ -46,3 +46,8 @@ export const giveRoleMenus = (payload: any) => {
 export const findAllMenu = (payload: any) => {
   return request(`${BASE_URL}role/findAllMenu`, "POST", payload);
 };
+
+/** nest角色分配人接口 */
+export const roleMenu = (payload: any) => {
+  return request(`${BASE_URL}role/menu`, "GET", payload);
+};

@@ -1,0 +1,27 @@
+.container {
+  user-select: none;
+  padding: 12px;
+  min-width: 324px;
+  position: relative;
+  background: rgba(164, 203, 200, 1);
+}
+
+.title {
+  text-align: center;
+  padding: 0px 12px;
+}
+
+.forgetPassword {
+  float: right;
+  padding-right: 12px;
+  cursor: pointer;
+  color: #1890ff;
+}
+
+.other {
+  padding-bottom: 24px;
+}
+
+.submit {
+  text-align: center;
+}

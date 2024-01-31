@@ -6,10 +6,45 @@ $base-url: "https://www.freeimg.cn/i/2024/01/13/65a28bad6be9e.jpg";
   background-image: url($base-url);
   background-repeat: no-repeat;
   background-size: cover;
+  position: relative;
+
+  :global {
+    .loginfade-enter {
+      opacity: 0;
+    }
+    .loginfade-enter-active {
+      opacity: 1;
+      transform: translateX(0);
+      transition:
+        opacity 300ms,
+        transform 300ms;
+    }
+    .loginfade-enter-done {
+      opacity: 1;
+    }
+
+    .loginfade-exit {
+      display: none;
+    }
+    .loginfade-exit-active {
+      display: none;
+    }
+    .loginfade-exit-done {
+      display: none;
+    }
+  }
 }
 
 .cr {
   position: absolute;
   right: 12px;
   bottom: 12px;
+}
+
+.fromContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(164, 203, 200, 0.3);
 }

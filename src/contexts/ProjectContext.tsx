@@ -6,12 +6,13 @@ const ProjectContext: any = React.createContext({
   userName: undefined,
   release: undefined,
   username: "",
+  value: {},
   setValue: () => null
 });
 
 export const ProjectContextProvider = ({ children }) => {
   const [value, setValue] = useState(getUserState());
-  return <ProjectContext.Provider value={{ ...value, setValue }}>{children}</ProjectContext.Provider>;
+  return <ProjectContext.Provider value={{ value, setValue }}>{children}</ProjectContext.Provider>;
 };
 
 export default ProjectContext;
