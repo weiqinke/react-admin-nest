@@ -22,6 +22,11 @@ const Login = () => {
       <div className={styles.cr}>
         <Copyright />
       </div>
+      <div className={styles.paopaocontainer}>
+        {[1, 1, 1, 1, 1, 1, 1, 1, 1].map(() => (
+          <div className={styles.bubble} />
+        ))}
+      </div>
     </div>
   );
 };

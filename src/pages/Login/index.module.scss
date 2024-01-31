@@ -48,3 +48,135 @@ $base-url: "https://www.freeimg.cn/i/2024/01/13/65a28bad6be9e.jpg";
   transform: translate(-50%, -50%);
   background: rgba(164, 203, 200, 0.3);
 }
+
+.paopaocontainer {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.bubble {
+  position: absolute;
+  opacity: 0.5;
+  background: transparent;
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+  animation: flying 4s linear infinite;
+  &::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transform: scale(0.25) translate(-70%, -70%);
+    background: radial-gradient(#fff, transparent);
+    border-radius: 50%;
+  }
+}
+
+
+@keyframes flying {
+  0% {
+    transform: translateX(0);
+  }
+
+  15% {
+    transform: translateX(100px);
+  }
+
+  30% {
+    transform: translateX(-50px);
+  }
+
+  45% {
+    transform: translateX(150px);
+  }
+
+  60% {
+    transform: translateX(-150px);
+  }
+
+  75% {
+    transform: translateX(50px);
+  }
+
+  100% {
+    bottom: 100vh;
+    transform: translateX(0);
+  }
+}
+
+.bubble:nth-child(1) {
+  width: 30px;
+  height: 30px;
+  left: 10%;
+  bottom: -30px;
+  animation-duration: 8s;
+}
+
+.bubble:nth-child(2) {
+  width: 25px;
+  height: 25px;
+  left: 15%;
+  bottom: -25px;
+  animation-duration: 8s;
+  animation-delay: 1s;
+}
+
+.bubble:nth-child(3) {
+  width: 27px;
+  height: 27px;
+  left: 30%;
+  bottom: -27px;
+  animation-duration: 7s;
+}
+
+.bubble:nth-child(4) {
+  width: 25px;
+  height: 25px;
+  left: 40%;
+  bottom: -25px;
+  animation-duration: 7s;
+  animation-delay: 2s;
+}
+
+.bubble:nth-child(5) {
+  width: 25px;
+  height: 25px;
+  left: 50%;
+  bottom: -25px;
+  animation-duration: 8s;
+  animation-delay: 2s;
+}
+
+.bubble:nth-child(6) {
+  width: 33px;
+  height: 33px;
+  left: 62%;
+  bottom: -40px;
+  animation-duration: 6s;
+  animation-delay: 3s;
+}
+
+.bubble:nth-child(7) {
+  width: 20px;
+  height: 20px;
+  left: 70%;
+  bottom: -20px;
+  animation-duration: 10s;
+  animation-delay: 4s;
+}
+
+.bubble:nth-child(8) {
+  width: 30px;
+  height: 30px;
+  left: 80%;
+  bottom: -30px;
+  animation-duration: 6s;
+  animation-delay: 1s;
+}
