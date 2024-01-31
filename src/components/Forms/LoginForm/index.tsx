@@ -5,7 +5,7 @@ import { getUrlParam, getUserState } from "@/utils/core";
 import { ProjectParseMenuAsPre, SaveMeUrl, getIndexUrlInfo, saveMenus } from "@/utils/menuUtils";
 import { webSocketManager } from "@/utils/ws";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Divider, Form, Image, Input, Spin, Tooltip, message } from "antd";
+import { Button, Divider, Form, Image, Input, Spin, Tooltip, message } from "antd";
 import CaptchaMini from "captcha-mini";
 import { useContext, useEffect, useRef, useState } from "react";
 import ReactCardFlip from "react-card-flip";
@@ -15,9 +15,9 @@ import qrimg from "@/assets/qrcode.png";
 import IconFont from "@/components/IconFont";
 import styles from "./index.module.scss";
 
-const LoginForm = () => {
+const LoginForm = ({ setRegister }) => {
   const navigate = useNavigate();
-  const { setValue } = useContext(ProjectContext);
+  const { value, setValue } = useContext(ProjectContext);
   const { setTags } = useContext(MenuTagContext);
   const inputRef = useRef();
 
@@ -124,10 +124,6 @@ const LoginForm = () => {
     });
   }, []);
 
-  useEffect(() => {
-    console.log("isFlipped: ", isFlipped);
-  }, [isFlipped]);
-
   return (
     <div className={styles.container}>
       <div className={styles.changeQR} onClick={() => setIsFlipped(v => !v)}>
@@ -156,8 +152,13 @@ const LoginForm = () => {
               </Form.Item>
 
               <div className={styles.other}>
-                <Form.Item name="remember" valuePropName="checked" noStyle>
+                {/* <Form.Item name="remember" valuePropName="checked" noStyle>
                   <Checkbox>记住登录状态</Checkbox>
+                </Form.Item> */}
+                <Form.Item noStyle>
+                  <span className={styles.register} onClick={setRegister}>
+                    注册(register)
+                  </span>
                 </Form.Item>
                 <Form.Item noStyle>
                   <span className={styles.forgetPassword}>忘记密码</span>

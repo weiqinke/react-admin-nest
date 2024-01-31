@@ -16,6 +16,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
     "@react-spring/web": "^9.7.3",
+    "@types/react-transition-group": "^4.4.10",
     "animate.css": "^4.1.1",
     "antd": "^5.13.1",
     "axios": "^1.6.5",
@@ -34,6 +35,7 @@
     "react-countup": "^6.5.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.2",
+    "react-transition-group": "^4.4.5",
     "socket.io-client": "^4.7.4"
   },
   "devDependencies": {

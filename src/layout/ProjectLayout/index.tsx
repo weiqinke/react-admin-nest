@@ -1,9 +1,9 @@
-import { Outlet } from "react-router-dom";
-import { ProjectContextProvider } from "@/contexts/ProjectContext";
 import { MenuTagContextProvider } from "@/contexts/MenuTagContext";
-import { ConfigProvider } from "antd";
+import { ProjectContextProvider } from "@/contexts/ProjectContext";
 import { webSocketManager } from "@/utils/ws";
+import { ConfigProvider } from "antd";
 import { useEffect } from "react";
+import { Outlet } from "react-router-dom";
 
 const ProjectLayout = () => {
   useEffect(() => {

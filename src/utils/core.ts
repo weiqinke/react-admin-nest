@@ -1,6 +1,6 @@
 import qs from "qs";
 
-const SYSTEM_TOKEN = "token";
+export const SYSTEM_TOKEN = "token";
 
 function atou(str) {
   return decodeURIComponent(escape(atob(str)));
@@ -233,3 +233,20 @@ export const bd_encrypt = (gg_lng: string = "0", gg_lat: string = "0") => {
 };
 
 export const isTagVisible = (v: string) => v === "0";
+
+export const getMenuStructure = (menus: any[], parentUid: number = 0) => {
+  //认为你传进来的就是一个数组，我只要从里面取值就好了
+  const newList: any[] = [];
+  const cacheMenu = [...menus];
+  cacheMenu.map((item: any) => {
+    if (item.parentUid === parentUid) {
+      // 认为你是我要找的菜单
+      const childlsit = getMenuStructure(menus, item.id);
+      if (childlsit.length >= 1) {
+        item.children = childlsit;
+      }
+      newList.push(item);
+    }
+  });
+  return newList.sort((a, b) => a.sort - b.sort);
+};

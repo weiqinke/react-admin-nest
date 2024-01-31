@@ -1,10 +1,11 @@
-import { Descriptions } from "antd";
-import styles from "./index.module.scss";
-import { Link } from "react-router-dom";
 import TypingCard from "@/components/TypingCard";
+import { Descriptions } from "antd";
+import { Link } from "react-router-dom";
+import styles from "./index.module.scss";
 
 const About = () => {
   const { dependencies, devDependencies, version, lastBuildTime } = REACT_PACKAGE;
+  console.log("dependencies: ", dependencies);
 
   const depResult = [];
   for (const key in dependencies) {

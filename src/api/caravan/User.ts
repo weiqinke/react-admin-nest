@@ -24,6 +24,16 @@ export const accountlogin = (payload: any) => {
   return request(`${BASE_URL}user/accountlogin`, "POST", payload);
 };
 
+/** nest注册接口 */
+export const userRegister = (payload: any) => {
+  return request(`${BASE_URL}user/register`, "POST", payload);
+};
+
+/** nest用户菜单接口 */
+export const userMenus = (payload: any) => {
+  return request(`${BASE_URL}user/menus`, "GET", payload);
+};
+
 /** nest获取菜单接口 */
 export const GetMenuByToken = (payload: any) => {
   return request(`${BASE_URL}user/getmenubytoken`, "GET", payload);

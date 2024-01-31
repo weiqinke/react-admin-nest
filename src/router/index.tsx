@@ -7,13 +7,12 @@ import { createBrowserRouter } from "react-router-dom";
 const WrapperRoute = (props: any) => {
   const { component, title = "welcome", auth } = props;
   document.title = title;
-  const data: any = useContext(ProjectContext);
+  const { value: data }: any = useContext(ProjectContext);
   const { uid, exp } = data;
   const value = new Date().valueOf();
   const authEndTime = new Date(exp * 1000).valueOf();
   // 权限到期了，就跳转到 login
   if (authEndTime <= value) return <NeedLogin />;
-
   if (auth) {
     // 如果该菜单需要权限检查
     if (!uid) return <NeedLogin />;

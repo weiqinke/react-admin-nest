@@ -3,11 +3,7 @@
   width: 324px;
   min-height: 366px;
   padding: 12px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-top: -183px;
-  margin-left: -162px;
+  position: relative;
   background: rgba(164, 203, 200, 0.3);
   &:hover {
     box-shadow: -4px 4px 16px 1px rgba(0, 0, 0, 0.15);
@@ -71,7 +67,7 @@
   display: block;
 }
 
-.changeQR{
+.changeQR {
   cursor: pointer;
   position: absolute;
   width: 0;
@@ -86,17 +82,22 @@
   transform: rotate(90deg);
 }
 
-.code{
+.code {
   float: right;
   margin-top: -22px;
   margin-right: -10px;
   width: 30px;
   height: 30px;
-  background: url("/src/assets/qrcode-mini.png") no-repeat ;
+  background: url("/src/assets/qrcode-mini.png") no-repeat;
   background-size: 100%;
 }
 
-.card{
+.card {
   text-align: center;
   margin-top: 45px;
+}
+
+.register {
+  cursor: pointer;
+  color: #1677ff;
 }
