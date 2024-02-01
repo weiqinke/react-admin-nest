@@ -250,3 +250,42 @@ export const getMenuStructure = (menus: any[], parentUid: number = 0) => {
   });
   return newList.sort((a, b) => a.sort - b.sort);
 };
+
+/* *
+ *  把传入的时间戳与当前时间比较,计算几分钟前、几小时前、几天前，以及几分钟后、几小时后、几天前后
+ *  unixtime 需要计算的时间戳，保留到秒
+ * */
+export const getDateTimeFormat = unixtime => {
+  const calcTime = typeof unixtime === "string" ? new Date(unixtime).valueOf() : unixtime;
+  const currTime = new Date().valueOf();
+  const time = currTime - calcTime;
+
+  const value = Math.abs(time / 1000);
+  // 少于一分钟
+  if (value < 60) return "刚刚";
+
+  // 秒转分钟
+  const minuies = value / 60;
+  if (minuies < 60) {
+    return Math.floor(minuies) + "分钟前";
+  }
+
+  // 秒转小时
+  const hours = value / 3600;
+  if (hours < 24) {
+    return Math.floor(hours) + "小时前";
+  }
+  //秒转天数
+  const days = value / 3600 / 24;
+  if (days < 30) {
+    return Math.floor(days) + "天前";
+  }
+  //秒转月
+  const months = value / 3600 / 24 / 30;
+  if (months < 12) {
+    return Math.floor(months) + "月前";
+  }
+  //秒转年
+  const years = value / 3600 / 24 / 30 / 12;
+  return Math.floor(years) + "年前";
+};

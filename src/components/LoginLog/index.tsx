@@ -1,5 +1,6 @@
 import { findAccountLogs } from "@/api/caravan/Login";
 import { LoginFrequencyChart } from "@/components/Echarts";
+import { getDateTimeFormat } from "@/utils/core";
 import { Table } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
@@ -44,7 +45,7 @@ const LoginLog = () => {
       title: "登录时间",
       dataIndex: "created",
       render: item => {
-        return <span>{dayjs(item).format("YYYY-MM-DD HH:mm")}</span>;
+        return <span>{getDateTimeFormat(new Date(item).valueOf())}</span>;
       }
     }
   ];
