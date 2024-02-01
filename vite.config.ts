@@ -1,16 +1,16 @@
 import path from "path";
 import { defineConfig } from "vite";
 // https://vitejs.dev/config/
-import { dependencies, devDependencies, name, version } from "./package.json";
-import dayjs from "dayjs";
 import react from "@vitejs/plugin-react";
+import dayjs from "dayjs";
 import { visualizer } from "rollup-plugin-visualizer";
 import viteCompression from "vite-plugin-compression";
+import { dependencies, devDependencies, name, version } from "./package.json";
 
 import { createHtmlPlugin } from "vite-plugin-html";
 
 const isDev = process.env.NODE_ENV === "development";
-const httpUrl = isDev ? "http://localhost:3011/api/" : "https://nest-admin.com/nest3011/api/";
+const httpUrl = isDev ? "http://localhost:5000/api/" : "https://nest-admin.com/micro/api/";
 
 export default defineConfig({
   plugins: [

@@ -1,10 +1,13 @@
-import React, { FC, useEffect, useState } from "react";
-import { Alert, Button, message, Modal, Space, Table, Tag } from "antd";
+import { updaterole } from "@/api/caravan/Rbac";
+import { OperationRoleModal, RoleAllocationMenuModal, RoleAllocationUserModal } from "@/components/Modals";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { findalluser } from "@/api/caravan/Login";
-import { deleterole, findAllMenu, getallrole, getMenusByRoleCode, getUsersByRoleCode } from "@/api/caravan/Rbac";
-import { OperationRoleModal, RoleAllocationUserModal, RoleAllocationMenuModal } from "@/components/Modals";
+import { Alert, Button, Modal, Space, Table, Tag, message } from "antd";
+import { FC, useEffect, useState } from "react";
 
+import { menuFind } from "@/api/microservice/menu";
+import { findRoleMenus, findRoleUsers, findRoles } from "@/api/microservice/role";
+import { findUsers } from "@/api/microservice/user";
+import { getMenuStructure } from "@/utils/core";
 import styles from "./index.module.scss";
 
 const { confirm } = Modal;
@@ -27,35 +30,43 @@ const RoleList: FC = () => {
     setRole(null);
     setShareUsers(false);
     setShareMenu(false);
-    getallrole({})
+    findRoles({})
       .then(res => setDataSource(res.data.data || []))
       .catch(() => setDataSource([]));
   };
 
   useEffect(() => {
     findAllRole();
-    findalluser({})
+    findUsers({ banned: false, recycle: false })
       .then(res => setUserDatasource(res.data.data || []))
       .catch(() => setUserDatasource([]));
-    findAllMenu({ isdeleted: 0, version: 2 })
-      .then((res: any) => setMenuDataSource(res.data.data || []))
+    menuFind({ version: 1, delete: 0 })
+      .then((res: any) => {
+        const data = res.data.data.map(v => {
+          v.key = v.id;
+          v.value = v.id;
+          v.title = v.name;
+          return v;
+        });
+        setMenuDataSource(getMenuStructure(data, 0) || []);
+      })
       .catch(() => setMenuDataSource([]));
   }, []);
 
   const willGiveUser = (record: any) => {
-    getUsersByRoleCode({ roleCode: record.roleCode }).then(result => {
+    findRoleUsers({ roleCode: record.roleCode }).then(result => {
       if (result.data.code === 200) {
-        setRoleCode(record.roleCode);
-        setInitUIDs(result.data.data.map(v => v.uid) || []);
+        setRoleCode(record.id);
+        setInitUIDs(result.data.data || []);
         setShareUsers(true);
       }
     });
   };
   // 分配菜单
   const willGiveMenu = (record: any) => {
-    getMenusByRoleCode({ roleCode: record.roleCode }).then(result => {
+    findRoleMenus({ id: record.id, delete: 0 }).then(result => {
       if (result.data.code === 200) {
-        setRoleCode(record.roleCode);
+        setRoleCode(record.id);
         setChangeMenu(result.data.data || []);
         setShareMenu(true);
       }
@@ -70,14 +81,14 @@ const RoleList: FC = () => {
     confirm({
       title: "提示",
       icon: <ExclamationCircleOutlined />,
-      content: <span style={{ color: "red", fontSize: "19px" }}>{`是否${item.isdeleted ? "启用" : "禁用"}该用户？`}</span>,
+      content: <span style={{ color: "red", fontSize: "19px" }}>{`是否${item.banned ? "启用" : "禁用"}该权限？`}</span>,
       okText: "确定",
       okType: "danger",
       cancelText: "取消",
       onOk: async () => {
-        const result = await deleterole({
-          ...item,
-          isdeleted: item.isdeleted === 0 ? 1 : 0
+        const result = await updaterole({
+          id: item.id,
+          banned: !item.banned
         });
         if (result.data.code === 200) {
           message.info("操作成功");
@@ -95,13 +106,8 @@ const RoleList: FC = () => {
       dataIndex: "name"
     },
     {
-      title: "角色代码",
-      dataIndex: "roleCode",
-      responsive: ["lg"]
-    },
-    {
       title: "备注",
-      dataIndex: "remarks",
+      dataIndex: "remake",
       responsive: ["lg"]
     },
     {
@@ -111,7 +117,7 @@ const RoleList: FC = () => {
     },
     {
       title: "状态",
-      dataIndex: "isdeleted",
+      dataIndex: "banned",
       render: (item: any) => <Tag color={item ? "#f50" : "#2db7f5"}>{item ? "禁用" : "启用"}</Tag>
     },
     {
@@ -127,8 +133,8 @@ const RoleList: FC = () => {
           <Button size="small" type="primary" onClick={() => setRole(item)}>
             编辑
           </Button>
-          <Button size="small" type="primary" onClick={() => changeDelStasus(item)}>
-            {item.isdeleted === 0 ? "禁用" : "启用"}
+          <Button size="small" type="primary" danger={!item.banned} onClick={() => changeDelStasus(item)}>
+            {item.banned ? "启用" : "禁用"}
           </Button>
         </Space>
       )
@@ -150,6 +156,9 @@ const RoleList: FC = () => {
         }
       />
       <Space size={[8, 16]} className={styles.header}>
+        <Button type="primary" onClick={findAllRole}>
+          查询角色
+        </Button>
         <Button type="primary" onClick={() => setRole({})}>
           添加角色
         </Button>
@@ -157,10 +166,10 @@ const RoleList: FC = () => {
       <Table rowKey="id" columns={columns} dataSource={dataSource} />
       {role && <OperationRoleModal role={role} onOk={() => findAllRole()} onCancel={() => setRole(null)} />}
       {shareUsers && (
-        <RoleAllocationUserModal dataSource={userDataSource} initUIDs={initUIDs} roleCode={roleCode} onOk={() => findAllRole()} onCancel={() => setShareUsers(false)} />
+        <RoleAllocationUserModal dataSource={userDataSource} initUIDs={initUIDs} id={roleCode} onOk={() => findAllRole()} onCancel={() => setShareUsers(false)} />
       )}
       {shareMenu && (
-        <RoleAllocationMenuModal treeData={menuDataSource} initMenus={changeMenu} roleCode={roleCode} onOk={() => findAllRole()} onCancel={() => setShareMenu(false)} />
+        <RoleAllocationMenuModal treeData={menuDataSource} initMenus={changeMenu} id={roleCode} onOk={() => findAllRole()} onCancel={() => setShareMenu(false)} />
       )}
     </div>
   );

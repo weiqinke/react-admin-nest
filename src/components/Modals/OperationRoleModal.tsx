@@ -1,6 +1,6 @@
-import React, { useEffect, FC } from "react";
-import { Form, Row, Col, Input, Modal, message } from "antd";
-import { updaterole, addrole } from "@/api/caravan/Rbac";
+import { createRole, updateRole } from "@/api/microservice/role";
+import { Col, Form, Input, Modal, Row, message } from "antd";
+import { FC, useEffect } from "react";
 
 const layout = {
   labelCol: { span: 8 },
@@ -11,7 +11,7 @@ const RoleEditModal: FC<any> = ({ role, onCancel, onOk }: any) => {
   const [form] = Form.useForm();
 
   const onFinish = async data => {
-    const result: any = role?.id ? await updaterole({ ...role, ...data }) : await addrole({ ...role, ...data });
+    const result: any = role?.id ? await updateRole({ ...role, ...data }) : await createRole({ ...role, ...data });
     if (result.data.code !== 200) return message.info("操作失败");
     message.info("操作成功");
     onOk();
@@ -41,17 +41,12 @@ const RoleEditModal: FC<any> = ({ role, onCancel, onOk }: any) => {
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item name="roleCode" label="角色编码" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col span={20}>
             <Form.Item name="sort" label="序号" rules={[{ required: false }]}>
               <Input />
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item name="remarks" label="备注" rules={[{ required: false }]}>
+            <Form.Item name="remake" label="备注" rules={[{ required: false }]}>
               <Input.TextArea rows={4} />
             </Form.Item>
           </Col>

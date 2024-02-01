@@ -1,4 +1,4 @@
-import { findAccountLogs } from "@/api/caravan/Login";
+import { loginlog } from "@/api/microservice/log";
 import { LoginFrequencyChart } from "@/components/Echarts";
 import { getDateTimeFormat } from "@/utils/core";
 import { Table } from "antd";
@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 const LoginLog = () => {
   const columns: any = [
     {
-      title: "账号",
+      title: "昵称",
       dataIndex: "name"
     },
     {
@@ -53,7 +53,7 @@ const LoginLog = () => {
   const [dataSource, setDataSource] = useState<any[]>();
 
   const getLog = () => {
-    findAccountLogs({
+    loginlog({
       st: dayjs().subtract(15, "days").format("YYYY-MM-DD"),
       et: dayjs().add(1, "days").format("YYYY-MM-DD")
     })

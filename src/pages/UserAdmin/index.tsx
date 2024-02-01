@@ -1,10 +1,10 @@
-import { changeUserStatus, findalluser } from "@/api/caravan/Login";
 import { UserEditModal } from "@/components/Modals";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { Button, message, Modal, Space, Table, Tag } from "antd";
-import React, { FC, useEffect, useState } from "react";
+import { Button, Modal, Space, Table, Tag, message } from "antd";
+import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { findUsers, updateUser } from "@/api/microservice/user";
 import styles from "./index.module.scss";
 
 const { confirm } = Modal;
@@ -19,12 +19,12 @@ const UserAdmin: FC = () => {
     confirm({
       title: "提示",
       icon: <ExclamationCircleOutlined />,
-      content: <span style={{ color: "red", fontSize: "19px" }}>{`是否${item.isdeleted ? "启用" : "禁用"}该用户？`}</span>,
+      content: <span style={{ color: "red", fontSize: "19px" }}>{`是否${item.banned ? "启用" : "禁用"}该用户？`}</span>,
       okText: "确定",
       okType: "danger",
       cancelText: "取消",
       onOk: async () => {
-        const result = await changeUserStatus(item);
+        const result = await updateUser({ banned: !item.banned });
         if (result.data.code === 200) {
           message.info("操作成功");
           findAll();
@@ -39,11 +39,11 @@ const UserAdmin: FC = () => {
   const columns: any = [
     {
       title: "账号",
-      dataIndex: "name"
+      dataIndex: "username"
     },
     {
       title: "昵称",
-      dataIndex: "nick"
+      dataIndex: ["profile", "nick"]
     },
     {
       title: "邮箱",
@@ -51,13 +51,13 @@ const UserAdmin: FC = () => {
       responsive: ["xxl", "xl", "lg", "md"]
     },
     {
-      title: "手机号",
-      dataIndex: "phone",
+      title: "电话",
+      dataIndex: "mobile",
       responsive: ["xxl", "xl", "lg", "md"]
     },
     {
       title: "状态",
-      dataIndex: "isdeleted",
+      dataIndex: "banned",
       responsive: ["xxl", "xl", "lg", "md"],
       render: (item: any) => (
         <Tag color={item ? "#f50" : "#2db7f5"}>
@@ -73,8 +73,8 @@ const UserAdmin: FC = () => {
             <Button size="small" type="primary" onClick={() => setUser(item)} style={{ marginRight: "10px" }}>
               编辑
             </Button>
-            <Button size="small" type="primary" onClick={() => showDeleteConfirm(item)}>
-              {item.isdeleted === 0 ? "禁用" : "启用"}
+            <Button size="small" type="primary" onClick={() => showDeleteConfirm(item)} danger={!item.banned}>
+              {item.banned ? "启用" : "禁用"}
             </Button>
           </div>
         );
@@ -84,7 +84,7 @@ const UserAdmin: FC = () => {
 
   const findAll = () => {
     setUser(null);
-    findalluser({})
+    findUsers({ banned: false, recycle: false })
       .then(result => {
         if (result.data.code === 200) {
           setDataSource(result.data.data || []);

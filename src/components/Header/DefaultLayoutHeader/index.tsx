@@ -1,15 +1,15 @@
 import ProjectContext from "@/contexts/ProjectContext";
-import { UserOutlined } from "@ant-design/icons";
 import { webSocketManager } from "@/utils/ws";
+import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Dropdown, MenuProps, Modal } from "antd";
-import React, { useContext, useEffect, useState } from "react";
+import html2canvas from "html2canvas";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HeaderNotice from "../HeaderNotice";
-import { getPlacardListByType, readOnePlacard } from "@/api/caravan/Placard";
-import html2canvas from "html2canvas";
 
-import styles from "./index.module.scss";
+import { submitPlacard, userPlacard } from "@/api/microservice/log";
 import MenuTagContext from "@/contexts/MenuTagContext";
+import styles from "./index.module.scss";
 
 const DefaultLayoutHeader = () => {
   const { username, setValue } = useContext(ProjectContext);
@@ -86,9 +86,10 @@ const DefaultLayoutHeader = () => {
 
   useEffect(() => {
     if (readPlacard) return;
-    getPlacardListByType({
+    userPlacard({
       type: "system",
-      status: "broadcasting"
+      status: "broadcasting",
+      uid: parseInt(localStorage.getItem("uid"))
     })
       .then(result => {
         //如果请求成功，需要弹出对应数量的公告modal
@@ -103,7 +104,7 @@ const DefaultLayoutHeader = () => {
                 <p>{item.description.slice(0, 300)}</p>
               </div>
             ),
-            onOk: () => readOnePlacard(item)
+            onOk: () => submitPlacard({ id: item.id, uid: parseInt(localStorage.getItem("uid")) })
           });
         });
       })

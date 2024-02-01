@@ -1,12 +1,12 @@
-import React, { FC, useEffect, useState } from "react";
-import { Button, message, Modal, Space, Table, Tag } from "antd";
-import dayjs from "dayjs";
 import { PlacardEditModal } from "@/components/Modals";
 import { webSocketManager } from "@/utils/ws";
-import { broadcastPlacard, deleteOnePlacard, getAllPlacard } from "@/api/caravan/Placard";
+import { Button, Modal, Space, Table, Tag, message } from "antd";
+import dayjs from "dayjs";
+import { FC, useEffect, useState } from "react";
 
-import styles from "./index.module.scss";
+import { getPlacard, pushPlacard, updatePlacard } from "@/api/microservice/log";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
+import styles from "./index.module.scss";
 
 interface PlacardData {
   created: string;
@@ -73,7 +73,7 @@ const PlacardAdmin: FC = () => {
   const [placard, setPlacard] = useState<any>();
 
   const findAllPlacards = () => {
-    getAllPlacard({ type: "system", status: "preparation" })
+    getPlacard({ type: "system", deleted: 0 })
       .then(result => {
         if (result.data.code === 200) setDataSource(result.data.data);
       })
@@ -89,7 +89,7 @@ const PlacardAdmin: FC = () => {
       okText: "确定",
       cancelText: "取消",
       onOk: async () => {
-        const result = await broadcastPlacard(record);
+        const result = await pushPlacard(record);
         if (result.data.code === 200) {
           message.info("发布成功");
           webSocketManager.postMessage({
@@ -119,7 +119,8 @@ const PlacardAdmin: FC = () => {
       okType: "danger",
       cancelText: "取消",
       onOk: async () => {
-        const result = await deleteOnePlacard({ id: item.id });
+        const result = await updatePlacard({ id: item.id, deleted: 1 });
+        console.log("result: ", result);
         if (result.data.code === 200) {
           message.info("操作成功");
           return findAllPlacards();

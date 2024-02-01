@@ -1,7 +1,6 @@
-import React, { useEffect, FC } from "react";
-import { Form, Row, Col, Input, Modal, message, Select } from "antd";
-import { editMenuItem } from "@/api/caravan/MenuApi";
-import { addPlacard } from "@/api/caravan/Placard";
+import { createPlacard, updatePlacard } from "@/api/microservice/log";
+import { Col, Form, Input, Modal, Row, Select, message } from "antd";
+import { FC, useEffect } from "react";
 
 const layout = {
   labelCol: { span: 8 },
@@ -14,7 +13,7 @@ const PlacardEditModal: FC<any> = ({ placard, onOk, onCancel }: any) => {
   const onGenderChange = (type: string) => form.setFieldsValue({ type });
 
   const onFinish = async payload => {
-    const result = placard?.id ? await editMenuItem({ ...placard, ...payload }) : await addPlacard(payload);
+    const result = placard?.id ? await updatePlacard({ ...placard, ...payload }) : await createPlacard(payload);
     if (result.data.code !== 200) return message.info("操作失败");
     message.success("操作成功");
     onOk();
