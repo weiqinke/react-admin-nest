@@ -35,10 +35,11 @@ const RegisterForm = ({ goBack }) => {
       .then(res => {
         const { data, code } = res.data;
         if (code === 200) {
-          localStorage.setItem(SYSTEM_TOKEN, data);
-          const userState = getUserState();
-          localStorage.setItem("uid", userState.uid);
+          const { token, uid } = data;
+          localStorage.setItem(SYSTEM_TOKEN, token);
+          localStorage.setItem("uid", uid);
           // 更新内存中的用户信息
+          const userState = getUserState();
           setValue(userState);
           //   获取用户菜单
           getMenu(userState.uid);

@@ -1,12 +1,13 @@
+import { updateUserAvatarUrl } from "@/api/caravan/Login";
 import { UserOutlined } from "@ant-design/icons";
-import { Avatar, Col, Form, Input, message, Modal, Radio, Row, Upload } from "antd";
-import type { FC } from "react";
-import React, { useEffect, useState } from "react";
-import { addOneUser, editOneUser, updateUserAvatarUrl } from "@/api/caravan/Login";
+import { Avatar, Col, Form, Input, Modal, Radio, Row, Upload, message } from "antd";
 import { trim } from "lodash-es";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 
-import styles from "./index.module.scss";
+import { createUser, updateUser } from "@/api/microservice/user";
 import axios from "axios";
+import styles from "./index.module.scss";
 
 const layout = {
   labelCol: { span: 8 },
@@ -14,15 +15,14 @@ const layout = {
 };
 
 const UserEditModal: FC<any> = (props: any) => {
-  const { onCancel, onOk, initUser } = props;
+  const { onCancel, onOk, initUser = {} } = props;
+  const initialValues = { ...initUser, ...initUser.profile };
+  const title = initUser?.uid ? "编辑" : "添加";
   const [form] = Form.useForm();
   const [type, setType] = useState("text");
-  const [title, setTitle] = useState("添加");
-  const [avatarUrl, setAvatarUrl] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState(initialValues.avatar || "");
   const [isreadOnly, setIsreadOnly] = useState(true);
-
   const [fileList, setfileList] = useState<any[]>([]);
-
   const [uploading, setuploading] = useState(false);
   const getBase64 = async (img: any, callback: any) => {
     const reader = new FileReader();
@@ -94,20 +94,24 @@ const UserEditModal: FC<any> = (props: any) => {
   const creatRoleSubmit = async () => {
     const data = await form.validateFields();
     let result: any = null;
-    if (initUser?.id) {
-      const { nick, title, phone, email, sex, password } = data;
-      const payload = {
-        ...initUser,
-        nick,
-        title,
-        phone,
+    if (initUser?.uid) {
+      const { username, nick, title, mobile, email, sex, password, address } = data;
+      const payload: any = {
+        uid: initUser.uid,
+        username,
+        mobile,
         email,
-        sex
+        profile: {
+          nick,
+          title,
+          sex,
+          address
+        }
       };
       if (password) payload.password = trim(password);
-      result = await editOneUser(payload);
+      result = await updateUser(payload);
     } else {
-      result = await addOneUser(data);
+      result = await createUser(data);
     }
 
     if (result.data.code !== 200) {
@@ -128,10 +132,8 @@ const UserEditModal: FC<any> = (props: any) => {
       setAvatarUrl(initUser.avatar || "");
     }
     if (initUser?.id) {
-      setTitle("编辑");
       setIsreadOnly(true);
     } else {
-      setTitle("添加");
       setIsreadOnly(false);
       form.setFieldsValue({ sex: "1" });
     }
@@ -151,20 +153,20 @@ const UserEditModal: FC<any> = (props: any) => {
           </div>
         </Col>
       </Row>
-      <Form form={form} initialValues={initUser} onFinish={handleSubmit} {...layout}>
+      <Form form={form} initialValues={initialValues} onFinish={handleSubmit} {...layout}>
         <Row>
           <Col span={20}>
-            <Form.Item label="用户编号" name="id" rules={[{ required: false }]}>
+            <Form.Item label="用户编号" name="id" rules={[{ required: false }]} hidden>
               <Input readOnly autoComplete="off" placeholder="自动生成" />
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item label="账号" name="name" rules={[{ required: true }]}>
-              <Input autoComplete="off" placeholder="请输入账号" readOnly={isreadOnly} />
+            <Form.Item label="账号" name="username" rules={[{ required: true }]}>
+              <Input autoComplete="off" placeholder="请输入账号" readOnly={initUser?.uid} />
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item label="密码" name="password" rules={[{ required: !isreadOnly }]}>
+            <Form.Item label="密码" name="password" rules={[{ required: !initUser?.uid }]}>
               <Input placeholder="请输入密码" type={type} onChange={setInputType} />
             </Form.Item>
           </Col>
@@ -182,7 +184,7 @@ const UserEditModal: FC<any> = (props: any) => {
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item label="联系电话" name="phone" rules={[{ required: true }]}>
+            <Form.Item label="联系电话" name="mobile" rules={[{ required: true }]}>
               <Input maxLength={11} />
             </Form.Item>
           </Col>
@@ -192,7 +194,7 @@ const UserEditModal: FC<any> = (props: any) => {
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item label="联系地址" name="group" rules={[{ required: false }]}>
+            <Form.Item label="联系地址" name="address" rules={[{ required: false }]}>
               <Input />
             </Form.Item>
           </Col>

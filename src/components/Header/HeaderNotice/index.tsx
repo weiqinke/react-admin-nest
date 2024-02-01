@@ -1,9 +1,8 @@
-import React, { FC, useState, useEffect, useRef } from "react";
-import { Dropdown, Badge, MenuProps, Tabs, DropdownProps, List, Avatar } from "antd";
 import { BellOutlined } from "@ant-design/icons";
+import { Avatar, Badge, Dropdown, DropdownProps, List, MenuProps, Tabs } from "antd";
+import { FC, useEffect, useRef, useState } from "react";
 
-import { getUidNotices } from "@/api/caravan/User";
-
+import { userNotice } from "@/api/microservice/log";
 import styles from "./index.module.scss";
 
 const HeaderNotice: FC = () => {
@@ -33,7 +32,7 @@ const HeaderNotice: FC = () => {
       },
       1000 * 60 * 60
     );
-    getUidNotices()
+    userNotice({ delete: 0 })
       .then(result => {
         setLoading(false);
         if (result.status && result.data && Array.isArray(result.data.data)) {

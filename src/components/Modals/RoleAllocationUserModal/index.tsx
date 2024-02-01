@@ -1,8 +1,8 @@
-import { giveUser } from "@/api/caravan/Rbac";
+import { updateRoleUsers } from "@/api/microservice/role";
 import { message, Modal, Table } from "antd";
 import React, { FC, useState } from "react";
 
-const RoleAllocationUserModal: FC<any> = ({ dataSource, onOk, onCancel, initUIDs, roleCode, okText, cancelText, title }: any) => {
+const RoleAllocationUserModal: FC<any> = ({ dataSource, onOk, onCancel, initUIDs, id, okText, cancelText, title }: any) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([...initUIDs]);
 
   const rowSelection: any = {
@@ -12,10 +12,12 @@ const RoleAllocationUserModal: FC<any> = ({ dataSource, onOk, onCancel, initUIDs
   };
 
   const onSubmit = async () => {
-    giveUser({ roleCode, users: selectedRowKeys })
-      .then(() => {
-        message.info("操作成功");
-        onOk();
+    updateRoleUsers({ id, uids: selectedRowKeys })
+      .then(res => {
+        if (res.data.code === 200) {
+          onOk();
+          return message.info("操作成功");
+        }
       })
       .catch(() => message.error("操作失败"));
   };
@@ -23,11 +25,15 @@ const RoleAllocationUserModal: FC<any> = ({ dataSource, onOk, onCancel, initUIDs
   const columns = [
     {
       title: "账号",
-      dataIndex: "name"
+      dataIndex: "username"
     },
     {
-      title: "昵称",
-      dataIndex: "nick"
+      title: "电话",
+      dataIndex: "mobile"
+    },
+    {
+      title: "email",
+      dataIndex: "email"
     }
   ];
 

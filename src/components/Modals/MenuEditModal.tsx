@@ -1,6 +1,6 @@
-import { addMenuItem, editMenuItem } from "@/api/caravan/MenuApi";
-import { Col, Form, Input, message, Modal, Row, Select } from "antd";
-import React, { FC, useEffect, useState } from "react";
+import { createMenuItem, updateMenuItem } from "@/api/microservice/menu";
+import { Col, Form, Input, Modal, Row, Select, message } from "antd";
+import { FC, useEffect, useState } from "react";
 
 const layout = {
   labelCol: { span: 8 },
@@ -22,13 +22,12 @@ const MenuEditModal: FC<any> = ({ isEdit, onOk, visible, initMenuItem, parentUid
     const payload = {
       parentUid,
       ...data,
-      version: 2
+      version: 1
     };
-
-    if (isEdit) {
-      result = await editMenuItem(payload);
+    if (payload.id) {
+      result = await updateMenuItem(payload);
     } else {
-      result = await addMenuItem(payload);
+      result = await createMenuItem(payload);
     }
     if (result.data.code !== 200) {
       message.info("操作失败");
@@ -43,7 +42,7 @@ const MenuEditModal: FC<any> = ({ isEdit, onOk, visible, initMenuItem, parentUid
   };
 
   const hiddMenuChange = (value: string) => {
-    form.setFieldsValue({ dontshow: value });
+    form.setFieldsValue({ show: value });
   };
 
   useEffect(() => {
@@ -68,11 +67,11 @@ const MenuEditModal: FC<any> = ({ isEdit, onOk, visible, initMenuItem, parentUid
         <Row>
           <Col span={20}>
             <Form.Item name="version" label="菜单版本" rules={[{ required: false }]}>
-              <Input readOnly placeholder="自动生成" defaultValue={2} />
+              <Input readOnly placeholder="自动生成" defaultValue={1} />
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item name="menuUid" label="菜单ID" rules={[{ required: false }]}>
+            <Form.Item name="id" label="菜单ID" rules={[{ required: false }]}>
               <Input readOnly placeholder="自动生成" />
             </Form.Item>
           </Col>
@@ -101,7 +100,7 @@ const MenuEditModal: FC<any> = ({ isEdit, onOk, visible, initMenuItem, parentUid
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item name="dontshow" label="是否显示" rules={[{ required: true }]} initialValue="1">
+            <Form.Item name="show" label="是否显示" rules={[{ required: true }]} initialValue="1">
               <Select placeholder="请选择是否在菜单中显示" onChange={hiddMenuChange}>
                 <Option value="1">显示</Option>
                 <Option value="0">隐藏</Option>

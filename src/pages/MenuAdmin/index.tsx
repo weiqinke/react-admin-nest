@@ -1,9 +1,9 @@
-import { delMenuItem, getAllMenus } from "@/api/caravan/MenuApi";
+import { menuFind, updateMenuItem } from "@/api/microservice/menu";
 import { MenuEditModal } from "@/components/Modals";
+import { getMenuStructure } from "@/utils/core";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { Button, Form, message, Modal, Space, Table, Tag } from "antd";
-import React, { FC, useEffect, useState } from "react";
-
+import { Button, Form, Modal, Space, Table, Tag, message } from "antd";
+import { FC, useEffect, useState } from "react";
 import styles from "./index.module.scss";
 
 const { confirm } = Modal;
@@ -56,13 +56,11 @@ const MenusAdmin: FC = () => {
     },
     {
       title: "操作",
-      dataIndex: "menuUid",
-      key: "menuUid",
       render: (text: any, record: any) => {
         return (
           <div>
             {record.type === "page" ? null : (
-              <Button type="link" onClick={() => addmenuItem(record.menuUid)}>
+              <Button type="link" onClick={() => addmenuItem(record.id)}>
                 添加子页面
               </Button>
             )}
@@ -87,7 +85,7 @@ const MenusAdmin: FC = () => {
       okType: "danger",
       cancelText: "取消",
       onOk: async () => {
-        const result = await delMenuItem({ uid: record.menuUid });
+        const result = await updateMenuItem({ id: record.id, delete: 1 });
         if (result.data.code === 200) {
           message.info("操作成功");
           getallmenusdata();
@@ -116,9 +114,9 @@ const MenusAdmin: FC = () => {
 
   const getallmenusdata = () => {
     setMenuslist([]);
-    getAllMenus({ version: 2 }).then((result: any) => {
+    menuFind({ version: 1, delete: 0 }).then((result: any) => {
       if (result.data.code === 200) {
-        const menudata = result.data.data;
+        const menudata = getMenuStructure(result.data.data);
         setMenuslist(menudata || []);
       }
     });
@@ -137,11 +135,11 @@ const MenusAdmin: FC = () => {
         <Button type="primary" onClick={getallmenusdata}>
           查询菜单
         </Button>
-        <Button type="primary" onClick={() => addmenuItem("-1")}>
+        <Button type="primary" onClick={() => addmenuItem(0)}>
           添加菜单
         </Button>
       </Space>
-      <Table columns={columns} dataSource={menuslist} rowKey={(record: any) => record.menuUid} bordered={true} className="menutable" pagination={{ pageSize: 18 }} />
+      <Table columns={columns} dataSource={menuslist} rowKey={(record: any) => record.id} bordered={true} className="menutable" pagination={{ pageSize: 18 }} />
       {visible && <MenuEditModal parentUid={parentUid} isEdit={isEdit} initMenuItem={initMenuItem} onOk={onOk} onCancel={() => setVisible(false)} />}
     </div>
   );

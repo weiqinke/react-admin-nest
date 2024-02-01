@@ -1,8 +1,8 @@
-import { accountlogin, getUserMenus, userTokenByOAuth2Code } from "@/api/caravan/Login";
+import { userTokenByOAuth2Code } from "@/api/caravan/Login";
 import MenuTagContext from "@/contexts/MenuTagContext";
 import ProjectContext from "@/contexts/ProjectContext";
-import { getUrlParam, getUserState } from "@/utils/core";
-import { ProjectParseMenuAsPre, SaveMeUrl, getIndexUrlInfo, saveMenus } from "@/utils/menuUtils";
+import { getMenuStructure, getUrlParam, getUserState } from "@/utils/core";
+import { ProjectParseMenuAsPre, getIndexUrlInfo, saveMenus } from "@/utils/menuUtils";
 import { webSocketManager } from "@/utils/ws";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Divider, Form, Image, Input, Spin, Tooltip, message } from "antd";
@@ -11,13 +11,14 @@ import { useContext, useEffect, useRef, useState } from "react";
 import ReactCardFlip from "react-card-flip";
 import { useNavigate } from "react-router-dom";
 
+import { login, userMenus } from "@/api/microservice/user";
 import qrimg from "@/assets/qrcode.png";
 import IconFont from "@/components/IconFont";
 import styles from "./index.module.scss";
 
 const LoginForm = ({ setRegister }) => {
   const navigate = useNavigate();
-  const { value, setValue } = useContext(ProjectContext);
+  const { setValue }: any = useContext(ProjectContext);
   const { setTags } = useContext(MenuTagContext);
   const inputRef = useRef();
 
@@ -36,14 +37,14 @@ const LoginForm = ({ setRegister }) => {
         .then(res => {
           // debugger;
           if (res.data.code === 200) {
-            const { avatar, nick, token } = res.data.data;
+            const { avatar, nick, token, uid } = res.data.data;
             localStorage.setItem("nick", nick);
             localStorage.setItem("loginState", "1");
             localStorage.setItem("token", token);
             localStorage.setItem("nick", nick);
             localStorage.setItem("avatar", avatar || "");
             setValue(getUserState());
-            getMenuData();
+            getMenuData(uid);
           }
         })
         .finally(() => {
@@ -71,41 +72,39 @@ const LoginForm = ({ setRegister }) => {
   }, []);
 
   const onFinish = values => {
-    accountlogin({ ...values, logintype: "web" }).then(r => {
+    login({ ...values, logintype: "web" }).then(r => {
       if (r.data.code === 200) {
-        const { avatar, nick, token } = r.data.data;
+        const { avatar, nick, token, uid } = r.data.data;
+        localStorage.setItem("uid", uid);
         localStorage.setItem("nick", nick);
         localStorage.setItem("loginState", "1");
         localStorage.setItem("token", token);
         localStorage.setItem("nick", nick);
         localStorage.setItem("avatar", avatar);
         setValue(getUserState());
-        getMenuData();
+        getMenuData(uid);
       }
     });
   };
 
-  const getMenuData = () => {
-    getUserMenus({ version: 2 }).then(r => {
-      if (r.data.code === 200) {
-        const cacheMenu = r.data.data;
-        if (!cacheMenu) return message.info("暂未分配权限，请通知管理员分配权限");
-        saveMenus(JSON.stringify(cacheMenu));
-        webSocketManager.postMessage({
-          type: "ResetUserName",
-          data: {
-            token: localStorage.getItem("token")
-          }
-        });
-        const allMenusInfo = SaveMeUrl(ProjectParseMenuAsPre(cacheMenu.concat()), "");
-        //找到第一个url直接跳转过去吧
-        const indexTag = getIndexUrlInfo(allMenusInfo);
-        const { meUrl } = indexTag;
-        const from = { pathname: meUrl };
-        setTags([]);
-        navigate(from);
-        // 登录以后，还要把socket名字改掉
-      }
+  const getMenuData = uid => {
+    userMenus({ uid, version: 1 }).then(r => {
+      const data = r.data.data;
+      if (!data) return message.info("暂未分配权限，请通知管理员分配权限");
+      const menus = getMenuStructure(data);
+      saveMenus(JSON.stringify(menus));
+      webSocketManager.postMessage({
+        type: "ResetUserName",
+        data: {
+          token: localStorage.getItem("token")
+        }
+      });
+      setTags([]);
+      //找到第一个url直接跳转过去吧
+      const indexTag = getIndexUrlInfo(ProjectParseMenuAsPre(menus));
+      const { url } = indexTag;
+      navigate(`/${url}`);
+      // 登录以后，还要把socket名字改掉
     });
   };
 
@@ -113,7 +112,7 @@ const LoginForm = ({ setRegister }) => {
     console.log("Failed:", errorInfo);
   };
 
-  const initialValues = { remember: true, name: "qkstart", password: "123456" };
+  const initialValues = { remember: true, loginName: "qkstart", password: "123456" };
 
   useEffect(() => {
     webSocketManager.postMessage({
@@ -136,7 +135,7 @@ const LoginForm = ({ setRegister }) => {
         <div>
           <Spin spinning={loading} delay={500}>
             <Form name="basic" initialValues={initialValues} onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete="off">
-              <Form.Item name="name" rules={[{ required: true, message: "请输入用户名!" }]}>
+              <Form.Item name="loginName" rules={[{ required: true, message: "请输入用户名!" }]}>
                 <Input placeholder="qkstart" prefix={<UserOutlined />} />
               </Form.Item>
 
