@@ -36,3 +36,8 @@ export const updateUser = (payload: any) => {
 export const userinfo = (payload: any) => {
   return request(`${BASE_URL}user/userinfo`, "GET", payload);
 };
+
+/** OAuth2 获取code */
+export const userOAuth2 = payload => {
+  return request(`${BASE_URL}user/oauth2`, "POST", payload);
+};

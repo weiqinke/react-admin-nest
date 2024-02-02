@@ -1,4 +1,3 @@
-import { userTokenByOAuth2Code } from "@/api/caravan/Login";
 import MenuTagContext from "@/contexts/MenuTagContext";
 import ProjectContext from "@/contexts/ProjectContext";
 import { getMenuStructure, getUrlParam, getUserState } from "@/utils/core";
@@ -11,7 +10,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import ReactCardFlip from "react-card-flip";
 import { useNavigate } from "react-router-dom";
 
-import { login, userMenus } from "@/api/microservice/user";
+import { login, userMenus, userOAuth2 } from "@/api/microservice/user";
 import qrimg from "@/assets/qrcode.png";
 import IconFont from "@/components/IconFont";
 import styles from "./index.module.scss";
@@ -30,7 +29,7 @@ const LoginForm = ({ setRegister }) => {
     const state = getUrlParam("state");
     if (code) {
       setLoading(true);
-      userTokenByOAuth2Code({
+      userOAuth2({
         code,
         state
       })
