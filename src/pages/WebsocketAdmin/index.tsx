@@ -1,14 +1,14 @@
-import React, { FC, useEffect, useRef, useState } from "react";
-import { webSocketManager } from "@/utils/ws";
-import { message, Modal, Image } from "antd";
-import { MetaDescModal } from "@/components/Modals";
-import { getUserInfoByUid } from "@/api/caravan/User";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
 import prewImg from "@/assets/prewview.png";
+import { MetaDescModal } from "@/components/Modals";
 import Waterfall from "@/components/Weaterfall";
+import { webSocketManager } from "@/utils/ws";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { Image, Modal, message } from "antd";
+import { FC, useEffect, useRef, useState } from "react";
 
-import styles from "./index.module.scss";
+import { userinfo } from "@/api/microservice/user";
 import SocketCard from "@/components/SocketCard";
+import styles from "./index.module.scss";
 
 const WebsocketAdmin: FC = () => {
   const imgMinWidth = 280; // 允许瀑布流单列最低宽度，可能再低就变形和会重叠
@@ -69,7 +69,7 @@ const WebsocketAdmin: FC = () => {
   };
 
   const loadUserInfo = user => {
-    getUserInfoByUid({ uid: user?.uid }).then(result => {
+    userinfo({ uid: user?.uid }).then(result => {
       if (result.data.code === 200) {
         setUserInfo(result.data.data);
       }
@@ -109,7 +109,7 @@ const WebsocketAdmin: FC = () => {
     };
   }, []);
 
-  const getList = () => {
+  const getList = async () => {
     return socketUsers;
   };
 

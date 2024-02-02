@@ -1,9 +1,9 @@
-import { getmyuserinfo } from "@/api/caravan/User";
 import AvatarData from "@/components/AvatarData";
 import FineDay from "@/components/FineDay";
 import StarrySky from "@/components/StarrySky";
 import { useEffect, useState } from "react";
 
+import { userinfo } from "@/api/microservice/user";
 import { AntDesignOutlined, GithubOutlined, InstagramOutlined, MessageOutlined, MoreOutlined, QqOutlined, ShareAltOutlined, WechatOutlined } from "@ant-design/icons";
 import { Avatar, Button, Card, Col, Divider, Flex, Image, List, Row, Segmented, Typography } from "antd";
 import Message from "antd/es/message";
@@ -40,13 +40,14 @@ const SocialData = [
 const UserInfoCard = () => {
   const value = Math.floor(Math.random() * 100);
   const avatar = localStorage.getItem("avatar");
+  const uid = localStorage.getItem("uid");
   const [info, setInfo] = useState({
     nick: "",
     avatar: ""
   });
   const [tabActive, setTabActive] = useState("Profile");
   useEffect(() => {
-    getmyuserinfo().then(result => {
+    userinfo({ uid }).then(result => {
       if (result.data.code === 200) {
         setInfo({
           ...result.data.data,
