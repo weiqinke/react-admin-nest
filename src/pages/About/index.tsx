@@ -5,7 +5,6 @@ import styles from "./index.module.scss";
 
 const About = () => {
   const { dependencies, devDependencies, version, lastBuildTime } = REACT_PACKAGE;
-  console.log("dependencies: ", dependencies);
 
   const depResult = [];
   for (const key in dependencies) {

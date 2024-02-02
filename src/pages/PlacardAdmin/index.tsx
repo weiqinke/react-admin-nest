@@ -120,7 +120,6 @@ const PlacardAdmin: FC = () => {
       cancelText: "取消",
       onOk: async () => {
         const result = await updatePlacard({ id: item.id, deleted: 1 });
-        console.log("result: ", result);
         if (result.data.code === 200) {
           message.info("操作成功");
           return findAllPlacards();
