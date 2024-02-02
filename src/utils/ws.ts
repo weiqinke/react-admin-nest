@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 import { tupleStr } from "./core";
-const DEV_REACT_APP_SOCKET_URL = "http://127.0.0.1:3011/nestws";
+const DEV_REACT_APP_SOCKET_URL = "http://127.0.0.1:5000/nestws";
 const PRO_REACT_APP_SOCKET_URL = "https://nest-admin.com/nestws";
 // 项目中所有websocket事件名称
 const eventName = tupleStr(

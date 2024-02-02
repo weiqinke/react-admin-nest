@@ -31,3 +31,8 @@ export const findUsers = payload => {
 export const updateUser = (payload: any) => {
   return request(`${BASE_URL}user/update`, "POST", payload);
 };
+
+/** 获取用户信息 */
+export const userinfo = (payload: any) => {
+  return request(`${BASE_URL}user/userinfo`, "GET", payload);
+};
