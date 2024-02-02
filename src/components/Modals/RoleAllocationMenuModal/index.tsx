@@ -10,8 +10,6 @@ const RoleAllocationMenuModal: FC<any> = ({ treeData, onOk, onCancel, initMenus,
 
   const onOkSubmit = async () => {
     //分配菜单
-    console.log("checkedKeys: ", checkedKeys);
-
     const result: any = await updateRoleMenus({ id, mids: checkedKeys });
     if (result.data.code === 200) {
       message.info("操作成功");

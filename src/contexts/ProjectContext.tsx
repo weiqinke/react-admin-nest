@@ -1,18 +1,34 @@
+import { userinfo } from "@/api/microservice/user";
 import { getUserState } from "@/utils/core";
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+
+const Cancel = axios.CancelToken;
+const source = Cancel.source();
 
 const ProjectContext: any = React.createContext({
-  uid: undefined,
-  userName: undefined,
-  release: undefined,
-  username: "",
+  profile: {},
+  setProfile: () => null,
   value: {},
   setValue: () => null
 });
 
 export const ProjectContextProvider = ({ children }) => {
   const [value, setValue] = useState(getUserState());
-  return <ProjectContext.Provider value={{ value, setValue }}>{children}</ProjectContext.Provider>;
+  const [profile, setProfile] = useState({});
+
+  useEffect(() => {
+    if (value.uid) {
+      userinfo({ uid: value.uid, cancelToken: source.token }).then(res => {
+        setProfile(res.data.data.profile);
+      });
+    }
+    return () => {
+      source.cancel();
+    };
+  }, [value]);
+
+  return <ProjectContext.Provider value={{ value, setValue, profile, setProfile }}>{children}</ProjectContext.Provider>;
 };
 
 export default ProjectContext;

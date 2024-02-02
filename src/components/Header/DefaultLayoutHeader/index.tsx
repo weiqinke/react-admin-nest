@@ -12,13 +12,11 @@ import MenuTagContext from "@/contexts/MenuTagContext";
 import styles from "./index.module.scss";
 
 const DefaultLayoutHeader = () => {
-  const { username, setValue } = useContext(ProjectContext);
+  const { value, setValue } = useContext(ProjectContext);
   const { addTag } = useContext(MenuTagContext);
   const navigate = useNavigate();
 
   const [readPlacard, setReadPlacard] = useState(false);
-
-  const src = window.localStorage.getItem("avatar");
 
   const toggleLanguage = () => {
     const language = localStorage.getItem("language");
@@ -74,6 +72,7 @@ const DefaultLayoutHeader = () => {
       });
     });
   };
+
   useEffect(() => {
     const removeHandler = webSocketManager.addEventHandler(payload => {
       if (payload?.type === "HandleForcedOffline") logout();
@@ -92,8 +91,9 @@ const DefaultLayoutHeader = () => {
       uid: parseInt(localStorage.getItem("uid"))
     })
       .then(result => {
+        if (result?.data?.code !== 200) return;
         //如果请求成功，需要弹出对应数量的公告modal
-        result.data.data.map((item: any, index: number) => {
+        result?.data?.data?.map((item: any, index: number) => {
           return Modal.info({
             title: item.title,
             mask: index === 0,
@@ -121,8 +121,8 @@ const DefaultLayoutHeader = () => {
       <div className={styles.user}>
         <Dropdown menu={{ items, onClick }}>
           <div className={styles.nameContainer}>
-            <Avatar src={src} icon={<UserOutlined />} />
-            <span className={styles.name}>{username}</span>
+            <Avatar src={value.avatar} icon={<UserOutlined />} />
+            <span className={styles.name}>{value.nick}</span>
           </div>
         </Dropdown>
       </div>

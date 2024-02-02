@@ -12,7 +12,6 @@ const MenusAdmin: FC = () => {
   const [menuslist, setMenuslist] = useState([]);
   const [parentUid, setparentUid] = useState("-1");
   const [visible, setVisible] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
   const [initMenuItem, setInitMenuItem] = useState();
 
   const [form] = Form.useForm();
@@ -32,9 +31,9 @@ const MenusAdmin: FC = () => {
       title: "类型",
       dataIndex: "type",
       responsive: ["xxl", "xl", "lg", "md"],
-      render: (text: any) => {
-        if (text === "menu") return <Tag color="#87d068">菜单</Tag>;
-        if (text === "page") return <Tag color="#108ee9">页面</Tag>;
+      render: (type: any) => {
+        if (type === 1) return <Tag color="#87d068">菜单</Tag>;
+        if (type === 2) return <Tag color="#108ee9">页面</Tag>;
         return <Tag color="#f50">未知</Tag>;
       }
     },
@@ -101,7 +100,6 @@ const MenusAdmin: FC = () => {
     setFieldsValue({ ...record });
     //编辑回显菜单
     setVisible(true);
-    setIsEdit(true);
     setInitMenuItem(record);
     setparentUid(record.parentUid);
   };
@@ -140,7 +138,7 @@ const MenusAdmin: FC = () => {
         </Button>
       </Space>
       <Table columns={columns} dataSource={menuslist} rowKey={(record: any) => record.id} bordered={true} className="menutable" pagination={{ pageSize: 18 }} />
-      {visible && <MenuEditModal parentUid={parentUid} isEdit={isEdit} initMenuItem={initMenuItem} onOk={onOk} onCancel={() => setVisible(false)} />}
+      {visible && <MenuEditModal parentUid={parentUid} initMenuItem={initMenuItem} onOk={onOk} onCancel={() => setVisible(false)} />}
     </div>
   );
 };

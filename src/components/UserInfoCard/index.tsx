@@ -1,13 +1,13 @@
+import { userinfo } from "@/api/microservice/user";
+import avatarImg from "@/assets/user/defaultAvatar.jpg";
 import AvatarData from "@/components/AvatarData";
 import FineDay from "@/components/FineDay";
 import StarrySky from "@/components/StarrySky";
-import { useEffect, useState } from "react";
-
-import { userinfo } from "@/api/microservice/user";
+import ProjectContext from "@/contexts/ProjectContext";
 import { AntDesignOutlined, GithubOutlined, InstagramOutlined, MessageOutlined, MoreOutlined, QqOutlined, ShareAltOutlined, WechatOutlined } from "@ant-design/icons";
 import { Avatar, Button, Card, Col, Divider, Flex, Image, List, Row, Segmented, Typography } from "antd";
-import Message from "antd/es/message";
 import dayjs from "dayjs";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import IconFont from "../IconFont";
 import styles from "./index.module.scss";
@@ -38,20 +38,16 @@ const SocialData = [
 ];
 
 const UserInfoCard = () => {
-  const value = Math.floor(Math.random() * 100);
-  const avatar = localStorage.getItem("avatar");
-  const uid = localStorage.getItem("uid");
-  const [info, setInfo] = useState({
-    nick: "",
-    avatar: ""
-  });
+  const random = Math.floor(Math.random() * 100);
+  const { value }: { value: any } = useContext(ProjectContext);
+  const [info, setInfo] = useState({});
   const [tabActive, setTabActive] = useState("Profile");
   useEffect(() => {
-    userinfo({ uid }).then(result => {
+    userinfo({ uid: value?.uid }).then(result => {
       if (result.data.code === 200) {
+        const profile = result.data.data.profile;
         setInfo({
-          ...result.data.data,
-          avatar
+          ...profile
         });
       }
     });
@@ -69,7 +65,7 @@ const UserInfoCard = () => {
   return (
     <div className={styles.page}>
       <div className={styles.cover}>
-        {value % 2 === 1 ? <StarrySky /> : <FineDay />}
+        {random % 2 === 1 ? <StarrySky /> : <FineDay />}
         <AvatarData info={info} />
       </div>
       <div className={styles.segm}>
@@ -136,7 +132,7 @@ const UserInfoCard = () => {
                 <Flex justify={"space-between"} align="center" gap={16}>
                   <List>
                     <List.Item key="1">
-                      <List.Item.Meta avatar={<Avatar src={avatar} size={48} />} title={info?.nick} description={dayjs().format("YYYY/MM/DD")} />
+                      <List.Item.Meta avatar={<Avatar src={avatarImg} size={48} />} title={info?.nick} description={dayjs().format("YYYY/MM/DD")} />
                     </List.Item>
                   </List>
                   <Button shape="circle" type="text" icon={<MoreOutlined />}></Button>
@@ -161,10 +157,6 @@ const UserInfoCard = () => {
                     <Button shape="circle" type="text" icon={<ShareAltOutlined />}></Button>
                   </div>
                 </Flex>
-                {[].map(item => (
-                  <Message avatar={item.avatar} time={item.time} content={item.content} user={item.user} />
-                ))}
-                {/* 发送消息 */}
               </Flex>
             </Card>
           </Flex>

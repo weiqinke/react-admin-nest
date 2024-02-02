@@ -1,6 +1,6 @@
 import { createMenuItem, updateMenuItem } from "@/api/microservice/menu";
 import { Col, Form, Input, Modal, Row, Select, message } from "antd";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 
 const layout = {
   labelCol: { span: 8 },
@@ -10,9 +10,8 @@ const layout = {
 const { Option } = Select;
 const { TextArea } = Input;
 
-const MenuEditModal: FC<any> = ({ isEdit, onOk, visible, initMenuItem, parentUid, onCancel }) => {
+const MenuEditModal: FC<any> = ({ onOk, initMenuItem, parentUid, onCancel }) => {
   const [form] = Form.useForm();
-  const [title, setTitle] = useState("添加");
 
   const handleSubmit = () => {};
 
@@ -50,28 +49,17 @@ const MenuEditModal: FC<any> = ({ isEdit, onOk, visible, initMenuItem, parentUid
     form.getFieldsValue();
   }, [form]);
 
-  useEffect(() => {
-    if (isEdit) {
-      setTitle("编辑");
-      form.setFieldsValue({
-        ...initMenuItem
-      });
-    } else {
-      setTitle("添加");
-    }
-  }, [initMenuItem, isEdit, visible, form]);
-
   return (
-    <Modal open title={title} onOk={creatRoleSubmit} onCancel={onCancel} width={800} getContainer={false} forceRender>
+    <Modal open title={initMenuItem.id ? "编辑" : "添加"} onOk={creatRoleSubmit} onCancel={onCancel} width={800} getContainer={false} forceRender>
       <Form form={form} onFinish={handleSubmit} initialValues={initMenuItem} {...layout} autoComplete="off">
         <Row>
           <Col span={20}>
-            <Form.Item name="version" label="菜单版本" rules={[{ required: false }]}>
+            <Form.Item name="version" label="菜单版本" rules={[{ required: false }]} hidden>
               <Input readOnly placeholder="自动生成" defaultValue={1} />
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item name="id" label="菜单ID" rules={[{ required: false }]}>
+            <Form.Item name="id" label="菜单ID" rules={[{ required: false }]} hidden>
               <Input readOnly placeholder="自动生成" />
             </Form.Item>
           </Col>
@@ -88,22 +76,22 @@ const MenuEditModal: FC<any> = ({ isEdit, onOk, visible, initMenuItem, parentUid
           </Col>
           <Col span={20}>
             <Form.Item name="sort" label="序号" rules={[{ required: false }]}>
-              <Input />
+              <Input type="number" max={100} />
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item name="type" label="类型" rules={[{ required: true }]} initialValue="menu">
+            <Form.Item name="type" label="类型" rules={[{ required: true }]} initialValue={1}>
               <Select placeholder="请选择类型" onChange={onGenderChange}>
-                <Option value="menu">菜单</Option>
-                <Option value="page">页面</Option>
+                <Option value={1}>菜单</Option>
+                <Option value={2}>页面</Option>
               </Select>
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item name="show" label="是否显示" rules={[{ required: true }]} initialValue="1">
+            <Form.Item name="show" label="是否显示" rules={[{ required: true }]} initialValue={1}>
               <Select placeholder="请选择是否在菜单中显示" onChange={hiddMenuChange}>
-                <Option value="1">显示</Option>
-                <Option value="0">隐藏</Option>
+                <Option value={1}>显示</Option>
+                <Option value={0}>隐藏</Option>
               </Select>
             </Form.Item>
           </Col>
