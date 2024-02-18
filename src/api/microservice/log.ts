@@ -41,3 +41,8 @@ export const pushPlacard = (payload: any) => {
 export const submitPlacard = (payload: any) => {
   return request(`${BASE_URL}logs/placard/submit`, "POST", payload);
 };
+
+/** 接口调用数量 */
+export const apiCount = (payload: any) => {
+  return request(`${BASE_URL}logs/apicount`, "GET", payload);
+};
