@@ -1,11 +1,12 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import bytes from "bytes";
-import dayjs from "dayjs";
-import { Row, Col, Card, Progress } from "antd";
-
-import styles from "./index.module.scss";
+import { apiCount } from "@/api/microservice/log";
 import { totalPercentage } from "@/utils/core";
 import { webSocketManager } from "@/utils/ws";
+import { Card, Col, Progress, Row } from "antd";
+import bytes from "bytes";
+import dayjs from "dayjs";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+
+import styles from "./index.module.scss";
 
 const statusColor = (percentage: number) => {
   if (percentage < 40) return "#52c41a";
@@ -51,6 +52,7 @@ const SystemInfo: React.FC = () => {
   const [curSystemTime, setCurSystemTime] = useState("加载中。。。");
   const [messageList, setMessageList] = useState<any>();
   const [loading, setLoading] = useState(true);
+  const [apiCounts, setApiCounts] = useState({ total: 0, today: 0 });
   const memPercentage = useMemo(() => {
     return totalPercentage(OsInfo.totalmem, OsInfo.freemem);
   }, []);
@@ -79,6 +81,14 @@ const SystemInfo: React.FC = () => {
     webSocketManager.postMessage({ type: "memStatus" });
 
     setMessageList(message);
+  }, []);
+
+  useEffect(() => {
+    apiCount({}).then(res => {
+      if (res.data.code === 200) {
+        setApiCounts(res.data.data);
+      }
+    });
   }, []);
 
   return (
@@ -121,10 +131,10 @@ const SystemInfo: React.FC = () => {
             {fetchinfo.mysqlVersion}
           </div>
           <div className={styles.itemText}>
-            <em>内存使用率 正常</em>
+            <em>API总调用次数 {apiCounts.total}</em>
           </div>
           <div className={styles.itemText}>
-            <em>硬盘使用率 正常</em>
+            <em>API今日调用次数 {apiCounts.today}</em>
           </div>
         </Card>
       </Col>
