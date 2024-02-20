@@ -8,8 +8,8 @@ import FailContainer from "@/pages/FailPage/FailContainer";
 import { Alert, Layout, Spin } from "antd";
 import { throttle } from "lodash-es";
 import { Suspense, useContext, useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
-
+import { CSSTransition, SwitchTransition } from "react-transition-group";
+import { Outlet, useLocation } from "react-router-dom";
 import styles from "./index.module.scss";
 
 const { Content, Sider } = Layout;
@@ -21,8 +21,8 @@ const SuspendFallbackLoading = () => (
 );
 
 const DefaultLayout = () => {
+  const location = useLocation();
   const { setTagPlanVisible, refresh } = useContext(MenuTagContext);
-
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
@@ -65,7 +65,19 @@ const DefaultLayout = () => {
           <ErrorBoundary fallbackRender={FailContainer}>
             <Suspense fallback={<SuspendFallbackLoading />}>
               <div className={styles.outletContainer}>
-                <div className={styles.pageOutlet}>{refresh ? <SuspendFallbackLoading /> : <Outlet />}</div>
+                <div className={styles.pageOutlet}>
+                  {refresh ? (
+                    <SuspendFallbackLoading />
+                  ) : (
+                    <SwitchTransition>
+                      <CSSTransition key={location.pathname} timeout={100} classNames="transformOutletitem">
+                        <div>
+                          <Outlet />
+                        </div>
+                      </CSSTransition>
+                    </SwitchTransition>
+                  )}
+                </div>
                 <Copyright />
               </div>
             </Suspense>
