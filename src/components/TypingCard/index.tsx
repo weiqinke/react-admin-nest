@@ -3,26 +3,22 @@ import { Card } from "antd";
 import Typing from "./Typing";
 
 const TypingCard = (props: any) => {
-  const { title, source } = props;
-  const sourceEl: any = useRef();
   const outputEl: any = useRef();
 
   useEffect(() => {
     const typing: any = new Typing({
-      source: sourceEl,
+      data: props.source,
       output: outputEl,
-      delay: 30,
-      stopFlag: false
+      delay: 50
     });
     typing.start();
     return () => {
-      typing.opts.done();
+      typing.done();
     };
-  }, []);
+  }, [props]);
 
   return (
-    <Card bordered={false} className="card-item" title={title}>
-      <div ref={sourceEl} style={{ display: "none" }} dangerouslySetInnerHTML={{ __html: source }} />
+    <Card bordered={false} className="card-item" title={props.title}>
       <div ref={outputEl} style={{ fontSize: "1.5rem" }} />
     </Card>
   );

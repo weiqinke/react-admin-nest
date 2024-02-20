@@ -4,10 +4,15 @@ class Typing {
   public output;
   public delay: number;
   public chain;
+  public element;
+  public doneState: boolean;
+  public timer;
 
   constructor(opts) {
     this.opts = opts || {};
-    this.source = opts.source.current;
+    const element = document.createElement("div");
+    element.innerHTML = opts.data;
+    this.element = element;
     this.output = opts.output;
     this.delay = opts.delay || 120;
     this.chain = {
@@ -15,7 +20,7 @@ class Typing {
       dom: this.output,
       val: []
     };
-    if (!(typeof this.opts.done === "function")) this.opts.done = function () {};
+    this.doneState = false;
   }
 
   convert(dom, arr) {
@@ -36,9 +41,10 @@ class Typing {
     }
     return arr;
   }
-
   print(dom, val, callback) {
-    setTimeout(function () {
+    clearTimeout(this.timer);
+    this.timer = null;
+    this.timer = setTimeout(function () {
       if (dom.current) {
         dom.current.appendChild(document.createTextNode(val));
       } else {
@@ -51,10 +57,11 @@ class Typing {
     }, this.delay);
   }
   play(ele) {
+    if (this.doneState) return;
     //当打印最后一个字符时，动画完毕，执行done
     if (!ele.val.length) {
       if (ele.parent) this.play(ele.parent);
-      else this.opts.done();
+      else this.done();
       return;
     }
     const current = ele.val.shift(); //获取第一个元素，同时删除数组中的第一个元素
@@ -78,8 +85,16 @@ class Typing {
   }
   start() {
     //初始化函数
-    this.chain.val = this.convert(this.source, this.chain.val);
+    this.chain.val = this.convert(this.element, this.chain.val);
+    clearTimeout(this.timer);
+    this.timer = null;
+    this.output.current.innerHTML = "";
     this.play(this.chain);
+  }
+  done() {
+    this.doneState = true;
+    clearTimeout(this.timer);
+    this.timer = null;
   }
 }
 
