@@ -23,8 +23,8 @@ const Login = () => {
         <Copyright />
       </div>
       <div className={styles.paopaocontainer}>
-        {[1, 1, 1, 1, 1, 1, 1, 1, 1].map(() => (
-          <div className={styles.bubble} />
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((item) => (
+          <div className={styles.bubble} key={item} />
         ))}
       </div>
     </div>
