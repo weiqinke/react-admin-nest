@@ -21,7 +21,7 @@ const MenusAdmin: FC = () => {
   const [menuslist, setMenuslist] = useState([]);
   const [parentUid, setparentUid] = useState("-1");
   const [visible, setVisible] = useState(false);
-  const [initMenuItem, setInitMenuItem] = useState();
+  const [initMenuItem, setInitMenuItem] = useState<any>();
 
   const [form] = Form.useForm();
   const { setFieldsValue } = form;

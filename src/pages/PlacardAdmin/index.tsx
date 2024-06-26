@@ -7,6 +7,7 @@ import { FC, useEffect, useState } from "react";
 import { getPlacard, pushPlacard, updatePlacard } from "@/api/microservice/log";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import styles from "./index.module.scss";
+import PageIntroduction from "@/components/PageIntroduction";
 
 interface PlacardData {
   created: string;
@@ -18,6 +19,15 @@ interface PlacardData {
   title: string;
   yetypear: string;
 }
+
+const infos = [
+  {
+    title: "系统设置"
+  },
+  {
+    title: "公告管理"
+  }
+];
 
 const PlacardAdmin: FC = () => {
   const columns: any = [
@@ -132,16 +142,18 @@ const PlacardAdmin: FC = () => {
 
   return (
     <div className={styles.placard}>
-      <Space size={[8, 16]} className={styles.header}>
-        <Button type="primary" className="topbtn" onClick={findAllPlacards}>
-          查询公告
-        </Button>
-        <Button type="primary" className="topbtn" onClick={() => setPlacard({})}>
-          添加公告
-        </Button>
-      </Space>
-
-      <Table columns={columns} dataSource={dataSource} rowKey="placardid" bordered={true} pagination={{ pageSize: 20 }} />
+      <PageIntroduction infos={infos} introduction="本页面是操作系统中的公告，可以用来添加和发布公告。" />
+      <div className={styles.tableContainer}>
+        <Space size={[8, 16]} className={styles.header}>
+          <Button type="primary" className="topbtn" onClick={findAllPlacards}>
+            查询公告
+          </Button>
+          <Button type="primary" className="topbtn" onClick={() => setPlacard({})}>
+            添加公告
+          </Button>
+        </Space>
+        <Table columns={columns} dataSource={dataSource} rowKey="placardid" bordered={true} pagination={{ pageSize: 20 }} />
+      </div>
       {placard && <PlacardEditModal placard={placard} onCancel={() => setPlacard(null)} onOk={onOk} />}
     </div>
   );
