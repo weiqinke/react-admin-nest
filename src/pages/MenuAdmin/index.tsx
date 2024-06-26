@@ -1,12 +1,21 @@
 import { menuFind, updateMenuItem } from "@/api/microservice/menu";
 import { MenuEditModal } from "@/components/Modals";
-import { getMenuStructure } from "@/utils/core";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { getMenuStructure, scrollToAnchor } from "@/utils/core";
+import { ExclamationCircleOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { Button, Form, Modal, Space, Table, Tag, message } from "antd";
 import { FC, useEffect, useState } from "react";
 import styles from "./index.module.scss";
+import PageIntroduction from "@/components/PageIntroduction";
 
 const { confirm } = Modal;
+const infos = [
+  {
+    title: "系统设置"
+  },
+  {
+    title: "菜单管理"
+  }
+];
 
 const MenusAdmin: FC = () => {
   const [menuslist, setMenuslist] = useState([]);
@@ -48,10 +57,14 @@ const MenusAdmin: FC = () => {
       responsive: ["xxl", "xl", "lg", "md"]
     },
     {
-      title: "备注",
-      dataIndex: "remarks",
+      title: "状态",
+      dataIndex: "banned",
       responsive: ["xxl", "xl", "lg", "md"],
-      render: (text: any) => <span>{text.slice(0, 15)}</span>
+      render: (item: any) => (
+        <Tag color={item ? "#f50" : "#2db7f5"}>
+          <span>{item ? "禁用" : "启用"}</span>
+        </Tag>
+      )
     },
     {
       title: "操作",
@@ -67,7 +80,7 @@ const MenusAdmin: FC = () => {
               编辑
             </Button>
             <Button type="link" onClick={() => removeMenuitem(record)}>
-              删除
+              {record?.banned ? "启用" : "禁用"}
             </Button>
           </div>
         );
@@ -79,12 +92,12 @@ const MenusAdmin: FC = () => {
     confirm({
       title: "提示",
       icon: <ExclamationCircleOutlined />,
-      content: <span style={{ color: "red", fontSize: "19px" }}>{`是否删除${record.name}菜单？`}</span>,
+      content: <span style={{ color: "red", fontSize: "19px" }}>{`是否 ${record?.banned ? "启用" : "禁用"} ${record.name} 菜单？`}</span>,
       okText: "确定",
       okType: "danger",
       cancelText: "取消",
       onOk: async () => {
-        const result = await updateMenuItem({ id: record.id, delete: 1 });
+        const result = await updateMenuItem({ id: record.id, banned: record?.banned ? 0 : 1 });
         if (result.data.code === 200) {
           message.info("操作成功");
           getallmenusdata();
@@ -112,7 +125,7 @@ const MenusAdmin: FC = () => {
 
   const getallmenusdata = () => {
     setMenuslist([]);
-    menuFind({ version: 1, delete: 0 }).then((result: any) => {
+    menuFind({ version: 1 }).then((result: any) => {
       if (result.data.code === 200) {
         const menudata = getMenuStructure(result.data.data);
         setMenuslist(menudata || []);
@@ -127,17 +140,28 @@ const MenusAdmin: FC = () => {
 
   useEffect(getallmenusdata, []);
 
+  useEffect(()=>{
+    scrollToAnchor("Anchor")
+  },[])
+
   return (
     <div className={styles.menusAdminContainer}>
-      <Space size={[8, 16]} className={styles.header}>
-        <Button type="primary" onClick={getallmenusdata}>
-          查询菜单
-        </Button>
-        <Button type="primary" onClick={() => addmenuItem(0)}>
-          添加菜单
-        </Button>
-      </Space>
-      <Table columns={columns} dataSource={menuslist} rowKey={(record: any) => record.id} bordered={true} className="menutable" pagination={{ pageSize: 18 }} />
+      <span id="Anchor" />
+      <PageIntroduction
+        infos={infos}
+        introduction="本页面是展示和操作系统中的菜单，可以新增和编辑你想要配置的路径，图标，排序等信息。操作完成后，需要在权限管理中，再次进行分配。"
+      />
+      <div className={styles.tableContainer}>
+        <Space size={[8, 16]} className={styles.header}>
+          <Button type="primary" icon={<SearchOutlined />} iconPosition="end" onClick={getallmenusdata}>
+            查询菜单
+          </Button>
+          <Button type="primary" icon={<PlusOutlined />} iconPosition="end" onClick={() => addmenuItem(0)}>
+            添加菜单
+          </Button>
+        </Space>
+        <Table columns={columns} dataSource={menuslist} rowKey={(record: any) => record.id} bordered={true} className="menutable" pagination={{ pageSize: 18 }} />
+      </div>
       {visible && <MenuEditModal parentUid={parentUid} initMenuItem={initMenuItem} onOk={onOk} onCancel={() => setVisible(false)} />}
     </div>
   );

@@ -289,3 +289,12 @@ export const getDateTimeFormat = unixtime => {
   const years = value / 3600 / 24 / 30 / 12;
   return Math.floor(years) + "年前";
 };
+
+export const scrollToAnchor = (anchorName) => {
+  if (anchorName) {
+      // 找到锚点
+      const anchorElement = document.getElementById(anchorName);
+      // 如果对应id的锚点存在，就跳转到锚点
+      if(anchorElement) { anchorElement.scrollIntoView({block: 'start', behavior: 'smooth'}); }
+  }
+}

@@ -1,5 +1,4 @@
 import { useRef, useEffect } from "react";
-import { Card } from "antd";
 import Typing from "./Typing";
 
 const TypingCard = (props: any) => {
@@ -18,9 +17,9 @@ const TypingCard = (props: any) => {
   }, [props]);
 
   return (
-    <Card bordered={false} className="card-item" title={props.title}>
-      <div ref={outputEl} style={{ fontSize: "1.5rem" }} />
-    </Card>
+    <div>
+      <div ref={outputEl} style={{ fontSize: props.fontSize || "1.5rem" }} />
+    </div>
   );
 };
 

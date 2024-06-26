@@ -1,6 +1,6 @@
 import { updaterole } from "@/api/caravan/Rbac";
 import { OperationRoleModal, RoleAllocationMenuModal, RoleAllocationUserModal } from "@/components/Modals";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { ExclamationCircleOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { Alert, Button, Modal, Space, Table, Tag, message } from "antd";
 import { FC, useEffect, useState } from "react";
 
@@ -9,8 +9,18 @@ import { findRoleMenus, findRoleUsers, findRoles } from "@/api/microservice/role
 import { findUsers } from "@/api/microservice/user";
 import { getMenuStructure } from "@/utils/core";
 import styles from "./index.module.scss";
+import PageIntroduction from "@/components/PageIntroduction";
 
 const { confirm } = Modal;
+
+const infos = [
+  {
+    title: "系统设置"
+  },
+  {
+    title: "权限管理"
+  }
+];
 
 const RoleList: FC = () => {
   const [dataSource, setDataSource] = useState([]);
@@ -64,7 +74,7 @@ const RoleList: FC = () => {
   };
   // 分配菜单
   const willGiveMenu = (record: any) => {
-    findRoleMenus({ id: record.id, delete: 0 }).then(result => {
+    findRoleMenus({ id: record.id }).then(result => {
       if (result.data.code === 200) {
         setRoleCode(record.id);
         setChangeMenu(result.data.data || []);
@@ -143,27 +153,34 @@ const RoleList: FC = () => {
 
   return (
     <div className={styles.container}>
-      <Alert
-        type="success"
-        message={
-          <div className={styles.tip}>
-            朋友们,咱们尽量别改动
-            <span className={styles.weightFont}>qkstat</span>
-            的权限和菜单，因为新人登陆进来都是这个账号，祝大家体验愉快，有问题可以提
-            <span className={styles.weightFont}>issues</span>
-            ,我会及时回复您的。
-          </div>
-        }
-      />
-      <Space size={[8, 16]} className={styles.header}>
-        <Button type="primary" onClick={findAllRole}>
-          查询角色
-        </Button>
-        <Button type="primary" onClick={() => setRole({})}>
-          添加角色
-        </Button>
-      </Space>
-      <Table rowKey="id" columns={columns} dataSource={dataSource} />
+      <div className={styles.tipContainer}>
+        <Alert
+          type="success"
+          message={
+            <div className={styles.tip}>
+              朋友们,咱们尽量别改动
+              <span className={styles.weightFont}>qkstat</span>和<span className={styles.weightFont}>admin</span>
+              的权限和菜单，因为新人登陆进来都是这个账号，祝大家体验愉快，有问题可以提
+              <span className={styles.weightFont}>issues</span>
+              ,我会及时回复您的。
+            </div>
+          }
+        />
+      </div>
+
+      <PageIntroduction infos={infos} introduction="本页面是操作系统中的权限，可以用来分配人员和分配菜单。" />
+      <div className={styles.tableContainer}>
+        <Space size={[8, 16]} className={styles.header}>
+          <Button type="primary" icon={<SearchOutlined />} iconPosition="end" onClick={findAllRole}>
+            查询角色
+          </Button>
+          <Button type="primary" icon={<PlusOutlined />} iconPosition="end" onClick={() => setRole({})}>
+            添加角色
+          </Button>
+        </Space>
+        <Table rowKey="id" columns={columns} dataSource={dataSource} />
+      </div>
+
       {role && <OperationRoleModal role={role} onOk={() => findAllRole()} onCancel={() => setRole(null)} />}
       {shareUsers && (
         <RoleAllocationUserModal dataSource={userDataSource} initUIDs={initUIDs} id={roleCode} onOk={() => findAllRole()} onCancel={() => setShareUsers(false)} />

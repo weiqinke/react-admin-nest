@@ -2,6 +2,10 @@
   padding: 12px;
 }
 
+.tipContainer{
+  margin-bottom: 12px;
+}
+
 .tip {
   font-size: 1em;
 }
@@ -9,8 +13,15 @@
 .weightFont {
   font-size: 15px;
   color: #f00;
+  padding:0 6px;
 }
 
 .header {
-  padding: 12px 0;
+  margin: 12px 0;
+}
+
+.tableContainer{
+  background-color: #fff;;
+  padding: 0px 12px;
+  margin-top: 12px;
 }
