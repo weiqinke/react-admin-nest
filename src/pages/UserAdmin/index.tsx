@@ -1,18 +1,27 @@
 import { UserEditModal } from "@/components/Modals";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { ArrowRightOutlined, ExclamationCircleOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { Button, Modal, Space, Table, Tag, message } from "antd";
 import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { findUsers, updateUser } from "@/api/microservice/user";
 import styles from "./index.module.scss";
+import PageIntroduction from "@/components/PageIntroduction";
 
 const { confirm } = Modal;
+
+const infos = [
+  {
+    title: "系统设置"
+  },
+  {
+    title: "用户管理"
+  }
+];
 
 const UserAdmin: FC = () => {
   const [dataSource, setDataSource] = useState([]);
   const [user, setUser] = useState(null);
-
   const navigate = useNavigate();
 
   const showDeleteConfirm = (item: any) => {
@@ -98,18 +107,22 @@ const UserAdmin: FC = () => {
 
   return (
     <div className={styles.userAdminContainer}>
-      <Space size={[8, 16]} className={styles.header}>
-        <Button type="primary" onClick={findAll}>
-          查询人员
-        </Button>
-        <Button type="primary" onClick={() => setUser({})}>
-          添加人员
-        </Button>
-        <Button type="primary" onClick={() => navigate("/myinfo")}>
-          跳转
-        </Button>
-      </Space>
-      <Table columns={columns} dataSource={dataSource} rowKey="uid" />
+      <PageIntroduction infos={infos} introduction="本页面是操作系统中的用户，可以用来添加和编辑用户。" />
+      <div className={styles.tableContainer}>
+        <Space size={[8, 16]} className={styles.header}>
+          <Button type="primary" icon={<SearchOutlined />} iconPosition="end" onClick={findAll}>
+            查询人员
+          </Button>
+          <Button type="primary" icon={<PlusOutlined />} iconPosition="end" onClick={() => setUser({})}>
+            添加人员
+          </Button>
+          <Button type="primary" icon={<ArrowRightOutlined />} iconPosition="end" onClick={() => navigate("/profile")}>
+            跳转
+          </Button>
+        </Space>
+        <Table columns={columns} dataSource={dataSource} rowKey="uid" />
+      </div>
+
       {user && <UserEditModal initUser={user} onOk={() => findAll()} onCancel={() => setUser(null)} />}
     </div>
   );
