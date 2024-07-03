@@ -29,29 +29,23 @@ const UserEditModal: FC<any> = (props: any) => {
     reader.addEventListener("load", () => callback(reader.result));
     reader.readAsDataURL(img);
   };
-  const handleUpload = async (uid: string) => {
-    if (fileList.length <= 0 || !uid) {
-      return;
-    }
+  const handleUpload = async () => {
+    if (fileList.length <= 0) return;
     const formData = new FormData();
     fileList.forEach(file => {
       formData.append("files", file);
     });
-    if (uploading) {
-      return;
-    }
-    formData.append("userUid", uid);
+    if (uploading) return;
     setuploading(true);
     const avatar = await axios
       .post(
         "https://freeimg.cn/api/v1/upload",
         {
-          file: fileList[0],
-          album_id: 145
+          file: fileList[0]
         },
         {
           headers: {
-            Authorization: "Bearer 134|dfgG6kRMsd3SP6E0ZJvieEq98mOOhdaATYQRZruZ",
+            Authorization: "Bearer 391|UOekGM7OekO9sFl6g6WNl7PlFn20b4Al1UCIji6W",
             "Content-Type": "multipart/form-data"
           }
         }
@@ -66,10 +60,7 @@ const UserEditModal: FC<any> = (props: any) => {
         message.info("头像修改失败");
         return "";
       });
-    updateUserAvatarUrl({
-      uid,
-      avatar
-    }).finally(() => onOk(true));
+    return avatar;
   };
 
   const UpLoadProps = {
@@ -94,24 +85,26 @@ const UserEditModal: FC<any> = (props: any) => {
   const creatRoleSubmit = async () => {
     const data = await form.validateFields();
     let result: any = null;
+    const avatar = await handleUpload();
+    const { username, nick, title, mobile, email, sex, password, address } = data;
+    const payload: any = {
+      uid: initUser.uid,
+      username,
+      mobile,
+      email,
+      profile: {
+        nick,
+        title,
+        sex,
+        address,
+        avatar
+      }
+    };
+    if (password) payload.password = trim(password);
     if (initUser?.uid) {
-      const { username, nick, title, mobile, email, sex, password, address } = data;
-      const payload: any = {
-        uid: initUser.uid,
-        username,
-        mobile,
-        email,
-        profile: {
-          nick,
-          title,
-          sex,
-          address
-        }
-      };
-      if (password) payload.password = trim(password);
       result = await updateUser(payload);
     } else {
-      result = await createUser(data);
+      result = await createUser(payload);
     }
 
     if (result.data.code !== 200) {
@@ -120,7 +113,7 @@ const UserEditModal: FC<any> = (props: any) => {
     }
     message.info("操作成功");
     setuploading(false);
-    handleUpload(initUser.uid || result.data.data.uid);
+    onOk();
   };
 
   const setInputType = () => {
@@ -129,7 +122,7 @@ const UserEditModal: FC<any> = (props: any) => {
 
   useEffect(() => {
     if (initUser) {
-      setAvatarUrl(initUser.avatar || "");
+      setAvatarUrl(initUser?.profile?.avatar || "");
     }
     if (initUser?.id) {
       setIsreadOnly(true);
