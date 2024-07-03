@@ -12,7 +12,7 @@ import MenuTagContext from "@/contexts/MenuTagContext";
 import styles from "./index.module.scss";
 
 const DefaultLayoutHeader = () => {
-  const { value, setValue } = useContext(ProjectContext);
+  const { profile, setValue } = useContext<any>(ProjectContext);
   const { addTag } = useContext(MenuTagContext);
   const navigate = useNavigate();
 
@@ -121,8 +121,8 @@ const DefaultLayoutHeader = () => {
       <div className={styles.user}>
         <Dropdown menu={{ items, onClick }}>
           <div className={styles.nameContainer}>
-            <Avatar src={value.avatar} icon={<UserOutlined />} />
-            <span className={styles.name}>{value.nick}</span>
+            <Avatar src={profile?.avatar} icon={<UserOutlined />} />
+            <span className={styles.name}>{profile?.nick}</span>
           </div>
         </Dropdown>
       </div>

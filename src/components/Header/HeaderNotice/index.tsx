@@ -127,10 +127,8 @@ const HeaderNotice: FC = () => {
   return (
     <div className={styles.notice}>
       <Dropdown menu={{ items, onClick }} placement="bottomRight" trigger={["hover"]} onOpenChange={handleOpenChange} open={open}>
-        <Badge count={noticeList.length || noticeCount} overflowCount={999}>
-          <span>
-            <BellOutlined style={{ fontSize: "22px", color: "#fff" }} />
-          </span>
+        <Badge count={noticeList.length || noticeCount} overflowCount={999} offset={[0, 10]}>
+          <Avatar shape="square" size="large" src={<BellOutlined style={{ fontSize: "22px", color: "#fff" }} />} />
         </Badge>
       </Dropdown>
     </div>

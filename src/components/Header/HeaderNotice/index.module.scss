@@ -1,11 +1,11 @@
 .notice {
   float: right;
-  padding: 0 20px;
-  padding-top: 10px;
-  margin-right: 10px;
-
-  cursor: pointer;
   user-select: none;
+  cursor: pointer;
+  margin-right: 20px;
+  &:hover {
+    background-color: #41b3a3;
+  }
 }
 
 .container {
