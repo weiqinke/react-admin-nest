@@ -16,7 +16,8 @@ const RoleAllocationUserModal: FC<any> = ({ dataSource, onOk, onCancel, initUIDs
       .then(res => {
         if (res.data.code === 200) {
           onOk();
-          return message.info("操作成功");
+          message.info("操作成功");
+          return;
         }
       })
       .catch(() => message.error("操作失败"));

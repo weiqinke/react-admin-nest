@@ -146,7 +146,7 @@ const UserInfoCard = () => {
                     <Button size="small" type="text">
                       <IconFont type="icon-profile" size={24} style={{ color: "#000" }} /> 3
                     </Button>
-                    <Avatar.Group maxCount={2} maxStyle={{ color: "#f56a00", backgroundColor: "#fde3cf" }}>
+                    <Avatar.Group max={{ count: 2, style: { color: "#f56a00", backgroundColor: "#fde3cf" } }}>
                       <Avatar src="https://www.freeimg.cn/i/2024/01/13/65a29b436889b.jpg" />
                       <Avatar style={{ backgroundColor: "#f56a00" }}>K</Avatar>
                       <Avatar style={{ backgroundColor: "#1677ff" }} icon={<AntDesignOutlined />} />

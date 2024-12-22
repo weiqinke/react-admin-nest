@@ -1,7 +1,7 @@
 import { apiCount } from "@/api/microservice/log";
 import { totalPercentage } from "@/utils/core";
 import { webSocketManager } from "@/utils/ws";
-import { Card, Col, Progress, Row } from "antd";
+import { Col, Progress, Row } from "antd";
 import bytes from "bytes";
 import dayjs from "dayjs";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -79,7 +79,8 @@ const SystemInfo: React.FC = () => {
     ];
     console.log("我发送一次");
     webSocketManager.postMessage({ type: "memStatus" });
-
+    messageList;
+    loading;
     setMessageList(message);
   }, []);
 
@@ -94,57 +95,79 @@ const SystemInfo: React.FC = () => {
   return (
     <Row gutter={[16, 12]}>
       <Col xs={24} sm={24} md={8} lg={8} xl={8} xxl={8}>
-        <Card title="系统参数" hoverable loading={loading}>
-          <div className={styles.itemText}>
-            <em>系统类型：</em>
-            {OsInfo.platform}_{OsInfo.arch}
+        <div className={styles.cardContainer}>
+          <div className={styles.Gcontainer}>
+            <div className={styles.Ginner}></div>
+            <div className={styles.Gafter}></div>
           </div>
-          <div className={styles.itemText}>
-            <em>Node版本：</em>
-            {fetchinfo.nodeVersion}
+          <div className={styles.body}>
+            <div className={styles.title}>系统参数</div>
+            <div className={styles.itemText}>
+              <em>系统类型：</em>
+              {OsInfo.platform}_{OsInfo.arch}
+            </div>
+            <div className={styles.itemText}>
+              <em>Node版本：</em>
+              {fetchinfo.nodeVersion}
+            </div>
+            <div className={styles.itemText}>
+              <em>MySQL版本：</em>
+              {fetchinfo.mysqlVersion}
+            </div>
+            <div className={styles.itemText}>
+              <em>当前环境：</em>
+              <em>生产环境</em>
+            </div>
+            <div className={styles.itemText}>
+              <em>系统时间：</em>
+              <em>{curSystemTime}</em>
+            </div>
           </div>
-          <div className={styles.itemText}>
-            <em>MySQL版本：</em>
-            {fetchinfo.mysqlVersion}
-          </div>
-          <div className={styles.itemText}>
-            <em>当前环境：</em>
-            <em>生产环境</em>
-          </div>
-          <div className={styles.itemText}>
-            <em>系统时间：</em>
-            <em>{curSystemTime}</em>
-          </div>
-        </Card>
+        </div>
       </Col>
 
       <Col xs={24} sm={24} md={8} lg={8} xl={8} xxl={8}>
-        <Card title="我的消息" hoverable loading={loading}>
-          <div className={styles.itemText}>
-            <em>CPU Intel(R) Xeon(R) Platinum 8280L 正常</em>
+        <div className={`${styles.cardContainer} ${styles.fense}`}>
+          <div className={styles.Gcontainer}>
+            <div className={styles.Ginner}></div>
+            <div className={styles.Gafter}></div>
           </div>
-          <div className={styles.itemText}>
-            <em>最近5、10、15分钟平均负载 正常</em>
+
+          <div className={styles.body}>
+            <div className={styles.title}>我的消息</div>
+            <div className={styles.itemText}>
+              <em>CPU Intel(R) Xeon(R) Platinum 8280L 正常</em>
+            </div>
+            <div className={styles.itemText}>
+              <em>最近5、10、15分钟平均负载 正常</em>
+            </div>
+            <div className={styles.itemText}>
+              <em>MySQL版本：</em>
+              {fetchinfo.mysqlVersion}
+            </div>
+            <div className={styles.itemText}>
+              <em>API总调用次数 {apiCounts.total}</em>
+            </div>
+            <div className={styles.itemText}>
+              <em>API今日调用次数 {apiCounts.today}</em>
+            </div>
           </div>
-          <div className={styles.itemText}>
-            <em>MySQL版本：</em>
-            {fetchinfo.mysqlVersion}
-          </div>
-          <div className={styles.itemText}>
-            <em>API总调用次数 {apiCounts.total}</em>
-          </div>
-          <div className={styles.itemText}>
-            <em>API今日调用次数 {apiCounts.today}</em>
-          </div>
-        </Card>
+        </div>
       </Col>
       <Col xs={24} sm={24} md={8} lg={8} xl={8} xxl={8}>
-        <Card title={`内存使用率(${memPercentage}%)`} hoverable>
-          <div className={styles.mem}>
-            <Progress type="circle" percent={memPercentage} strokeColor={statusColor(memPercentage)} format={percent => percent + "%"} />
-            <div className={styles.surplus}>剩余{bytes(OsInfo.freemem)}</div>
+        <div className={`${styles.cardContainer} ${styles.zise}`}>
+          <div className={styles.Gcontainer}>
+            <div className={styles.Ginner}></div>
+            <div className={styles.Gafter}></div>
           </div>
-        </Card>
+          <div className={styles.body}>
+            <div className={styles.title}>{`内存使用率(${memPercentage}%)`}</div>
+            <div className={styles.mem}>
+              <Progress type="circle" percent={memPercentage} strokeColor={statusColor(memPercentage)} format={percent => percent + "%"} />
+              <div className={styles.surplus}>剩余{bytes(OsInfo.freemem)}</div>
+            </div>
+          </div>
+        </div>
       </Col>
     </Row>
   );

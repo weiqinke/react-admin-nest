@@ -1,10 +1,9 @@
-import React, { FC, useEffect, useRef } from "react";
+import { FC, useEffect, useRef } from "react";
 import * as echarts from "echarts";
 const LineChart: FC = () => {
   const ref = useRef();
 
   const data = [1700, 2800, 3700, 3600, 4800, 5700];
-  const barWidth = 40;
 
   const offsetX = 20;
   const offsetY = 10;

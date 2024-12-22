@@ -12,7 +12,10 @@ const RoleEditModal: FC<any> = ({ role, onCancel, onOk }: any) => {
 
   const onFinish = async data => {
     const result: any = role?.id ? await updateRole({ ...role, ...data }) : await createRole({ ...role, ...data });
-    if (result.data.code !== 200) return message.info("操作失败");
+    if (result.data.code !== 200) {
+      message.info("操作失败");
+      return;
+    }
     message.info("操作成功");
     onOk();
   };

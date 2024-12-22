@@ -7,7 +7,9 @@ const PieBorderRadius: FC = () => {
     const myChart: any = echarts.init(ref.current);
     myChart.setOption({
       title: {
-        text: "UserAgent"
+        text: "UserAgent",
+        left: 12,
+        top: 12
       },
       tooltip: {
         trigger: "item"

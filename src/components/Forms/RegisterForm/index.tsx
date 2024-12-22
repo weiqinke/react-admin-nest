@@ -8,7 +8,7 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
 
-const RegisterForm = ({ goBack }) => {
+const RegisterForm = ({ goBack, setCloseEyes }) => {
   const initialValues = { username: "qkstart", password: "123456", submitpassword: "123456" };
   const [loading, setLoading] = useState(false);
   const { setValue }: any = useContext(ProjectContext);
@@ -18,7 +18,10 @@ const RegisterForm = ({ goBack }) => {
     userMenus({ uid, version: 1 }).then(r => {
       if (r.data.code === 200) {
         const data = r.data.data;
-        if (!data) return message.info("暂未分配权限，请通知管理员分配权限");
+        if (!data) {
+          message.info("暂未分配权限，请通知管理员分配权限");
+          return;
+        }
         const menus = getMenuStructure(data);
         saveMenus(JSON.stringify(menus));
         //找到第一个url直接跳转过去吧
@@ -50,6 +53,13 @@ const RegisterForm = ({ goBack }) => {
       .catch(() => setLoading(false));
   };
 
+  const onBlur = () => {
+    setCloseEyes(false);
+  };
+  const onFocus = () => {
+    setCloseEyes(true);
+  };
+
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Nest-Admin</h1>
@@ -59,16 +69,16 @@ const RegisterForm = ({ goBack }) => {
             name="basic"
             initialValues={initialValues}
             onFinish={onFinish}
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
             style={{ maxWidth: 600 }}
             autoComplete="off">
             <Form.Item label="用户名称" name="username" rules={[{ required: true, message: "Please input your username!" }]}>
-              <Input />
+              <Input onBlur={onBlur} onFocus={onFocus} />
             </Form.Item>
 
             <Form.Item label="用户密码" name="password" rules={[{ required: true, message: "Please input your password!" }]}>
-              <Input.Password />
+              <Input.Password onBlur={onBlur} onFocus={onFocus} />
             </Form.Item>
 
             <Form.Item
@@ -87,10 +97,10 @@ const RegisterForm = ({ goBack }) => {
                   }
                 })
               ]}>
-              <Input.Password />
+              <Input.Password onBlur={onBlur} onFocus={onFocus} />
             </Form.Item>
 
-            <Form.Item wrapperCol={{ xs: { span: 24 }, sm: { offset: 8 }, md: { offset: 8 }, lg: { offset: 8 } }}>
+            <Form.Item wrapperCol={{ span: 24 }}>
               <Button type="primary" htmlType="submit" block>
                 注册
               </Button>

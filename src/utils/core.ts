@@ -290,11 +290,52 @@ export const getDateTimeFormat = unixtime => {
   return Math.floor(years) + "年前";
 };
 
-export const scrollToAnchor = (anchorName) => {
+export const scrollToAnchor = anchorName => {
   if (anchorName) {
-      // 找到锚点
-      const anchorElement = document.getElementById(anchorName);
-      // 如果对应id的锚点存在，就跳转到锚点
-      if(anchorElement) { anchorElement.scrollIntoView({block: 'start', behavior: 'smooth'}); }
+    // 找到锚点
+    const anchorElement = document.getElementById(anchorName);
+    // 如果对应id的锚点存在，就跳转到锚点
+    if (anchorElement) {
+      anchorElement.scrollIntoView({ block: "start", behavior: "smooth" });
+    }
   }
-}
+};
+
+export const getRandom = (option: any) => {
+  let ret: any, random: any;
+  const clientHeight = document.body.clientHeight;
+  const clientWidth = document.body.clientWidth;
+  switch (option) {
+    case "x":
+      ret = Math.random() * clientWidth;
+      break;
+    case "y":
+      ret = Math.random() * clientHeight;
+      break;
+    case "s":
+      ret = Math.random();
+      break;
+    case "r":
+      ret = Math.random() * 6;
+      break;
+    case "fnx":
+      random = -0.5 + Math.random() * 1;
+      ret = function (x: any) {
+        return x + 0.5 * random - 1.7;
+      };
+      break;
+    case "fny":
+      random = 1.5 + Math.random() * 0.7;
+      ret = function (x: any, y: any) {
+        return y + random;
+      };
+      break;
+    case "fnr":
+      random = Math.random() * 0.03;
+      ret = function (r: any) {
+        return r + random;
+      };
+      break;
+  }
+  return ret;
+};

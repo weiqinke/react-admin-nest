@@ -1,4 +1,3 @@
-import { updateUserAvatarUrl } from "@/api/caravan/Login";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Col, Form, Input, Modal, Radio, Row, Upload, message } from "antd";
 import { trim } from "lodash-es";
@@ -21,7 +20,6 @@ const UserEditModal: FC<any> = (props: any) => {
   const [form] = Form.useForm();
   const [type, setType] = useState("text");
   const [avatarUrl, setAvatarUrl] = useState(initialValues.avatar || "");
-  const [isreadOnly, setIsreadOnly] = useState(true);
   const [fileList, setfileList] = useState<any[]>([]);
   const [uploading, setuploading] = useState(false);
   const getBase64 = async (img: any, callback: any) => {
@@ -124,10 +122,7 @@ const UserEditModal: FC<any> = (props: any) => {
     if (initUser) {
       setAvatarUrl(initUser?.profile?.avatar || "");
     }
-    if (initUser?.id) {
-      setIsreadOnly(true);
-    } else {
-      setIsreadOnly(false);
+    if (!initUser?.id) {
       form.setFieldsValue({ sex: "1" });
     }
     return () => {

@@ -15,7 +15,7 @@ import qrimg from "@/assets/qrcode.png";
 import IconFont from "@/components/IconFont";
 import styles from "./index.module.scss";
 
-const LoginForm = ({ setRegister }) => {
+const LoginForm = ({ setRegister, setCloseEyes }) => {
   const navigate = useNavigate();
   const { setValue }: any = useContext(ProjectContext);
   const { setTags } = useContext(MenuTagContext);
@@ -89,7 +89,10 @@ const LoginForm = ({ setRegister }) => {
   const getMenuData = uid => {
     userMenus({ uid, version: 1 }).then(r => {
       const data = r.data.data;
-      if (!data) return message.info("暂未分配权限，请通知管理员分配权限");
+      if (!data) {
+        message.info("暂未分配权限，请通知管理员分配权限");
+        return;
+      }
       const menus = getMenuStructure(data);
       saveMenus(JSON.stringify(menus));
       webSocketManager.postMessage({
@@ -122,6 +125,12 @@ const LoginForm = ({ setRegister }) => {
     });
   }, []);
 
+  const onBlur = () => {
+    setCloseEyes(false);
+  };
+  const onFocus = () => {
+    setCloseEyes(true);
+  };
   return (
     <div className={styles.container}>
       <div className={styles.changeQR} onClick={() => setIsFlipped(v => !v)}>
@@ -135,24 +144,21 @@ const LoginForm = ({ setRegister }) => {
           <Spin spinning={loading} delay={500}>
             <Form name="basic" initialValues={initialValues} onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete="off">
               <Form.Item name="loginName" rules={[{ required: true, message: "请输入用户名!" }]}>
-                <Input placeholder="qkstart" prefix={<UserOutlined />} />
+                <Input placeholder="qkstart" prefix={<UserOutlined />} onBlur={onBlur} onFocus={onFocus} />
               </Form.Item>
 
               <Form.Item name="password" rules={[{ required: true, message: "请输入密码!" }]}>
-                <Input type="password" placeholder="123456" prefix={<LockOutlined />} />
+                <Input type="password" placeholder="123456" prefix={<LockOutlined />} onBlur={onBlur} onFocus={onFocus} />
               </Form.Item>
 
               <Form.Item className={styles.captchaLogin}>
                 <Form.Item name="captcha" rules={[{ required: true, message: "请输入验证码!" }]} noStyle>
-                  <Input placeholder="请输入验证码" className={styles.captchaInput} />
+                  <Input placeholder="请输入验证码" className={styles.captchaInput} onBlur={onBlur} onFocus={onFocus} />
                 </Form.Item>
                 <canvas width="140" height="32" id="captchaLogin" ref={inputRef} className={styles.captchaContainer} title="看不清？点击换一张。"></canvas>
               </Form.Item>
 
               <div className={styles.other}>
-                {/* <Form.Item name="remember" valuePropName="checked" noStyle>
-                  <Checkbox>记住登录状态</Checkbox>
-                </Form.Item> */}
                 <Form.Item noStyle>
                   <span className={styles.register} onClick={setRegister}>
                     注册(register)
@@ -172,11 +178,11 @@ const LoginForm = ({ setRegister }) => {
             </Form>
 
             <Divider plain style={{ borderWidth: 13 }}>
-              或者使用第三方登录
+              使用第三方登录
             </Divider>
             <div className={styles.ohter}>
               <div className={styles.type}>
-                <Button type="link" href="http://ssr.nest-admin.com">
+                <Button type="link" href="https://ssr.nest-admin.com">
                   <IconFont type="icon-cib-next-js" />
                   SSR
                 </Button>
@@ -190,7 +196,7 @@ const LoginForm = ({ setRegister }) => {
                 </Button>
               </div>
               <div className={styles.type}>
-                <Button type="link" href="http://webpack.nest-admin.com">
+                <Button type="link" href="https://webpack.nest-admin.com">
                   <IconFont type="icon-webpack" />
                   Webpack
                 </Button>

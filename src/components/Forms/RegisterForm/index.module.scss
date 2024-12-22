@@ -1,14 +1,16 @@
 .container {
   user-select: none;
-  padding: 12px;
+  padding: 40px;
   min-width: 324px;
   position: relative;
   background: rgba(164, 203, 200, 1);
+
 }
 
 .title {
   text-align: center;
-  padding: 0px 12px;
+  padding: 0px;
+  margin: 0px 0px 12px 0px;
 }
 
 .forgetPassword {
