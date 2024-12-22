@@ -1,0 +1,22 @@
+@import "@/styles/themeMixin";
+
+.ThemeColor {
+  float: right;
+  cursor: pointer;
+  user-select: none;
+  margin-right: 10px;
+  font-size: 22px;
+  padding: 0 12px;
+  @include get-class-from-key("color", "head-icon-color");
+  &:hover {
+    @include get-class-from-key("background-color", "head-icon-bg");
+    @include get-class-from-key("color", "head-icon-bg-hover");
+  }
+}
+
+.themetooltip {
+  @include get-class-from-key("color", "head-icon-color");
+  &:hover {
+    @include get-class-from-key("background-color", "head-icon-bg");
+  }
+}

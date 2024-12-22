@@ -1,9 +1,10 @@
+import React from "react";
 import ReactDOM from "react-dom/client";
 import ProjectRouter from "./router/index.tsx";
 import { RouterProvider } from "react-router-dom";
-import React from "react";
 
-import "./reset.css";
+import "./styles/reset.css";
+
 const router = ProjectRouter();
 
 ReactDOM.createRoot(document.getElementById("caravan-root")!).render(

@@ -1,15 +1,16 @@
 import ProjectContext from "@/contexts/ProjectContext";
 import { webSocketManager } from "@/utils/ws";
-import { UserOutlined } from "@ant-design/icons";
+import { SunOutlined, UserOutlined } from "@ant-design/icons";
 import { Avatar, Dropdown, MenuProps, Modal } from "antd";
 import html2canvas from "html2canvas";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import HeaderNotice from "../HeaderNotice";
 
 import { submitPlacard, userPlacard } from "@/api/microservice/log";
 import MenuTagContext from "@/contexts/MenuTagContext";
 import styles from "./index.module.scss";
+import ThemeColor from "../ThemeColor";
 
 const DefaultLayoutHeader = () => {
   const { profile, setValue } = useContext<any>(ProjectContext);
@@ -27,11 +28,11 @@ const DefaultLayoutHeader = () => {
     }
   };
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem("token");
     setValue({});
     navigate("/login");
-  };
+  }, [setValue, navigate]);
 
   const items: MenuProps["items"] = [
     {
@@ -75,13 +76,18 @@ const DefaultLayoutHeader = () => {
 
   useEffect(() => {
     const removeHandler = webSocketManager.addEventHandler(payload => {
-      if (payload?.type === "HandleForcedOffline") logout();
+      if (payload?.type === "HandleForcedOffline") {
+        logout();
+      }
       if (payload?.type === "GetPageView") {
         GetPageView(payload);
       }
     });
-    return removeHandler;
-  }, []);
+    return () => {
+      console.log("我要断开一次吗");
+      removeHandler();
+    };
+  }, [logout]);
 
   useEffect(() => {
     if (readPlacard) return;
@@ -114,7 +120,7 @@ const DefaultLayoutHeader = () => {
   }, [readPlacard]);
 
   return (
-    <div className={styles.container}>
+    <div className={styles.layoutHeader}>
       <div className={styles.logo} onClick={() => navigate("/workplace")}>
         <span className={styles.title}>nest-admin</span>
       </div>
@@ -127,6 +133,7 @@ const DefaultLayoutHeader = () => {
         </Dropdown>
       </div>
       <HeaderNotice />
+      <ThemeColor />
     </div>
   );
 };

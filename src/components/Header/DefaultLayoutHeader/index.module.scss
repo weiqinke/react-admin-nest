@@ -1,37 +1,65 @@
-.container {
+@import "@/styles/themeMixin";
+
+.layoutHeader {
   height: 50px;
   line-height: 50px;
   overflow: hidden;
-  background-color: #001529;
-  color: #fff;
-}
-
-.user {
-  float: right;
-  cursor: pointer;
-  user-select: none;
-
-  &:hover {
-    background-color: #41b3a3;
+  @include get-class-from-key("background-color");
+  @include get-class-from-key("color", "color-head");
+  .user {
+    float: right;
+    cursor: pointer;
+    user-select: none;
+    @include get-class-from-key("background-color");
+    @include get-class-from-key("color", "head-icon-color");
+    &:hover {
+      @include get-class-from-key("background-color", "head-icon-bg");
+      @include get-class-from-key("color", "head-icon-bg-hover");
+    }
   }
-}
 
-.nameContainer {
-  padding: 0 12px;
-}
+  .nameContainer {
+    padding: 0 12px;
+  }
 
-.name {
-  margin-left: 6px;
-}
+  .name {
+    margin-left: 6px;
+  }
 
-.logo {
-  float: left;
-  cursor: pointer;
-  user-select: none;
-  width: 200px;
-  text-align: center;
-  font-size: 30px;
-  font-weight: bold;
+  .logo {
+    float: left;
+    cursor: pointer;
+    user-select: none;
+    width: 200px;
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+  }
+
+  .title {
+    /*渐变背景*/
+    background-image: -webkit-linear-gradient(
+      left,
+      #3498db,
+      #f47920 10%,
+      #d71345 20%,
+      #f7acbc 30%,
+      #ffd400 40%,
+      #3498db 50%,
+      #f47920 60%,
+      #d71345 70%,
+      #f7acbc 80%,
+      #ffd400 90%,
+      #3498db
+    );
+    color: transparent; /*文字填充色为透明*/
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    background-size: 200% 100%;
+    /* 动画 */
+    animation: masked-animation 4s infinite linear;
+  }
 }
 
 @keyframes masked-animation {
@@ -41,29 +69,4 @@
   100% {
     background-position: -100% 0;
   }
-}
-
-.title {
-  /*渐变背景*/
-  background-image: -webkit-linear-gradient(
-    left,
-    #3498db,
-    #f47920 10%,
-    #d71345 20%,
-    #f7acbc 30%,
-    #ffd400 40%,
-    #3498db 50%,
-    #f47920 60%,
-    #d71345 70%,
-    #f7acbc 80%,
-    #ffd400 90%,
-    #3498db
-  );
-  color: transparent; /*文字填充色为透明*/
-  -webkit-text-fill-color: transparent;
-  -webkit-background-clip: text;
-  background-clip: text;
-  background-size: 200% 100%;
-  /* 动画 */
-  animation: masked-animation 4s infinite linear;
 }

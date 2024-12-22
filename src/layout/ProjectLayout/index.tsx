@@ -20,6 +20,17 @@ const ProjectLayout = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const themeDict = {
+      light: "dark",
+      dark: "light"
+    };
+    console.log("ProjectLayout，初始化一次主题色");
+    const theme = localStorage.getItem("data-theme") || "light";
+    localStorage.setItem("data-theme", themeDict[theme]);
+    window.document.documentElement.setAttribute("data-theme", themeDict[theme]);
+  }, []);
+
   return (
     <ConfigProvider
       theme={{
@@ -34,7 +45,9 @@ const ProjectLayout = () => {
       }}>
       <ProjectContextProvider>
         <MenuTagContextProvider>
-          <Outlet />
+          <div id="default-layout">
+            <Outlet />
+          </div>
         </MenuTagContextProvider>
       </ProjectContextProvider>
     </ConfigProvider>

@@ -23,7 +23,6 @@ const HeaderNotice: FC = () => {
   const getNotice = async () => {
     //查看我是否有新消息 无论如何
     setLoading(true);
-    loading;
     //无论如何，清掉定时器,使用了 ref,肯定能拿到指针。
     //并且启动一个定时器，定时刷新我的消息
     clearTimeout(intervalHandle.current);
@@ -129,7 +128,7 @@ const HeaderNotice: FC = () => {
     <div className={styles.notice}>
       <Dropdown menu={{ items, onClick }} placement="bottomRight" trigger={["hover"]} onOpenChange={handleOpenChange} open={open}>
         <Badge count={noticeList.length || noticeCount} overflowCount={999} offset={[0, 10]}>
-          <Avatar shape="square" size="large" src={<BellOutlined style={{ fontSize: "22px", color: "#fff" }} />} />
+          <Avatar shape="square" size="large" src={<BellOutlined />} className={styles.icon} />
         </Badge>
       </Dropdown>
     </div>

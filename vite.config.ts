@@ -10,7 +10,7 @@ import { dependencies, devDependencies, name, version } from "./package.json";
 import { createHtmlPlugin } from "vite-plugin-html";
 
 const isDev = process.env.NODE_ENV === "development";
-const httpUrl = isDev ? "http://localhost:5000/api/" : "https://nest-admin.com/micro/api/";
+const httpUrl = isDev ? "https://nest-admin.com/micro/api/" : "https://nest-admin.com/micro/api/";
 
 export default defineConfig({
   plugins: [
