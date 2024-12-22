@@ -14,7 +14,10 @@ const PlacardEditModal: FC<any> = ({ placard, onOk, onCancel }: any) => {
 
   const onFinish = async payload => {
     const result = placard?.id ? await updatePlacard({ ...placard, ...payload }) : await createPlacard(payload);
-    if (result.data.code !== 200) return message.info("操作失败");
+    if (result.data.code !== 200) {
+      message.info("操作失败");
+      return;
+    }
     message.success("操作成功");
     onOk();
   };

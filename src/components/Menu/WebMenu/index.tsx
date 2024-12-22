@@ -1,18 +1,15 @@
 import IconFont from "@/components/IconFont";
 import MenuTagContext from "@/contexts/MenuTagContext";
-import { getLocalStorageMenus, getOpenKeysByUrls, getShowMenus, setLocalStorage } from "@/utils/menuUtils";
+import { formatURL, getLocalStorageMenus, getMenus, getOpenKeysByUrls, setLocalStorage } from "@/utils/menuUtils";
 import { AppstoreOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
 import { toNumber } from "lodash-es";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useLayoutEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const createIcon = item => {
-  item.icon = item.icon ? <IconFont type={item.icon} /> : <AppstoreOutlined />;
-};
 const createMenuIcon = item => {
   return item.map(v => {
-    createIcon(v);
+    v.icon = v.icon ? <IconFont type={v.icon} /> : <AppstoreOutlined />;
     if (v.children) createMenuIcon(v.children);
     return v;
   });
@@ -23,7 +20,7 @@ const WebMenu = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const menusList = JSON.parse(getLocalStorageMenus() || "");
-  const newmenus = createMenuIcon(getShowMenus(menusList.concat()));
+  const [menuItems, setMenuItems] = useState([]);
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [openKeys, setOpenkeys] = useState([]);
 
@@ -36,30 +33,34 @@ const WebMenu = () => {
     const menuPath: string[] = keyPath.map(v => toNumber(v)).reverse();
     let changeMenus = menusList.concat();
     const urls = [];
-    let activeKey = "";
-    menuPath.map(item => {
+    for (let index = 0; index < menuPath.length; index++) {
+      const item = menuPath[index];
       const result = changeMenus.find(v => v.id === parseInt(item));
       urls.push(result?.url || "");
-      activeKey = result?.url;
       if (result.children) changeMenus = result.children;
-    });
-    navigate("/" + urls.join("/"));
+    }
+    const url = formatURL("/" + urls.join("/"));
+    navigate(url);
     setOpenkeys(() => keyPath); // 修改当前组件的state
     setSelectedKeys(() => [key]);
     addTag(urls, key);
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // 说明：
     // (1)
     // 这里要考虑 ( 登陆第一次跳转的加载 ) 和 ( 刷新浏览器的加载 )
     // 不管哪种情况，都获取当前的 pathname，当前pathname是 ( path和menu的keys要一致的原因  )
     // 如果第一次刷新，是不是可以直接从地址栏解析出 id ？
+    const menusList = JSON.parse(getLocalStorageMenus() || "");
+    const result = getMenus(menusList);
+    const items = createMenuIcon(result);
     const data = pathname.split("/").filter(v => v);
-    const [openKeys, currentKey] = getOpenKeysByUrls(data, newmenus);
+    const [openKeys, currentKey] = getOpenKeysByUrls(data, items);
+    setMenuItems(items);
     setOpenkeys(openKeys);
     setSelectedKeys(currentKey);
-  }, []);
+  }, [pathname]);
 
   // 展开/关闭的回调
   const onOpenChange = (openKeys: any) => {
@@ -69,8 +70,18 @@ const WebMenu = () => {
 
   return (
     <div style={{ width: "100%" }}>
-      <Menu mode="inline" theme="dark" onClick={onClick} selectedKeys={selectedKeys} openKeys={openKeys} onOpenChange={onOpenChange} items={newmenus} inlineIndent={12} />
+      <Menu
+        mode="inline"
+        theme="dark"
+        onClick={onClick}
+        selectedKeys={selectedKeys}
+        openKeys={openKeys}
+        onOpenChange={onOpenChange}
+        items={menuItems}
+        inlineIndent={12}
+      />
     </div>
   );
 };
+
 export default WebMenu;

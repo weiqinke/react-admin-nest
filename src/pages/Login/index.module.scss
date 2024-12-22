@@ -1,11 +1,10 @@
-$base-url: "https://www.freeimg.cn/i/2024/01/13/65a28bad6be9e.jpg";
 .container {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background-image: url($base-url);
   background-repeat: no-repeat;
   background-size: cover;
+  background-position: center;
   position: relative;
 
   :global {
@@ -46,9 +45,20 @@ $base-url: "https://www.freeimg.cn/i/2024/01/13/65a28bad6be9e.jpg";
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(164, 203, 200, 0.3);
+  z-index: 3;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
+.Snowflakecontainer {
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  top: 0px;
+  overflow: hidden;
+  user-select: none;
+  pointer-events: none;
+}
 .paopaocontainer {
   position: relative;
   width: 100%;
@@ -78,7 +88,6 @@ $base-url: "https://www.freeimg.cn/i/2024/01/13/65a28bad6be9e.jpg";
     border-radius: 50%;
   }
 }
-
 
 @keyframes flying {
   0% {

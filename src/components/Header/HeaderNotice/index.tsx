@@ -23,6 +23,7 @@ const HeaderNotice: FC = () => {
   const getNotice = async () => {
     //查看我是否有新消息 无论如何
     setLoading(true);
+    loading;
     //无论如何，清掉定时器,使用了 ref,肯定能拿到指针。
     //并且启动一个定时器，定时刷新我的消息
     clearTimeout(intervalHandle.current);

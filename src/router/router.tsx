@@ -6,6 +6,7 @@ import ProjectLayout from "@/layout/ProjectLayout";
 import Login from "@/pages/Login";
 import Account from "@/pages/Account";
 import UserProfile from "@/pages/UserProfile";
+import MusicChart from "@/pages/MusicChart";
 const BMap = lazy(() => import(/* webpackChunkName: "BMap'"*/ "@/pages/BMap"));
 const About = lazy(() => import(/* webpackChunkName: "About'"*/ "@/pages/About"));
 const AnimateCard = lazy(() => import(/* webpackChunkName: "AnimateCard'"*/ "@/pages/AnimateCard"));
@@ -50,6 +51,12 @@ const RouterPages: any = [
             component: <Workbench />,
             auth: true,
             title: "工作台"
+          },
+          {
+            path: "music",
+            component: <MusicChart />,
+            auth: true,
+            title: "音乐排行榜"
           },
           {
             path: "bmap",

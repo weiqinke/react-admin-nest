@@ -48,7 +48,8 @@ const WebsocketAdmin: FC = () => {
 
   const ForcedOffline = item => {
     if (webSocketManager.MySocketID === item.id) {
-      return message.info("不允许让自己强制下线");
+      message.info("不允许让自己强制下线");
+      return;
     }
     Modal.confirm({
       title: "提示",

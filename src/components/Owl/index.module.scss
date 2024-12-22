@@ -1,0 +1,82 @@
+@mixin backgroundImage($url) {
+  background-image: url($url);
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+.owlRect {
+  position: relative;
+  height: 95px;
+  background-color: transparent;
+  z-index: 3;
+  .position {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .owlContainer {
+    position: relative;
+    width: 120px;
+    height: 95px;
+    transform: translateY(12%);
+    @include backgroundImage("./face.png");
+    .leftHand,
+    .rightHand {
+      z-index: 2;
+      position: absolute;
+      width: 45px;
+      height: 25px;
+      transition: transform 0.2s linear;
+    }
+    .leftHand {
+      bottom: 3px;
+      left: -35px;
+      @include backgroundImage("./hand-down-left.png");
+    }
+    .rightHand {
+      bottom: 3px;
+      right: -40px;
+      @include backgroundImage("./hand-down-right.png");
+    }
+    .leftHideHand,
+    .rightHideHand {
+      z-index: 3;
+      position: absolute;
+      width: 50px;
+      height: 40px;
+      opacity: 0;
+      transition: opacity 0.1s linear 0.1s;
+    }
+    .leftHideHand {
+      bottom: 11px;
+      left: -5px;
+      @include backgroundImage("./hand-up-left.png");
+    }
+    .rightHideHand {
+      bottom: 11px;
+      right: 5px;
+      @include backgroundImage("./hand-up-right.png");
+    }
+    .closeEyes {
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.1s linear 0.1s;
+      @include backgroundImage("./close-eyes.png");
+    }
+  }
+
+  .owlpassword {
+    .leftHand {
+      transform: translateX(30px) scale(0) translateY(-10px);
+    }
+    .rightHand {
+      transform: translateX(-40px) scale(0) translateY(-10px);
+    }
+    .leftHideHand,
+    .rightHideHand,
+    .closeEyes {
+      opacity: 1;
+    }
+  }
+}

@@ -31,10 +31,12 @@ const Waterfall = <T extends waterfallItem>(props: waterfallProps<T>) => {
   const colRef = useRef<(HTMLDivElement | null)[]>([]);
   /**瀑布流每个模块的宽度。随着窗口大小变化而变化 */
   const imgWidth = useCalculativeWidth(listRef, marginX, cols);
+  console.log("imgWidth: ", imgWidth);
 
   const [list, setList] = useState<T[]>([]); //用来暂时存储获取到的最新list。
   const [colList, setColList] = useState(Array.from({ length: cols }, () => new Array<T>())); //要展示的图片列表，二维数组
   const [colHeight, setColHeight] = useState(new Array<number>(cols).fill(0)); //当前每一列的高度
+  console.log("colHeight: ", colHeight);
 
   /**获取列表数据 */
   const _getList = async () => {
@@ -86,7 +88,7 @@ const Waterfall = <T extends waterfallItem>(props: waterfallProps<T>) => {
   //监听滚动事件，绑定触底加载函数
   useEffect(() => {
     //这里的this是 scrollRef.current 。 scrollRef是props中传递过来的
-    const handler = function (this: HTMLElement, e: Event) {
+    const handler = function (this: HTMLElement) {
       //scrollHeight是可滚动区域的总高度， innerHeight是可视窗口的高度， scrollTop是盒子可视窗口的最顶部，到盒子可滚动上限的距离
       // 还有一个可以性能优化的点， this.scrollHeight 在没有获取新数据时，是固定的，可以存起来成一个变量，获取新数据再更新，减少重排重绘
       if (this.scrollHeight - window.innerHeight - this.scrollTop < 10) {

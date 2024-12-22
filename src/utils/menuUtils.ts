@@ -1,5 +1,4 @@
 import { toNumber } from "lodash-es";
-
 export interface menuchild {
   authority: string;
   children: [];
@@ -127,7 +126,7 @@ export function getShowMenus(menulist: any[]) {
       const echild: any[] = getShowMenus(children);
       newMenuItem = { ...menuitem, children: echild };
     } else {
-      newMenuItem = { ...menuitem, children: null,type:"page" };
+      newMenuItem = { ...menuitem, children: null, type: "page" };
       delete newMenuItem.children;
     }
     // 这里是为了兼容 antd Menu 组件新版写法
@@ -179,4 +178,33 @@ export const getMenuItemByUrl = (url: any) => {
 export const getMenuItemByID = (id: any) => {
   const unbendMenus = getUnbendMenus(JSON.parse(getLocalStorageMenus()));
   return unbendMenus.find((v: { id: number }) => v.id === toNumber(id));
+};
+
+export const getMenus = (data, parentUrl = "/") => {
+  const result = [];
+  for (let index = 0; index < data.length; index++) {
+    const item = data[index];
+    item.label = item.name;
+    item.path = formatURL(`${parentUrl}/${item.url}`);
+    item.key = item.id;
+    item.meta = {
+      menuUid: item.menuUid,
+      parentUid: item.parentUid
+    };
+    delete item.menuUid;
+    delete item.parentUid;
+    if (item.show) {
+      if (item.children && item.children?.length > 0) {
+        item.children = getMenus(item.children, item.path);
+      }
+      result.push(item);
+    }
+  }
+  return result;
+};
+
+export const formatURL = url => {
+  const list = url.split("/").filter(v => v);
+  const path = "/" + list.join("/");
+  return path;
 };

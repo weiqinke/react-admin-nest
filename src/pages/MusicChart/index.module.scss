@@ -1,0 +1,42 @@
+.MusicChart{
+    margin: 12px;
+    padding: 12px;
+    background-color: #fff;
+    .musicContainer{
+        display: inline-block;
+        .musicItem{
+            font-size: 16px;
+            padding: 12px;
+            cursor: pointer;
+            user-select: none;
+            &:hover{
+                background: #DDD;
+            }
+            .title{
+                text-align: center;
+            }
+            .user{
+                font-size: 12px;
+                color: #333;
+            }
+            .playIconNode{
+                margin: 0 auto;
+                text-align: center;
+                display: inline-block;
+                margin: 6px 0px;
+                .playIcon{
+                    border: 12px solid #ccc;
+                    border-radius: 50%;
+                    background-color: #ccc;
+                    transform: scale(0.5);
+                }
+            }
+            .share{
+                margin:0px 12px;
+            }
+            .btns{
+                margin:0px 6px;
+            }
+        }
+    }
+}

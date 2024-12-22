@@ -2,9 +2,10 @@
   user-select: none;
   width: 324px;
   min-height: 366px;
-  padding: 12px;
+  padding: 40px;
   position: relative;
   background: rgba(164, 203, 200, 0.3);
+  border-radius: 8px;
   &:hover {
     box-shadow: -4px 4px 16px 1px rgba(0, 0, 0, 0.15);
     background: rgba(164, 203, 200, 1);
@@ -17,7 +18,8 @@
 
 .title {
   text-align: center;
-  padding: 0px 12px;
+  padding: 0px;
+  margin: 0 0 20px 0;
 }
 
 .forgetPassword {
@@ -40,12 +42,17 @@
 }
 
 .captchaContainer {
-  position: relative;
-  top: 11px;
+  position: absolute;
+  top: 50%;
+  right: 2px;
+  width: calc(50% - 10px);
+  transform: translateY(-50%);
+  height: 32px;
+  border-radius: 6px;
 }
 
 .captchaInput {
-  width: 50%;
+  width: calc(50%);
 }
 
 .ohter {

@@ -21,3 +21,117 @@
 .surplus {
   margin-top: 8px;
 }
+
+.cardContainer {
+  border: 12px;
+  background-color: #41b3a3;
+  border-radius: 8px;
+  border: 2px solid #41b3a3;
+  &.fense {
+    background-color: #f8c0cb;
+    border: 2px solid #f8c0cb;
+  }
+
+  &.zise {
+    background-color: #ccbce1;
+    border: 2px solid #ccbce1;
+  }
+
+  .header {
+    width: 70%;
+    overflow: hidden;
+    border-radius: 8px 0px 0px 0px;
+    position: relative;
+    .tab {
+      height: 20px;
+      background-color: #fff;
+      border-radius: 0px 10px 0px 0px;
+      transform: perspective(18px) rotateX(12deg) rotateY(0deg);
+      position: relative;
+      top: -1px;
+      left: -15px;
+    }
+    .roundNode {
+      position: absolute;
+      bottom: 0px;
+      right: 0px;
+      width: 10px;
+      height: 10px;
+      background: radial-gradient(circle at 100% 0, transparent, transparent 9.5px, #000 10px, #000);
+    }
+  }
+  .body {
+    min-height: 120px;
+    border-radius: 0px 8px 8px 8px;
+    background-color: #fff;
+    padding: 0px 20px 20px 20px;
+    .title {
+      padding: 0px 0px 12px 0px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+  }
+}
+
+.Gcontainer {
+  position: relative;
+  height: 48px;
+  overflow: hidden;
+  border-radius: 8px 0px 0 0px;
+}
+.Ginner {
+  position: absolute;
+  user-select: none;
+  width: 50%;
+  height: 50px;
+  background: #fff;
+  bottom: 0;
+  border-radius: 0 20px 0 20px;
+  transform: perspective(40px) scaleX(1.4) scaleY(1.5) rotateX(20deg) translate(-10px, 0);
+  transform-origin: 50% 100%;
+}
+.Ginner::before {
+  content: "";
+  position: absolute;
+  right: -10px;
+  width: 10px;
+  height: 10px;
+  top: 40px;
+  background: radial-gradient(circle at 100% 0, transparent, transparent 9.5px, #fff 10px, #fff);
+}
+.Gafter {
+  position: absolute;
+  width: 150px;
+  height: 50px;
+  background: transparent;
+  bottom: 49px;
+  right: 0;
+  border-radius: 20px 0 20px 0;
+  transform: perspective(40px) scaleX(1.4) scaleY(-1.5) rotateX(20deg) translate(14px, 0);
+  transform-origin: 53% 100%;
+}
+.Gafter::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 40px;
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle at 0 0, transparent, transparent 9.5px, transparent 10px, transparent);
+}
+.GinnerText,
+.GafterText {
+  user-select: none;
+  cursor: pointer;
+  position: absolute;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+}
+.GinnerText {
+  top: 50%;
+  transform: translateY(-50%);
+}
+.GafterText {
+  top: 50%;
+}

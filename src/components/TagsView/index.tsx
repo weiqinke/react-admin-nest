@@ -34,10 +34,11 @@ const TagsView: FC = () => {
     event.stopPropagation();
     event.preventDefault();
     if (tags && tags.length <= 1) {
-      return message.success({
+      message.success({
         content: "请保留至少一个标签",
         duration: 0.5
       });
+      return;
     }
     removeTag(item);
   };

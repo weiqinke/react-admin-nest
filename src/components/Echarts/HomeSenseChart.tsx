@@ -1,5 +1,5 @@
 import * as echarts from "echarts";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import axios from "axios";
 
 const HomeSenseChart = () => {
@@ -36,9 +36,6 @@ const HomeSenseChart = () => {
   };
   const l7 = {
     厨房控制: [116.448, 39.905]
-  };
-  const zhuwo = {
-    主卧控制: [116.409, 39.928]
   };
 
   //geoCoordMap把所有可能出现的传感器加到数组里面
@@ -271,28 +268,28 @@ const HomeSenseChart = () => {
   const line2 = [];
   const line3 = [];
   const line4 = [];
-  for (var key in geoCoordMap001) {
+  for (const key in geoCoordMap001) {
     line1.push({
       year: "温度",
       name: key,
       value: d1[key]
     });
   }
-  for (var key in geoCoordMap002) {
+  for (const key in geoCoordMap002) {
     line2.push({
       year: "温度",
       name: key,
       value: d1[key]
     });
   }
-  for (var key in geoCoordMap003) {
+  for (const key in geoCoordMap003) {
     line3.push({
       year: "温度",
       name: key,
       value: d1[key]
     });
   }
-  for (var key in geoCoordMap004) {
+  for (const key in geoCoordMap004) {
     line4.push({
       year: "温度",
       name: key,
@@ -300,7 +297,7 @@ const HomeSenseChart = () => {
     });
   }
 
-  for (var key in geoCoordMap) {
+  for (const key in geoCoordMap) {
     mapData[0].push({
       year: "温度",
       name: key,
@@ -577,7 +574,7 @@ const HomeSenseChart = () => {
       return res;
     };
 
-    const optionXyMap01 = {
+    const optionXyMap01: any = {
       //底部滚动栏
       timeline: {
         data: year,
