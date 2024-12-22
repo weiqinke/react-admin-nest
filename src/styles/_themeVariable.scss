@@ -1,0 +1,45 @@
+/**
+    _themeVariable.scss文件
+    下边是sass语法的map数据结构
+   */
+$themes: (
+  "light": (
+    background-color: #fedce0,
+    background-slider: #fff,
+    head-color: #fff,
+    head-icon-bg: #158670,
+    // header icon 正常的颜色
+    head-icon-color: #158670,
+    head-icon-bg-hover: #fff,
+    font-basis-color: #b6bbc9,
+    box-border: #b6bbc9,
+    transition: 0.2s,
+    color-font-normal: #a6acbd,
+    color-font-light: #fff,
+    color-font-dark: #003049,
+    color-pink: #f72585,
+    color-green: #22b07d,
+    color-logo: #1081e8,
+    color-head: #fff
+  ),
+  "dark": (
+    background-color: #001529,
+    background-slider: #171717,
+    head-color: #fff,
+    head-icon-bg: #41b3a3,
+    // header icon 正常的颜色
+    head-icon-color: #fff,
+    head-icon-bg-hover: #fff,
+    font-basis-color: #f0f0f0,
+    box-border: none,
+    transition: 0.2s,
+    color-normal: #a6acbd,
+    color-font-normal: #fff,
+    color-font-light: #fff,
+    color-font-dark: #fff,
+    color-pink: #f72585,
+    color-green: #22b07d,
+    color-logo: #fff,
+    color-head: #fff
+  )
+);

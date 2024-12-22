@@ -1,0 +1,24 @@
+@import "./themeVariable.scss"; //导入主题颜色变量
+
+@mixin themeMixin {
+  @each $theme-name, $theme-map in $themes {
+    //!global 把局部变量强升为全局变量
+    $theme-map: $theme-map !global;
+    [data-theme="#{$theme-name}"] & {
+      // #{} 插值表达式
+      @content;
+    }
+  }
+}
+
+//声明一个根据Key获取颜色的function
+@function themed($key) {
+  @return map-get($theme-map, $key);
+}
+
+@mixin get-class-from-key($key, $colorName: $key) {
+  @include themeMixin {
+    // 因为插值表达式会将变量转变成无符号字符串，所以可以直接当变量名
+    #{$key}: themed($colorName);
+  }
+}

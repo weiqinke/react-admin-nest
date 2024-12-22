@@ -1,10 +1,17 @@
+@import "@/styles/themeMixin";
 .notice {
   float: right;
   user-select: none;
   cursor: pointer;
   margin-right: 20px;
-  &:hover {
-    background-color: #41b3a3;
+
+  .icon {
+    font-size: 22px;
+    @include get-class-from-key("color", "head-icon-color");
+    &:hover {
+      @include get-class-from-key("background-color", "head-icon-bg");
+      @include get-class-from-key("color", "head-icon-bg-hover");
+    }
   }
 }
 
@@ -17,10 +24,6 @@
       }
     }
   }
-}
-.topNotice {
-  padding: 4px 8px 0px 8px;
-  user-select: none;
 }
 
 .bottomBar {
