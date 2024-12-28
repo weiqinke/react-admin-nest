@@ -1,19 +1,19 @@
 import { SunOutlined } from "@ant-design/icons";
 import styles from "./index.module.scss";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Tooltip } from "antd";
+import ProjectContext from "@/contexts/ProjectContext";
 
 const ThemeColor = () => {
+  const { theme, setTheme } = useContext<any>(ProjectContext);
   const themeDict = {
     light: "dark",
     dark: "light"
   };
-  const [theme, setTheme] = useState(localStorage.getItem("data-theme") || "light");
 
   function handleChangeTheme() {
-    localStorage.setItem("data-theme", themeDict[theme]);
-    window.document.documentElement.setAttribute("data-theme", themeDict[theme]);
-    setTheme(themeDict[theme]);
+    const data = themeDict[theme];
+    setTheme(data);
   }
   return (
     <Tooltip title="切换 Theme" placement="bottom" className={styles.themetooltip}>
