@@ -80,12 +80,8 @@ const UserAdmin: FC = () => {
           </Form.Item>
           <Form.Item>
             <Space size={[8, 16]} className={styles.header}>
-              <Button type="primary" htmlType="submit">
-                查询
-              </Button>
-              <Button type="primary" onClick={() => setUser({})}>
-                添加
-              </Button>
+              <Button htmlType="submit">查询</Button>
+              <Button onClick={() => setUser({})}>添加</Button>
             </Space>
           </Form.Item>
         </Form>

@@ -2,10 +2,11 @@ import { MenuTagContextProvider } from "@/contexts/MenuTagContext";
 import { ProjectContextProvider } from "@/contexts/ProjectContext";
 import { webSocketManager } from "@/utils/ws";
 import { ConfigProvider } from "antd";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 
 const ProjectLayout = () => {
+  const [theme, setTheme] = useState(localStorage.getItem("data-theme") || "light");
   useEffect(() => {
     webSocketManager.create();
     return () => {
@@ -20,30 +21,63 @@ const ProjectLayout = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const themeDict = {
-      light: "dark",
-      dark: "light"
-    };
-    console.log("ProjectLayout，初始化一次主题色");
-    const theme = localStorage.getItem("data-theme") || "light";
-    localStorage.setItem("data-theme", themeDict[theme]);
-    window.document.documentElement.setAttribute("data-theme", themeDict[theme]);
-  }, []);
+  useLayoutEffect(() => {
+    localStorage.setItem("data-theme", theme);
+    console.log("theme: ", theme);
+    document.body.setAttribute("data-theme", theme);
+    if (theme === "dark") {
+      setMenusConfig({
+        darkItemSelectedBg: "#41b3a3",
+        // 选中时菜单颜色 和父级选中颜色
+        darkItemSelectedColor: "#fafafc",
+        // 未选中的菜单项颜色
+        darkItemColor: "#fafafc",
+        darkGroupTitleColor: "#000"
+      });
+      setButtonConfig({
+        defaultBg: "#41b3a3",
+        primaryColor: "#fff"
+      });
+    } else {
+      // 粉色背景
+      setMenusConfig({
+        darkItemSelectedBg: "#fedce0",
+        darkPopupBg: "#fedce0",
+        darkSubMenuItemBg: "#000",
+        darkItemBg: "#fedce0",
+        // 选中时菜单颜色 和父级选中颜色
+        darkItemSelectedColor: "#fafafc",
+        darkItemBg: "#001529",
+        // 未选中的菜单项颜色
+        darkItemColor: "#fafafc",
+        darkGroupTitleColor: "#000"
+      });
+
+      setButtonConfig({
+        defaultBg: "#fedce0",
+        primaryColor: "#fff"
+      });
+    }
+  }, [theme]);
+
+  const [menusConfig, setMenusConfig] = useState({
+    darkItemSelectedBg: "#41b3a3"
+  });
+
+  const [ButtonConfig, setButtonConfig] = useState({
+    defaultBg: "#41b3a3",
+    primaryColor: "#fff"
+  });
 
   return (
     <ConfigProvider
       theme={{
         components: {
-          Menu: {
-            darkItemSelectedBg: "#41b3a3"
-            // darkPopupBg: "#7cc1ad",
-            // darkSubMenuItemBg: "#7cc1ad",
-            // darkItemBg: "#7cc1ad",
-          }
+          Button: ButtonConfig,
+          Menu: menusConfig
         }
       }}>
-      <ProjectContextProvider>
+      <ProjectContextProvider theme={theme} setTheme={setTheme}>
         <MenuTagContextProvider>
           <div id="default-layout">
             <Outlet />

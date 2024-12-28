@@ -148,6 +148,9 @@ const PlacardAdmin: FC = () => {
           <Button type="primary" className="topbtn" onClick={findAllPlacards}>
             查询公告
           </Button>
+          <Button className="topbtn" onClick={findAllPlacards}>
+            查询公告
+          </Button>
           <Button type="primary" className="topbtn" onClick={() => setPlacard({})}>
             添加公告
           </Button>

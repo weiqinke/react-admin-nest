@@ -10,10 +10,12 @@ const ProjectContext: any = React.createContext({
   profile: {},
   setProfile: () => null,
   value: {},
-  setValue: () => null
+  setValue: () => null,
+  theme: {},
+  setTheme: () => null
 });
 
-export const ProjectContextProvider = ({ children }) => {
+export const ProjectContextProvider = ({ theme, setTheme, children }) => {
   const [value, setValue] = useState(getUserState());
   const [profile, setProfile] = useState({});
 
@@ -28,7 +30,7 @@ export const ProjectContextProvider = ({ children }) => {
     };
   }, [value]);
 
-  return <ProjectContext.Provider value={{ value, setValue, profile, setProfile }}>{children}</ProjectContext.Provider>;
+  return <ProjectContext.Provider value={{ value, setValue, profile, setProfile, theme, setTheme }}>{children}</ProjectContext.Provider>;
 };
 
 export default ProjectContext;
