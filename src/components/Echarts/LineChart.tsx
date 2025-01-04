@@ -78,7 +78,7 @@ const LineChart: FC = () => {
           fontSize: 22,
           color: "rgb(233,240,255)"
         },
-        data: ["进港货量"],
+        data: [""],
         right: "center" //组件离容器左侧的距离，可以是left,center,right，也可以是像素px和百分比10%
       },
       //图表大小位置限制
@@ -199,13 +199,7 @@ const LineChart: FC = () => {
           showSymbol: true,
           symbol: "circle",
           symbolSize: 20,
-          itemStyle: {
-            normal: {
-              color: "#121E43",
-              borderColor: "#00D8FF",
-              borderWidth: 3
-            }
-          },
+
           data: ["20", "25", "24", "27", "14", "18"],
           yAxisIndex: 0
         },

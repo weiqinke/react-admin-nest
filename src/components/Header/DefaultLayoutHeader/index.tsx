@@ -127,7 +127,7 @@ const DefaultLayoutHeader = () => {
       <div className={styles.user}>
         <Dropdown menu={{ items, onClick }}>
           <div className={styles.nameContainer}>
-            <Avatar src={profile?.avatar} icon={<UserOutlined />} />
+            <Avatar src={profile?.avatar || "https://dr.cdnux.com/18510675/i/2025/01/04/65a29b436889b.jpg"} icon={<UserOutlined />} />
             <span className={styles.name}>{profile?.nick}</span>
           </div>
         </Dropdown>

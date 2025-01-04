@@ -8,7 +8,7 @@ import Round from "@/components/Echarts/Round";
 
 const Workplace = () => {
   const toMygit = () => window.open("https://github.com/weiqinke/react-admin-nest", "topFrame");
-  const src = "https://www.freeimg.cn/i/2024/12/18/6762e71092b9c.webp";
+  const src = "https://dr.cdnux.com/18510675/i/2024/12/31/7xt4r.webp";
   return (
     <div className={styles.container}>
       <Row gutter={[12, 12]} className={styles.header}>
@@ -70,7 +70,7 @@ const Workplace = () => {
         </Col>
         <Col xs={24} sm={24} md={24} lg={16} xl={16} xxl={16}>
           <div className={styles.baseChart}>
-            <div className={styles.imgbg} style={{ backgroundImage: `url(https://www.freeimg.cn/i/2024/12/19/676421779793a.webp)` }}></div>
+            <div className={styles.imgbg} style={{ backgroundImage: `url(https://dr.cdnux.com/18510675/i/2024/12/31/14tve.webp)` }}></div>
           </div>
         </Col>
       </Row>

@@ -12,8 +12,7 @@ const Login = () => {
   const onClick = () => setRegister(v => v + 1);
   const [random] = useState(Math.random());
   const [closeEyes, setCloseEyes] = useState(false);
-
-  const bg = random < 0.45 ? "https://www.freeimg.cn/i/2024/01/13/65a28bad6be9e.jpg" : "https://www.freeimg.cn/i/2024/12/18/6762e71092b9c.webp";
+  const bg = random < 0.45 ? "https://dr.cdnux.com/18510675/i/2025/01/04/65a28bad6be9e.jpg" : "https://dr.cdnux.com/18510675/i/2024/12/31/7xt4r.webp";
   return (
     <div className={styles.container} style={{ backgroundImage: `url(${bg})` }}>
       <div className={styles.fromContainer}>
