@@ -140,14 +140,14 @@ const UserInfoCard = () => {
               }>
               <Flex gap={16} vertical>
                 <Text>乱世评荐难再续，唯有荷香夜夜长。</Text>
-                <Image className={styles["custom-image"]} width={"100%"} src={"https://www.freeimg.cn/i/2024/01/19/65aa5a2fa5422.png"} />
+                <Image className={styles["custom-image"]} width={"100%"} src={"https://dr.cdnux.com/18510675/i/2025/01/04/65aa5a2fa5422.webp"} />
                 <Flex justify="space-between" align="content-center">
                   <Flex align="center">
                     <Button size="small" type="text">
                       <IconFont type="icon-profile" size={24} style={{ color: "#000" }} /> 3
                     </Button>
                     <Avatar.Group max={{ count: 2, style: { color: "#f56a00", backgroundColor: "#fde3cf" } }}>
-                      <Avatar src="https://www.freeimg.cn/i/2024/01/13/65a29b436889b.jpg" />
+                      <Avatar src="https://dr.cdnux.com/18510675/i/2025/01/04/65a29b436889b.jpg" />
                       <Avatar style={{ backgroundColor: "#f56a00" }}>K</Avatar>
                       <Avatar style={{ backgroundColor: "#1677ff" }} icon={<AntDesignOutlined />} />
                     </Avatar.Group>

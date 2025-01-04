@@ -3,7 +3,7 @@ import ProjectContext from "@/contexts/ProjectContext";
 import { getMenuStructure, getUrlParam, getUserState } from "@/utils/core";
 import { ProjectParseMenuAsPre, getIndexUrlInfo, saveMenus } from "@/utils/menuUtils";
 import { webSocketManager } from "@/utils/ws";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { GithubOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Divider, Form, Image, Input, Spin, Tooltip, message } from "antd";
 import CaptchaMini from "captcha-mini";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -14,6 +14,7 @@ import { login, userMenus, userOAuth2 } from "@/api/microservice/user";
 import qrimg from "@/assets/qrcode.png";
 import IconFont from "@/components/IconFont";
 import styles from "./index.module.scss";
+import GithubAuth from "@/components/OAuth2/GithubAuth";
 
 const LoginForm = ({ setRegister, setCloseEyes }) => {
   const navigate = useNavigate();
@@ -178,7 +179,7 @@ const LoginForm = ({ setRegister, setCloseEyes }) => {
             </Form>
 
             <Divider plain style={{ borderWidth: 13 }}>
-              使用第三方登录
+              第三方登录
             </Divider>
             <div className={styles.ohter}>
               <div className={styles.type}>
@@ -196,10 +197,7 @@ const LoginForm = ({ setRegister, setCloseEyes }) => {
                 </Button>
               </div>
               <div className={styles.type}>
-                <Button type="link" href="https://webpack.nest-admin.com">
-                  <IconFont type="icon-webpack" />
-                  Webpack
-                </Button>
+                <GithubAuth />
               </div>
             </div>
           </Spin>

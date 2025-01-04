@@ -5,7 +5,7 @@ const Round: FC = () => {
   const ref = useRef();
 
   const bgPatternImg = new Image();
-  bgPatternImg.src = "https://www.freeimg.cn/i/2024/12/19/676423a20a391.webp";
+  bgPatternImg.src = "https://dr.cdnux.com/18510675/i/2025/01/04/676423a20a391.webp";
   const chartData = [
     {
       value: 520

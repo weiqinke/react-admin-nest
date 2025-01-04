@@ -6,7 +6,7 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 
 const ProjectLayout = () => {
-  const [theme, setTheme] = useState(localStorage.getItem("data-theme") || "light");
+  const [theme, setTheme] = useState(localStorage.getItem("data-theme") || "dark");
   useEffect(() => {
     webSocketManager.create();
     return () => {
@@ -23,7 +23,6 @@ const ProjectLayout = () => {
 
   useLayoutEffect(() => {
     localStorage.setItem("data-theme", theme);
-    console.log("theme: ", theme);
     document.body.setAttribute("data-theme", theme);
     if (theme === "dark") {
       setMenusConfig({

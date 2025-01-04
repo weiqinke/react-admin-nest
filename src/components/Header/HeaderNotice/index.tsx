@@ -59,6 +59,9 @@ const HeaderNotice: FC = () => {
     };
   }, []);
 
+  const clearMessage = () => {
+    setDataSource([])
+  };
   const items: MenuProps["items"] = [
     {
       key: "1",
@@ -87,7 +90,7 @@ const HeaderNotice: FC = () => {
               size="small"
               footer={
                 <div className={styles.bottomBar}>
-                  <div className={styles.doLeftBtn}>
+                  <div className={styles.doLeftBtn} onClick={clearMessage}>
                     <span>清空</span>
                   </div>
                   <div className={styles.dobtn}>

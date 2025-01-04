@@ -1633,11 +1633,6 @@ const HomeSenseChart = () => {
         ]
       });
     }
-    axios.get("https://nest-admin.com/home.json").then(res => {
-      echarts.registerMap("home", res.data);
-      myChart.setOption(optionXyMap01);
-    });
-
     window.addEventListener("resize", function () {
       myChart.resize();
     });
