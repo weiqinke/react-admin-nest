@@ -1,7 +1,9 @@
 import { PieBorderRadius } from "@/components/Echarts";
 import { DingdingOutlined, QqOutlined, WechatOutlined, WeiboOutlined } from "@ant-design/icons";
 import { Col, Row } from "antd";
-import CountUp from "react-countup";
+import CountUpImport from "react-countup";
+
+const CountUp = (CountUpImport as any).default ?? CountUpImport;
 
 import styles from "./index.module.scss";
 import Round from "@/components/Echarts/Round";

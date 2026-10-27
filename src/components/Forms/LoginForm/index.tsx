@@ -7,7 +7,10 @@ import { GithubOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Divider, Form, Image, Input, Spin, Tooltip, message } from "antd";
 import CaptchaMini from "captcha-mini";
 import { useContext, useEffect, useRef, useState } from "react";
-import ReactCardFlip from "react-card-flip";
+import ReactCardFlipImport from "react-card-flip";
+
+// Vite 8 CJS interop: default import may be { default: Component }
+const ReactCardFlip = (ReactCardFlipImport as any).default ?? ReactCardFlipImport;
 import { useNavigate } from "react-router-dom";
 
 import { login, userMenus, userOAuth2 } from "@/api/microservice/user";

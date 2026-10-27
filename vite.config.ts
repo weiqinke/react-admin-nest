@@ -1,18 +1,35 @@
 import path from "path";
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 // https://vitejs.dev/config/
 import react from "@vitejs/plugin-react";
 import dayjs from "dayjs";
 import { visualizer } from "rollup-plugin-visualizer";
 import viteCompression from "vite-plugin-compression";
-import { dependencies, devDependencies, name, version } from "./package.json";
+import packageJson from "./package.json" with { type: "json" };
 
 import { createHtmlPlugin } from "vite-plugin-html";
+
+const { dependencies, devDependencies, name, version } = packageJson;
+const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const isDev = process.env.NODE_ENV === "development";
 const httpUrl = isDev ? "https://nest-admin.com/micro/api/" : "https://nest-admin.com/micro/api/";
 
+function vendorChunkName(id: string) {
+  // pnpm: .../node_modules/.pnpm/<pkg>@ver/node_modules/<pkg>/...
+  // npm/yarn: .../node_modules/<pkg>/...
+  const match = id.match(/node_modules\/(?:\.pnpm\/[^/]+\/node_modules\/)?((?:@[^/]+\/)?[^/]+)/);
+  return match?.[1] || "vendor";
+}
+
 export default defineConfig({
+  // Vite 8 CJS 默认导出互操作变更：部分 CJS 包（如 react-card-flip、react-countup）
+  // 的 default import 会变成 { default: Component }，导致 JSX 报 type is invalid。
+  // 临时恢复旧行为；后续可改为 `import X from 'pkg'; const Comp = X.default ?? X`
+  legacy: {
+    inconsistentCjsInterop: true
+  },
   plugins: [
     react(),
     createHtmlPlugin({
@@ -59,7 +76,7 @@ export default defineConfig({
     visualizer({
       emitFile: false,
       filename: "analysis-chart.html", // 分析图生成的文件名
-      open: true // 如果存在本地服务端口，将在打包后自动展示
+      open: false // 打包后不自动打开，避免 CI/本地构建被打断
     })
   ],
   define: {
@@ -75,7 +92,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src")
+      "@": path.resolve(dirname, "./src")
     }
   },
   preview: {
@@ -102,7 +119,7 @@ export default defineConfig({
         drop_debugger: process.env.NODE_ENV === "production" ? true : false
       }
     },
-    rollupOptions: {
+    rolldownOptions: {
       // 静态资源分类打包
       output: {
         // 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量
@@ -110,11 +127,17 @@ export default defineConfig({
         chunkFileNames: "js/[name]-[hash].js",
         entryFileNames: "js/[name]-[hash].js",
         assetFileNames: "[ext]/[name]-[hash].[ext]",
-        manualChunks(id) {
-          // 静态资源分拆打包
-          if (id.includes("node_modules")) {
-            return id.toString().split("node_modules/")[1].split("/")[0].toString();
-          }
+        // Vite 8 / Rolldown：用 codeSplitting 替代已弃用的 manualChunks
+        codeSplitting: {
+          groups: [
+            {
+              test: /node_modules/,
+              debugName: "vendor-by-package",
+              name(id: string) {
+                return vendorChunkName(id);
+              }
+            }
+          ]
         }
       }
     }
