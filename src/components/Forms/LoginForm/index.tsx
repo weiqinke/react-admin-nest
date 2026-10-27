@@ -3,7 +3,7 @@ import ProjectContext from "@/contexts/ProjectContext";
 import { getMenuStructure, getUrlParam, getUserState } from "@/utils/core";
 import { ProjectParseMenuAsPre, getIndexUrlInfo, saveMenus } from "@/utils/menuUtils";
 import { webSocketManager } from "@/utils/ws";
-import { GithubOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Divider, Form, Image, Input, Spin, Tooltip, message } from "antd";
 import CaptchaMini from "captcha-mini";
 import { useContext, useEffect, useRef, useState } from "react";

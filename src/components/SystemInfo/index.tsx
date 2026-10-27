@@ -50,8 +50,8 @@ const SystemInfo: React.FC = () => {
 
   const timer: any = useRef();
   const [curSystemTime, setCurSystemTime] = useState("加载中。。。");
-  const [messageList, setMessageList] = useState<any>();
-  const [loading, setLoading] = useState(true);
+  const [, setMessageList] = useState<any>();
+  const [, setLoading] = useState(true);
   const [apiCounts, setApiCounts] = useState({ total: 0, today: 0 });
   const memPercentage = useMemo(() => {
     return totalPercentage(OsInfo.totalmem, OsInfo.freemem);
@@ -79,8 +79,6 @@ const SystemInfo: React.FC = () => {
     ];
     console.log("我发送一次");
     webSocketManager.postMessage({ type: "memStatus" });
-    messageList;
-    loading;
     setMessageList(message);
   }, []);
 

@@ -5,10 +5,8 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import dayjs from "dayjs";
 import { visualizer } from "rollup-plugin-visualizer";
-import viteCompression from "vite-plugin-compression";
+import { compression } from "vite-plugin-compression2";
 import packageJson from "./package.json" with { type: "json" };
-
-import { createHtmlPlugin } from "vite-plugin-html";
 
 const { dependencies, devDependencies, name, version } = packageJson;
 const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -32,46 +30,11 @@ export default defineConfig({
   },
   plugins: [
     react(),
-    createHtmlPlugin({
-      minify: true,
-      /**
-       * 在这里写entry后，你将不需要在`index.html`内添加 script 标签，原有标签需要删除
-       * @default src/main.ts
-       */
-      entry: "/src/main.tsx",
-      /**
-       * 需要注入 index.html ejs 模版的数据
-       */
-      template: "public/index.html",
-      inject: {
-        data: {
-          // 查找.env.test文件里面的VITE_PROJECT_TITLE，请以VITE_标识开头
-          title: "编程的奇思妙想" || name,
-          injectScript: `<script type="module" crossorigin src="/src/main.tsx"></script>`
-        },
-        tags: [
-          {
-            injectTo: "body-prepend",
-            tag: "div",
-            attrs: {
-              id: "tag"
-            }
-          }
-        ]
-      }
-    }),
-    // 构建压缩文件
-    viteCompression({
-      // 记录压缩文件及其压缩率。默认true
-      verbose: true,
-      // 是否启用压缩，默认false
-      disable: false,
-      // 需要使用压缩前的最小文件大小，单位字节（byte） b，1b(字节)=8bit(比特), 1KB=1024B
-      threshold: 10240, // 即10kb以上即会压缩
-      // 压缩算法 可选 'gzip' | 'brotliCompress' | 'deflate' | 'deflateRaw'
-      algorithm: "gzip",
-      // 压缩后的文件格式
-      ext: ".gz"
+    // 构建时生成 gzip 预压缩资源（替代已停更的 vite-plugin-compression）
+    compression({
+      algorithms: ["gzip"],
+      threshold: 10240,
+      logLevel: "info"
     }),
     visualizer({
       emitFile: false,

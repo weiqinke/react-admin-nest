@@ -1,6 +1,5 @@
 import * as echarts from "echarts";
 import { useEffect, useRef } from "react";
-import axios from "axios";
 
 const HomeSenseChart = () => {
   const ref = useRef();
