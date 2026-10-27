@@ -1,56 +1,22 @@
 ﻿import { Button, Form, Input, Spin, message } from "antd";
 
-import { userMenus, userRegister } from "@/api/caravan/User";
-import ProjectContext from "@/contexts/ProjectContext";
-import { SYSTEM_TOKEN, getMenuStructure, getUserState } from "@/utils/core";
-import { ProjectParseMenuAsPre, getIndexUrlInfo, saveMenus } from "@/utils/menuUtils";
-import { useContext, useState } from "react";
-import { useNavigate } from "react-router";
+import { userRegister } from "@/api/caravan/User";
+import { useState } from "react";
 import styles from "./index.module.scss";
 
 const RegisterForm = ({ goBack, setCloseEyes }) => {
-  const initialValues = { username: "qkstart", password: "123456", submitpassword: "123456" };
+  const initialValues = { username: "newuser", password: "123456", submitpassword: "123456" };
   const [loading, setLoading] = useState(false);
-  const { setValue }: any = useContext(ProjectContext);
-  const navigate = useNavigate();
-
-  const getMenu = uid => {
-    userMenus({ uid, version: 1 }).then(r => {
-      if (r.data.code === 200) {
-        const data = r.data.data;
-        if (!data) {
-          message.info("暂未分配权限，请通知管理员分配权限");
-          return;
-        }
-        const menus = getMenuStructure(data);
-        saveMenus(JSON.stringify(menus));
-        //找到第一个url直接跳转过去吧
-        const indexTag = getIndexUrlInfo(ProjectParseMenuAsPre(menus));
-        const { url } = indexTag;
-        navigate(`/${url}`);
-      }
-    });
-  };
 
   const onFinish = value => {
     setLoading(true);
-    userRegister(value)
-      .then(res => {
-        const { data, code } = res.data;
-        if (code === 200) {
-          const { token, uid } = data;
-          localStorage.setItem(SYSTEM_TOKEN, token);
-          localStorage.setItem("uid", uid);
-          // 更新内存中的用户信息
-          const userState = getUserState();
-          setValue(userState);
-          //   获取用户菜单
-          getMenu(userState.uid);
-        } else {
-          setLoading(false);
-        }
+    userRegister({ username: value.username, password: value.password })
+      .then(() => {
+        message.success("注册成功，请登录");
+        goBack();
       })
-      .catch(() => setLoading(false));
+      .catch(() => setLoading(false))
+      .finally(() => setLoading(false));
   };
 
   const onBlur = () => {

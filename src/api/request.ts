@@ -1,58 +1,28 @@
 import axios from "axios";
-import { requestInterce, responseInterce } from "./axios-interceptors";
-// 跨域认证信息 header 名
-const xsrfHeaderName = "Authorization";
-const service = axios.create();
-/**接口最大响应时间** */
-service.defaults.timeout = 20000;
-// axios.defaults.withCredentials= true
-service.defaults.withCredentials = false;
-service.defaults.xsrfHeaderName = xsrfHeaderName;
-service.defaults.xsrfCookieName = xsrfHeaderName;
-// 加载请求拦截器
-requestInterce.forEach(item => {
-  let { onFulfilled, onRejected } = item;
-  if (!onFulfilled || typeof onFulfilled !== "function") {
-    onFulfilled = config => config;
-  }
-  if (!onRejected || typeof onRejected !== "function") {
-    onRejected = error => Promise.reject(error);
-  }
-  service.interceptors.request.use(
-    config => onFulfilled(config),
-    error => onRejected(error)
-  );
-});
-// 加载响应拦截器
-responseInterce.forEach((item: any) => {
-  let { onFulfilled, onRejected } = item;
-  if (!onFulfilled || typeof onFulfilled !== "function") {
-    onFulfilled = response => response;
-  }
-  if (!onRejected || typeof onRejected !== "function") {
-    onRejected = error => Promise.reject(error);
-  }
-  service.interceptors.response.use(
-    response => onFulfilled(response),
-    error => onRejected(error)
-  );
+import { attachInterceptors } from "./axios-interceptors";
+
+const service = axios.create({
+  baseURL: REACT_APP_API_URL,
+  timeout: 20000,
+  withCredentials: false,
+  validateStatus: () => true
 });
 
+attachInterceptors(service);
+
 /**
- * axios请求
- * @param url 请求地址
- * @param method {string} http method
- * @param params 请求参数
- * @returns {Promise<AxiosResponse<T>>}
+ * axios 请求。成功时响应体仍是 { code, message, data }，code === 0。
+ * 业务失败会 reject，error.code 为业务错误码。
  */
-export const request = async (url, method, params = {}, options = {}) => {
-  switch (method) {
+export const request = async (url, method, params = {}, options: any = {}) => {
+  const verb = String(method || "GET").toUpperCase();
+  switch (verb) {
     case "GET":
       return service.get(url, { params, ...options });
     case "POST":
       return service.post(url, params, { ...options });
     case "DELETE":
-      return service.delete(url, { params });
+      return service.delete(url, { params, ...options });
     case "PUT":
       return service.put(url, params, options);
     case "PATCH":

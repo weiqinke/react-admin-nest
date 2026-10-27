@@ -71,7 +71,7 @@ const WebsocketAdmin: FC = () => {
 
   const loadUserInfo = user => {
     userinfo({ uid: user?.uid }).then(result => {
-      if (result.data.code === 200) {
+      if (result.data.code === 0) {
         setUserInfo(result.data.data);
       }
     });

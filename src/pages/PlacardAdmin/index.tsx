@@ -85,7 +85,7 @@ const PlacardAdmin: FC = () => {
   const findAllPlacards = () => {
     getPlacard({ type: "system", deleted: 0 })
       .then(result => {
-        if (result.data.code === 200) setDataSource(result.data.data);
+        if (result.data.code === 0) setDataSource(result.data.data);
       })
       .catch(() => setDataSource([]));
   };
@@ -100,7 +100,7 @@ const PlacardAdmin: FC = () => {
       cancelText: "取消",
       onOk: async () => {
         const result = await pushPlacard(record);
-        if (result.data.code === 200) {
+        if (result.data.code === 0) {
           message.info("发布成功");
           webSocketManager.postMessage({
             type: "BroadcastPlacard",
@@ -130,7 +130,7 @@ const PlacardAdmin: FC = () => {
       cancelText: "取消",
       onOk: async () => {
         const result = await updatePlacard({ id: item.id, deleted: 1 });
-        if (result.data.code === 200) {
+        if (result.data.code === 0) {
           message.info("操作成功");
           return findAllPlacards();
         }

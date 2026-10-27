@@ -14,7 +14,7 @@ const RoleAllocationUserModal: FC<any> = ({ dataSource, onOk, onCancel, initUIDs
   const onSubmit = async () => {
     updateRoleUsers({ id, uids: selectedRowKeys })
       .then(res => {
-        if (res.data.code === 200) {
+        if (res.data.code === 0) {
           onOk();
           message.info("操作成功");
           return;

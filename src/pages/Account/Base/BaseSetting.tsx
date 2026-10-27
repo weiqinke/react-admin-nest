@@ -17,13 +17,13 @@ const BaseSetting: FC = function () {
   const [needaxios, setNeedAxios] = useState(1);
   const pendingCallback = async (formdata: any) => {
     const result = await updateMyinfo(formdata);
-    if (result.data.code === 200) {
+    if (result.data.code === 0) {
       setNeedAxios(needaxios + 1);
     }
   };
   useEffect(() => {
     getmyuserinfo().then(result => {
-      if (result.data.code === 200) {
+      if (result.data.code === 0) {
         setInitFormItem(result.data.data);
       }
     });

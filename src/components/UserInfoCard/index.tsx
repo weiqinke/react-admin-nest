@@ -44,7 +44,7 @@ const UserInfoCard = () => {
   const [tabActive, setTabActive] = useState("Profile");
   useEffect(() => {
     userinfo({ uid: value?.uid }).then(result => {
-      if (result.data.code === 200) {
+      if (result.data.code === 0) {
         const profile = result.data.data.profile;
         setInfo({
           ...profile

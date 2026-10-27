@@ -13,7 +13,7 @@ const OperationLabelModal: FC<any> = ({ label, onCancel, onOk }) => {
   const onFinish = async data => {
     const payload = { ...label, ...data };
     const result = label?.id ? await putlabelbyuser(payload) : await addnewlabelbyuser(payload);
-    if (result.data.code !== 200) {
+    if (result.data.code !== 0) {
       message.info("操作失败");
       return;
     }

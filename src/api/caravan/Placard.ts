@@ -1,37 +1,15 @@
-import { request } from "@/api/request";
+import { emptyOk, removedApi } from "@/api/removed";
 
-const BASE_URL = REACT_APP_API_URL;
+export const findLastTypePlacard = () => emptyOk([]);
 
-/** 获取系统通知接口 */
-export const findLastTypePlacard = (payload: any) => {
-  return request(`${BASE_URL}placard/findLastTypePlacard`, "GET", payload);
-};
+export const getPlacardListByType = () => emptyOk([]);
 
-/** 获取系统通知列表接口 */
-export const getPlacardListByType = (payload: any) => {
-  return request(`${BASE_URL}placard/getPlacardListByType`, "GET", payload);
-};
+export const getAllPlacard = () => emptyOk([]);
 
-/** 获取所有公告和通知 */
-export const getAllPlacard = (payload: any) => {
-  return request(`${BASE_URL}placard/getAllPlacard`, "GET", payload);
-};
+export const addPlacard = () => removedApi("公告");
 
-/** 添加一个公告 */
-export const addPlacard = (payload: any) => {
-  return request(`${BASE_URL}placard/addPlacard`, "POST", payload);
-};
-/** 发布一个公告 */
-export const broadcastPlacard = (payload: any) => {
-  return request(`${BASE_URL}placard/broadcastPlacard`, "POST", payload);
-};
+export const broadcastPlacard = () => removedApi("公告");
 
-/** 已读一个公告 */
-export const readOnePlacard = (payload: any) => {
-  return request(`${BASE_URL}placard/readOnePlacard`, "PUT", payload);
-};
+export const readOnePlacard = () => removedApi("公告");
 
-/** 删除一个公告 */
-export const deleteOnePlacard = (payload: any) => {
-  return request(`${BASE_URL}placard`, "DELETE", payload);
-};
+export const deleteOnePlacard = () => removedApi("公告");

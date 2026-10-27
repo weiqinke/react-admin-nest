@@ -98,7 +98,7 @@ const MenusAdmin: FC = () => {
       cancelText: "取消",
       onOk: async () => {
         const result = await updateMenuItem({ id: record.id, banned: record?.banned ? 0 : 1 });
-        if (result.data.code === 200) {
+        if (result.data.code === 0) {
           message.info("操作成功");
           getallmenusdata();
           return;
@@ -126,7 +126,7 @@ const MenusAdmin: FC = () => {
   const getallmenusdata = () => {
     setMenuslist([]);
     menuFind({ version: 1 }).then((result: any) => {
-      if (result.data.code === 200) {
+      if (result.data.code === 0) {
         const menudata = getMenuStructure(result.data.data);
         setMenuslist(menudata || []);
       }

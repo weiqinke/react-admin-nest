@@ -1,53 +1,33 @@
-import { request } from "@/api/request";
+import { assignRole, createRole, deleteRole, getRolePermissions, getRoles, revokeRole, setRolePermissions, updateRole } from "@/api/goadmin";
+import { removedApi } from "@/api/removed";
 
-const BASE_URL = REACT_APP_API_URL;
+export const getallrole = () => getRoles();
 
-/** nest获取所有角色接口 */
-export const getallrole = (payload: any) => {
-  return request(`${BASE_URL}role/getallrole`, "GET", payload);
+export const addrole = payload => createRole(payload);
+
+export const updaterole = (payload: any = {}) => {
+  if (payload && Object.prototype.hasOwnProperty.call(payload, "banned") && !payload.name) {
+    return removedApi("角色启用/禁用");
+  }
+  return updateRole(payload.code || payload.id, { name: payload.name, inherits: payload.inherits });
 };
 
-/** nest添加角色接口 */
-export const addrole = (payload: any) => {
-  return request(`${BASE_URL}role/addrole`, "POST", payload);
+export const deleterole = (payload: any = {}) => deleteRole(payload.code || payload.id);
+
+export const getUsersByRoleCode = () => removedApi("按角色查用户");
+
+export const getMenusByRoleCode = (payload: any = {}) => getRolePermissions(payload.code || payload.roleCode);
+
+export const giveUser = (payload: any = {}) => {
+  if (payload.revoke) return revokeRole({ user_id: String(payload.user_id), role_code: payload.role_code });
+  return assignRole({ user_id: String(payload.user_id || payload.uid), role_code: payload.role_code || payload.roleCode });
 };
 
-/** nest更新角色接口 */
-export const updaterole = (payload: any) => {
-  return request(`${BASE_URL}role/updaterole`, "POST", payload);
+export const giveRoleMenus = (payload: any = {}) => {
+  const codes = (payload.menus || payload.permission_codes || []).map(code => String(code));
+  return setRolePermissions(payload.roleCode || payload.code, codes);
 };
 
-/** nest禁用角色接口 */
-export const deleterole = (payload: any) => {
-  return request(`${BASE_URL}role/deleterole`, "POST", payload);
-};
+export const findAllMenu = () => removedApi("菜单");
 
-/** nest角色接口 */
-export const getUsersByRoleCode = (payload: any) => {
-  return request(`${BASE_URL}role/getUsersByRoleCode`, "POST", payload);
-};
-
-/** nest角色接口 */
-export const getMenusByRoleCode = (payload: any) => {
-  return request(`${BASE_URL}role/getMenusByRoleCode`, "POST", payload);
-};
-
-/** nest角色分配人接口 */
-export const giveUser = (payload: any) => {
-  return request(`${BASE_URL}role/giveUser`, "POST", payload);
-};
-
-/** nest角色分配人接口 */
-export const giveRoleMenus = (payload: any) => {
-  return request(`${BASE_URL}role/giveRoleMenus`, "POST", payload);
-};
-
-/** nest角色分配人接口 */
-export const findAllMenu = (payload: any) => {
-  return request(`${BASE_URL}role/findAllMenu`, "POST", payload);
-};
-
-/** nest角色分配人接口 */
-export const roleMenu = (payload: any) => {
-  return request(`${BASE_URL}role/menu`, "GET", payload);
-};
+export const roleMenu = () => removedApi("菜单");

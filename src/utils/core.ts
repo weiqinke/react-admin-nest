@@ -2,16 +2,33 @@ import qs from "qs";
 
 export const SYSTEM_TOKEN = "token";
 
-function atou(str) {
-  return decodeURIComponent(escape(atob(str)));
+function decodeJwtPayload(token: string) {
+  const part = token.split(".")[1];
+  if (!part) return {};
+  try {
+    const b64 = part.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = b64 + "=".repeat((4 - (b64.length % 4)) % 4);
+    return JSON.parse(decodeURIComponent(escape(atob(padded))));
+  } catch {
+    return {};
+  }
 }
+
 export const getUserState = () => {
   const token = window.localStorage.getItem(SYSTEM_TOKEN);
   if (!token) return {};
-  const result = token.replace("_", "/").replace("-", "+"); // 添加这一行
-  const payload = result.split(".")[1];
-  const userPayload = atou(payload);
-  return JSON.parse(userPayload);
+  const claims = decodeJwtPayload(token);
+  const storedUid = window.localStorage.getItem("uid");
+  const uid = storedUid || claims.uid || claims.user_id || (claims.sub != null ? String(claims.sub) : "");
+  let exp = claims.exp;
+  if (!exp) {
+    const expiresAt = window.localStorage.getItem("expires_at");
+    if (expiresAt) {
+      const ms = new Date(expiresAt).getTime();
+      if (!Number.isNaN(ms)) exp = Math.floor(ms / 1000);
+    }
+  }
+  return { ...claims, uid: uid ? String(uid) : "", exp };
 };
 
 export const getUrlParam = name => {
