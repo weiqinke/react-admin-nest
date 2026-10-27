@@ -3,7 +3,7 @@ import { message, Tabs } from "antd";
 import MenuTagContext from "@/contexts/MenuTagContext";
 
 import styles from "./index.module.scss";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 import { getMenuItemByUrl } from "@/utils/menuUtils";
 import Contextmenu from "./Contextmenu";
 import MenuTag from "./MenuTag";

@@ -1,7 +1,7 @@
-import Collision from "@/components/D3/Collision";
+﻿import Collision from "@/components/D3/Collision";
 import { withErrorBoundary } from "@/components/ErrorBoundary";
 import { Row, Col, Card } from "antd";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData } from "react-router";
 import FailContainer from "../FailPage/FailContainer";
 
 // eslint-disable-next-line react-refresh/only-export-components

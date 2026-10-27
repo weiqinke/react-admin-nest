@@ -1,4 +1,4 @@
-import MenuTagContext from "@/contexts/MenuTagContext";
+﻿import MenuTagContext from "@/contexts/MenuTagContext";
 import ProjectContext from "@/contexts/ProjectContext";
 import { getMenuStructure, getUrlParam, getUserState } from "@/utils/core";
 import { ProjectParseMenuAsPre, getIndexUrlInfo, saveMenus } from "@/utils/menuUtils";
@@ -11,7 +11,7 @@ import ReactCardFlipImport from "react-card-flip";
 
 // Vite 8 CJS interop: default import may be { default: Component }
 const ReactCardFlip = (ReactCardFlipImport as any).default ?? ReactCardFlipImport;
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 import { login, userMenus, userOAuth2 } from "@/api/microservice/user";
 import qrimg from "@/assets/qrcode.png";

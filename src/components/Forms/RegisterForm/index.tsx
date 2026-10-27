@@ -1,11 +1,11 @@
-import { Button, Form, Input, Spin, message } from "antd";
+﻿import { Button, Form, Input, Spin, message } from "antd";
 
 import { userMenus, userRegister } from "@/api/caravan/User";
 import ProjectContext from "@/contexts/ProjectContext";
 import { SYSTEM_TOKEN, getMenuStructure, getUserState } from "@/utils/core";
 import { ProjectParseMenuAsPre, getIndexUrlInfo, saveMenus } from "@/utils/menuUtils";
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import styles from "./index.module.scss";
 
 const RegisterForm = ({ goBack, setCloseEyes }) => {

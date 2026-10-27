@@ -1,6 +1,6 @@
-import { Spin, Alert } from "antd";
+﻿import { Spin, Alert } from "antd";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 const NeedLogin = () => {
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
-import TypingCard from "@/components/TypingCard";
+﻿import TypingCard from "@/components/TypingCard";
 import { Descriptions } from "antd";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import styles from "./index.module.scss";
 
 const About = () => {

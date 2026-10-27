@@ -1,5 +1,5 @@
-import { lazy } from "react";
-import { Outlet } from "react-router-dom";
+﻿import { lazy } from "react";
+import { Outlet } from "react-router";
 
 import DefaultLayout from "@/layout/DefaultLayout";
 import ProjectLayout from "@/layout/ProjectLayout";

@@ -1,11 +1,11 @@
-import IconFont from "@/components/IconFont";
+﻿import IconFont from "@/components/IconFont";
 import MenuTagContext from "@/contexts/MenuTagContext";
 import { formatURL, getLocalStorageMenus, getMenus, getOpenKeysByUrls, setLocalStorage } from "@/utils/menuUtils";
 import { AppstoreOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
 import { toNumber } from "lodash-es";
 import { useContext, useLayoutEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 
 const createMenuIcon = item => {
   return item.map(v => {
