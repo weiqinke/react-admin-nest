@@ -68,7 +68,7 @@ const HeaderNotice: FC = () => {
       label: (
         <div className={styles.container}>
           <Tabs
-            destroyInactiveTabPane
+            destroyOnHidden
             defaultActiveKey="notification"
             centered
             type="card"
