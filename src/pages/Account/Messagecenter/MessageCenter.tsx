@@ -22,7 +22,7 @@ const MessageCenter: FC = () => {
   return (
     <div className="inner-message">
       <Col span={24}>
-        <Divider orientation="left" plain>
+        <Divider titlePlacement="left" plain>
           消息中心
         </Divider>
       </Col>

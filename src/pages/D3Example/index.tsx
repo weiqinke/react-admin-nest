@@ -12,12 +12,12 @@ const D3Example = () => {
     <div style={{ width: "100vw", height: "100vh" }}>
       <Row gutter={[16, 16]}>
         <Col span={8}>
-          <Card title="Collision" bordered={false}>
+          <Card title="Collision" variant="borderless">
             <Collision />
           </Card>
         </Col>
         <Col span={8}>
-          <Card title="Galaxy" bordered={false}></Card>
+          <Card title="Galaxy" variant="borderless"></Card>
         </Col>
       </Row>
     </div>

@@ -30,7 +30,7 @@ const RegisterForm = ({ goBack, setCloseEyes }) => {
     <div className={styles.container}>
       <h1 className={styles.title}>Nest-Admin</h1>
       <div>
-        <Spin spinning={loading} delay={500} tip="Registering">
+        <Spin spinning={loading} delay={500} description="Registering">
           <Form
             name="basic"
             initialValues={initialValues}

@@ -2,7 +2,6 @@ import Copyright from "@/components/Footer/Copyright";
 import LoginForm from "@/components/Forms/LoginForm";
 import RegisterForm from "@/components/Forms/RegisterForm";
 import { useState } from "react";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
 import Snowflake from "./snowflake";
 import styles from "./index.module.scss";
 import Owl from "@/components/Owl";
@@ -19,11 +18,9 @@ const Login = () => {
         <div>
           <Owl closeEyes={closeEyes} />
         </div>
-        <TransitionGroup>
-          <CSSTransition key={register} timeout={100} classNames="loginfade">
-            {register % 2 ? <RegisterForm goBack={() => setRegister(0)} setCloseEyes={setCloseEyes} /> : <LoginForm setRegister={onClick} setCloseEyes={setCloseEyes} />}
-          </CSSTransition>
-        </TransitionGroup>
+        <div>
+          {register % 2 ? <RegisterForm goBack={() => setRegister(0)} setCloseEyes={setCloseEyes} /> : <LoginForm setRegister={onClick} setCloseEyes={setCloseEyes} />}
+        </div>
       </div>
       <div className={styles.cr}>
         <Copyright />

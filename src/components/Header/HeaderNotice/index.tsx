@@ -1,5 +1,5 @@
 import { BellOutlined } from "@ant-design/icons";
-import { Avatar, Badge, Dropdown, DropdownProps, List, MenuProps, Tabs } from "antd";
+import { Avatar, Badge, Dropdown, DropdownProps, Flex, Listy, MenuProps, Tabs } from "antd";
 import { FC, useEffect, useRef, useState } from "react";
 
 import { userNotice } from "@/api/microservice/log";
@@ -14,7 +14,7 @@ const HeaderNotice: FC = () => {
   const intervalHandle: any = useRef(null);
   const [noticeNum, setNoticeNum] = useState(0);
   const [activeKey, setActiveKey] = useState("notification");
-  const [dataSource, setDataSource] = useState([]);
+  const [dataSource, setDataSource] = useState<any[]>([]);
 
   const noticeListFilter = <T extends string>(type: T) => {
     return noticeList.filter(notice => notice.type === type) as any[];
@@ -85,30 +85,27 @@ const HeaderNotice: FC = () => {
             })}
           />
           <div>
-            <List
-              itemLayout="horizontal"
-              size="small"
-              footer={
-                <div className={styles.bottomBar}>
-                  <div className={styles.doLeftBtn} onClick={clearMessage}>
-                    <span>清空</span>
-                  </div>
-                  <div className={styles.dobtn}>
-                    <span>查看更多</span>
-                  </div>
-                </div>
-              }
-              dataSource={dataSource}
-              renderItem={item => (
-                <List.Item key={item.id}>
-                  <List.Item.Meta
-                    avatar={<Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${item.id}`} />}
-                    title={<a href="https://ant.design">{item.title}</a>}
-                    description={item.description}
-                  />
-                </List.Item>
+            <Listy
+              items={dataSource}
+              rowKey="id"
+              itemRender={item => (
+                <Flex align="center" gap={12}>
+                  <Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${item.id}`} />
+                  <Flex vertical>
+                    <a href="https://ant.design">{item.title}</a>
+                    <span>{item.description}</span>
+                  </Flex>
+                </Flex>
               )}
             />
+            <div className={styles.bottomBar}>
+              <div className={styles.doLeftBtn} onClick={clearMessage}>
+                <span>清空</span>
+              </div>
+              <div className={styles.dobtn}>
+                <span>查看更多</span>
+              </div>
+            </div>
           </div>
         </div>
       )

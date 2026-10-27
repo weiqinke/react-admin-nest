@@ -8,7 +8,7 @@ const SecuritySetting: FC = function () {
   return (
     <Row>
       <Col span={24}>
-        <Divider orientation="left" plain>
+        <Divider titlePlacement="left" plain>
           安全设置
         </Divider>
       </Col>

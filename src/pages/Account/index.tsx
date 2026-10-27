@@ -13,7 +13,7 @@ const Account: FC = () => {
   return (
     <Layout className={styles.container}>
       <Tabs
-        tabPosition="left"
+        tabPlacement="left"
         className={styles.tabplane}
         items={[
           {

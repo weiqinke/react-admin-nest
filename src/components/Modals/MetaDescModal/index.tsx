@@ -21,7 +21,7 @@ const MetaDescModal: FC<any> = ({ userInfo, onOk }) => {
         </Button>
       }>
       <div className={styles.container}>
-        <Avatar src={userInfo.avatar || ""} className={styles.avatar} style={{ userSelect: "none" }} />
+        <Avatar src={userInfo.avatar || undefined} className={styles.avatar} style={{ userSelect: "none" }} />
         <div className={styles.name}>{userInfo.name}</div>
         <div className={styles.description}>{userInfo.signature}</div>
         <div className={styles.area}></div>

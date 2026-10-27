@@ -8,7 +8,6 @@ import FailContainer from "@/pages/FailPage/FailContainer";
 import { Layout } from "antd";
 import { throttle } from "lodash-es";
 import { Suspense, useContext, useEffect, useState } from "react";
-import { CSSTransition, SwitchTransition } from "react-transition-group";
 import { Outlet, useLocation } from "react-router";
 import styles from "./index.module.scss";
 import SuspendFallback from "@/components/SuspendFallback";
@@ -16,9 +15,9 @@ import SuspendFallback from "@/components/SuspendFallback";
 const { Content, Sider } = Layout;
 
 const DefaultLayout = () => {
-  const location = useLocation();
   const { setTagPlanVisible, refresh } = useContext(MenuTagContext);
   const [collapsed, setCollapsed] = useState(false);
+  const { pathname } = useLocation();
 
   useEffect(() => {
     const resize = throttle(
@@ -52,7 +51,7 @@ const DefaultLayout = () => {
 
         <Content className={styles.pageContent}>
           <TagsView />
-          <ErrorBoundary fallbackRender={FailContainer}>
+          <ErrorBoundary fallbackRender={FailContainer} resetKeys={[pathname]}>
             <Suspense fallback={<SuspendFallback />}>
               <div className={styles.outletContainer}>
                 <div className={styles.pageOutlet}>
@@ -60,13 +59,7 @@ const DefaultLayout = () => {
                     <SuspendFallback />
                   </div>
                   <div style={{ display: `${refresh ? "none" : ""}` }}>
-                    <SwitchTransition>
-                      <CSSTransition key={location.pathname} timeout={100} classNames="transformOutletitem">
-                        <div>
-                          <Outlet />
-                        </div>
-                      </CSSTransition>
-                    </SwitchTransition>
+                    <Outlet />
                   </div>
                 </div>
                 <Copyright />

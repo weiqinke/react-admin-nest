@@ -3,7 +3,6 @@ import MenuTagContext from "@/contexts/MenuTagContext";
 import { formatURL, getLocalStorageMenus, getMenus, getOpenKeysByUrls, setLocalStorage } from "@/utils/menuUtils";
 import { AppstoreOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
-import { toNumber } from "lodash-es";
 import { useContext, useLayoutEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 
@@ -30,12 +29,12 @@ const WebMenu = () => {
     // key 是指 嵌套到最底层的那一层菜单 key
     // keyPath 是指 由深到浅组成的数组
     // keyPath 是当前所有的菜单，我们需要把菜单拼接起来，记住，从后往前
-    const menuPath: string[] = keyPath.map(v => toNumber(v)).reverse();
+    const menuPath: string[] = [...keyPath].reverse();
     let changeMenus = menusList.concat();
     const urls = [];
     for (let index = 0; index < menuPath.length; index++) {
       const item = menuPath[index];
-      const result = changeMenus.find(v => v.id === parseInt(item));
+      const result = changeMenus.find(v => String(v.id) === String(item));
       urls.push(result?.url || "");
       if (result.children) changeMenus = result.children;
     }
