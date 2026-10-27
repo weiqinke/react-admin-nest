@@ -3,7 +3,7 @@ import { tupleStr } from "./core";
 const DEV_REACT_APP_SOCKET_URL = "http://127.0.0.1:5000/nestws";
 const PRO_REACT_APP_SOCKET_URL = "https://nest-admin.com/nestws";
 // 项目中所有websocket事件名称
-const eventName = tupleStr(
+export const eventName = tupleStr(
   "paySignMoney",
   "loginMessage",
   "NestAdminCar",
@@ -16,21 +16,22 @@ const eventName = tupleStr(
   "WEBSOCKET_CHAT_GET_HISTORY"
 );
 
+export type EventName = (typeof eventName)[number];
+
 interface SocketEvent {
   name: EventName;
   type: any;
   data?: any;
   func?: string;
 }
-type EventName = (typeof eventName)[number];
 type websocketEventFn = (e: SocketEvent) => void;
 
 function WebsocketManager(this: any) {
-  this.socket;
-  this.activeRoom;
+  this.socket = null;
+  this.activeRoom = null;
   this.ConnectNum = 0;
   this.SokcetUrl = "";
-  this.MySocketID;
+  this.MySocketID = null;
   this.publicEventName = "NestAdminCar";
   // 监听事件池
   this.websocketListeners = new Set<websocketEventFn>();

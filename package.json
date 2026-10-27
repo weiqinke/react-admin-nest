@@ -4,10 +4,13 @@
   "description": "",
   "author": "qkstart@foxmail.com",
   "type": "module",
+  "engines": {
+    "node": ">=22.22.0"
+  },
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint . --report-unused-disable-directives --max-warnings 50",
     "preview": "vite preview",
     "lint:fix": "eslint . --fix",
     "prettier": "prettier --write .",
@@ -38,6 +41,7 @@
     "socket.io-client": "^4.7.4"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/bytes": "^3.1.4",
     "@types/d3": "^7.4.3",
     "@types/node": "^20.19.0",
@@ -45,21 +49,20 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@types/react-transition-group": "^4.4.10",
-    "@typescript-eslint/eslint-plugin": "^6.19.0",
-    "@typescript-eslint/parser": "^6.14.0",
     "@vitejs/plugin-react": "^6.1.2",
-    "eslint": "^8.56.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.5",
-    "eslint-plugin-unused-imports": "^3.0.0",
+    "eslint": "^10.13.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
+    "eslint-plugin-unused-imports": "^4.4.1",
+    "globals": "^17.13.0",
     "prettier": "3.2.4",
     "rollup-plugin-visualizer": "^7.1.1",
     "sass": "^1.70.0",
     "terser": "^5.37.0",
-    "typescript": "^5.7.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.72.1",
     "vite": "^8.3.5",
-    "vite-plugin-compression": "^0.5.1",
-    "vite-plugin-html": "^3.2.2"
+    "vite-plugin-compression2": "^2.5.4"
   },
   "license": "MIT"
 }

@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router";
 const MenuTagContext = React.createContext({
   tags: [],
   setTags: () => null,
-  // eslint-disable-next-line unused-imports/no-unused-vars, @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line unused-imports/no-unused-vars
   addTag: (urls: any, key: any) => null,
   activeUrl: "",
   setActiveUrl: () => null,

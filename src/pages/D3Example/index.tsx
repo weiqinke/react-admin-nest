@@ -24,7 +24,7 @@ const D3Example = () => {
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
+ 
 export default withErrorBoundary(D3Example, {
   fallbackRender: FailContainer
 });

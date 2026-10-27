@@ -1,6 +1,6 @@
 import { SunOutlined } from "@ant-design/icons";
 import styles from "./index.module.scss";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { Tooltip } from "antd";
 import ProjectContext from "@/contexts/ProjectContext";
 

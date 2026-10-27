@@ -4,11 +4,12 @@
     <meta charset="UTF-8" />
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
-    <title><%- title %></title>
+    <title>编程的奇思妙想</title>
   </head>
   <body>
+    <div id="tag"></div>
     <div id="caravan-root"></div>
-    <%- injectScript %>
     <script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=pfDeQwmAwislusrWwBxzVVXLfXustbd7"></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

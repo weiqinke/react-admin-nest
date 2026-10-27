@@ -9,7 +9,7 @@ const HeaderNotice: FC = () => {
   const [open, setOpen] = useState(false);
 
   const [noticeList, setNoticeList] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   const noticeCount = 10;
   const intervalHandle: any = useRef(null);
   const [noticeNum, setNoticeNum] = useState(0);
