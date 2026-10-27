@@ -84,7 +84,7 @@ const SystemInfo: React.FC = () => {
 
   useEffect(() => {
     apiCount({}).then(res => {
-      if (res.data.code === 200) {
+      if (res.data.code === 0) {
         setApiCounts(res.data.data);
       }
     });

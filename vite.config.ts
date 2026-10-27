@@ -12,7 +12,15 @@ const { dependencies, devDependencies, name, version } = packageJson;
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const isDev = process.env.NODE_ENV === "development";
-const httpUrl = isDev ? "https://nest-admin.com/micro/api/" : "https://nest-admin.com/micro/api/";
+const goAdminOrigin = "http://127.0.0.1:8080";
+// 开发走 Vite 代理，浏览器同源访问；生产直连 goadmin（后端已开 CORS）
+const httpUrl = isDev ? "" : goAdminOrigin;
+
+const goAdminProxy = {
+  "/api": { target: goAdminOrigin, changeOrigin: true },
+  "/health": { target: goAdminOrigin, changeOrigin: true },
+  "/ws": { target: goAdminOrigin, changeOrigin: true, ws: true }
+};
 
 function vendorChunkName(id: string) {
   // pnpm: .../node_modules/.pnpm/<pkg>@ver/node_modules/<pkg>/...
@@ -68,20 +76,11 @@ export default defineConfig({
     include: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime", "react-dom/client"]
   },
   preview: {
-    proxy: {
-      // 使用 proxy 实例
-      // "/nest3011": {
-      //   target: "https://nest-admin.com/nest3011/",
-      //   changeOrigin: true,
-      //   secure: false,
-      //   configure: (proxy, options) => {
-      //     return proxy;
-      //   },
-      // },
-    }
+    proxy: goAdminProxy
   },
   server: {
-    hmr: {}
+    hmr: {},
+    proxy: goAdminProxy
   },
   build: {
     minify: "terser", // 必须开启：使用 terserOptions 才有效果

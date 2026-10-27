@@ -29,7 +29,7 @@ const MenuEditModal: FC<any> = ({ onOk, initMenuItem, parentUid, onCancel }) => 
     } else {
       result = await createMenuItem(payload);
     }
-    if (result.data.code !== 200) {
+    if (result.data.code !== 0) {
       message.info("操作失败");
       return;
     }

@@ -64,9 +64,9 @@ const RoleList: FC = () => {
   }, []);
 
   const willGiveUser = (record: any) => {
-    findRoleUsers({ roleCode: record.roleCode }).then(result => {
-      if (result.data.code === 200) {
-        setRoleCode(record.id);
+    findRoleUsers({ roleCode: record.code }).then(result => {
+      if (result.data.code === 0) {
+        setRoleCode(record.code);
         setInitUIDs(result.data.data || []);
         setShareUsers(true);
       }
@@ -74,9 +74,9 @@ const RoleList: FC = () => {
   };
   // 分配菜单
   const willGiveMenu = (record: any) => {
-    findRoleMenus({ id: record.id }).then(result => {
-      if (result.data.code === 200) {
-        setRoleCode(record.id);
+    findRoleMenus({ code: record.code }).then(result => {
+      if (result.data.code === 0) {
+        setRoleCode(record.code);
         setChangeMenu(result.data.data || []);
         setShareMenu(true);
       }
@@ -100,7 +100,7 @@ const RoleList: FC = () => {
           id: item.id,
           banned: !item.banned
         });
-        if (result.data.code === 200) {
+        if (result.data.code === 0) {
           message.info("操作成功");
           return findAllRole();
         }

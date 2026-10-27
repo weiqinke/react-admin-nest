@@ -1,48 +1,45 @@
+import { getLoginLogs } from "@/api/goadmin";
+import { emptyOk, removedApi } from "@/api/removed";
 import { request } from "@/api/request";
 
-const BASE_URL = REACT_APP_API_URL;
+export async function loginlog(payload: any = {}) {
+  const res = await getLoginLogs({
+    page: payload.page || 1,
+    page_size: payload.page_size || payload.pageSize || 200,
+    from: payload.from || payload.st,
+    to: payload.to || payload.et,
+    username: payload.username,
+    user_id: payload.user_id,
+    success: payload.success,
+    ip: payload.ip
+  });
+  const list = (res.data?.data?.list || []).map(item => ({
+    ...item,
+    name: item.username,
+    bowser: item.browser || item.user_agent,
+    host: item.ip,
+    created: item.created_at || item.created
+  }));
+  return { ...res, data: { ...res.data, data: list } };
+}
 
-/** 获取用户登录日志 */
-export const loginlog = (payload: any) => {
-  return request(`${BASE_URL}logs/loginlog`, "GET", payload);
-};
+export const userNotice = () => emptyOk([]);
 
-/** 获取用户消息 */
-export const userNotice = (payload: any) => {
-  return request(`${BASE_URL}logs/userNotice`, "GET", payload);
-};
+export const userPlacard = () => emptyOk([]);
 
-/** 获取用户未读通知 */
-export const userPlacard = (payload: any) => {
-  return request(`${BASE_URL}logs/placard/user`, "GET", payload);
-};
+export const getPlacard = () => emptyOk([]);
 
-/** 获取所有通知 */
-export const getPlacard = (payload: any) => {
-  return request(`${BASE_URL}logs/placard`, "GET", payload);
-};
+export const createPlacard = () => removedApi("公告");
 
-/** 创建通知 */
-export const createPlacard = (payload: any) => {
-  return request(`${BASE_URL}logs/placard/create`, "POST", payload);
-};
+export const updatePlacard = () => removedApi("公告");
 
-/** 更新通知 */
-export const updatePlacard = (payload: any) => {
-  return request(`${BASE_URL}logs/placard/update`, "POST", payload);
-};
+export const pushPlacard = () => removedApi("公告");
 
-/** 推送通知 */
-export const pushPlacard = (payload: any) => {
-  return request(`${BASE_URL}logs/placard/push`, "POST", payload);
-};
+export const submitPlacard = () => removedApi("公告");
 
-/** 推送通知 */
-export const submitPlacard = (payload: any) => {
-  return request(`${BASE_URL}logs/placard/submit`, "POST", payload);
-};
-
-/** 接口调用数量 */
-export const apiCount = (payload: any) => {
-  return request(`${BASE_URL}logs/apicount`, "GET", payload);
-};
+/** 访问日志总数。无 stats:read 时静默失败，不打断工作台。 */
+export function apiCount() {
+  return request("/api/stats/access/logs", "GET", { page: 1, page_size: 1 }, { skipErrorMessage: true })
+    .then(res => ({ ...res, data: { ...res.data, data: { total: res.data?.data?.total || 0, today: 0 } } }))
+    .catch(() => emptyOk({ total: 0, today: 0 }));
+}

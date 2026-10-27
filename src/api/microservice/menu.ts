@@ -1,18 +1,29 @@
-import { request } from "@/api/request";
+import { createPermission, getPermissions, updatePermission } from "@/api/goadmin";
+import { removedApi } from "@/api/removed";
 
-const BASE_URL = REACT_APP_API_URL;
+/** goadmin 不做菜单树。这里把权限码铺成扁平树，供角色授权页使用。 */
+export async function menuFind() {
+  const res = await getPermissions();
+  const list = (res.data?.data?.list || []).map(item => ({
+    id: item.code,
+    key: item.code,
+    value: item.code,
+    name: item.name ? `${item.name} (${item.code})` : item.code,
+    title: item.name ? `${item.name} (${item.code})` : item.code,
+    parentUid: 0,
+    sort: 0
+  }));
+  return { ...res, data: { ...res.data, data: list } };
+}
 
-/** 获取所有菜单 */
-export const menuFind = (payload: any) => {
-  return request(`${BASE_URL}menu/find`, "GET", payload);
+export const createMenuItem = (payload: any = {}) => {
+  const code = payload.code || payload.url || payload.name;
+  if (!code) return removedApi("菜单");
+  return createPermission({ code, name: payload.name || code });
 };
 
-/** 添加菜单 */
-export const createMenuItem = (payload: any) => {
-  return request(`${BASE_URL}menu/create`, "POST", payload);
-};
-
-/**修改菜单属性 */
-export const updateMenuItem = (payload: any) => {
-  return request(`${BASE_URL}menu/update`, "POST", payload);
+export const updateMenuItem = (payload: any = {}) => {
+  const code = payload.code || payload.id;
+  if (!code || !payload.name) return removedApi("菜单");
+  return updatePermission(String(code), { name: payload.name });
 };

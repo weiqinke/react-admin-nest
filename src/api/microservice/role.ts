@@ -1,38 +1,57 @@
-import { request } from "@/api/request";
+import { assignRole, createRole as goCreateRole, getRolePermissions, getRoles, getUsers, revokeRole, setRolePermissions, updateRole as goUpdateRole } from "@/api/goadmin";
 
-const BASE_URL = REACT_APP_API_URL;
+function roleCodeOf(payload: any = {}) {
+  return payload.code || payload.roleCode || payload.role_code || payload.id;
+}
 
-/** 获取所有角色 */
-export const findRoles = (payload: any) => {
-  return request(`${BASE_URL}role/findRoles`, "GET", payload);
-};
+export async function findRoles() {
+  const res = await getRoles();
+  return { ...res, data: { ...res.data, data: res.data?.data?.list || [] } };
+}
 
-/** 创建角色 */
-export const createRole = payload => {
-  return request(`${BASE_URL}role/create`, "POST", payload);
-};
+export const createRole = (payload: any = {}) =>
+  goCreateRole({
+    code: payload.code || payload.name,
+    name: payload.name,
+    inherits: payload.inherits
+  });
 
-/** 更新角色 */
-export const updateRole = payload => {
-  return request(`${BASE_URL}role/updateRole`, "POST", payload);
-};
+export const updateRole = (payload: any = {}) =>
+  goUpdateRole(roleCodeOf(payload), {
+    name: payload.name,
+    inherits: payload.inherits
+  });
 
-/** 获取角色下的人员 */
-export const findRoleUsers = payload => {
-  return request(`${BASE_URL}role/findRoleUsers`, "GET", payload);
-};
+export async function findRoleUsers(payload: any = {}) {
+  const code = roleCodeOf(payload);
+  const res = await getUsers();
+  const list = (res.data?.data?.list || []).filter(user => (user.roles || []).includes(code)).map(user => user.id);
+  return { ...res, data: { ...res.data, data: list } };
+}
 
-/** 更新角色下的人员 */
-export const updateRoleUsers = payload => {
-  return request(`${BASE_URL}role/user/update`, "POST", payload);
-};
+export async function updateRoleUsers(payload: any = {}) {
+  const code = String(roleCodeOf(payload) || "");
+  const nextIds: string[] = (payload.uids || payload.user_ids || []).map(id => String(id));
+  const next = new Set<string>(nextIds);
+  const users = (await getUsers()).data?.data?.list || [];
+  const current = users.filter(user => (user.roles || []).includes(code)).map(user => String(user.id));
+  for (const userId of nextIds) {
+    if (!current.includes(userId)) await assignRole({ user_id: userId, role_code: code });
+  }
+  for (const userId of current) {
+    if (!next.has(userId)) await revokeRole({ user_id: userId, role_code: code });
+  }
+  return { data: { code: 0, message: "ok", data: { user_id: "", roles: nextIds } }, status: 200 };
+}
 
-/** 获取角色下的菜单 */
-export const findRoleMenus = payload => {
-  return request(`${BASE_URL}role/menu`, "GET", payload);
-};
+export async function findRoleMenus(payload: any = {}) {
+  const res = await getRolePermissions(roleCodeOf(payload));
+  const data = res.data?.data || {};
+  const list = data.list || data.permissions || [];
+  return { ...res, data: { ...res.data, data: list } };
+}
 
-/** 更新角色下的菜单 */
-export const updateRoleMenus = payload => {
-  return request(`${BASE_URL}role/menu/update`, "POST", payload);
+export const updateRoleMenus = (payload: any = {}) => {
+  const codes = (payload.mids || payload.menus || payload.permission_codes || []).map(code => String(code));
+  return setRolePermissions(roleCodeOf(payload), codes);
 };

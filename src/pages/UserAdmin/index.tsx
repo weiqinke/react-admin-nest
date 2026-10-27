@@ -31,8 +31,8 @@ const UserAdmin: FC = () => {
       okType: "danger",
       cancelText: "取消",
       onOk: async () => {
-        const result = await updateUser({ banned: !item.banned });
-        if (result.data.code === 200) {
+        const result = await updateUser({ id: item.id || item.uid, banned: !item.banned });
+        if (result.data.code === 0) {
           message.info("操作成功");
           findAll();
           return;
@@ -53,7 +53,7 @@ const UserAdmin: FC = () => {
 
     findUsers(payload)
       .then(result => {
-        if (result.data.code === 200) {
+        if (result.data.code === 0) {
           setDataSource(result.data.data || []);
         } else {
           setDataSource([]);

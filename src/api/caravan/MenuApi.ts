@@ -1,28 +1,12 @@
-import { request } from "@/api/request";
+import { getPermissions } from "@/api/goadmin";
+import { removedApi } from "@/api/removed";
 
-const BASE_URL = REACT_APP_API_URL;
+export const getUserMenus = () => getPermissions();
 
-/** 获取菜单接口 */
-export const getUserMenus = () => {
-  return request(`${BASE_URL}menus/getUserMenus`, "GET", {});
-};
+export const addMenuItem = () => removedApi("菜单");
 
-/** 添加菜单接口 */
-export const addMenuItem = (payload: any) => {
-  return request(`${BASE_URL}menus/addMenuItem`, "POST", payload);
-};
+export const editMenuItem = () => removedApi("菜单");
 
-/** 编辑菜单接口 */
-export const editMenuItem = (payload: any) => {
-  return request(`${BASE_URL}menus/editMenuItem`, "POST", payload);
-};
+export const delMenuItem = () => removedApi("菜单");
 
-/** 删除菜单接口 */
-export const delMenuItem = (payload: any) => {
-  return request(`${BASE_URL}menus`, "DELETE", payload);
-};
-
-/** 删除菜单接口 */
-export const getAllMenus = payload => {
-  return request(`${BASE_URL}menus/getAllMenus`, "GET", payload);
-};
+export const getAllMenus = () => getPermissions();

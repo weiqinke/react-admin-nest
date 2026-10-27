@@ -1,43 +1,83 @@
-import { request } from "@/api/request";
+import { getCaptcha, getMe, getPublicKey, getUsers, login as goLogin, logout as goLogout, register as goRegister, updateUserProfile } from "@/api/goadmin";
+import { getRefreshToken } from "@/api/session";
 
-const BASE_URL = REACT_APP_API_URL;
+export { getCaptcha, getPublicKey };
 
-/** 用户登录 */
-export const login = (payload: any) => {
-  return request(`${BASE_URL}user/login`, "POST", payload);
-};
+function normalizeUser(user) {
+  const profile = user?.profile || {};
+  return {
+    ...user,
+    uid: user?.id,
+    email: profile.email || "",
+    mobile: profile.mobile || profile.phone || "",
+    banned: profile.status === 0,
+    profile: {
+      ...profile,
+      nick: profile.nickname || user?.username || ""
+    }
+  };
+}
 
-/** 用户注册 */
-export const register = (payload: any) => {
-  return request(`${BASE_URL}user/register`, "POST", payload);
-};
+function profilePayload(payload: any = {}) {
+  const profile = payload.profile || {};
+  const body: any = {
+    nickname: profile.nick ?? payload.nick,
+    email: payload.email,
+    mobile: payload.mobile,
+    phone: payload.phone,
+    avatar: profile.avatar ?? payload.avatar,
+    address: profile.address ?? payload.address,
+    bio: profile.signature ?? payload.signature
+  };
+  if (profile.sex != null && profile.sex !== "") body.gender = Number(profile.sex);
+  if (payload.banned != null) body.status = payload.banned ? 0 : 1;
+  if (payload.status != null) body.status = payload.status;
+  return Object.fromEntries(Object.entries(body).filter(([, value]) => value !== undefined && value !== ""));
+}
 
-/** nest用户菜单接口 */
-export const userMenus = (payload: any) => {
-  return request(`${BASE_URL}user/menus`, "GET", payload);
-};
+/** 登录。可传明文 password，由这里做 RSA-OAEP 加密。 */
+export const login = payload => goLogin(payload);
 
-/** 创建一个用户 */
-export const createUser = payload => {
-  return request(`${BASE_URL}user/create`, "POST", payload);
-};
+/** 注册。成功后不会返回 token，需要再登录。 */
+export const register = payload => goRegister(payload);
 
-/** 获取所有用户 */
-export const findUsers = payload => {
-  return request(`${BASE_URL}user/findall`, "GET", payload);
-};
+/** 当前用户。兼容旧页面读取 data.profile。 */
+export async function userinfo() {
+  const res = await getMe();
+  const user = normalizeUser(res.data?.data || {});
+  return { ...res, data: { ...res.data, data: user } };
+}
 
-/** 更新用户 */
-export const updateUser = (payload: any) => {
-  return request(`${BASE_URL}user/update`, "POST", payload);
-};
+export const userMenus = () => userinfo();
 
-/** 获取用户信息 */
-export const userinfo = (payload: any) => {
-  return request(`${BASE_URL}user/userinfo`, "GET", payload);
-};
+export async function createUser(payload) {
+  const created = await goRegister({ username: payload.username, password: payload.password });
+  const id = created.data?.data?.user?.id;
+  const profile = profilePayload(payload);
+  if (!id || Object.keys(profile).length === 0) return created;
+  return updateUserProfile(String(id), profile);
+}
 
-/** OAuth2 获取code */
-export const userOAuth2 = payload => {
-  return request(`${BASE_URL}user/oauth2`, "POST", payload);
-};
+export async function findUsers(query: any = {}) {
+  const res = await getUsers();
+  let list = res.data?.data?.list || [];
+  if (query.username) list = list.filter(item => item.username?.includes(query.username));
+  if (query.email) list = list.filter(item => (item.profile?.email || "").includes(query.email));
+  if (query.mobile) {
+    list = list.filter(item => (item.profile?.mobile || item.profile?.phone || "").includes(query.mobile));
+  }
+  return { ...res, data: { ...res.data, data: list.map(normalizeUser) } };
+}
+
+export function updateUser(payload: any = {}) {
+  const id = payload.id || payload.uid || payload.user_id;
+  return updateUserProfile(String(id), profilePayload(payload));
+}
+
+/** OAuth 已不在 goadmin 中提供。 */
+export const userOAuth2 = () => Promise.reject(Object.assign(new Error("当前后端未提供第三方登录"), { code: 40401 }));
+
+export function logout() {
+  const refresh_token = getRefreshToken();
+  return goLogout(refresh_token || undefined, { skipErrorMessage: true });
+}

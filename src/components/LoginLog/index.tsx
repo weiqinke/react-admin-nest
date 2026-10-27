@@ -58,7 +58,7 @@ const LoginLog = () => {
       et: dayjs().add(1, "days").format("YYYY-MM-DD")
     })
       .then(r => {
-        if (r.data.code === 200) setDataSource(r?.data?.data?.reverse() || []);
+        if (r.data.code === 0) setDataSource(r?.data?.data?.reverse() || []);
       })
       .catch(() => setDataSource([]));
   };

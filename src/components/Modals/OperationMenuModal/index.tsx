@@ -13,7 +13,7 @@ const OperationMenuModal: FC<any> = (props: any) => {
     //分配人员
     const payload = { roleCode, menus: checkedKeys };
     const result: any = await giveRoleMenus(payload);
-    if (result.data.code === 200) {
+    if (result.data.code === 0) {
       message.info("操作成功");
       pendingCallback(true);
       return;

@@ -7,7 +7,9 @@ import { useContext, useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router";
 import HeaderNotice from "../HeaderNotice";
 
-import { submitPlacard, userPlacard } from "@/api/microservice/log";
+import { userPlacard } from "@/api/microservice/log";
+import { logout as apiLogout } from "@/api/microservice/user";
+import { clearSession } from "@/api/session";
 import MenuTagContext from "@/contexts/MenuTagContext";
 import styles from "./index.module.scss";
 import ThemeColor from "../ThemeColor";
@@ -29,9 +31,13 @@ const DefaultLayoutHeader = () => {
   };
 
   const logout = useCallback(() => {
-    localStorage.removeItem("token");
-    setValue({});
-    navigate("/login");
+    apiLogout()
+      .catch(() => undefined)
+      .finally(() => {
+        clearSession();
+        setValue({});
+        navigate("/login");
+      });
   }, [setValue, navigate]);
 
   const items: MenuProps["items"] = [
@@ -97,7 +103,7 @@ const DefaultLayoutHeader = () => {
       uid: parseInt(localStorage.getItem("uid"))
     })
       .then(result => {
-        if (result?.data?.code !== 200) return;
+        if (result?.data?.code !== 0) return;
         //如果请求成功，需要弹出对应数量的公告modal
         result?.data?.data?.map((item: any, index: number) => {
           return Modal.info({
@@ -110,7 +116,7 @@ const DefaultLayoutHeader = () => {
                 <p>{item.description.slice(0, 300)}</p>
               </div>
             ),
-            onOk: () => submitPlacard({ id: item.id, uid: parseInt(localStorage.getItem("uid")) })
+            onOk: () => undefined
           });
         });
       })

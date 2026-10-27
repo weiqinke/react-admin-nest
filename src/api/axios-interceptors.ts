@@ -1,134 +1,158 @@
 import { message } from "antd";
+import axios from "axios";
+import { clearSession, getAccessToken, getRefreshToken, saveLoginSession } from "./session";
 
-// 401拦截
-const resp401 = {
-  /**
-   * 响应数据之前做点什么
-   * @param response 响应对象
-   * @param options 应用配置 包含: {router, i18n, store, message}
-   * @returns {*}
-   */
-  onFulfilled(response) {
-    if (response.status === 400) {
-      message.error({
-        content: "无此接口权限",
-        duration: 1
-      });
-    }
-    if (response.status === 401) {
-      message.error({
-        content: "无此接口权限",
-        duration: 1
-      });
-    }
-    return response;
+const PUBLIC_PATHS = ["/health", "/api/captcha", "/api/crypto/public-key", "/api/register", "/api/login", "/api/token/refresh"];
+const REFRESH_CODES = new Set([40101, 40102, 40104]);
+
+function requestPath(url?: string) {
+  if (!url) return "";
+  try {
+    if (url.startsWith("http")) return new URL(url).pathname;
+  } catch {
+    /* 相对路径继续按原字符串处理 */
   }
-};
+  return url.split("?")[0];
+}
 
-const resp403 = {
-  onFulfilled(response) {
-    if (response.status === 403) {
-      message.error({
-        content: "请求被拒绝",
-        duration: 1
-      });
-    }
-    return response;
+function isPublic(url?: string) {
+  return PUBLIC_PATHS.includes(requestPath(url));
+}
+
+function errorText(body: any) {
+  const code = body?.code;
+  const serverMessage = body?.message || "请求失败";
+  if (code === 40301 && body?.data?.permission) return `无权限：${body.data.permission}`;
+  if (code === 40302) return "账号已禁用";
+  if (code === 42901) {
+    const wait = body?.data?.retry_after;
+    return wait ? `请求过于频繁，请 ${wait} 秒后再试` : "请求过于频繁";
   }
-};
+  if (code === 40002) return "验证码错误，请重新获取";
+  if (code === 40003) return "密码加密无效，请重试";
+  if (code === 40103) return "登录已失效，请重新登录";
+  if (code === 40902) return serverMessage || "角色约束冲突";
+  if (code === 40903) return "动态职责分离冲突，请指定激活角色";
+  if (code === 40906) return "用户名已存在";
+  return serverMessage;
+}
 
-const resp404 = {
-  onFulfilled(response) {
-    if (response.status === 404) {
-      message.error({
-        content: "请求找不到",
-        duration: 1
-      });
-    }
-    return response;
-  }
-};
+function toApiError(body: any, httpStatus?: number) {
+  const error: any = new Error(errorText(body));
+  error.code = body?.code;
+  error.data = body?.data ?? null;
+  error.httpStatus = httpStatus;
+  return error;
+}
 
-const resp415 = {
-  onFulfilled(response) {
-    if (response.status === 415) {
-      message.error({
-        content: "请求方式不受支持",
-        duration: 1
-      });
-    }
-    return response;
-  }
-};
+function redirectLogin() {
+  if (window.location.pathname.startsWith("/login")) return;
+  window.location.assign("/login");
+}
 
-const resp20401 = {
-  onFulfilled(response) {
-    if (response.status === 200 && response.data.code === 20401) {
-      // 为了处理返回数据为空，hash
-      // $message.error({
-      //   content: '获取到0条数据',
-      //   duration: 1
-      // });
-    }
-    if (response.status === 200 && response.data.code === 41701) {
-      message.error({
-        content: "查询参数错误",
-        duration: 1
-      });
-    }
-    if (response.data.code !== 200 && response.data.message) {
-      message.error({
-        content: `${response.data.message}`,
-        duration: 1
-      });
-    }
-    return response;
-  }
-};
+let refreshing: Promise<string> | null = null;
 
-const resperror = {
-  onRejected(error) {
-    message.error({
-      content: "请求错误",
-      duration: 1
+function refreshAccessToken(baseURL?: string) {
+  if (!refreshing) {
+    const refresh_token = getRefreshToken();
+    const raw = axios.create({
+      baseURL,
+      timeout: 20000,
+      validateStatus: () => true
     });
-    return Promise.reject(error);
+    refreshing = raw
+      .post("/api/token/refresh", { refresh_token })
+      .then(res => {
+        const body = res.data;
+        if (!body || body.code !== 0 || !body.data?.token) {
+          throw toApiError(body || { code: 40103, message: "refresh failed" }, res.status);
+        }
+        saveLoginSession(body.data);
+        return body.data.token as string;
+      })
+      .finally(() => {
+        refreshing = null;
+      });
   }
-};
+  return refreshing;
+}
 
 const reqCommon = {
-  /**
-   * 发送请求之前做些什么
-   * @param config axios config
-   * @returns {*}
-   */
   onFulfilled(config) {
-    // if (url.indexOf('login') === -1 && xsrfCookieName && !Cookie.get(xsrfCookieName)) {
-    //   message.warning('认证 token 已过期，请重新登录')
-    // }
-    const token = window.localStorage.getItem("token") || "";
-    if (token) {
-      //将token放到请求头发送给服务器,将tokenkey放在请求头中
-      // 后端用请求头 Authorization 来获取token 所以必须放在请求头里面，这种需要前后台协商
-      config.headers["Authorization"] = "Bearer " + token;
+    config.headers = config.headers || {};
+    if (!config.headers["X-Request-ID"] && typeof crypto?.randomUUID === "function") {
+      config.headers["X-Request-ID"] = crypto.randomUUID();
+    }
+    if (isPublic(config.url)) {
+      delete config.headers.Authorization;
       return config;
     }
+    const token = getAccessToken();
+    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
-  /**
-   * 请求出错时做点什么
-   * @param error 错误对象
-   * @returns {Promise<never>}
-   */
   onRejected(error) {
-    message.error({
-      content: error.message,
-      duration: 1
-    });
     return Promise.reject(error);
   }
 };
 
-export const requestInterce = [reqCommon]; // 请求拦截
+function createResponseHandler(service) {
+  return {
+    async onFulfilled(response) {
+      const body = response?.data;
+      if (!body || typeof body.code !== "number") {
+        if (response?.status >= 400) {
+          message.error({ content: "请求错误", duration: 2 });
+          return Promise.reject(toApiError({ code: response.status, message: "请求错误" }, response.status));
+        }
+        return response;
+      }
+      if (body.code === 0) return response;
 
-export const responseInterce = [resp401, resp403, resp404, resp415, resp20401, resperror]; // 响应拦截
+      const config = response.config || {};
+      const canRefresh = REFRESH_CODES.has(body.code) && !config._retry && !isPublic(config.url) && getRefreshToken();
+      if (canRefresh) {
+        config._retry = true;
+        try {
+          const token = await refreshAccessToken(service.defaults.baseURL);
+          config.headers = config.headers || {};
+          config.headers.Authorization = `Bearer ${token}`;
+          if (requestPath(config.url) === "/api/logout") {
+            const latest = getRefreshToken();
+            config.data = latest ? { refresh_token: latest } : {};
+          }
+          return service(config);
+        } catch (error) {
+          clearSession();
+          redirectLogin();
+          if (!config.skipErrorMessage) {
+            message.error({ content: errorText({ code: 40103, message: "登录已失效，请重新登录" }), duration: 2 });
+          }
+          return Promise.reject(error);
+        }
+      }
+
+      if (body.code === 40103 || ((body.code === 40101 || body.code === 40102) && !isPublic(config.url) && !getRefreshToken())) {
+        clearSession();
+        redirectLogin();
+      }
+
+      if (!config.skipErrorMessage) {
+        message.error({ content: errorText(body), duration: 2 });
+      }
+      return Promise.reject(toApiError(body, response.status));
+    },
+    onRejected(error) {
+      if (!error?.config?.skipErrorMessage) {
+        message.error({ content: "网络请求失败", duration: 2 });
+      }
+      return Promise.reject(error);
+    }
+  };
+}
+
+export function attachInterceptors(service) {
+  const responseHandler = createResponseHandler(service);
+  service.interceptors.request.use(reqCommon.onFulfilled, reqCommon.onRejected);
+  service.interceptors.response.use(responseHandler.onFulfilled, responseHandler.onRejected);
+}
