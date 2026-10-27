@@ -184,6 +184,13 @@ export function adaptApiMenus(list: any[] = []) {
   return (list || []).map(adaptApiMenu).sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
 }
 
+/** 1 或未下发：出现在左侧菜单；0：只从侧边栏隐藏，页面路由仍可访问。 */
+function isVisibleInMenu(node: any) {
+  const flag = node?.visible_in_menu;
+  if (flag == null || flag === "") return true;
+  return Number(flag) === 1;
+}
+
 function adaptApiMenu(node: any) {
   const children = Array.isArray(node?.children) && node.children.length ? adaptApiMenus(node.children) : undefined;
   const item: any = {
@@ -191,7 +198,7 @@ function adaptApiMenu(node: any) {
     name: node.title || node.segment || "",
     url: node.segment || "",
     icon: node.icon || "",
-    show: true,
+    show: isVisibleInMenu(node),
     sort: node.sort ?? 0,
     parentUid: node.parent_id == null || node.parent_id === "" ? 0 : String(node.parent_id),
     menuUid: String(node.id)
@@ -217,6 +224,8 @@ export const getMenus = (data, parentUrl = "/") => {
       delete item.show;
       if (item.children && item.children?.length > 0) {
         item.children = getMenus(item.children, item.path);
+        // 子项全部隐藏时，目录本身也不再占一个空分组
+        if (!item.children.length) continue;
       }
       result.push(item);
     }
