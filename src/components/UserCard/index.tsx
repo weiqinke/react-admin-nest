@@ -1,7 +1,9 @@
 import { Button, Card, Flex, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import type { CardProps } from "antd/es/card";
-import CountUp from "react-countup";
+import CountUpImport from "react-countup";
+
+const CountUp = (CountUpImport as any).default ?? CountUpImport;
 import { GithubOutlined, LikeOutlined, MailOutlined } from "@ant-design/icons";
 import Translatex from "../Translatex";
 import avatar from "@/assets/user/defaultAvatar.jpg";
