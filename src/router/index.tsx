@@ -18,7 +18,7 @@ const WrapperRoute = (props: any) => {
     if (!uid) return <NeedLogin />;
   }
   // 权限到期了，就跳转到 login
-  return <React.Fragment children={component} />;
+  return <>{component}</>;
 };
 
 const ProjectRouter = () => {

@@ -91,9 +91,18 @@ export default defineConfig({
     NODE_ENV: JSON.stringify(process.env.NODE_ENV)
   },
   resolve: {
+    // 强制全项目使用同一份 React，避免 Vite 预构建误解析到残留的 react@18
+    dedupe: ["react", "react-dom"],
     alias: {
-      "@": path.resolve(dirname, "./src")
+      "@": path.resolve(dirname, "./src"),
+      react: path.resolve(dirname, "node_modules/react"),
+      "react-dom": path.resolve(dirname, "node_modules/react-dom"),
+      "react/jsx-runtime": path.resolve(dirname, "node_modules/react/jsx-runtime.js"),
+      "react/jsx-dev-runtime": path.resolve(dirname, "node_modules/react/jsx-dev-runtime.js")
     }
+  },
+  optimizeDeps: {
+    include: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime", "react-dom/client"]
   },
   preview: {
     proxy: {
