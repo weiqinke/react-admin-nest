@@ -3,7 +3,7 @@ import { ProjectContextProvider } from "@/contexts/ProjectContext";
 import { webSocketManager } from "@/utils/ws";
 import { ConfigProvider } from "antd";
 import { useEffect, useLayoutEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router";
 
 const ProjectLayout = () => {
   const [theme, setTheme] = useState(localStorage.getItem("data-theme") || "dark");

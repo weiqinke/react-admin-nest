@@ -1,6 +1,6 @@
-import { getIndexUrl } from "@/utils/menuUtils";
+﻿import { getIndexUrl } from "@/utils/menuUtils";
 import { Button, Result } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 const NotFoundPage = () => {
   const navigator = useNavigate();

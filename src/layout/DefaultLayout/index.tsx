@@ -9,7 +9,7 @@ import { Layout } from "antd";
 import { throttle } from "lodash-es";
 import { Suspense, useContext, useEffect, useState } from "react";
 import { CSSTransition, SwitchTransition } from "react-transition-group";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation } from "react-router";
 import styles from "./index.module.scss";
 import SuspendFallback from "@/components/SuspendFallback";
 

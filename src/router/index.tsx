@@ -2,7 +2,7 @@ import ProjectContext from "@/contexts/ProjectContext";
 import NeedLogin from "@/pages/FailPage/NeedLogin";
 import RouterPages from "@/router/router";
 import React, { useContext } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter } from "react-router";
 
 const WrapperRoute = (props: any) => {
   const { component, title = "welcome", auth } = props;

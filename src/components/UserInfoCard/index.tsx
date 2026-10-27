@@ -1,4 +1,4 @@
-import { userinfo } from "@/api/microservice/user";
+﻿import { userinfo } from "@/api/microservice/user";
 import avatarImg from "@/assets/user/defaultAvatar.jpg";
 import AvatarData from "@/components/AvatarData";
 import FineDay from "@/components/FineDay";
@@ -8,7 +8,7 @@ import { AntDesignOutlined, GithubOutlined, InstagramOutlined, MessageOutlined, 
 import { Avatar, Button, Card, Col, Divider, Flex, Image, List, Row, Segmented, Typography } from "antd";
 import dayjs from "dayjs";
 import { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import IconFont from "../IconFont";
 import styles from "./index.module.scss";
 

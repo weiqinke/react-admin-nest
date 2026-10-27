@@ -1,7 +1,7 @@
-import React from "react";
+﻿import React from "react";
 import ReactDOM from "react-dom/client";
 import ProjectRouter from "./router/index.tsx";
-import { RouterProvider } from "react-router-dom";
+import { RouterProvider } from "react-router/dom";
 
 import "./styles/reset.css";
 
