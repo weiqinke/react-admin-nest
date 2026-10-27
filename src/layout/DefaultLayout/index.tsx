@@ -6,6 +6,7 @@ import TagsView from "@/components/TagsView";
 import MenuTagContext from "@/contexts/MenuTagContext";
 import FailContainer from "@/pages/FailPage/FailContainer";
 import { Layout } from "antd";
+import "animate.css";
 import { throttle } from "lodash-es";
 import { Suspense, useContext, useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router";
@@ -13,6 +14,7 @@ import styles from "./index.module.scss";
 import SuspendFallback from "@/components/SuspendFallback";
 
 const { Content, Sider } = Layout;
+const pageMotion = "animate__animated animate__fadeInUp";
 
 const DefaultLayout = () => {
   const { setTagPlanVisible, refresh } = useContext(MenuTagContext);
@@ -55,11 +57,13 @@ const DefaultLayout = () => {
             <Suspense fallback={<SuspendFallback />}>
               <div className={styles.outletContainer}>
                 <div className={styles.pageOutlet}>
-                  <div style={{ display: `${refresh ? "" : "none"}` }}>
-                    <SuspendFallback />
-                  </div>
-                  <div style={{ display: `${refresh ? "none" : ""}` }}>
-                    <Outlet />
+                  <div key={pathname} className={`${pageMotion} ${styles.pageEnter}`}>
+                    <div style={{ display: `${refresh ? "" : "none"}` }}>
+                      <SuspendFallback />
+                    </div>
+                    <div style={{ display: `${refresh ? "none" : ""}` }}>
+                      <Outlet />
+                    </div>
                   </div>
                 </div>
                 <Copyright />
