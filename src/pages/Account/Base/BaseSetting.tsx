@@ -31,7 +31,7 @@ const BaseSetting: FC = function () {
   return (
     <Row>
       <Col span={24}>
-        <Divider orientation="left" plain>
+        <Divider titlePlacement="left" plain>
           个人中心
         </Divider>
       </Col>

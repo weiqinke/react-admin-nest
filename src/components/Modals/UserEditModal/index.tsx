@@ -136,7 +136,7 @@ const UserEditModal: FC<any> = (props: any) => {
         <Col span={24}>
           <div className={styles.avatar}>
             <Upload {...UpLoadProps}>
-              <Avatar icon={<UserOutlined />} size={100} src={avatarUrl} />
+              <Avatar icon={<UserOutlined />} size={100} src={avatarUrl || undefined} />
             </Upload>
           </div>
         </Col>

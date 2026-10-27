@@ -5,7 +5,7 @@ const AccountSetting: React.FC = function () {
   useEffect(() => {}, []);
   return (
     <div className="AccountSetting">
-      <Divider orientation="left" plain>
+      <Divider titlePlacement="left" plain>
         账号设置
       </Divider>
       <div className="list">

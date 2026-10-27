@@ -1,4 +1,3 @@
-import { toNumber } from "lodash-es";
 export interface menuchild {
   authority: string;
   children: [];
@@ -177,8 +176,29 @@ export const getMenuItemByUrl = (url: any) => {
 // 根据 ID 获取唯一的菜单
 export const getMenuItemByID = (id: any) => {
   const unbendMenus = getUnbendMenus(JSON.parse(getLocalStorageMenus()));
-  return unbendMenus.find((v: { id: number }) => v.id === toNumber(id));
+  return unbendMenus.find((v: { id: any }) => String(v.id) === String(id));
 };
+
+/** 把 GET /api/me/menus 的 data.list 转成侧边栏使用的菜单。id 保持字符串。 */
+export function adaptApiMenus(list: any[] = []) {
+  return (list || []).map(adaptApiMenu).sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
+}
+
+function adaptApiMenu(node: any) {
+  const children = Array.isArray(node?.children) && node.children.length ? adaptApiMenus(node.children) : undefined;
+  const item: any = {
+    id: String(node.id),
+    name: node.title || node.segment || "",
+    url: node.segment || "",
+    icon: node.icon || "",
+    show: true,
+    sort: node.sort ?? 0,
+    parentUid: node.parent_id == null || node.parent_id === "" ? 0 : String(node.parent_id),
+    menuUid: String(node.id)
+  };
+  if (children) item.children = children;
+  return item;
+}
 
 export const getMenus = (data, parentUrl = "/") => {
   const result = [];
@@ -194,6 +214,7 @@ export const getMenus = (data, parentUrl = "/") => {
     delete item.menuUid;
     delete item.parentUid;
     if (item.show) {
+      delete item.show;
       if (item.children && item.children?.length > 0) {
         item.children = getMenus(item.children, item.path);
       }

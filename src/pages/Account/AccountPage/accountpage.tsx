@@ -10,7 +10,7 @@ const AccountPage: FC = () => {
 
   return (
     <div className="account-setting">
-      <Divider orientation="left" plain>
+      <Divider titlePlacement="left" plain>
         修改密码
       </Divider>
       <Form layout="vertical" form={form} style={{ width: "300px" }}>

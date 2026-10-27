@@ -5,7 +5,7 @@ import FineDay from "@/components/FineDay";
 import StarrySky from "@/components/StarrySky";
 import ProjectContext from "@/contexts/ProjectContext";
 import { AntDesignOutlined, GithubOutlined, InstagramOutlined, MessageOutlined, MoreOutlined, QqOutlined, ShareAltOutlined, WechatOutlined } from "@ant-design/icons";
-import { Avatar, Button, Card, Col, Divider, Flex, Image, List, Row, Segmented, Typography } from "antd";
+import { Avatar, Button, Card, Col, Divider, Flex, Image, Listy, Row, Segmented, Typography } from "antd";
 import dayjs from "dayjs";
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router";
@@ -16,6 +16,7 @@ const { Text, Title } = Typography;
 
 const SocialData = [
   {
+    key: "github",
     title: (
       <Link to="https://github.com/weiqinke" target="_blank">
         weiqinke
@@ -24,14 +25,17 @@ const SocialData = [
     icon: <GithubOutlined style={{ fontSize: 24 }} />
   },
   {
+    key: "instagram",
     title: "Instagram",
     icon: <InstagramOutlined style={{ fontSize: 24 }} />
   },
   {
+    key: "wechat",
     title: "wechat",
     icon: <WechatOutlined style={{ fontSize: 24 }} />
   },
   {
+    key: "qq",
     title: "qq",
     icon: <QqOutlined style={{ fontSize: 24 }} />
   }
@@ -105,7 +109,7 @@ const UserInfoCard = () => {
             <Card>
               <Flex align="middle" justify="space-evenly">
                 <UserFooter name="Follower" count={12}></UserFooter>
-                <Divider style={{ height: "auto" }} type="vertical" />
+                <Divider style={{ height: "auto" }} orientation="vertical" />
                 <UserFooter name="Following" count={112}></UserFooter>
               </Flex>
             </Card>
@@ -113,13 +117,14 @@ const UserInfoCard = () => {
               <Text type="secondary">你爱的是春天，我爱的是秋季，我假如后退一步，你又跳一步向前，那，我们就一同住在，美丽的、热烈的夏天。</Text>
             </Card>
             <Card title="社交">
-              <List
-                itemLayout="horizontal"
-                dataSource={SocialData}
-                renderItem={(item, index) => (
-                  <List.Item key={index}>
-                    <List.Item.Meta avatar={item.icon} description={item.title} />
-                  </List.Item>
+              <Listy
+                items={SocialData}
+                rowKey="key"
+                itemRender={item => (
+                  <Flex align="center" gap={16}>
+                    {item.icon}
+                    <Text type="secondary">{item.title}</Text>
+                  </Flex>
                 )}
               />
             </Card>
@@ -130,11 +135,13 @@ const UserInfoCard = () => {
             <Card
               title={
                 <Flex justify={"space-between"} align="center" gap={16}>
-                  <List>
-                    <List.Item key="1">
-                      <List.Item.Meta avatar={<Avatar src={avatarImg} size={48} />} title={info?.nick} description={dayjs().format("YYYY/MM/DD")} />
-                    </List.Item>
-                  </List>
+                  <Flex align="center" gap={12}>
+                    <Avatar src={avatarImg} size={48} />
+                    <Flex vertical>
+                      <Text>{info?.nick}</Text>
+                      <Text type="secondary">{dayjs().format("YYYY/MM/DD")}</Text>
+                    </Flex>
+                  </Flex>
                   <Button shape="circle" type="text" icon={<MoreOutlined />}></Button>
                 </Flex>
               }>

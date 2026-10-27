@@ -10,8 +10,10 @@ import ReactCardFlipImport from "react-card-flip";
 const ReactCardFlip = (ReactCardFlipImport as any).default ?? ReactCardFlipImport;
 import { useNavigate } from "react-router";
 
+import { getMyMenus } from "@/api/goadmin";
 import { getCaptcha, login } from "@/api/microservice/user";
 import { saveLoginSession } from "@/api/session";
+import { adaptApiMenus, saveMenus } from "@/utils/menuUtils";
 import qrimg from "@/assets/qrcode.png";
 import IconFont from "@/components/IconFont";
 import styles from "./index.module.scss";
@@ -44,21 +46,24 @@ const LoginForm = ({ setRegister, setCloseEyes }) => {
       message.warning("验证码未就绪，请点击图片刷新");
       return;
     }
-    const activeRoles = String(values.active_roles || "")
-      .split(/[,，\s]+/)
-      .map(item => item.trim())
-      .filter(Boolean);
     setLoading(true);
     try {
       const result = await login({
         username: values.username,
         password: values.password,
         captcha_id: captcha.id,
-        captcha_code: values.captcha_code,
-        active_roles: activeRoles
+        captcha_code: values.captcha_code
       });
       saveLoginSession(result.data.data);
       setValue(getUserState());
+      try {
+        const menus = await getMyMenus();
+        const list = adaptApiMenus(menus.data?.data?.list || []);
+        saveMenus(JSON.stringify(list));
+        console.log("当前用户菜单", list);
+      } catch (error) {
+        console.log("当前用户菜单获取失败", error);
+      }
       webSocketManager.postMessage({
         type: "ResetUserName",
         data: { token: localStorage.getItem("token") }
@@ -111,10 +116,6 @@ const LoginForm = ({ setRegister, setCloseEyes }) => {
 
               <Form.Item name="password" rules={[{ required: true, message: "请输入密码!" }]}>
                 <Input type="password" placeholder="admin123" prefix={<LockOutlined />} onBlur={onBlur} onFocus={onFocus} />
-              </Form.Item>
-
-              <Form.Item name="active_roles">
-                <Input placeholder="激活角色，多个用逗号分隔（可选）" onBlur={onBlur} onFocus={onFocus} />
               </Form.Item>
 
               <Form.Item className={styles.captchaLogin}>

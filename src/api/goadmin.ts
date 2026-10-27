@@ -38,6 +38,9 @@ export const logout = (refresh_token?: string, options?: any) => request("/api/l
 
 export const getMe = () => request("/api/me", "GET");
 
+/** 当前用户可渲染菜单树。登录即可，不要求 menu:read。data 为 { list }。 */
+export const getMyMenus = () => request("/api/me/menus", "GET");
+
 export const getMyProfile = () => request("/api/me/profile", "GET");
 
 export const updateMyProfile = payload => request("/api/me/profile", "PUT", payload);
