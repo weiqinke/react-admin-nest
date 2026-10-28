@@ -75,15 +75,24 @@ const RegisterForm = ({ goBack, onRegistered, setCloseEyes }: RegisterFormProps)
     }
   };
 
-  const syncConfirm = () => {
-    if (form.getFieldValue("confirm")) form.validateFields(["confirm"]).catch(() => undefined);
+  const revalidate = (name: string) => {
+    if (form.getFieldError(name).length) form.validateFields([name]).catch(() => undefined);
+  };
+
+  const onValuesChange = (changed: Record<string, string>) => {
+    if ("username" in changed) revalidate("username");
+    if ("password" in changed) {
+      revalidate("password");
+      if (form.getFieldValue("confirm")) form.validateFields(["confirm"]).catch(() => undefined);
+    }
+    if ("confirm" in changed) revalidate("confirm");
   };
 
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Nest-Admin</h1>
       <p className={styles.subtitle}>创建账号</p>
-      <Form form={form} name="register" validateTrigger="onBlur" validateFirst autoComplete="off" onFinish={onFinish}>
+      <Form form={form} name="register" validateTrigger="onBlur" autoComplete="off" onValuesChange={onValuesChange} onFinish={onFinish}>
         <Form.Item
           name="username"
           getValueFromEvent={event => String(event.target.value).replace(/\s/g, "")}
@@ -125,15 +134,7 @@ const RegisterForm = ({ goBack, onRegistered, setCloseEyes }: RegisterFormProps)
             }
           ]}
           extra={<PasswordMeter password={password} />}>
-          <Input.Password
-            prefix={<LockOutlined />}
-            placeholder="6–64 位"
-            autoComplete="new-password"
-            maxLength={64}
-            onFocus={coverEyes}
-            onBlur={openEyes}
-            onChange={syncConfirm}
-          />
+          <Input.Password prefix={<LockOutlined />} placeholder="6–64 位" autoComplete="new-password" maxLength={64} onFocus={coverEyes} onBlur={openEyes} />
         </Form.Item>
 
         <Form.Item
