@@ -4,6 +4,7 @@ import ProjectRouter from "./router/index.tsx";
 import { RouterProvider } from "react-router/dom";
 
 import "./styles/reset.css";
+import "./styles/tailwind.css";
 
 const router = ProjectRouter();
 
