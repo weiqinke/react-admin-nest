@@ -17,7 +17,7 @@ const { Content, Sider } = Layout;
 const pageMotion = "animate__animated animate__fadeInUp";
 
 const DefaultLayout = () => {
-  const { setTagPlanVisible, refresh } = useContext(MenuTagContext);
+  const { refresh } = useContext(MenuTagContext);
   const [collapsed, setCollapsed] = useState(false);
   const { pathname } = useLocation();
 
@@ -31,15 +31,11 @@ const DefaultLayout = () => {
       { trailing: true, leading: false }
     );
     resize();
-    const clickRemove = () => setTagPlanVisible();
-    window.addEventListener("click", clickRemove);
-
     window.addEventListener("resize", resize);
     return () => {
-      window && window.removeEventListener("resize", resize);
-      window.removeEventListener("click", clickRemove);
+      window.removeEventListener("resize", resize);
     };
-  }, [setTagPlanVisible]);
+  }, []);
 
   return (
     <Layout className={styles.layout}>

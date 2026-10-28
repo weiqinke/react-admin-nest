@@ -1,10 +1,7 @@
-:global {
-  .anticon.anticon-close {
-    color: #000;
-  }
-}
-
 .tagsdiv {
+  background: #fff;
+  padding: 6px 4px 0 4px;
+
   :global {
     .ant-tabs-nav-list {
       padding: 0;
@@ -12,20 +9,15 @@
       &:last-child {
         margin-right: auto;
       }
+
       .ant-tabs-tab {
         background: #fafafa;
         border: 1px solid #e8e8e8;
-        padding: 0px;
-        margin: 0px;
+        padding: 0;
+        margin: 0;
         margin-right: 2px;
       }
-      .ant-tabs-tab-active.ant-tabs-tab {
-        .anticon.anticon-close {
-          &:hover {
-            color: #1890ff;
-          }
-        }
-      }
+
       .ant-tabs-ink-bar {
         background: transparent;
       }
