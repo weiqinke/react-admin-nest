@@ -111,9 +111,11 @@ export const updateConstraint = (code: string, payload) => request(`/api/roles/c
 
 export const deleteConstraint = (code: string) => request(`/api/roles/constraints/${enc(code)}`, "DELETE");
 
-export const assignRole = (payload: { user_id: string; role_code: string }) => request("/api/rbac/assign", "POST", payload);
+export const assignRole = (payload: { user_id: string; role_code: string }, options?: any) =>
+  request("/api/rbac/assign", "POST", payload, options);
 
-export const revokeRole = (payload: { user_id: string; role_code: string }) => request("/api/rbac/revoke", "POST", payload);
+export const revokeRole = (payload: { user_id: string; role_code: string }, options?: any) =>
+  request("/api/rbac/revoke", "POST", payload, options);
 
 export const getAccessStats = (query: any = {}) => request("/api/stats/access", "GET", compact(query));
 

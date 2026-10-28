@@ -17,6 +17,7 @@ const Workbench = lazy(() => import(/* webpackChunkName: "Workbench'"*/ "@/pages
 const Workplace = lazy(() => import(/* webpackChunkName: "Workplace'"*/ "@/pages/Workplace"));
 const PlacardAdmin = lazy(() => import(/* webpackChunkName: "PlacardAdmin'"*/ "@/pages/PlacardAdmin"));
 const RoleAdmin = lazy(() => import(/* webpackChunkName: "RoleAdmin'"*/ "@/pages/RoleAdmin"));
+const PermissionAdmin = lazy(() => import(/* webpackChunkName: "PermissionAdmin'"*/ "@/pages/PermissionAdmin"));
 
 const UserAdmin = lazy(() => import(/* webpackChunkName: "UserAdmin'"*/ "@/pages/UserAdmin"));
 const WebsocketAdmin = lazy(() => import(/* webpackChunkName: "WebsocketAdmin'"*/ "@/pages/WebsocketAdmin"));
@@ -114,6 +115,11 @@ const RouterPages: any = [
                 path: "roleadmin",
                 component: <RoleAdmin />,
                 title: "roleadmin"
+              },
+              {
+                path: "permissionadmin",
+                component: <PermissionAdmin />,
+                title: "permissionadmin"
               },
               {
                 path: "labelsadmin",

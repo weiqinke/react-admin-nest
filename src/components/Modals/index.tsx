@@ -1,11 +1,18 @@
-import { lazy } from "react";
-export const MenuEditModal = lazy(() => import(/* webpackChunkName: "MenuEditModal'"*/ "./MenuEditModal"));
-export const MessageModal = lazy(() => import(/* webpackChunkName: "MessageModal'"*/ "./MessageModal"));
-export const UserEditModal = lazy(() => import(/* webpackChunkName: "UserEditModal'"*/ "./UserEditModal"));
-export const OperationRoleModal = lazy(() => import(/* webpackChunkName: "OperationRoleModal'"*/ "./OperationRoleModal"));
-export const PlacardEditModal = lazy(() => import(/* webpackChunkName: "PlacardEditModal'"*/ "./PlacardEditModal"));
-export const OperationMenuModal = lazy(() => import(/* webpackChunkName: "OperationMenuModal'"*/ "./OperationMenuModal"));
-export const OperationLabelModal = lazy(() => import(/* webpackChunkName: "OperationLabelModal'"*/ "./OperationLabelModal"));
-export const RoleAllocationUserModal = lazy(() => import(/* webpackChunkName: "RoleAllocationUserModal'"*/ "./RoleAllocationUserModal"));
-export const RoleAllocationMenuModal = lazy(() => import(/* webpackChunkName: "RoleAllocationMenuModal'"*/ "./RoleAllocationMenuModal"));
-export const MetaDescModal = lazy(() => import(/* webpackChunkName: "MetaDescModal'"*/ "./MetaDescModal"));
+/**
+ * 弹窗改为同步导出。
+ * 若继续用 React.lazy，首次打开会 suspend 到布局层 Suspense，
+ * 表现为整页闪一下「加载中」像路由刷新，第二次才正常出弹窗。
+ */
+export { default as MenuEditModal } from "./MenuEditModal";
+export { default as MessageModal } from "./MessageModal";
+export { default as UserEditModal } from "./UserEditModal";
+export { default as OperationRoleModal } from "./OperationRoleModal";
+export { default as PlacardEditModal } from "./PlacardEditModal";
+export { default as OperationMenuModal } from "./OperationMenuModal";
+export { default as OperationLabelModal } from "./OperationLabelModal";
+export { default as RoleAllocationUserModal } from "./RoleAllocationUserModal";
+export { default as RoleAllocationPermModal } from "./RoleAllocationPermModal";
+/** @deprecated 角色不再挂菜单，请用 RoleAllocationPermModal */
+export { default as RoleAllocationMenuModal } from "./RoleAllocationPermModal";
+export { default as PermissionEditModal } from "./PermissionEditModal";
+export { default as MetaDescModal } from "./MetaDescModal";

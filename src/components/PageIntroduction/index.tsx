@@ -1,15 +1,21 @@
 import { Breadcrumb } from "antd";
+import { memo } from "react";
 import TypingCard from "../TypingCard";
 
-const PageIntroduction = ({ infos, introduction }) => {
+type Props = {
+  infos: { title: string }[];
+  introduction: string;
+};
+
+const PageIntroduction = ({ infos, introduction }: Props) => {
   return (
     <div className="bg-white p-3 select-none">
       <Breadcrumb items={infos} />
       <div className="mt-3">
-        <TypingCard title="测试" source={`${introduction}`} fontSize="1rem" />
+        <TypingCard source={introduction} fontSize="1rem" />
       </div>
     </div>
   );
 };
 
-export default PageIntroduction;
+export default memo(PageIntroduction);

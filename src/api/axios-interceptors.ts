@@ -31,6 +31,7 @@ function errorText(body: any) {
   if (code === 40002) return "验证码错误，请重新获取";
   if (code === 40003) return "密码加密无效，请重试";
   if (code === 40103) return "登录已失效，请重新登录";
+  if (code === 40901) return serverMessage === "conflict" ? "资源冲突：同级 segment 可能已存在" : serverMessage;
   if (code === 40902) return serverMessage || "角色约束冲突";
   if (code === 40903) return "动态职责分离冲突，请指定激活角色";
   if (code === 40906) return "用户名已存在";
