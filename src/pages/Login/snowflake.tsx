@@ -8,7 +8,7 @@ type SnowflakeProps = {
 
 /** 一片雪花（或樱花）。角度一律用弧度。 */
 type Flake = {
-  /** 左右摆动的中心，风加在这上面 */
+  /** 左右摆动的中心，不随时间横移 */
   anchorX: number;
   y: number;
   /** 0 远、1 近 */
@@ -139,9 +139,7 @@ const Snowflake = ({ rdm }: SnowflakeProps) => {
     };
 
     const step = (dt: number, time: number) => {
-      const wind = Math.sin(time * 0.17) * (isSnow ? 16 : 28) + (isSnow ? 6 : -20);
       for (const flake of flakes) {
-        flake.anchorX += wind * dt * (0.4 + flake.depth * 0.6);
         flake.y += flake.fall * dt;
         flake.rx += flake.vrx * dt;
         flake.ry += flake.vry * dt;
