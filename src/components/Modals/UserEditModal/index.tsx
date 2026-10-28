@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 
 import { createUser, updateUser } from "@/api/microservice/user";
 import axios from "axios";
-import styles from "./index.module.scss";
 
 const layout = {
   labelCol: { span: 8 },
@@ -134,7 +133,7 @@ const UserEditModal: FC<any> = (props: any) => {
     <Modal open title={`${title}用户`} width={800} onCancel={onCancel} onOk={creatRoleSubmit} okText="确定" cancelText="取消" maskClosable={false}>
       <Row>
         <Col span={24}>
-          <div className={styles.avatar}>
+          <div className="mx-auto rounded-full py-2.5 text-center">
             <Upload {...UpLoadProps}>
               <Avatar icon={<UserOutlined />} size={100} src={avatarUrl || undefined} />
             </Upload>

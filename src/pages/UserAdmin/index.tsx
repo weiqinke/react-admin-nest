@@ -6,7 +6,6 @@ import { findUsers, updateUser } from "@/api/microservice/user";
 import PageIntroduction from "@/components/PageIntroduction";
 import UserTable from "./components/Table";
 
-import styles from "./index.module.scss";
 
 const infos = [
   {
@@ -65,9 +64,9 @@ const UserAdmin: FC = () => {
   };
   useEffect(findAll, []);
   return (
-    <div className={styles.userAdminContainer}>
+    <div className="p-3">
       <PageIntroduction infos={infos} introduction="本页面是操作系统中的用户，可以用来添加和编辑用户。" />
-      <div className={styles.searchContainer}>
+      <div className="my-3 rounded-md bg-white p-3">
         <Form form={form} name="horizontal_login" layout="inline" autoComplete="off" onFinish={findAll}>
           <Form.Item name="username" label="用户名">
             <Input placeholder="username" autoComplete="off" />
@@ -79,7 +78,7 @@ const UserAdmin: FC = () => {
             <Input placeholder="mobile" />
           </Form.Item>
           <Form.Item>
-            <Space size={[8, 16]} className={styles.header}>
+            <Space size={[8, 16]}>
               <Button htmlType="submit">查询</Button>
               <Button onClick={() => setUser({})}>添加</Button>
             </Space>
@@ -87,7 +86,7 @@ const UserAdmin: FC = () => {
         </Form>
       </div>
 
-      <div className={styles.tableContainer}>
+      <div className="mt-3 rounded-md bg-white">
         <UserTable dataSource={dataSource} setUser={setUser} showDeleteConfirm={showDeleteConfirm} />
       </div>
 

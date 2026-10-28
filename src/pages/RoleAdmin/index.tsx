@@ -8,7 +8,6 @@ import { menuFind } from "@/api/microservice/menu";
 import { findRoleMenus, findRoleUsers, findRoles } from "@/api/microservice/role";
 import { findUsers } from "@/api/microservice/user";
 import { getMenuStructure } from "@/utils/core";
-import styles from "./index.module.scss";
 import PageIntroduction from "@/components/PageIntroduction";
 
 const { confirm } = Modal;
@@ -152,16 +151,16 @@ const RoleList: FC = () => {
   ];
 
   return (
-    <div className={styles.container}>
-      <div className={styles.tipContainer}>
+    <div className="p-3">
+      <div className="mb-3">
         <Alert
           type="success"
           message={
-            <div className={styles.tip}>
+            <div className="text-[1em]">
               朋友们,咱们尽量别改动
-              <span className={styles.weightFont}>qkstat</span>和<span className={styles.weightFont}>admin</span>
+              <span className="px-1.5 text-[15px] text-red-600">qkstat</span>和<span className="px-1.5 text-[15px] text-red-600">admin</span>
               的权限和菜单，因为新人登陆进来都是这个账号，祝大家体验愉快，有问题可以提
-              <span className={styles.weightFont}>issues</span>
+              <span className="px-1.5 text-[15px] text-red-600">issues</span>
               ,我会及时回复您的。
             </div>
           }
@@ -169,8 +168,8 @@ const RoleList: FC = () => {
       </div>
 
       <PageIntroduction infos={infos} introduction="本页面是操作系统中的权限，可以用来分配人员和分配菜单。" />
-      <div className={styles.tableContainer}>
-        <Space size={[8, 16]} className={styles.header}>
+      <div className="mt-3 bg-white px-3">
+        <Space size={[8, 16]} className="my-3">
           <Button type="primary" icon={<SearchOutlined />} iconPosition="end" onClick={findAllRole}>
             查询角色
           </Button>

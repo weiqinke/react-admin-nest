@@ -4,8 +4,6 @@ import { getalllabelsbyuser } from "@/api/caravan/Labels";
 import { isTagVisible } from "@/utils/core";
 import { OperationLabelModal } from "@/components/Modals";
 
-import styles from "./index.module.scss";
-
 const LabelsAdmin: FC = () => {
   const [dataSource, setDataSource] = useState([]);
   const [label, setLabel] = useState<any>();
@@ -49,8 +47,8 @@ const LabelsAdmin: FC = () => {
   ];
 
   return (
-    <div className={styles.container}>
-      <Space size={[8, 16]} className={styles.header}>
+    <div className="p-3">
+      <Space size={[8, 16]} className="mb-3">
         <Button type="primary" onClick={() => setLabel({})}>
           添加标签
         </Button>
