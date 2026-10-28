@@ -132,7 +132,7 @@ const TagsView: FC = () => {
   }, [activeUrl]);
 
   return (
-    <div className={styles.tagsdiv}>
+    <div className={`${styles.tagsdiv} bg-white px-1 pt-1.5`}>
       <Tabs
         tabBarStyle={{ margin: 0 }}
         onChange={onChange}
@@ -141,7 +141,7 @@ const TagsView: FC = () => {
         items={tags.map((tag: any) => {
           return {
             label: (
-              <div className={styles.tagitem} onContextMenu={e => contextTag(e, tag)} onClick={() => onClick(tag)}>
+              <div className="m-0 bg-transparent p-0" onContextMenu={e => contextTag(e, tag)} onClick={() => onClick(tag)}>
                 <MenuTag tag={tag} onClose={onClose} />
               </div>
             ),
