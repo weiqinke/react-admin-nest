@@ -41,6 +41,25 @@ export const getMe = () => request("/api/me", "GET");
 /** 当前用户可渲染菜单树。登录即可，不要求 menu:read。data 为 { list }。 */
 export const getMyMenus = () => request("/api/me/menus", "GET");
 
+/** 管理端全量菜单树（含禁用 / is_public 等）。data 为 { list }。 */
+export const getMenus = () => request("/api/menus", "GET");
+
+export const getMenu = (id: string) => request(`/api/menus/${enc(id)}`, "GET");
+
+export const createMenu = (payload: Record<string, any>) => request("/api/menus", "POST", payload);
+
+export const updateMenu = (id: string, payload: Record<string, any>) => request(`/api/menus/${enc(id)}`, "PUT", payload);
+
+export const updateMenuStatus = (id: string, status: 0 | 1) => request(`/api/menus/${enc(id)}/status`, "PUT", { status });
+
+export const deleteMenu = (id: string) => request(`/api/menus/${enc(id)}`, "DELETE");
+
+/** 菜单直接绑定的权限码。data 为 { permission_codes: string[] }。 */
+export const getMenuPermissions = (id: string) => request(`/api/menus/${enc(id)}/permissions`, "GET");
+
+export const setMenuPermissions = (id: string, permission_codes: string[]) =>
+  request(`/api/menus/${enc(id)}/permissions`, "PUT", { permission_codes });
+
 export const getMyProfile = () => request("/api/me/profile", "GET");
 
 export const updateMyProfile = payload => request("/api/me/profile", "PUT", payload);

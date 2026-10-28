@@ -1,0 +1,149 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: calc(100vh - 120px);
+}
+
+.panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  padding: 12px 16px 16px;
+  border-radius: 8px;
+  min-height: 480px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.treeWrap {
+  flex: 1;
+  overflow: auto;
+  padding-right: 4px;
+
+  :global {
+    .ant-tree .ant-tree-treenode {
+      align-items: center;
+      padding: 4px 0;
+    }
+
+    .ant-tree .ant-tree-switcher {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      align-self: center;
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      margin-inline-end: 4px;
+      flex: none;
+    }
+
+    .ant-tree .ant-tree-switcher .ant-tree-switcher-icon,
+    .ant-tree .ant-tree-switcher .ant-tree-switcher-line-icon,
+    .ant-tree .ant-tree-switcher .anticon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .ant-tree .ant-tree-node-content-wrapper {
+      display: inline-flex !important;
+      align-items: center;
+      min-height: 24px;
+      line-height: 1;
+      padding-block: 0;
+      padding-inline: 4px 8px;
+    }
+
+    .ant-tree .ant-tree-title {
+      display: inline-flex;
+      align-items: center;
+      width: 100%;
+      line-height: 1;
+    }
+  }
+}
+
+.nodeRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 24px;
+}
+
+.nodeMain {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  height: 24px;
+}
+
+.nodeTitle {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+}
+
+.pathTag {
+  margin: 0 !important;
+  line-height: 20px;
+  height: 20px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+}
+
+.nodeMain :global(.ant-tag) {
+  margin-inline-end: 0;
+  margin-block: 0;
+  line-height: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nodeActions {
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.nodeRow:hover .nodeActions,
+.nodeRow:focus-within .nodeActions {
+  opacity: 1;
+}
+
+.nodeDisabled {
+  opacity: 0.72;
+}
+
+@media (max-width: 960px) {
+  .nodeRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nodeActions {
+    opacity: 1;
+  }
+}
