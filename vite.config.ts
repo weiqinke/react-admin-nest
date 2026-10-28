@@ -12,8 +12,15 @@ const { dependencies, devDependencies, name, version } = packageJson;
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const isDev = process.env.NODE_ENV === "development";
-const goAdminOrigin = "http://127.0.0.1:8080";
-// 开发走 Vite 代理，浏览器同源访问；生产直连 goadmin（后端已开 CORS）
+// 开发走 Vite 代理，浏览器同源访问。
+// 生产默认直连本机 goadmin。CI 传入 DEPLOY_API_ORIGIN：
+// 空字符串 = 同源（由 Nginx 反代 /api）；非空 = 该源（已开 CORS）。
+function productionApiOrigin() {
+  const configured = process.env.DEPLOY_API_ORIGIN;
+  if (configured === undefined) return "http://127.0.0.1:8080";
+  return configured.replace(/\/$/, "");
+}
+const goAdminOrigin = productionApiOrigin();
 const httpUrl = isDev ? "" : goAdminOrigin;
 
 const goAdminProxy = {
