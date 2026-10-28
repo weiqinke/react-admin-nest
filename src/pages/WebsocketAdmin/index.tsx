@@ -8,7 +8,6 @@ import { FC, useEffect, useRef, useState } from "react";
 
 import { userinfo } from "@/api/microservice/user";
 import SocketCard from "@/components/SocketCard";
-import styles from "./index.module.scss";
 
 const WebsocketAdmin: FC = () => {
   const imgMinWidth = 280; // 允许瀑布流单列最低宽度，可能再低就变形和会重叠
@@ -115,8 +114,8 @@ const WebsocketAdmin: FC = () => {
   };
 
   return (
-    <div className={styles.websocketAdmin} ref={domRef}>
-      <div className={styles.imgbg}>
+    <div className="p-3" ref={domRef}>
+      <div className="mb-3 h-[140px] w-[300px] select-none">
         <Image
           width={300}
           src={imgSrc}

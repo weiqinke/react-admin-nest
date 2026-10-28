@@ -4,7 +4,6 @@ import { getMenuStructure, scrollToAnchor } from "@/utils/core";
 import { ExclamationCircleOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { Button, Form, Modal, Space, Table, Tag, message } from "antd";
 import { FC, useEffect, useState } from "react";
-import styles from "./index.module.scss";
 import PageIntroduction from "@/components/PageIntroduction";
 
 const { confirm } = Modal;
@@ -145,14 +144,14 @@ const MenusAdmin: FC = () => {
   },[])
 
   return (
-    <div className={styles.menusAdminContainer}>
+    <div className="p-3">
       <span id="Anchor" />
       <PageIntroduction
         infos={infos}
         introduction="本页面是展示和操作系统中的菜单，可以新增和编辑你想要配置的路径，图标，排序等信息。操作完成后，需要在权限管理中，再次进行分配。"
       />
-      <div className={styles.tableContainer}>
-        <Space size={[8, 16]} className={styles.header}>
+      <div className="mt-3 bg-white px-3">
+        <Space size={[8, 16]} className="my-3">
           <Button type="primary" icon={<SearchOutlined />} iconPosition="end" onClick={getallmenusdata}>
             查询菜单
           </Button>

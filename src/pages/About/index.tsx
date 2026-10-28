@@ -1,7 +1,6 @@
 ﻿import TypingCard from "@/components/TypingCard";
 import { Descriptions } from "antd";
 import { Link } from "react-router";
-import styles from "./index.module.scss";
 
 const About = () => {
   const { dependencies, devDependencies, version, lastBuildTime } = REACT_PACKAGE;
@@ -25,8 +24,8 @@ const About = () => {
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.card}>
+    <div>
+      <div className="bg-white p-3 m-3">
         <Descriptions title="关于项目" column={{ xs: 1, sm: 2, md: 3, lg: 4, xl: 4, xxl: 4 }} />
         <TypingCard
           title=""
@@ -35,7 +34,7 @@ const About = () => {
         />
       </div>
 
-      <div className={styles.card}>
+      <div className="bg-white p-3 m-3">
         <Descriptions
           title="项目信息"
           bordered
@@ -68,10 +67,10 @@ const About = () => {
           ]}
         />
       </div>
-      <div className={styles.card}>
+      <div className="bg-white p-3 m-3">
         <Descriptions title="生产环境依赖" bordered column={{ xs: 1, sm: 2, md: 3, lg: 4, xl: 4, xxl: 4 }} items={depResult} />
       </div>
-      <div className={styles.card}>
+      <div className="bg-white p-3 m-3">
         <Descriptions title="开发环境依赖" bordered column={{ xs: 1, sm: 2, md: 3, lg: 4, xl: 4, xxl: 4 }} items={devResult} />
       </div>
     </div>

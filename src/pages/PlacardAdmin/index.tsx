@@ -6,7 +6,6 @@ import { FC, useEffect, useState } from "react";
 
 import { getPlacard, pushPlacard, updatePlacard } from "@/api/microservice/log";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import styles from "./index.module.scss";
 import PageIntroduction from "@/components/PageIntroduction";
 
 interface PlacardData {
@@ -141,10 +140,10 @@ const PlacardAdmin: FC = () => {
   };
 
   return (
-    <div className={styles.placard}>
+    <div className="p-3">
       <PageIntroduction infos={infos} introduction="本页面是操作系统中的公告，可以用来添加和发布公告。" />
-      <div className={styles.tableContainer}>
-        <Space size={[8, 16]} className={styles.header}>
+      <div className="mt-3 bg-white px-3">
+        <Space size={[8, 16]} className="my-3">
           <Button type="primary" className="topbtn" onClick={findAllPlacards}>
             查询公告
           </Button>
