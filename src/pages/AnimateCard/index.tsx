@@ -1,7 +1,9 @@
 import "animate.css";
 
 import { Col, Row } from "antd";
-import styles from "./index.module.scss";
+
+const animateBox =
+  "w-full h-[100px] bg-[#fce5cd] border border-black text-center leading-[100px] text-base font-extrabold text-[#351c75] cursor-pointer [animation-iteration-count:1]";
 
 const AnimateCard = () => {
   const animateList = [
@@ -110,26 +112,25 @@ const AnimateCard = () => {
   const onMouseOver = (event, animate) => {
     event.stopPropagation();
     event.preventDefault();
-    event.target.removeAttribute("class");
-    event.target.setAttribute("class", `animateContainer animate__animated ${animate}`);
+    event.target.setAttribute("class", `${animateBox} animate__animated ${animate}`);
   };
 
   const onMouseOut = event => {
     event.stopPropagation();
     event.preventDefault();
     if (event.target.getAttribute("data-sorce")) {
-      event.target.setAttribute("class", "animateContainer");
+      event.target.setAttribute("class", animateBox);
     } else {
-      event.target.firstChild.setAttribute("class", `animateContainer`);
+      event.target.firstChild.setAttribute("class", animateBox);
     }
   };
   return (
-    <div className={styles.container}>
+    <div className="p-3 select-none">
       <Row gutter={[12, 12]}>
         {animateList.map(v => {
           return (
             <Col xs={12} sm={12} md={8} lg={4} xl={4} xxl={4} onMouseLeave={event => onMouseOut(event)} key={v}>
-              <div data-sorce="1" onMouseEnter={event => onMouseOver(event, v)} className="animateContainer">
+              <div data-sorce="1" onMouseEnter={event => onMouseOver(event, v)} className={animateBox}>
                 {v}
               </div>
             </Col>
