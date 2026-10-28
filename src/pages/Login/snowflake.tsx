@@ -8,19 +8,15 @@ type SnowflakeProps = {
 
 /** 一片雪花（或樱花）。角度一律用弧度。 */
 type Flake = {
-  /** 左右摆动的中心，不随时间横移 */
+  /** 左右摆动的中心，风加在这上面 */
   anchorX: number;
   y: number;
-  /** 0 远、1 近 */
+  /** 0 远、1 近。大小在出生时定下，下落过程中不变 */
   depth: number;
   size: number;
-  /** 绕自身 x / y / z 轴的旋转弧度 */
-  rx: number;
-  ry: number;
+  /** 画面内自旋的弧度，不改变雪花的大小 */
   rz: number;
-  /** 各轴角速度，弧度/秒 */
-  vrx: number;
-  vry: number;
+  /** 自旋角速度，弧度/秒 */
   vrz: number;
   fall: number;
   swayAmp: number;
@@ -39,30 +35,18 @@ function signed(min: number, max: number) {
   return rand(min, max) * (Math.random() < 0.5 ? -1 : 1);
 }
 
-/** 绕 x 或 y 轴的投影。符号表示翻过正面，幅度在接近 0 时仍留一条窄边。 */
-function axisScale(radians: number) {
-  const projected = Math.cos(radians);
-  const sign = projected < 0 ? -1 : 1;
-  return sign * (0.16 + 0.84 * Math.abs(projected));
-}
-
 function createFlake(width: number, height: number, isSnow: boolean, fromTop: boolean): Flake {
   const depth = rand(0.25, 1);
   const size = (isSnow ? 22 : 20) + depth * (isSnow ? 50 : 36);
   // 远处的更轻，摆幅更大
   const swayAmp = (isSnow ? 14 : 26) + (1 - depth) * (isSnow ? 34 : 46);
-  const spin = 1.15 - depth * 0.45;
 
   return {
     anchorX: rand(0, Math.max(width, 1)),
     y: fromTop ? -rand(size, size + height * 0.2) : rand(-size, height),
     depth,
     size,
-    rx: rand(0, Math.PI * 2),
-    ry: rand(0, Math.PI * 2),
     rz: rand(0, Math.PI * 2),
-    vrx: signed(0.9, 2.1) * spin * (isSnow ? 1 : 1.2),
-    vry: signed(0.8, 1.9) * spin * (isSnow ? 1 : 1.15),
     vrz: signed(0.5, 1.6) * (isSnow ? 1 : 1.1),
     fall: (isSnow ? 32 : 46) + depth * (isSnow ? 88 : 64),
     swayAmp,
@@ -126,23 +110,19 @@ const Snowflake = ({ rdm }: SnowflakeProps) => {
     const drawFlake = (flake: Flake, time: number) => {
       if (!ctx) return;
       const { x, y } = positionOf(flake, time);
-      // z：画面内自旋。x / y：翻转到侧面时宽高被压扁，负值表示翻过正面。
-      const scaleX = axisScale(flake.ry);
-      const scaleY = axisScale(flake.rx);
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate(flake.rz);
-      ctx.scale(scaleX, scaleY);
       ctx.globalAlpha = flake.opacity;
       ctx.drawImage(img, -flake.size / 2, -flake.size / 2, flake.size, flake.size);
       ctx.restore();
     };
 
     const step = (dt: number, time: number) => {
+      const wind = Math.sin(time * 0.17) * (isSnow ? 16 : 28) + (isSnow ? 6 : -20);
       for (const flake of flakes) {
+        flake.anchorX += wind * dt * (0.4 + flake.depth * 0.6);
         flake.y += flake.fall * dt;
-        flake.rx += flake.vrx * dt;
-        flake.ry += flake.vry * dt;
         flake.rz += flake.vrz * dt;
 
         const { x, y } = positionOf(flake, time);
