@@ -32,7 +32,7 @@
     "lodash-es": "^4.17.21",
     "qs": "^6.11.2",
     "react": "^19.3.1",
-    "react-bmap": "^1.0.131",
+    "react-bmap": "^2.0.6",
     "react-card-flip": "^1.2.2",
     "react-countup": "^6.5.0",
     "react-dom": "^19.3.1",
