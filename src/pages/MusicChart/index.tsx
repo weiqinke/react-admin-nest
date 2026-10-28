@@ -1,5 +1,4 @@
 import { useState } from "react";
-import styles from "./index.module.scss";
 import { useEffect } from "react";
 import { Card, message } from "antd";
 import MusicItem from "./musicItem";
@@ -189,14 +188,14 @@ const MusicChart = () => {
   };
 
   return (
-    <div className={styles.MusicChart}>
+    <div className="m-3 bg-white p-3">
       <h1>音乐排行榜</h1>
       <h2>目前的思路就是做一个2000-2015年的 music 排行榜</h2>
       <h2>平均每段 music 只有 10s ，仅展示有特点的那段。</h2>
       <h3>每个歌曲都要加上演唱者、歌词、点赞统计、月度排行(来自哪个平台排行统计呢)、年度排行(来自哪个平台排行统计呢)</h3>
       {musicList.map((music, index) => {
         return (
-          <div key={index} className={styles.musicContainer}>
+          <div key={index} className="inline-block">
             <Card
               title={
                 <div>
@@ -207,7 +206,7 @@ const MusicChart = () => {
               }>
               {music.dataSource.map((musicItem, k) => {
                 return (
-                  <Card.Grid hoverable={false} key={k} style={gridStyle} onClick={() => onClick(musicItem, music)} className={styles.musicItem}>
+                  <Card.Grid hoverable={false} key={k} style={gridStyle} onClick={() => onClick(musicItem, music)} className="cursor-pointer select-none p-3 text-base hover:bg-[#DDD]">
                     <div>
                       <MusicItem data={musicItem} />
                     </div>
