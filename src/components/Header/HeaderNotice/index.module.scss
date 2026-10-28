@@ -1,51 +1,11 @@
 @import "@/styles/themeMixin";
-.notice {
-  float: right;
-  user-select: none;
-  cursor: pointer;
-  margin-right: 20px;
 
-  .icon {
-    font-size: 22px;
-    @include get-class-from-key("color", "head-icon-color");
-    &:hover {
-      @include get-class-from-key("background-color", "head-icon-bg");
-      @include get-class-from-key("color", "head-icon-bg-hover");
-    }
+/* 与顶栏 ThemeColor / user 图标共用主题色，其余布局已迁到 Tailwind */
+.icon {
+  font-size: 22px;
+  @include get-class-from-key("color", "head-icon-color");
+  &:hover {
+    @include get-class-from-key("background-color", "head-icon-bg");
+    @include get-class-from-key("color", "head-icon-bg-hover");
   }
-}
-
-.container {
-  :global {
-    .ant-tabs-tab {
-      width: 130px;
-      .ant-tabs-tab-btn {
-        margin: 0 auto;
-      }
-    }
-  }
-}
-
-.bottomBar {
-  width: 100%;
-  border-top: 1px solid #f0f0f0;
-  border-radius: 0 0 2px 2px;
-  transition: all 0.3s;
-}
-
-.dobtn {
-  width: 49%;
-  padding: 12px 0;
-  float: left;
-  cursor: pointer;
-  text-align: center;
-}
-
-.doLeftBtn {
-  @extend .dobtn;
-  border-right: 1px solid #f0f0f0;
-}
-
-.tab {
-  padding: 0 12px;
 }

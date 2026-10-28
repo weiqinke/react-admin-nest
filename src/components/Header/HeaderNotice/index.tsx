@@ -60,13 +60,13 @@ const HeaderNotice: FC = () => {
   }, []);
 
   const clearMessage = () => {
-    setDataSource([])
+    setDataSource([]);
   };
   const items: MenuProps["items"] = [
     {
       key: "1",
       label: (
-        <div className={styles.container}>
+        <div className="[&_.ant-tabs-tab]:w-[130px] [&_.ant-tabs-tab-btn]:mx-auto">
           <Tabs
             destroyOnHidden
             defaultActiveKey="notification"
@@ -98,11 +98,11 @@ const HeaderNotice: FC = () => {
                 </Flex>
               )}
             />
-            <div className={styles.bottomBar}>
-              <div className={styles.doLeftBtn} onClick={clearMessage}>
+            <div className="w-full rounded-b transition-all duration-300 border-t border-[#f0f0f0]">
+              <div className="float-left w-[49%] cursor-pointer border-r border-[#f0f0f0] py-3 text-center" onClick={clearMessage}>
                 <span>清空</span>
               </div>
-              <div className={styles.dobtn}>
+              <div className="float-left w-[49%] cursor-pointer py-3 text-center">
                 <span>查看更多</span>
               </div>
             </div>
@@ -125,7 +125,7 @@ const HeaderNotice: FC = () => {
   };
 
   return (
-    <div className={styles.notice}>
+    <div className="float-right mr-5 cursor-pointer select-none">
       <Dropdown menu={{ items, onClick }} placement="bottomRight" trigger={["hover"]} onOpenChange={handleOpenChange} open={open}>
         <Badge count={noticeList.length || noticeCount} overflowCount={999} offset={[0, 10]}>
           <Avatar shape="square" size="large" src={<BellOutlined />} className={styles.icon} />
