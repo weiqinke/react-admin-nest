@@ -11,6 +11,11 @@ const Login = () => {
   const onClick = () => setRegister(v => v + 1);
   const [random] = useState(Math.random());
   const [closeEyes, setCloseEyes] = useState(false);
+  const [registeredUser, setRegisteredUser] = useState("");
+  const leaveRegister = () => {
+    setCloseEyes(false);
+    setRegister(0);
+  };
   const bg = random < 0.45 ? "https://dr.cdnux.com/18510675/i/2025/01/04/65a28bad6be9e.jpg" : "https://dr.cdnux.com/18510675/i/2024/12/31/7xt4r.webp";
   return (
     <div className={styles.container} style={{ backgroundImage: `url(${bg})` }}>
@@ -19,7 +24,18 @@ const Login = () => {
           <Owl closeEyes={closeEyes} />
         </div>
         <div>
-          {register % 2 ? <RegisterForm goBack={() => setRegister(0)} setCloseEyes={setCloseEyes} /> : <LoginForm setRegister={onClick} setCloseEyes={setCloseEyes} />}
+          {register % 2 ? (
+            <RegisterForm
+              goBack={leaveRegister}
+              onRegistered={username => {
+                setRegisteredUser(username);
+                leaveRegister();
+              }}
+              setCloseEyes={setCloseEyes}
+            />
+          ) : (
+            <LoginForm setRegister={onClick} setCloseEyes={setCloseEyes} username={registeredUser} />
+          )}
         </div>
       </div>
       <div className={styles.cr}>

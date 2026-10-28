@@ -19,7 +19,7 @@ import IconFont from "@/components/IconFont";
 import styles from "./index.module.scss";
 import GithubAuth from "@/components/OAuth2/GithubAuth";
 
-const LoginForm = ({ setRegister, setCloseEyes }) => {
+const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser }) => {
   const navigate = useNavigate();
   const { setValue }: any = useContext(ProjectContext);
   const { setTags } = useContext(MenuTagContext);
@@ -81,7 +81,7 @@ const LoginForm = ({ setRegister, setCloseEyes }) => {
     console.log("Failed:", errorInfo);
   };
 
-  const initialValues = { remember: true, username: "admin", password: "admin123" };
+  const initialValues = registeredUser ? { remember: true, username: registeredUser, password: "" } : { remember: true, username: "admin", password: "admin123" };
 
   useEffect(() => {
     webSocketManager.postMessage({
@@ -115,7 +115,7 @@ const LoginForm = ({ setRegister, setCloseEyes }) => {
               </Form.Item>
 
               <Form.Item name="password" rules={[{ required: true, message: "请输入密码!" }]}>
-                <Input type="password" placeholder="admin123" prefix={<LockOutlined />} onBlur={onBlur} onFocus={onFocus} />
+                <Input type="password" placeholder={registeredUser ? "请输入刚设置的密码" : "admin123"} prefix={<LockOutlined />} onBlur={onBlur} onFocus={onFocus} />
               </Form.Item>
 
               <Form.Item className={styles.captchaLogin}>
@@ -136,7 +136,7 @@ const LoginForm = ({ setRegister, setCloseEyes }) => {
               <div className={styles.other}>
                 <Form.Item noStyle>
                   <span className={styles.register} onClick={setRegister}>
-                    注册(register)
+                    注册账号
                   </span>
                 </Form.Item>
                 <Form.Item noStyle>

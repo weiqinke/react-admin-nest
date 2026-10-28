@@ -1,29 +1,138 @@
 .container {
   user-select: none;
+  width: 324px;
   padding: 40px;
-  min-width: 324px;
   position: relative;
-  background: rgba(164, 203, 200, 1);
+  background: rgba(164, 203, 200, 0.3);
+  border-radius: 8px;
+  animation: rise 0.32s ease;
+  transition:
+    box-shadow 0.6s ease,
+    background 0.6s ease;
 
+  &:hover {
+    box-shadow: -4px 4px 16px 1px rgba(0, 0, 0, 0.15);
+    background: rgba(164, 203, 200, 1);
+  }
 }
 
 .title {
   text-align: center;
-  padding: 0px;
-  margin: 0px 0px 12px 0px;
+  padding: 0;
+  margin: 0 0 4px;
 }
 
-.forgetPassword {
-  float: right;
-  padding-right: 12px;
-  cursor: pointer;
-  color: #1890ff;
-}
-
-.other {
-  padding-bottom: 24px;
+.subtitle {
+  margin: 0 0 18px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .submit {
+  margin-bottom: 0;
+}
+
+.back {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #1677ff;
+  font-size: 14px;
+  line-height: 22px;
   text-align: center;
+  cursor: pointer;
+
+  &:hover {
+    color: #4096ff;
+  }
+}
+
+.passwordItem {
+  :global(.ant-form-item-extra) {
+    margin-top: 6px;
+    min-height: 18px;
+  }
+}
+
+.hint {
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.meter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 18px;
+}
+
+.track {
+  display: flex;
+  flex: 1;
+  gap: 4px;
+}
+
+.segment {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.meterLabel {
+  flex: none;
+  min-width: 4.5em;
+  font-size: 12px;
+  line-height: 18px;
+  text-align: right;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.segment[data-tone="weak"] {
+  background: #d4380d;
+}
+.segment[data-tone="fair"] {
+  background: #d48806;
+}
+.segment[data-tone="good"] {
+  background: #389e0d;
+}
+.segment[data-tone="strong"] {
+  background: #0958d9;
+}
+
+.meterLabel[data-tone="weak"] {
+  color: #d4380d;
+}
+.meterLabel[data-tone="fair"] {
+  color: #d48806;
+}
+.meterLabel[data-tone="good"] {
+  color: #389e0d;
+}
+.meterLabel[data-tone="strong"] {
+  color: #0958d9;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .container {
+    animation: none;
+  }
 }
