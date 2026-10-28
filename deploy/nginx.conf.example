@@ -1,0 +1,47 @@
+# 放到服务器后按实际域名和目录修改，例如：
+#   sudo cp deploy/nginx.conf.example /etc/nginx/sites-available/nest-admin
+#   sudo ln -s /etc/nginx/sites-available/nest-admin /etc/nginx/sites-enabled/
+#   sudo nginx -t && sudo systemctl reload nginx
+#
+# root 必须和 GitHub Secret DEPLOY_PATH 一致。
+# 部署脚本会把该路径做成符号链接，Nginx 可以一直指向它。
+# 前端生产构建在未设置 DEPLOY_API_ORIGIN 时走同源，所以由这里把接口转到本机 goadmin。
+
+server {
+    listen 80;
+    server_name _;
+
+    root /var/www/nest-admin;
+    index index.html;
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location = /health {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /ws {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_read_timeout 3600s;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

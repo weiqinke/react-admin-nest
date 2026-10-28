@@ -1,0 +1,89 @@
+# 推送到 feat-ai 或 main 后，构建前端并用 scp 发布到自有服务器。
+# 也可在 Actions 页手动运行 "Deploy"。
+#
+# 密钥不要写进本文件。到 GitHub 仓库：
+#   Settings → Secrets and variables → Actions → New repository secret
+#
+# Secrets（必填，把值换成你自己的）：
+#   DEPLOY_HOST    服务器域名或 IPv4，例如 203.0.113.10
+#   DEPLOY_USER    SSH 用户，例如 deploy
+#   DEPLOY_SSH_KEY 私钥全文，含 -----BEGIN ... PRIVATE KEY----- 和 END 行
+#                  对应公钥写入该用户的 ~/.ssh/authorized_keys
+#                  本机生成示例：
+#                    ssh-keygen -t ed25519 -f deploy_key -C github-actions-nest-admin
+#   DEPLOY_PATH    站点目录，必须是绝对路径，例如 /var/www/nest-admin
+#                  该用户需要对目录的父级有写权限。目录会变成指向本次发布的符号链接。
+#
+# Secrets（可选）：
+#   DEPLOY_PORT         SSH 端口。不创建这个 Secret 时使用 22
+#   DEPLOY_KNOWN_HOSTS  ssh-keyscan -p 22 <主机> 的输出。不填则每次部署时自动获取
+#
+# Variables（可选，Settings 里的 Variables，不是 Secret）：
+#   DEPLOY_API_ORIGIN   生产环境接口源。
+#                       不创建或留空：前端请求走当前网站同源，由 Nginx 反代 /api、/health、/ws
+#                       接口在别的域名时填写，例如 https://api.example.com （不要末尾斜杠）
+#
+# 服务器需要 OpenSSH、bash、GNU tar / mv / find。Nginx 示例见 deploy/nginx.conf.example。
+# DEPLOY_PATH 只放这个站点，脚本会把旧的普通目录改名为 *.bak.* 再切换。
+
+name: Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feat-ai
+      - main
+
+concurrency:
+  group: scp-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          # package.json engines：node >= 22.22.0。用 22 取当前最新的 22.x。
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+        env:
+          # 未配置 Variable 时为空字符串，生产包走同源。本地不设该变量时仍是 http://127.0.0.1:8080。
+          DEPLOY_API_ORIGIN: ${{ vars.DEPLOY_API_ORIGIN }}
+
+      - name: Pack dist
+        run: |
+          test -f dist/index.html
+          archive="${RUNNER_TEMP}/nest-admin-dist.tar.gz"
+          tar -C dist -czf "$archive" .
+          echo "DIST_ARCHIVE=${archive}" >> "$GITHUB_ENV"
+
+      - name: Upload dist with scp
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: bash scripts/deploy-scp.sh
