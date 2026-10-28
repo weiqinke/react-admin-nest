@@ -17,11 +17,10 @@ const { Content, Sider } = Layout;
 const pageMotion = "animate__animated animate__fadeInUp";
 
 const DefaultLayout = () => {
-  const { refresh } = useContext(MenuTagContext);
+  const { refreshKey, refreshing } = useContext(MenuTagContext);
   const [collapsed, setCollapsed] = useState(false);
   const { pathname } = useLocation();
-  // 入场动画只在路由切换时播一次；常挂 animate.css 类会在 Modal 打开
-  // （body 锁滚动 / 滚动条消失引发 reflow）时被浏览器重新播放，造成整页闪烁。
+  // 入场动画只在路由切换时播；真刷新用 loading，避免像重新进路由。
   const [enterMotion, setEnterMotion] = useState(true);
 
   useEffect(() => {
@@ -58,18 +57,19 @@ const DefaultLayout = () => {
 
         <Content className={styles.pageContent}>
           <TagsView />
-          <ErrorBoundary fallbackRender={FailContainer} resetKeys={[pathname]}>
+          <ErrorBoundary fallbackRender={FailContainer} resetKeys={[pathname, refreshKey]}>
             <Suspense fallback={<SuspendFallback />}>
               <div className={styles.outletContainer}>
                 <div className={styles.pageOutlet}>
-                  <div key={pathname} className={`${enterMotion ? pageMotion : ""} ${styles.pageEnter}`.trim()}>
-                    <div style={{ display: `${refresh ? "" : "none"}` }}>
-                      <SuspendFallback />
-                    </div>
-                    <div style={{ display: `${refresh ? "none" : ""}` }}>
+                  {refreshing ? (
+                    <SuspendFallback />
+                  ) : (
+                    <div
+                      key={`${pathname}-${refreshKey}`}
+                      className={`${enterMotion ? pageMotion : ""} ${styles.pageEnter}`.trim()}>
                       <Outlet />
                     </div>
-                  </div>
+                  )}
                 </div>
                 <Copyright />
               </div>

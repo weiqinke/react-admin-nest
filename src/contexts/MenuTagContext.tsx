@@ -17,7 +17,10 @@ type MenuTagContextValue = {
   closeOtherTags: (url: string) => void;
   closeLeftTags: (url: string) => void;
   closeRightTags: (url: string) => void;
-  refresh: boolean;
+  /** 递增后布局用 key 强制重挂当前页 */
+  refreshKey: number;
+  /** 真刷新过程中：先出 loading，再重挂 */
+  refreshing: boolean;
   refreshPage: () => void;
 };
 
@@ -31,7 +34,8 @@ const MenuTagContext = React.createContext<MenuTagContextValue>({
   closeOtherTags: () => null,
   closeLeftTags: () => null,
   closeRightTags: () => null,
-  refresh: false,
+  refreshKey: 0,
+  refreshing: false,
   refreshPage: () => null
 });
 
@@ -41,14 +45,16 @@ export const MenuTagContextProvider = ({ children }: { children: React.ReactNode
   const activeUrl = location.pathname;
 
   const [tags, setTags] = useState<MenuTagItem[]>([]);
-  const [refresh, setRefresh] = useState(false);
-  const refreshTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+  const refreshTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
-  useEffect(() => {
-    return () => {
-      if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
-    };
+  const clearRefreshTimers = useCallback(() => {
+    refreshTimersRef.current.forEach(clearTimeout);
+    refreshTimersRef.current = [];
   }, []);
+
+  useEffect(() => clearRefreshTimers, [clearRefreshTimers]);
 
   useEffect(() => {
     const url = location.pathname;
@@ -120,10 +126,16 @@ export const MenuTagContextProvider = ({ children }: { children: React.ReactNode
   );
 
   const refreshPage = useCallback(() => {
-    setRefresh(true);
-    if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
-    refreshTimerRef.current = setTimeout(() => setRefresh(false), 2000);
-  }, []);
+    clearRefreshTimers();
+    setRefreshing(true);
+    // 先展示 loading，再换 key 重挂页面，最后收起 loading
+    const remountTimer = setTimeout(() => {
+      setRefreshKey(key => key + 1);
+      const doneTimer = setTimeout(() => setRefreshing(false), 280);
+      refreshTimersRef.current.push(doneTimer);
+    }, 180);
+    refreshTimersRef.current.push(remountTimer);
+  }, [clearRefreshTimers]);
 
   const value = useMemo(
     () => ({
@@ -136,10 +148,11 @@ export const MenuTagContextProvider = ({ children }: { children: React.ReactNode
       closeOtherTags,
       closeLeftTags,
       closeRightTags,
-      refresh,
+      refreshKey,
+      refreshing,
       refreshPage
     }),
-    [tags, activeUrl, addTag, switchTo, removeTag, closeOtherTags, closeLeftTags, closeRightTags, refresh, refreshPage]
+    [tags, activeUrl, addTag, switchTo, removeTag, closeOtherTags, closeLeftTags, closeRightTags, refreshKey, refreshing, refreshPage]
   );
 
   return <MenuTagContext.Provider value={value}>{children}</MenuTagContext.Provider>;
