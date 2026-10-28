@@ -1,43 +1,45 @@
 /**
-    与 src/styles/tailwind.css、src/styles/aether.ts 同一套 Aether 配色。
+    与 src/styles/tailwind.css、src/styles/aether.ts 同一套石墨 + 钴蓝。
     background-color 在这里是顶栏底色，不是页面底色。
    */
 $themes: (
   "light": (
     background-color: #ffffff,
-    background-slider: #0b1220,
-    head-color: #0b1220,
-    head-icon-bg: #0e7490,
-    head-icon-color: #0e7490,
+    background-slider: #101216,
+    head-color: #12141a,
+    head-line: 1px solid #e6e8ee,
+    head-icon-bg: #2563eb,
+    head-icon-color: #3a4150,
     head-icon-bg-hover: #ffffff,
-    font-basis-color: #46556f,
-    box-border: #d5dce8,
+    font-basis-color: #5c6574,
+    box-border: #e6e8ee,
     transition: 0.2s,
-    color-font-normal: #46556f,
-    color-font-light: #f4f7fb,
-    color-font-dark: #0b1220,
+    color-font-normal: #5c6574,
+    color-font-light: #f5f6f8,
+    color-font-dark: #12141a,
     color-pink: #e11d48,
-    color-green: #059669,
-    color-logo: #0e7490,
-    color-head: #0b1220
+    color-green: #0f9f6e,
+    color-logo: #12141a,
+    color-head: #12141a
   ),
   "dark": (
-    background-color: #0b1220,
-    background-slider: #070b14,
-    head-color: #e8eef6,
-    head-icon-bg: #164e63,
-    head-icon-color: #a5f3fc,
-    head-icon-bg-hover: #ecfeff,
-    font-basis-color: #a8b3c7,
-    box-border: #2a3854,
+    background-color: #16181d,
+    background-slider: #101216,
+    head-color: #f3f4f6,
+    head-line: 1px solid rgba(255, 255, 255, 0.08),
+    head-icon-bg: #2563eb,
+    head-icon-color: #d5d9e0,
+    head-icon-bg-hover: #ffffff,
+    font-basis-color: #a7aeb8,
+    box-border: #2c313c,
     transition: 0.2s,
-    color-normal: #a8b3c7,
-    color-font-normal: #e8eef6,
-    color-font-light: #f4f7fb,
-    color-font-dark: #e8eef6,
+    color-normal: #a7aeb8,
+    color-font-normal: #f3f4f6,
+    color-font-light: #f5f6f8,
+    color-font-dark: #f3f4f6,
     color-pink: #fb7185,
     color-green: #34d399,
-    color-logo: #22d3ee,
-    color-head: #e8eef6
+    color-logo: #f3f4f6,
+    color-head: #f3f4f6
   )
 );

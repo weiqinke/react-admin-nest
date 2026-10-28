@@ -4,57 +4,57 @@
 @import "tailwindcss/utilities.css" layer(utilities);
 
 /*
-  Aether — 科技后台配色
+  石墨 + 钴蓝
 
-  墨色 ink    页面、侧栏、层级。冷，不发灰。
-  信号 signal 主操作、选中、链接。深色表面上用 300/400，浅底上用 600/700。
-  电离 ion    次强调、图表第二序列。不拿来做主按钮。
-  状态色      成功 / 警告 / 危险 / 信息，和品牌青分开。
+  ink     中性石墨，不带蓝、不带青。侧栏比顶栏更深一档。
+  signal  唯一主色。浅底按钮和链接用 600，深底高亮字用 300。
+  ion     暖金，只给图表第二序列和点缀，不做按钮。
+  状态色  成功 / 警告 / 危险，和主色蓝分开。
 
-  固定色阶：bg-ink-900、text-signal-300、border-ion-400
+  固定色阶：bg-ink-950、bg-signal-600、text-signal-300、text-ion-500
   随 data-theme 切换：bg-canvas、bg-surface、text-fg、text-fg-muted、
   border-line、bg-accent、text-accent-fg、bg-accent-soft、text-ion、bg-header、bg-sidebar
 */
 
 @theme {
-  --color-ink-950: #060912;
-  --color-ink-900: #0b1220;
-  --color-ink-800: #121b2e;
-  --color-ink-700: #1c2740;
-  --color-ink-600: #2a3854;
-  --color-ink-500: #46556f;
-  --color-ink-400: #7d8ba3;
-  --color-ink-300: #a8b3c7;
-  --color-ink-200: #d5dce8;
-  --color-ink-100: #e8eef6;
-  --color-ink-50: #f4f7fb;
+  --color-ink-950: #101216;
+  --color-ink-900: #16181d;
+  --color-ink-800: #1e222b;
+  --color-ink-700: #2a303a;
+  --color-ink-600: #3a4150;
+  --color-ink-500: #5c6574;
+  --color-ink-400: #8b93a1;
+  --color-ink-300: #c5cad3;
+  --color-ink-200: #e6e8ee;
+  --color-ink-100: #eef0f4;
+  --color-ink-50: #f5f6f8;
 
-  --color-signal-50: #ecfeff;
-  --color-signal-100: #cffafe;
-  --color-signal-200: #a5f3fc;
-  --color-signal-300: #67e8f9;
-  --color-signal-400: #22d3ee;
-  --color-signal-500: #06b6d4;
-  --color-signal-600: #0891b2;
-  --color-signal-700: #0e7490;
-  --color-signal-800: #155e75;
-  --color-signal-900: #164e63;
+  --color-signal-50: #eff4ff;
+  --color-signal-100: #dbe6ff;
+  --color-signal-200: #c0d4ff;
+  --color-signal-300: #93b4ff;
+  --color-signal-400: #5b8def;
+  --color-signal-500: #3b74f2;
+  --color-signal-600: #2563eb;
+  --color-signal-700: #1d4ed8;
+  --color-signal-800: #1e40af;
+  --color-signal-900: #1e3a8a;
 
-  --color-ion-300: #c4b5fd;
-  --color-ion-400: #a78bfa;
-  --color-ion-500: #8b5cf6;
-  --color-ion-600: #7c3aed;
+  --color-ion-300: #f0d089;
+  --color-ion-400: #e0b15a;
+  --color-ion-500: #d4920a;
+  --color-ion-600: #b7791f;
 
   --color-ok-400: #34d399;
-  --color-ok-600: #059669;
-  --color-warn-400: #fbbf24;
-  --color-warn-600: #d97706;
+  --color-ok-600: #0f9f6e;
+  --color-warn-400: #f0d089;
+  --color-warn-600: #d4920a;
   --color-danger-400: #fb7185;
   --color-danger-600: #e11d48;
-  --color-info-400: #60a5fa;
+  --color-info-400: #93b4ff;
   --color-info-600: #2563eb;
 
-  --shadow-panel: 0 16px 40px rgb(6 9 18 / 0.08);
+  --shadow-panel: 0 16px 40px rgb(16 18 22 / 0.08);
   --radius-panel: 12px;
 }
 
@@ -79,39 +79,39 @@
 
 :root,
 [data-theme="light"] {
-  --aether-canvas: #f4f7fb;
+  --aether-canvas: #f5f6f8;
   --aether-surface: #ffffff;
-  --aether-surface-muted: #e8eef6;
-  --aether-fg: #0b1220;
-  --aether-fg-muted: #46556f;
-  --aether-line: #d5dce8;
-  --aether-accent: #0e7490;
-  --aether-accent-fg: #f4f7fb;
-  --aether-accent-soft: #ecfeff;
-  --aether-ion: #7c3aed;
+  --aether-surface-muted: #eef0f4;
+  --aether-fg: #12141a;
+  --aether-fg-muted: #5c6574;
+  --aether-line: #e6e8ee;
+  --aether-accent: #2563eb;
+  --aether-accent-fg: #ffffff;
+  --aether-accent-soft: #eff4ff;
+  --aether-ion: #b7791f;
   --aether-header: #ffffff;
-  --aether-sidebar: #0b1220;
-  --aether-ok: #059669;
-  --aether-warn: #d97706;
+  --aether-sidebar: #101216;
+  --aether-ok: #0f9f6e;
+  --aether-warn: #d4920a;
   --aether-danger: #e11d48;
   --aether-info: #2563eb;
 }
 
 [data-theme="dark"] {
-  --aether-canvas: #060912;
-  --aether-surface: #121b2e;
-  --aether-surface-muted: #1c2740;
-  --aether-fg: #e8eef6;
-  --aether-fg-muted: #a8b3c7;
-  --aether-line: #2a3854;
-  --aether-accent: #22d3ee;
-  --aether-accent-fg: #062833;
-  --aether-accent-soft: #164e63;
-  --aether-ion: #a78bfa;
-  --aether-header: #0b1220;
-  --aether-sidebar: #070b14;
+  --aether-canvas: #101216;
+  --aether-surface: #1a1d24;
+  --aether-surface-muted: #242833;
+  --aether-fg: #f3f4f6;
+  --aether-fg-muted: #a7aeb8;
+  --aether-line: #2c313c;
+  --aether-accent: #2563eb;
+  --aether-accent-fg: #ffffff;
+  --aether-accent-soft: #1a2744;
+  --aether-ion: #e0b15a;
+  --aether-header: #16181d;
+  --aether-sidebar: #101216;
   --aether-ok: #34d399;
-  --aether-warn: #fbbf24;
+  --aether-warn: #e0b15a;
   --aether-danger: #fb7185;
-  --aether-info: #60a5fa;
+  --aether-info: #93b4ff;
 }

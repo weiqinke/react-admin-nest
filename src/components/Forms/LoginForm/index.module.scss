@@ -4,11 +4,13 @@
   min-height: 366px;
   padding: 40px;
   position: relative;
-  background: rgba(164, 203, 200, 0.3);
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.72);
   border-radius: 8px;
+  backdrop-filter: blur(16px);
   &:hover {
-    box-shadow: -4px 4px 16px 1px rgba(0, 0, 0, 0.15);
-    background: rgba(164, 203, 200, 1);
+    box-shadow: 0 16px 40px rgba(16, 18, 22, 0.12);
+    background: rgba(255, 255, 255, 0.92);
     transition:
       box-shadow 1s,
       background 1s,
@@ -26,7 +28,7 @@
   float: right;
   padding-right: 12px;
   cursor: pointer;
-  color: #0e7490;
+  color: #2563eb;
 }
 
 .other {
@@ -84,8 +86,8 @@
   border-top-left-radius: 8px;
   border-bottom: 30px solid transparent;
   border-right: 30px solid transparent;
-  border-top: 30px solid rgba(7, 67, 36, 0.8);
-  border-left: 30px solid rgba(7, 67, 36, 0.8);
+  border-top: 30px solid #2563eb;
+  border-left: 30px solid #2563eb;
   transform: rotate(90deg);
 }
 
@@ -106,5 +108,5 @@
 
 .register {
   cursor: pointer;
-  color: #0e7490;
+  color: #2563eb;
 }

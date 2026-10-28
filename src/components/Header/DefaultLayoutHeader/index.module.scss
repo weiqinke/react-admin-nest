@@ -6,6 +6,7 @@
   overflow: hidden;
   @include get-class-from-key("background-color");
   @include get-class-from-key("color", "color-head");
+  @include get-class-from-key("border-bottom", "head-line");
   .user {
     float: right;
     cursor: pointer;
@@ -37,23 +38,7 @@
   }
 
   .title {
-    /*渐变背景*/
-    background-image: linear-gradient(90deg, #0e7490, #22d3ee 28%, #a78bfa 62%, #22d3ee 82%, #0e7490);
-    color: transparent; /*文字填充色为透明*/
-    -webkit-text-fill-color: transparent;
-    -webkit-background-clip: text;
-    background-clip: text;
-    background-size: 200% 100%;
-    /* 动画 */
-    animation: masked-animation 4s infinite linear;
-  }
-}
-
-@keyframes masked-animation {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: -100% 0;
+    color: inherit;
+    letter-spacing: -0.04em;
   }
 }

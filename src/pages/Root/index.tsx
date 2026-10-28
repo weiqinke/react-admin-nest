@@ -31,10 +31,10 @@ const Root = () => {
       theme={{
         components: {
           Menu: {
-            darkItemBg: aether.ink900,
+            darkItemBg: aether.ink950,
             darkSubMenuItemBg: aether.ink950,
-            darkItemSelectedBg: aether.signal900,
-            darkItemSelectedColor: aether.signal300,
+            darkItemSelectedBg: aether.signal600,
+            darkItemSelectedColor: aether.white,
             darkItemColor: aether.ink300
           }
         }

@@ -24,17 +24,17 @@
 
 .cardContainer {
   border: 12px;
-  background-color: #0e7490;
+  background-color: #2563eb;
   border-radius: 8px;
-  border: 2px solid #0e7490;
+  border: 2px solid #2563eb;
   &.fense {
-    background-color: #0ea5e9;
-    border: 2px solid #0ea5e9;
+    background-color: #5b8def;
+    border: 2px solid #5b8def;
   }
 
   &.zise {
-    background-color: #8b5cf6;
-    border: 2px solid #8b5cf6;
+    background-color: #d4920a;
+    border: 2px solid #d4920a;
   }
 
   .header {

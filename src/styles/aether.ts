@@ -1,24 +1,22 @@
 /**
- * Aether 配色里需要交给 Ant Design 的实色。
- * 色阶和随 data-theme 切换的语义色在 tailwind.css。
- * 按钮和链接落在浅色内容区上，主色用 signal-700，保证白字可读。
- * 亮青 signal-400 只用于深色表面（侧栏选中字、暗色强调）。
+ * 交给 Ant Design 的实色。色阶和随 data-theme 切换的语义色在 tailwind.css。
+ * 壳层是中性石墨，主色是钴蓝 signal-600。白字落在 #2563eb 上对比足够。
  */
 export const aether = {
   white: "#ffffff",
-  ink950: "#060912",
-  ink900: "#0b1220",
-  ink800: "#121b2e",
-  ink300: "#a8b3c7",
-  ink50: "#f4f7fb",
-  signal900: "#164e63",
-  signal700: "#0e7490",
-  signal600: "#0891b2",
-  signal300: "#67e8f9",
-  ion500: "#8b5cf6",
-  sky500: "#0ea5e9",
-  ok: "#059669",
-  warn: "#d97706",
+  ink950: "#101216",
+  ink900: "#16181d",
+  ink800: "#1e222b",
+  ink300: "#c5cad3",
+  ink50: "#f5f6f8",
+  signal900: "#1e3a8a",
+  signal700: "#1d4ed8",
+  signal600: "#2563eb",
+  signal300: "#93b4ff",
+  ion500: "#d4920a",
+  sky500: "#5b8def",
+  ok: "#0f9f6e",
+  warn: "#d4920a",
   danger: "#e11d48",
   info: "#2563eb"
 } as const;

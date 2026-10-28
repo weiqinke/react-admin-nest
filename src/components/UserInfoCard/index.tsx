@@ -156,7 +156,7 @@ const UserInfoCard = () => {
                     <Avatar.Group max={{ count: 2, style: { color: "#f56a00", backgroundColor: "#fde3cf" } }}>
                       <Avatar src="https://dr.cdnux.com/18510675/i/2025/01/04/65a29b436889b.jpg" />
                       <Avatar style={{ backgroundColor: "#f56a00" }}>K</Avatar>
-                      <Avatar style={{ backgroundColor: "#0891b2" }} icon={<AntDesignOutlined />} />
+                      <Avatar style={{ backgroundColor: "#2563eb" }} icon={<AntDesignOutlined />} />
                     </Avatar.Group>
                   </Flex>
                   <div>
