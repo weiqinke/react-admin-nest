@@ -1,0 +1,4 @@
+/* 不引入 Preflight，避免改写 reset.css 和 Ant Design 的基础样式。工具类仍可用。 */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);

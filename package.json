@@ -41,6 +41,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@tailwindcss/vite": "^4.3.3",
     "@types/bytes": "^3.1.4",
     "@types/d3": "^7.4.3",
     "@types/node": "^20.19.0",
@@ -56,6 +57,7 @@
     "prettier": "3.2.4",
     "rollup-plugin-visualizer": "^7.1.1",
     "sass": "^1.70.0",
+    "tailwindcss": "^4.3.3",
     "terser": "^5.37.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.72.1",
