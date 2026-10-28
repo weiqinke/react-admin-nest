@@ -1049,13 +1049,13 @@ paths:
         "403":
           $ref: "#/components/responses/Forbidden"
 
-  /ws:
+  /gows:
     get:
       tags: [WebSocket]
       summary: WebSocket 连接
       description: |
         需要权限 `ws:connect`。
-        连接：`ws://host/ws?token=<jwt>` 或 Header Bearer。
+        连接：`ws://host/gows?token=<jwt>` 或 Header Bearer。
         连接后收到 welcome；可发 `{"type":"chat","payload":{"text":"hi"}}` 广播。
       operationId: websocketConnect
       parameters:

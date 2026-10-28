@@ -14,13 +14,6 @@ const Root = () => {
   useEffect(() => {
     webSocketManager.create();
     return () => {
-      webSocketManager.postMessage({
-        name: "qkstartCar",
-        type: "123",
-        message: "",
-        data: []
-      });
-      webSocketManager.socket.disconnect();
       webSocketManager.close();
     };
   }, []);

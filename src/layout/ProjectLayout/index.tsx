@@ -7,18 +7,9 @@ import { Outlet } from "react-router";
 
 const ProjectLayout = () => {
   const [theme, setTheme] = useState(localStorage.getItem("data-theme") || "dark");
+
   useEffect(() => {
     webSocketManager.create();
-    return () => {
-      webSocketManager.postMessage({
-        name: "qkstartCar",
-        type: "123",
-        message: "",
-        data: []
-      });
-      webSocketManager.socket.disconnect();
-      webSocketManager.close();
-    };
   }, []);
 
   useLayoutEffect(() => {

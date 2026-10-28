@@ -24,10 +24,24 @@ function productionApiOrigin() {
 const goAdminOrigin = productionApiOrigin();
 const httpUrl = isDev ? "" : goAdminOrigin;
 
+// 开发时代理和线上 Nginx 一样带上真实 IP。浏览器和 Vite 在同一台机器时，这个地址本来就是 127.0.0.1。
+function goAdminProxyEntry() {
+  return {
+    target: goAdminOrigin,
+    changeOrigin: true,
+    xfwd: true,
+    configure(proxy) {
+      proxy.on("proxyReq", (proxyReq, req) => {
+        const raw = req.socket.remoteAddress || "";
+        const ip = raw.startsWith("::ffff:") ? raw.slice(7) : raw;
+        if (ip) proxyReq.setHeader("X-Real-IP", ip);
+      });
+    }
+  };
+}
 const goAdminProxy = {
-  "/api": { target: goAdminOrigin, changeOrigin: true },
-  "/health": { target: goAdminOrigin, changeOrigin: true },
-  "/ws": { target: goAdminOrigin, changeOrigin: true, ws: true }
+  "/api": goAdminProxyEntry(),
+  "/health": goAdminProxyEntry()
 };
 
 function vendorChunkName(id: string) {
@@ -61,6 +75,7 @@ export default defineConfig({
   ],
   define: {
     REACT_APP_API_URL: JSON.stringify(httpUrl),
+    REACT_APP_WS_ORIGIN: JSON.stringify(goAdminOrigin),
     REACT_PACKAGE: JSON.stringify({
       dependencies,
       devDependencies,

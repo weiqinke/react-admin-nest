@@ -89,9 +89,9 @@ go run .
 - `POST /api/login`
 - `POST /api/token/refresh`
 
-其余 `/api/*` 与 `GET /ws` 都要鉴权；权限不足：HTTP 403 / `code=40301` + `data.permission`。
+其余 `/api/*` 与 `GET /gows` 都要鉴权；权限不足：HTTP 403 / `code=40301` + `data.permission`。
 
-WebSocket：`ws://127.0.0.1:8080/ws?token=<access jwt>`（或握手带 Bearer），需要 `ws:connect`。
+WebSocket：`ws://127.0.0.1:8080/gows?token=<access jwt>`（或握手带 Bearer），需要 `ws:connect`。
 
 ### 请求封装建议
 

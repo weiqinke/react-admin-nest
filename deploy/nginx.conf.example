@@ -1,44 +1,83 @@
-# 放到服务器后按实际域名和目录修改，例如：
-#   sudo cp deploy/nginx.conf.example /etc/nginx/sites-available/nest-admin
-#   sudo ln -s /etc/nginx/sites-available/nest-admin /etc/nginx/sites-enabled/
+# 放到服务器后按实际域名、证书和目录修改。
+# 站点已经在跑时，不要整文件覆盖。把下面 http 级的两段、server 里的四行
+# proxy_set_header，以及 location /gows，贴进「正在对外提供这个网站」的那个
+# server（listen 443 ssl 那一份）。/api/ 与 /health 不要在 location 里再写
+# proxy_set_header，否则会盖掉 server 上的真实 IP 头。
+#
 #   sudo nginx -t && sudo systemctl reload nginx
 #
 # root 必须和 GitHub Secret DEPLOY_PATH 一致。
-# 父目录可写时，该路径会是符号链接；父目录不可写时，文件直接放在这个目录里。Nginx 两种都能读。
-# 前端生产构建在未设置 DEPLOY_API_ORIGIN 时走同源，所以由这里把接口转到本机 goadmin。
+# 前端生产构建在 DEPLOY_API_ORIGIN 为空时走同源：
+#   页面 https://域名  → 浏览器连 wss://域名/gows?token=...
+#   Nginx 再转到本机 http://127.0.0.1:8080/gows ，8080 不对公网开放。
+# 截屏上传是普通 HTTP POST /api/ws/screenshots，走下面的 /api/ 即可。
 
+# map / log_format 必须写在 http {} 里，不能写进 server {}。
+# Ubuntu/Debian 的 sites-enabled 本身就在 http 里 include，放在本文件顶部即可。
+# 宝塔、1Panel 等面板若只让你编辑 server 内部，把这两段挪到 nginx.conf 的 http {} 中。
+
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ""      close;
+}
+
+# $uri 不带 query，避免 access log 记下 ?token= 里的 JWT。
+log_format gows_safe '$remote_addr - $remote_user [$time_local] '
+                     '"$request_method $uri $server_protocol" $status $body_bytes_sent '
+                     '"$http_referer" "$http_user_agent"';
+
+# 已有 HTTPS 时：80 只做跳转，业务和 /gows 都放在 443 的 server 里。
 server {
     listen 80;
     server_name _;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    # 1.25.1 之前不要写成单独的 http2 on;，否则 nginx -t 会失败。
+    listen 443 ssl http2;
+    server_name _;
+
+    # 改成实际证书路径。证书由面板托管时，保留面板生成的 ssl_certificate 行，不要改路径。
+    ssl_certificate     /etc/nginx/ssl/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/privkey.pem;
 
     root /var/www/nest-admin;
     index index.html;
 
+    # 反代之后，Go 的 TCP 对端永远是 127.0.0.1。
+    # 访问日志、登录日志、按 IP 限流必须读这里写入的 X-Real-IP，不能读 RemoteAddr。
+    # X-Forwarded-For 用 $remote_addr 覆盖客户端自带的值，避免伪造 IP 被记进去。
+    # 这两个头只应被本机 127.0.0.1 / ::1 信任。
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header X-Forwarded-Proto $scheme;
+
     location /api/ {
         proxy_pass http://127.0.0.1:8080;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
     }
 
     location = /health {
         proxy_pass http://127.0.0.1:8080;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    location /ws {
+    # proxy_pass 不写路径，原始 URI 和 ?token= 会原样转到 Go。
+    # 读超时必须长于心跳间隔（前端 30 秒 ping）。默认 60 秒会把长连接掐掉。
+    location /gows {
         proxy_pass http://127.0.0.1:8080;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
+        proxy_set_header Connection $connection_upgrade;
+        # location 里一旦写了 proxy_set_header，就不再继承 server 上的同名指令，IP 头要再写一遍。
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_buffering off;
         proxy_read_timeout 3600s;
+        proxy_send_timeout 3600s;
+        access_log /var/log/nginx/gows.access.log gows_safe;
     }
 
     location / {

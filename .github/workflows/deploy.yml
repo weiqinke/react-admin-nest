@@ -21,7 +21,7 @@
 #
 # Variables（可选，Settings 里的 Variables，不是 Secret）：
 #   DEPLOY_API_ORIGIN   生产环境接口源。
-#                       不创建或留空：前端请求走当前网站同源，由 Nginx 反代 /api、/health、/ws
+#                       不创建或留空：前端请求走当前网站同源，由 Nginx 反代 /api、/health、/gows
 #                       接口在别的域名时填写，例如 https://api.example.com （不要末尾斜杠）
 #
 # 服务器需要 OpenSSH、bash、GNU tar / mv / find / cp。Nginx 示例见 deploy/nginx.conf.example。

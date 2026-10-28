@@ -18,6 +18,7 @@
 | 访问日志 | 全站写入 `api_access_log`；URL 中 `token` 等敏感参数脱敏为 `***` |
 | 请求追踪 | 响应头 `X-Request-ID`；可主动传入同名请求头 |
 | 限流 | captcha 30/分、login 10/分、register 5/分、refresh 30/分（按 IP）；超限 HTTP 429 / `code=42901` |
+| 客户端 IP | 见下方「客户端 IP」。访问日志、登录日志、限流使用同一个结果 |
 
 ### 响应信封（必读）
 
@@ -54,6 +55,23 @@
   "data": { "permission": "user:read" }
 }
 ```
+
+### 客户端 IP
+
+Nginx 把请求转到 `127.0.0.1:8080` 之后，连接的对端地址永远是 `127.0.0.1`。访问日志、登录日志、按 IP 限流如果读 `RemoteAddr`，统计会全部变成 `127.0.0.1`。
+
+Nginx 对每个反代请求写入：
+
+- `X-Real-IP: $remote_addr`
+- `X-Forwarded-For: $remote_addr`（覆盖客户端自己带的值，不追加）
+
+取值顺序：
+
+1. 对端是 `127.0.0.1` 或 `::1` 时，采用 `X-Real-IP`（合法 IP 才采纳）。
+2. 没有该头时，采用 `X-Forwarded-For` 中唯一的这一段。
+3. 直连、没有反代时，采用 `RemoteAddr` 去掉端口后的地址。
+
+来自其他地址的这两个头忽略，避免客户端伪造。实现在 `internal/pkg/clientip`，访问日志、登录日志、按 IP 限流、WebSocket 握手共用。这是 GoFrame，不使用 Gin 的 `SetTrustedProxies`。
 
 ### 演示账号
 
@@ -444,10 +462,10 @@
 
 ## 6. WebSocket
 
-### `GET /ws`
+### `GET /gows`
 
 权限：`ws:connect`。  
-连接：`ws://host/ws?token=<access jwt>` 或 Header Bearer。
+连接：`ws://host/gows?token=<access jwt>` 或 Header Bearer。
 
 - 连接后收到 `welcome`
 - 客户端可发：`{"type":"chat","payload":{"text":"hi"}}`

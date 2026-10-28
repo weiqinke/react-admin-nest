@@ -64,10 +64,7 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser }) => {
       } catch (error) {
         console.log("当前用户菜单获取失败", error);
       }
-      webSocketManager.postMessage({
-        type: "ResetUserName",
-        data: { token: localStorage.getItem("token") }
-      });
+      webSocketManager.create();
       setTags([]);
       navigate("/workplace");
     } catch {
@@ -82,15 +79,6 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser }) => {
   };
 
   const initialValues = registeredUser ? { remember: true, username: registeredUser, password: "" } : { remember: true, username: "admin", password: "admin123" };
-
-  useEffect(() => {
-    webSocketManager.postMessage({
-      type: "ResetUserName",
-      data: {
-        token: localStorage.getItem("token")
-      }
-    });
-  }, []);
 
   const onBlur = () => {
     setCloseEyes(false);
