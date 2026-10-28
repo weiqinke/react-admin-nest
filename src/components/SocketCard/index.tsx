@@ -4,7 +4,7 @@ import styles from "./index.module.scss";
 import { webSocketManager } from "@/utils/ws";
 
 const SocketCard = ({ userInfo, loadUserInfo, getUserView, ForcedOffline }) => {
-  const isMe = webSocketManager.MySocketID === userInfo.id;
+  const isMe = String(userInfo.user_id || "") === String(localStorage.getItem("uid") || "") || webSocketManager.MySocketID === userInfo.conn_id;
 
   return (
     <div className={styles.container}>

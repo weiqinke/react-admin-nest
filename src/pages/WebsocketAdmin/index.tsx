@@ -9,44 +9,60 @@ import { FC, useEffect, useRef, useState } from "react";
 import { userinfo } from "@/api/microservice/user";
 import SocketCard from "@/components/SocketCard";
 
+const toCard = (user: any) => ({
+  id: user.conn_id,
+  conn_id: user.conn_id,
+  user_id: user.user_id,
+  uid: user.user_id,
+  name: user.username,
+  nick: user.username,
+  login: true
+});
+
 const WebsocketAdmin: FC = () => {
-  const imgMinWidth = 280; // 允许瀑布流单列最低宽度，可能再低就变形和会重叠
-  const timer = useRef();
+  const imgMinWidth = 280;
   const scrollRef = useRef();
-  const domRef = useRef<HTMLDivElement>();
-  const [socketUsers, setSocketUsers] = useState([]);
+  const domRef = useRef<HTMLDivElement>(null);
+  const [socketUsers, setSocketUsers] = useState<any[]>([]);
   const [userInfo, setUserInfo] = useState(null);
   const [imgSrc, setImgSrc] = useState(prewImg);
   const [itemNum, setItemNum] = useState<number>(3);
-  const getOnlintUsers = () => {
-    webSocketManager.postMessage({
-      type: "GetAllOnLineClient"
-    });
-    clearTimeout(timer.current);
-    timer.current = setTimeout(getOnlintUsers, 5000);
-  };
 
   useEffect(() => {
-    getOnlintUsers();
+    webSocketManager.postMessage({ type: "room.join", data: { room: "admin-watch" } });
+    webSocketManager.postMessage({ type: "presence.list" });
     return () => {
-      clearTimeout(timer.current);
+      webSocketManager.postMessage({ type: "room.leave", data: { room: "admin-watch" } });
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     const removeHandler = webSocketManager.addEventHandler(payload => {
-      const { type, data } = payload;
-      if (type === "OnlineUsers") {
-        const { OnlineUser = [] } = data;
-        setSocketUsers(OnlineUser.filter(v => v?.login));
+      const { type, data = {} } = payload;
+      if (type === "presence.snapshot") {
+        setSocketUsers((data.users || []).map(toCard));
+      }
+      if (type === "presence.changed") {
+        webSocketManager.postMessage({ type: "presence.list" });
+      }
+      if (type === "screen.ready" && data.url) {
+        setImgSrc(data.url);
+      }
+      if (type === "screen.denied") {
+        message.info("对方拒绝了界面查看");
+      }
+      if (type === "screen.error") {
+        message.warning(data.message === "timeout" ? "对方未确认，请求已超时" : "获取界面失败");
+      }
+      if (type === "error" && data.message === "screen busy") {
+        message.warning("该用户已有进行中的查看请求");
       }
     });
     return removeHandler;
   }, []);
 
   const ForcedOffline = item => {
-    if (webSocketManager.MySocketID === item.id) {
+    if (String(item.user_id) === String(localStorage.getItem("uid") || "")) {
       message.info("不允许让自己强制下线");
       return;
     }
@@ -58,18 +74,16 @@ const WebsocketAdmin: FC = () => {
       cancelText: "取消",
       onOk: async () => {
         webSocketManager.postMessage({
-          type: "HandleForcedOffline",
-          data: { receiver: item.id }
+          type: "admin.force_offline",
+          data: { target_user_id: String(item.user_id) }
         });
         message.info("请求已发送");
-        getOnlintUsers();
-      },
-      onCancel() {}
+      }
     });
   };
 
   const loadUserInfo = user => {
-    userinfo({ uid: user?.uid }).then(result => {
+    userinfo({ uid: user?.user_id || user?.uid }).then(result => {
       if (result.data.code === 0) {
         setUserInfo(result.data.data);
       }
@@ -77,70 +91,47 @@ const WebsocketAdmin: FC = () => {
   };
 
   const getUserView = item => {
+    const requestId = crypto.randomUUID();
     webSocketManager.postMessage({
-      type: "GetPageView",
-      data: { receiver: item.id }
+      type: "screen.request",
+      request_id: requestId,
+      data: { target_conn_id: item.conn_id, request_id: requestId }
     });
   };
-
-  const ceatt = Bdata => {
-    return "data:image/png;base64," + window.btoa(new Uint8Array(Bdata).reduce((data, byte) => data + String.fromCharCode(byte), ""));
-  };
-  useEffect(() => {
-    const removeHandler = webSocketManager.addEventHandler(payload => {
-      if (payload?.type === "PageViewBlob") {
-        const Bdata = payload.data.blob;
-        setImgSrc(ceatt(Bdata));
-      }
-    });
-    return removeHandler;
-  }, []);
 
   const resize = () => {
-    const winW = domRef.current.clientWidth;
-    const value = Math.floor(winW / imgMinWidth); // 当每一个项的宽度都是固定的时候，需要计算出浏览器一行可以排列几个。
-    setItemNum(value);
+    const winW = domRef.current?.clientWidth || 0;
+    setItemNum(Math.max(1, Math.floor(winW / imgMinWidth)));
   };
   useEffect(() => {
     resize();
     window.addEventListener("resize", resize);
-    return () => {
-      window && window.removeEventListener("resize", resize);
-    };
+    return () => window.removeEventListener("resize", resize);
   }, []);
 
-  const getList = async () => {
-    return socketUsers;
-  };
+  const getList = async () => socketUsers;
 
   return (
     <div className="p-3" ref={domRef}>
       <div className="mb-3 h-[140px] w-[300px] select-none">
-        <Image
-          width={300}
-          src={imgSrc}
-          preview={{
-            src: imgSrc
-          }}
-        />
+        <Image width={300} src={imgSrc} preview={{ src: imgSrc }} />
       </div>
-      {/* socketUsers */}
-      {socketUsers.length && (
+      {socketUsers.length ? (
         <Waterfall
           scrollRef={scrollRef}
           getList={getList}
-          key={itemNum}
+          key={`${itemNum}-${socketUsers.map(user => user.conn_id).join(",")}`}
           cols={itemNum}
           imgMinWidth={imgMinWidth}
           itemRender={(item, i) => {
             return (
-              <div style={{ height: 147 }} key={i}>
+              <div style={{ height: 147 }} key={item.conn_id || i}>
                 <SocketCard userInfo={item} ForcedOffline={ForcedOffline} loadUserInfo={loadUserInfo} getUserView={getUserView} />
               </div>
             );
           }}
         />
-      )}
+      ) : null}
 
       {userInfo && <MetaDescModal userInfo={userInfo} onOk={() => setUserInfo(null)} />}
     </div>

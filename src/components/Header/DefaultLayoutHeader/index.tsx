@@ -1,12 +1,13 @@
 ﻿import ProjectContext from "@/contexts/ProjectContext";
 import { webSocketManager } from "@/utils/ws";
 import { UserOutlined } from "@ant-design/icons";
-import { Avatar, Dropdown, MenuProps, Modal } from "antd";
+import { Avatar, Dropdown, MenuProps, Modal, notification } from "antd";
 import html2canvas from "html2canvas";
 import { useContext, useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router";
 import HeaderNotice from "../HeaderNotice";
 
+import { uploadWsScreenshot } from "@/api/goadmin";
 import { userPlacard } from "@/api/microservice/log";
 import { logout as apiLogout } from "@/api/microservice/user";
 import { clearSession } from "@/api/session";
@@ -14,12 +15,36 @@ import MenuTagContext from "@/contexts/MenuTagContext";
 import styles from "./index.module.scss";
 import ThemeColor from "../ThemeColor";
 
+const statusText: Record<string, string> = {
+  idle: "未连接",
+  connecting: "连接中",
+  connected: "在线",
+  reconnecting: "重连中",
+  offline: "离线"
+};
+
+function toJpeg(source: HTMLCanvasElement) {
+  const max = 1920;
+  const scale = Math.min(1, max / Math.max(source.width, source.height, 1));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(source.width * scale));
+  canvas.height = Math.max(1, Math.round(source.height * scale));
+  canvas.getContext("2d")?.drawImage(source, 0, 0, canvas.width, canvas.height);
+  return new Promise<{ blob: Blob; width: number; height: number }>((resolve, reject) => {
+    canvas.toBlob(blob => {
+      if (!blob) reject(new Error("截屏失败"));
+      else resolve({ blob, width: canvas.width, height: canvas.height });
+    }, "image/jpeg", 0.7);
+  });
+}
+
 const DefaultLayoutHeader = () => {
   const { profile, setValue } = useContext<any>(ProjectContext);
-  const { addTag } = useContext(MenuTagContext);
+  const { addTag, setTags, switchTo } = useContext(MenuTagContext);
   const navigate = useNavigate();
 
   const [readPlacard, setReadPlacard] = useState(false);
+  const [wsStatus, setWsStatus] = useState(webSocketManager.status || "idle");
 
   const toggleLanguage = () => {
     const language = localStorage.getItem("language");
@@ -52,47 +77,111 @@ const DefaultLayoutHeader = () => {
     {
       label: "退出登录",
       key: "3"
+    },
+    {
+      label: "订阅",
+      key: "4"
     }
   ];
   const onClick: MenuProps["onClick"] = ({ key }) => {
     if (key === "1") {
       addTag(["profile"], 145);
-
       return navigate("/profile");
     }
     if (key === "2") return toggleLanguage();
     if (key === "3") return logout();
+    if (key === "4") {
+      setTags((prev: { url: string }[]) => (prev.some(tag => tag.url === "/subscribe") ? prev : [...prev, { url: "/subscribe", name: "订阅" }]));
+      switchTo("/subscribe");
+    }
   };
 
-  const GetPageView = async payload => {
-    // 开始截屏
+  const captureScreen = async (requestId: string) => {
     const result = await html2canvas(document.body, {
-      useCORS: true, // 【重要】开启跨域配置
+      useCORS: true,
       scale: window.devicePixelRatio < 3 ? window.devicePixelRatio : 2,
-      allowTaint: true // 允许跨域图片
+      allowTaint: true
     });
+    const shot = await toJpeg(result);
+    const uploaded = await uploadWsScreenshot(shot.blob, requestId);
+    const file = uploaded?.data?.data || {};
+    webSocketManager.postMessage({
+      type: "screen.ready",
+      data: {
+        request_id: requestId,
+        url: file.url,
+        expires_at: file.expires_at,
+        width: shot.width,
+        height: shot.height
+      }
+    });
+  };
 
-    result.toBlob(res => {
-      webSocketManager.postMessage({
-        type: "PageViewBlob",
-        data: { blob: res, receiver: payload.receiver }
-      });
+  const askScreen = (data: any) => {
+    const requestId = data?.request_id;
+    if (!requestId) return;
+    const name = data.from_username || "管理员";
+    Modal.confirm({
+      title: `${name} 请求查看当前界面`,
+      okText: "允许",
+      cancelText: "拒绝",
+      onOk: () => {
+        webSocketManager.postMessage({ type: "screen.accept", data: { request_id: requestId } });
+        window.setTimeout(() => {
+          captureScreen(requestId).catch(() => {
+            webSocketManager.postMessage({ type: "screen.error", data: { request_id: requestId, message: "capture failed" } });
+          });
+        }, 300);
+      },
+      onCancel: () => {
+        webSocketManager.postMessage({ type: "screen.denied", data: { request_id: requestId } });
+      }
     });
   };
 
   useEffect(() => {
+    setWsStatus(webSocketManager.status || "idle");
     const removeHandler = webSocketManager.addEventHandler(payload => {
-      if (payload?.type === "HandleForcedOffline") {
+      const data = payload?.data || {};
+      if (payload?.type === "connection.status") {
+        setWsStatus(data.status || "idle");
+      }
+      if (payload?.type === "admin.force_offline") {
+        webSocketManager.close();
         logout();
       }
-      if (payload?.type === "GetPageView") {
-        GetPageView(payload);
+      if (payload?.type === "screen.request") {
+        askScreen(data);
+      }
+      if (payload?.type === "notify.message") {
+        notification.info({ message: data.title || "通知", description: data.content });
+      }
+      if (payload?.type === "presence.user_online" || payload?.type === "presence.user_offline") {
+        const who = data.note ? `${data.note}（${data.username}）` : data.username;
+        notification.info({ message: `${who || "用户"} ${payload.type === "presence.user_online" ? "已上线" : "已下线"}` });
+      }
+      if (payload?.type === "presence.catch_up") {
+        const items = data.items || [];
+        notification.info({
+          message: `你关注的 ${items.length} 人有上线/下线动态`,
+          onClick: () => {
+            Modal.info({
+              title: "订阅动态",
+              content: (
+                <div>
+                  {(webSocketManager.catchUpItems || items).map((item: any) => (
+                    <div key={`${item.user_id}-${item.at}`}>
+                      {(item.note || item.username) + (item.event_type === "offline" ? " 下线" : " 上线")}
+                    </div>
+                  ))}
+                </div>
+              )
+            });
+          }
+        });
       }
     });
-    return () => {
-      console.log("我要断开一次吗");
-      removeHandler();
-    };
+    return () => removeHandler();
   }, [logout]);
 
   useEffect(() => {
@@ -135,6 +224,7 @@ const DefaultLayoutHeader = () => {
           <div className={styles.nameContainer}>
             <Avatar src={profile?.avatar || "https://dr.cdnux.com/18510675/i/2025/01/04/65a29b436889b.jpg"} icon={<UserOutlined />} />
             <span className={styles.name}>{profile?.nick}</span>
+            <span className="ml-2 text-xs text-[#898989]">{statusText[wsStatus] || wsStatus}</span>
           </div>
         </Dropdown>
       </div>

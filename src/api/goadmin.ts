@@ -105,3 +105,10 @@ export const getAccessDaily = (query: any = {}) => request("/api/stats/access/da
 export const getAccessUsers = (query: any = {}) => request("/api/stats/access/users", "GET", compact(query));
 
 export const getServerStats = () => request("/api/stats/server", "GET");
+
+export const uploadWsScreenshot = (file: Blob, requestId: string) => {
+  const form = new FormData();
+  form.append("file", file, "screen.jpg");
+  form.append("request_id", requestId);
+  return request("/api/ws/screenshots", "POST", form);
+};

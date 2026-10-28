@@ -52,7 +52,7 @@ function redirectLogin() {
 
 let refreshing: Promise<string> | null = null;
 
-function refreshAccessToken(baseURL?: string) {
+export function refreshAccessToken(baseURL?: string) {
   if (!refreshing) {
     const refresh_token = getRefreshToken();
     const raw = axios.create({

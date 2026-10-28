@@ -8,3 +8,4 @@ declare const REACT_PACKAGE: {
   lastBuildTime: string;
 };
 declare const REACT_APP_API_URL: string;
+declare const REACT_APP_WS_ORIGIN: string;

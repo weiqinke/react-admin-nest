@@ -102,8 +102,8 @@ const PlacardAdmin: FC = () => {
         if (result.data.code === 0) {
           message.info("发布成功");
           webSocketManager.postMessage({
-            type: "BroadcastPlacard",
-            data: record
+            type: "notify.push",
+            data: { title: record.title, content: record.description, level: "info" }
           });
         } else {
           message.info(result.data.message);

@@ -6,6 +6,7 @@ import ProjectLayout from "@/layout/ProjectLayout";
 import Login from "@/pages/Login";
 import Account from "@/pages/Account";
 import UserProfile from "@/pages/UserProfile";
+import Subscribe from "@/pages/Subscribe";
 import MusicChart from "@/pages/MusicChart";
 const BMap = lazy(() => import(/* webpackChunkName: "BMap'"*/ "@/pages/BMap"));
 const About = lazy(() => import(/* webpackChunkName: "About'"*/ "@/pages/About"));
@@ -153,6 +154,12 @@ const RouterPages: any = [
             component: <UserProfile />,
             auth: true,
             title: "个人中心"
+          },
+          {
+            path: "subscribe",
+            component: <Subscribe />,
+            auth: true,
+            title: "订阅"
           },
 
           {
