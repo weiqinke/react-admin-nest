@@ -1,20 +1,29 @@
-import { useRef, useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Typing from "./Typing";
 
-const TypingCard = (props: any) => {
-  const outputEl: any = useRef();
+const TypingCard = (props: { source?: string; fontSize?: string; delay?: number; title?: string }) => {
+  const outputEl = useRef<HTMLDivElement>(null);
+  const lastSourceRef = useRef<string | null>(null);
+  const source = props.source ?? "";
 
   useEffect(() => {
-    const typing: any = new Typing({
-      data: props.source,
+    const el = outputEl.current;
+    if (!el) return;
+
+    // 文案没变时不重播（弹窗开关引起的父级重渲染会走到这里）
+    if (lastSourceRef.current === source && el.textContent) return;
+
+    lastSourceRef.current = source;
+    const typing = new Typing({
+      data: source,
       output: outputEl,
-      delay: 50
+      delay: props.delay ?? 50
     });
     typing.start();
     return () => {
       typing.done();
     };
-  }, [props]);
+  }, [source, props.delay]);
 
   return (
     <div>

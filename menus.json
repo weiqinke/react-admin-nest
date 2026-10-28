@@ -210,6 +210,23 @@
               "is_public": true
             },
             {
+              "id": "373466091770000001",
+              "chain_id": "373466091332046848",
+              "parent_id": "373466091332046848",
+              "segment": "permissionadmin",
+              "full_path": "/management/permissionadmin",
+              "weight": 2,
+              "title": "权限管理",
+              "icon": "",
+              "remark": "seed from react-admin-nest routes",
+              "is_hot": 0,
+              "has_update": 0,
+              "visible_in_menu": 1,
+              "sort": 35,
+              "status": 1,
+              "is_public": true
+            },
+            {
               "id": "373466091839557632",
               "chain_id": "373466091332046848",
               "parent_id": "373466091332046848",

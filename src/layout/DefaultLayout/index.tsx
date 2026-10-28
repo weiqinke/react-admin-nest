@@ -20,6 +20,15 @@ const DefaultLayout = () => {
   const { refresh } = useContext(MenuTagContext);
   const [collapsed, setCollapsed] = useState(false);
   const { pathname } = useLocation();
+  // 入场动画只在路由切换时播一次；常挂 animate.css 类会在 Modal 打开
+  // （body 锁滚动 / 滚动条消失引发 reflow）时被浏览器重新播放，造成整页闪烁。
+  const [enterMotion, setEnterMotion] = useState(true);
+
+  useEffect(() => {
+    setEnterMotion(true);
+    const timer = window.setTimeout(() => setEnterMotion(false), 350);
+    return () => window.clearTimeout(timer);
+  }, [pathname]);
 
   useEffect(() => {
     const resize = throttle(
@@ -53,7 +62,7 @@ const DefaultLayout = () => {
             <Suspense fallback={<SuspendFallback />}>
               <div className={styles.outletContainer}>
                 <div className={styles.pageOutlet}>
-                  <div key={pathname} className={`${pageMotion} ${styles.pageEnter}`}>
+                  <div key={pathname} className={`${enterMotion ? pageMotion : ""} ${styles.pageEnter}`.trim()}>
                     <div style={{ display: `${refresh ? "" : "none"}` }}>
                       <SuspendFallback />
                     </div>

@@ -105,9 +105,27 @@ const MenuFormDrawer: FC<Props> = ({ open, mode, parentId, node, onClose, onSucc
         <Form.Item
           name="segment"
           label="路由段 segment"
-          rules={[{ required: true, message: "请输入路由段" }]}
-          extra="同级下需唯一；跨分支可重复。完整路径由服务端拼接。">
-          <Input placeholder="例如 menuadmin" disabled={isEdit} />
+          rules={[
+            { required: true, message: "请输入路由段" },
+            {
+              validator: async (_, value) => {
+                const v = String(value || "").trim();
+                if (!v) return;
+                if (v.includes("/") || v.includes("\\")) {
+                  throw new Error("只填本级段名，例如 permissionadmin，不要写 /management/permissionadmin");
+                }
+                if (!/^[A-Za-z0-9_-]+$/.test(v)) {
+                  throw new Error("segment 仅允许字母、数字、下划线和中划线");
+                }
+              }
+            }
+          ]}
+          extra={
+            parentId
+              ? "只填本级段名（如 permissionadmin）。完整路径由父级自动拼接为 /management/permissionadmin。"
+              : "根菜单只填首段（如 workplace），不要带前导 /。"
+          }>
+          <Input placeholder="例如 permissionadmin" disabled={isEdit} />
         </Form.Item>
         <Form.Item name="icon" label="图标">
           <Input placeholder="图标名或留空" />
