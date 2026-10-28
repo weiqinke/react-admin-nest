@@ -1,164 +1,95 @@
-import React, { FC, useContext, useEffect, useState } from "react";
+import { FC, MouseEvent, useContext, useEffect, useState } from "react";
 import { message, Tabs } from "antd";
 import MenuTagContext from "@/contexts/MenuTagContext";
-
+import type { MenuTagItem } from "@/contexts/MenuTagContext";
 import styles from "./index.module.scss";
-import { useLocation, useNavigate } from "react-router";
-import { getMenuItemByUrl } from "@/utils/menuUtils";
 import Contextmenu from "./Contextmenu";
 import MenuTag from "./MenuTag";
 
+type ContextMenuState = {
+  x: number;
+  y: number;
+  tag: MenuTagItem;
+};
+
 const TagsView: FC = () => {
-  const { tags, setTags, activeUrl, setActiveUrl, tagPlanVisible, setTagPlanVisible, setRefresh } = useContext(MenuTagContext);
-  const location = useLocation();
-  const navigate = useNavigate();
+  const { tags, activeUrl, switchTo, removeTag, closeOtherTags, closeLeftTags, closeRightTags, refreshPage } =
+    useContext(MenuTagContext);
 
-  const [pageclientX, setPageclientX] = useState(0);
-  const [pageclientY, setPageclientY] = useState(0);
-  const [contextMenuTag, setContextMenuTag] = useState<any>();
+  const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
 
-  // 切换标签时触发事件，切换页面地址
+  useEffect(() => {
+    if (!contextMenu) return;
+    const close = () => setContextMenu(null);
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+    // 延后绑定，避免右键同一次手势立刻关掉菜单
+    const timer = window.setTimeout(() => {
+      window.addEventListener("click", close);
+      window.addEventListener("keydown", onKeyDown);
+    }, 0);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("click", close);
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [contextMenu]);
+
   const onChange = (url: string) => {
-    setTagPlanVisible(false);
-    setTags((prev: any) => {
-      return prev.map(v => {
-        v.active = v.url === url;
-        return v;
-      });
-    });
-    setActiveUrl(url);
+    setContextMenu(null);
+    switchTo(url);
   };
 
-  //关闭标签时，从tags中删除指定标签
-  const onClose = (event: any, item: any) => {
+  const onClose = (event: MouseEvent, item: MenuTagItem) => {
     event.stopPropagation();
     event.preventDefault();
-    if (tags && tags.length <= 1) {
-      message.success({
-        content: "请保留至少一个标签",
-        duration: 0.5
-      });
+    if (tags.length <= 1) {
+      message.success({ content: "请保留至少一个标签", duration: 0.5 });
       return;
     }
-    removeTag(item);
+    removeTag(item.url);
   };
 
-  const contextTag = (event: any, tag: any) => {
+  const openContextMenu = (event: MouseEvent, tag: MenuTagItem) => {
     event.stopPropagation();
     event.preventDefault();
-    const { clientX, clientY } = event;
-    setPageclientX(clientX);
-    setPageclientY(clientY);
-    setContextMenuTag(tag);
-    setTagPlanVisible(true);
+    setContextMenu({ x: event.clientX, y: event.clientY, tag });
   };
 
-  // 关闭其他标签
-  const handleCloseOtherTags = () => {
-    const item = tags.find(v => v.url === contextMenuTag.url);
-    item.active = true;
-    setActiveUrl(item.url);
-    setTags([item]);
-    setTagPlanVisible(false);
+  const runMenuAction = (action: (url: string) => void) => {
+    if (!contextMenu) return;
+    action(contextMenu.tag.url);
+    setContextMenu(null);
   };
-
-  // 关闭左侧标签
-  const handleCloseLeftTags = () => {
-    const index = tags.findIndex(v => v.url === contextMenuTag.url);
-    const activeIndex = tags.findIndex(v => v.active);
-    const arr = tags.slice(index);
-    if (activeIndex < index) {
-      setActiveUrl(arr[0]["url"]);
-      arr[0]["active"] = true;
-    }
-    setTags(arr);
-  };
-
-  // 关闭右侧标签
-  const handleCloseRightTags = () => {
-    const index = tags.findIndex(v => v.url === contextMenuTag.url);
-    // 如果右侧的菜单有选中值 就把最后一个当作 active
-    const activeIndex = tags.findIndex(v => v.active);
-    setTagPlanVisible(false);
-    const arr = tags.slice(0, index + 1);
-    if (activeIndex > index) {
-      setActiveUrl(tags[index]["url"]);
-      arr[index]["active"] = true;
-    }
-    setTags(arr);
-  };
-
-  // 刷新当前页面
-  const refreshPage = () => {
-    setTagPlanVisible(false);
-    setRefresh(true);
-    setTimeout(() => setRefresh(false), 2000);
-  };
-
-  const removeTag = ({ url, active }) => {
-    // 只剩下一个了，别删除了
-    if (tags.length <= 1) return;
-    const tagList = tags.filter(tag => tag.url !== url);
-    // 如果删除的是选中的
-    if (active) {
-      tagList[tagList.length - 1]["active"] = true;
-      setActiveUrl(tagList[tagList.length - 1]["url"]);
-    }
-    setTags(tagList);
-  };
-
-  useEffect(() => {
-    if (!tags.length) {
-      const url = location?.pathname;
-      const initItem = getMenuItemByUrl(url.split("/").pop());
-      setTags([
-        {
-          url,
-          closable: false,
-          name: initItem?.name,
-          active: true
-        }
-      ]);
-    }
-  }, [location?.pathname]);
-
-  const onClick = tag => {
-    if (tag.active) return;
-    onChange(tag.url);
-  };
-
-  useEffect(() => {
-    if (activeUrl) navigate(activeUrl);
-  }, [activeUrl]);
 
   return (
-    <div className={`${styles.tagsdiv} bg-white px-1 pt-1.5`}>
+    <div className={styles.tagsdiv}>
       <Tabs
+        activeKey={activeUrl}
         tabBarStyle={{ margin: 0 }}
         onChange={onChange}
-        onClick={onClick}
-        tabBarExtraContent={<span></span>}
-        items={tags.map((tag: any) => {
-          return {
-            label: (
-              <div className="m-0 bg-transparent p-0" onContextMenu={e => contextTag(e, tag)} onClick={() => onClick(tag)}>
-                <MenuTag tag={tag} onClose={onClose} />
-              </div>
-            ),
-            key: tag.url,
-            closable: true
-          };
-        })}
+        items={tags.map(tag => ({
+          key: tag.url,
+          label: (
+            <div className="m-0 bg-transparent p-0" onContextMenu={e => openContextMenu(e, tag)}>
+              <MenuTag tag={tag} active={tag.url === activeUrl} onClose={onClose} />
+            </div>
+          )
+        }))}
       />
-      {tagPlanVisible ? (
+      {contextMenu ? (
         <Contextmenu
-          pageclientX={pageclientX}
-          pageclientY={pageclientY}
-          handleCloseLeftTags={handleCloseLeftTags}
-          handleCloseRightTags={handleCloseRightTags}
-          handleCloseOtherTags={handleCloseOtherTags}
-          contextMenuTag={contextMenuTag}
-          refreshPage={refreshPage}
+          x={contextMenu.x}
+          y={contextMenu.y}
+          isActive={contextMenu.tag.url === activeUrl}
+          onCloseLeft={() => runMenuAction(closeLeftTags)}
+          onCloseRight={() => runMenuAction(closeRightTags)}
+          onCloseOther={() => runMenuAction(closeOtherTags)}
+          onRefresh={() => {
+            refreshPage();
+            setContextMenu(null);
+          }}
         />
       ) : null}
     </div>
