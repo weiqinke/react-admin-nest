@@ -11,7 +11,7 @@
 
 .activeContainer {
   @extend .container;
-  border-bottom: 2px solid #41b3a3;
+  border-bottom: 2px solid #0891b2;
 }
 
 .round {
@@ -26,7 +26,7 @@
 
 .activeRound {
   @extend .round;
-  background: #41b3a3;
+  background: #0891b2;
 }
 
 .name {
@@ -50,7 +50,7 @@
   position: absolute;
   top: 3px;
   &:hover {
-    background-color: #1772f6;
+    background-color: #0891b2;
   }
 }
 

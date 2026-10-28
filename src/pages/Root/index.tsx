@@ -7,6 +7,7 @@ import "./index.scss";
 import { ConfigProvider } from "antd";
 import { webSocketManager } from "@/utils/ws";
 import { useEffect } from "react";
+import { aether } from "@/styles/aether";
 
 const Root = () => {
   const router = ProjectRouter();
@@ -30,10 +31,11 @@ const Root = () => {
       theme={{
         components: {
           Menu: {
-            darkItemSelectedBg: "#41b3a3"
-            // darkPopupBg: "#7cc1ad",
-            // darkSubMenuItemBg: "#7cc1ad",
-            // darkItemBg: "#7cc1ad",
+            darkItemBg: aether.ink900,
+            darkSubMenuItemBg: aether.ink950,
+            darkItemSelectedBg: aether.signal900,
+            darkItemSelectedColor: aether.signal300,
+            darkItemColor: aether.ink300
           }
         }
       }}>

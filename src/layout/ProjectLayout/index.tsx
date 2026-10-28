@@ -1,9 +1,22 @@
 import { MenuTagContextProvider } from "@/contexts/MenuTagContext";
 import { ProjectContextProvider } from "@/contexts/ProjectContext";
+import { aether } from "@/styles/aether";
 import { webSocketManager } from "@/utils/ws";
 import { ConfigProvider } from "antd";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { Outlet } from "react-router";
+
+const menuToken = {
+  darkItemBg: aether.ink900,
+  darkSubMenuItemBg: aether.ink950,
+  darkPopupBg: aether.ink800,
+  darkItemColor: aether.ink300,
+  darkItemHoverBg: aether.ink800,
+  darkItemHoverColor: aether.signal300,
+  darkItemSelectedBg: aether.signal900,
+  darkItemSelectedColor: aether.signal300,
+  darkGroupTitleColor: aether.ink300
+};
 
 const ProjectLayout = () => {
   const [theme, setTheme] = useState(localStorage.getItem("data-theme") || "dark");
@@ -24,56 +37,29 @@ const ProjectLayout = () => {
   useLayoutEffect(() => {
     localStorage.setItem("data-theme", theme);
     document.body.setAttribute("data-theme", theme);
-    if (theme === "dark") {
-      setMenusConfig({
-        darkItemSelectedBg: "#41b3a3",
-        // 选中时菜单颜色 和父级选中颜色
-        darkItemSelectedColor: "#fafafc",
-        // 未选中的菜单项颜色
-        darkItemColor: "#fafafc",
-        darkGroupTitleColor: "#000"
-      });
-      setButtonConfig({
-        defaultBg: "#41b3a3",
-        primaryColor: "#fff"
-      });
-    } else {
-      // 粉色背景
-      setMenusConfig({
-        darkItemSelectedBg: "#fedce0",
-        darkPopupBg: "#fedce0",
-        darkSubMenuItemBg: "#000",
-        darkItemBg: "#fedce0",
-        // 选中时菜单颜色 和父级选中颜色
-        darkItemSelectedColor: "#fafafc",
-        darkItemBg: "#001529",
-        // 未选中的菜单项颜色
-        darkItemColor: "#fafafc",
-        darkGroupTitleColor: "#000"
-      });
-
-      setButtonConfig({
-        defaultBg: "#fedce0",
-        primaryColor: "#fff"
-      });
-    }
   }, [theme]);
 
-  const [menusConfig, setMenusConfig] = useState({
-    darkItemSelectedBg: "#41b3a3"
-  });
-
-  const [ButtonConfig, setButtonConfig] = useState({
-    defaultBg: "#41b3a3",
-    primaryColor: "#fff"
-  });
+  const headerBg = theme === "dark" ? aether.ink900 : aether.white;
 
   return (
     <ConfigProvider
       theme={{
+        token: {
+          colorPrimary: aether.signal700,
+          colorInfo: aether.info,
+          colorSuccess: aether.ok,
+          colorWarning: aether.warn,
+          colorError: aether.danger,
+          colorLink: aether.signal700,
+          borderRadius: 8
+        },
         components: {
-          Button: ButtonConfig,
-          Menu: menusConfig
+          Layout: {
+            bodyBg: aether.ink50,
+            headerBg,
+            siderBg: aether.ink900
+          },
+          Menu: menuToken
         }
       }}>
       <ProjectContextProvider theme={theme} setTheme={setTheme}>
