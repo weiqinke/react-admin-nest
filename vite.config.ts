@@ -2,6 +2,7 @@ import path from "path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 // https://vitejs.dev/config/
+import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import dayjs from "dayjs";
 import { visualizer } from "rollup-plugin-visualizer";
@@ -44,6 +45,7 @@ export default defineConfig({
     inconsistentCjsInterop: true
   },
   plugins: [
+    tailwindcss(),
     react(),
     // 构建时生成 gzip 预压缩资源（替代已停更的 vite-plugin-compression）
     compression({
