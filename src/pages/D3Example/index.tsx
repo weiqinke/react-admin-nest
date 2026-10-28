@@ -26,5 +26,5 @@ const D3Example = () => {
 
  
 export default withErrorBoundary(D3Example, {
-  fallbackRender: FailContainer
+  FallbackComponent: FailContainer
 });

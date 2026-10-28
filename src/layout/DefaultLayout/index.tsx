@@ -47,7 +47,7 @@ const DefaultLayout = () => {
 
   return (
     <Layout className={styles.layout}>
-      <ErrorBoundary fallbackRender={FailContainer}>
+      <ErrorBoundary FallbackComponent={FailContainer}>
         <DefaultLayoutHeader />
       </ErrorBoundary>
       <Layout className={styles.content}>
@@ -57,7 +57,7 @@ const DefaultLayout = () => {
 
         <Content className={styles.pageContent}>
           <TagsView />
-          <ErrorBoundary fallbackRender={FailContainer} resetKeys={[pathname, refreshKey]}>
+          <ErrorBoundary FallbackComponent={FailContainer} resetKeys={[pathname, refreshKey]}>
             <Suspense fallback={<SuspendFallback />}>
               <div className={styles.outletContainer}>
                 <div className={styles.pageOutlet}>
