@@ -4,7 +4,7 @@
 #   sudo nginx -t && sudo systemctl reload nginx
 #
 # root 必须和 GitHub Secret DEPLOY_PATH 一致。
-# 部署脚本会把该路径做成符号链接，Nginx 可以一直指向它。
+# 父目录可写时，该路径会是符号链接；父目录不可写时，文件直接放在这个目录里。Nginx 两种都能读。
 # 前端生产构建在未设置 DEPLOY_API_ORIGIN 时走同源，所以由这里把接口转到本机 goadmin。
 
 server {

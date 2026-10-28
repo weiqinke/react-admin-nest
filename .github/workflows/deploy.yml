@@ -11,8 +11,9 @@
 #                  对应公钥写入该用户的 ~/.ssh/authorized_keys
 #                  本机生成示例：
 #                    ssh-keygen -t ed25519 -f deploy_key -C github-actions-nest-admin
-#   DEPLOY_PATH    站点目录，必须是绝对路径，例如 /var/www/nest-admin
-#                  该用户需要对目录的父级有写权限。目录会变成指向本次发布的符号链接。
+#   DEPLOY_PATH    站点目录，必须是绝对路径，例如 /data/www/nest-admin.com
+#                  父目录可写时，这里会变成指向本次发布的符号链接。
+#                  父目录不可写（常见）时，目录必须已存在且该用户可写，脚本只替换里面的文件。
 #
 # Secrets（可选）：
 #   DEPLOY_PORT         SSH 端口。不创建这个 Secret 时使用 22
@@ -23,8 +24,9 @@
 #                       不创建或留空：前端请求走当前网站同源，由 Nginx 反代 /api、/health、/ws
 #                       接口在别的域名时填写，例如 https://api.example.com （不要末尾斜杠）
 #
-# 服务器需要 OpenSSH、bash、GNU tar / mv / find。Nginx 示例见 deploy/nginx.conf.example。
-# DEPLOY_PATH 只放这个站点，脚本会把旧的普通目录改名为 *.bak.* 再切换。
+# 服务器需要 OpenSSH、bash、GNU tar / mv / find / cp。Nginx 示例见 deploy/nginx.conf.example。
+# 父目录不可写时，请先准备好站点目录，例如：
+#   sudo mkdir -p /data/www/nest-admin.com && sudo chown -R <DEPLOY_USER> /data/www/nest-admin.com
 
 name: Deploy
 

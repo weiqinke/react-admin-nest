@@ -148,38 +148,71 @@ archive=$2
 
 parent=$(dirname "$dest")
 name=$(basename "$dest")
-mkdir -p "$parent"
-
-release=$(mktemp -d "$parent/.$name.release.XXXXXX")
-tar -xzf "$archive" -C "$release"
+# 先在 /tmp 解压。scp 能写到 /tmp，不依赖 /data/www 是否可写。
+release=$(mktemp -d /tmp/nest-admin-release.XXXXXX)
+trap 'rm -rf "$release"' EXIT
+tar -xzf "$archive" -C "$release" || {
+  rm -f "$archive"
+  exit 1
+}
 rm -f "$archive"
 # 压缩包里的 ./ 会把目录权限盖回打包机的 umask（常见 700）。
-# 发布后再放开，Nginx 用户才能读到页面。
 chmod 755 "$release"
 chmod -R a+rX "$release"
 
 if [ ! -f "$release/index.html" ]; then
   echo "构建包里没有 index.html，停止切换。" >&2
-  rm -rf "$release"
   exit 1
 fi
 
-# 第一次如果目标已经是普通目录，先挪走，避免 mv 覆盖失败，也避免误删旧文件。
-if [ -e "$dest" ] && [ ! -L "$dest" ]; then
-  backup="${dest}.bak.$(date +%Y%m%d%H%M%S)"
-  mv "$dest" "$backup"
-  echo "原目录不是符号链接，已改名为 ${backup}"
+parent_writable=0
+probe="${parent}/.nest-admin-write-probe.$$"
+if mkdir "$probe" 2>/dev/null; then
+  rmdir "$probe"
+  parent_writable=1
 fi
 
-ln -sfn "$release" "${dest}.next"
-mv -Tf "${dest}.next" "$dest"
-echo "已发布 ${dest} -> ${release}"
+if [ "$parent_writable" -eq 1 ]; then
+  echo "父目录可写，使用符号链接发布"
+  final=$(mktemp -d "$parent/.$name.release.XXXXXX")
+  cp -a "$release"/. "$final"/
+  chmod 755 "$final"
 
-find "$parent" -mindepth 1 -maxdepth 1 -type d -name ".${name}.release.*" -printf '%T@ %p\n' \
-  | sort -nr \
-  | awk 'NR>3 { print substr($0, index($0, " ") + 1) }' \
-  | while read -r old; do
-      rm -rf "$old"
-      echo "已删除旧版本 ${old}"
-    done
+  # 第一次如果目标已经是普通目录，先挪走，避免 mv 覆盖失败，也避免误删旧文件。
+  if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+    backup="${dest}.bak.$(date +%Y%m%d%H%M%S)"
+    mv "$dest" "$backup"
+    echo "原目录不是符号链接，已改名为 ${backup}"
+  fi
+
+  ln -sfn "$final" "${dest}.next"
+  mv -Tf "${dest}.next" "$dest"
+  echo "已发布 ${dest} -> ${final}"
+
+  find "$parent" -mindepth 1 -maxdepth 1 -type d -name ".${name}.release.*" -printf '%T@ %p\n' \
+    | sort -nr \
+    | awk 'NR>3 { print substr($0, index($0, " ") + 1) }' \
+    | while read -r old; do
+        rm -rf "$old"
+        echo "已删除旧版本 ${old}"
+      done
+  exit 0
+fi
+
+# /data/www 常见是 root 所有，站点目录本身才归部署用户。这时直接替换目录里的文件。
+if [ ! -d "$dest" ] || [ ! -w "$dest" ]; then
+  echo "无法在 ${parent} 新建目录，且 ${dest} 不存在或当前用户不可写。" >&2
+  id >&2 || true
+  ls -ld "$parent" "$dest" >&2 || true
+  echo "在服务器执行一次（把用户换成 DEPLOY_USER）：" >&2
+  echo "  sudo mkdir -p ${dest} && sudo chown -R $(id -un) ${dest}" >&2
+  exit 1
+fi
+
+echo "父目录不可写，直接更新 ${dest} 里的文件"
+find "$dest" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+cp -a "$release"/. "$dest"/
+chmod 755 "$dest" || true
+chmod -R a+rX "$dest" || true
+echo "已发布 ${dest}"
 EOF
