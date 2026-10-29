@@ -8,7 +8,6 @@ import { useNavigate } from "react-router";
 import HeaderNotice from "../HeaderNotice";
 
 import { uploadWsScreenshot } from "@/api/goadmin";
-import { userPlacard } from "@/api/microservice/log";
 import { logout as apiLogout } from "@/api/microservice/user";
 import { clearSession } from "@/api/session";
 import MenuTagContext from "@/contexts/MenuTagContext";
@@ -43,7 +42,6 @@ const DefaultLayoutHeader = () => {
   const { addTag, setTags, switchTo } = useContext(MenuTagContext);
   const navigate = useNavigate();
 
-  const [readPlacard, setReadPlacard] = useState(false);
   const [wsStatus, setWsStatus] = useState(webSocketManager.status || "idle");
 
   const toggleLanguage = () => {
@@ -183,36 +181,6 @@ const DefaultLayoutHeader = () => {
     });
     return () => removeHandler();
   }, [logout]);
-
-  useEffect(() => {
-    if (readPlacard) return;
-    userPlacard({
-      type: "system",
-      status: "broadcasting",
-      uid: parseInt(localStorage.getItem("uid"))
-    })
-      .then(result => {
-        if (result?.data?.code !== 0) return;
-        //如果请求成功，需要弹出对应数量的公告modal
-        result?.data?.data?.map((item: any, index: number) => {
-          return Modal.info({
-            title: item.title,
-            mask: index === 0,
-            okText: "确认收到",
-            width: 600,
-            content: (
-              <div className="systemCard">
-                <p>{item.description.slice(0, 300)}</p>
-              </div>
-            ),
-            onOk: () => undefined
-          });
-        });
-      })
-      .finally(() => {
-        setReadPlacard(true);
-      });
-  }, [readPlacard]);
 
   return (
     <div className={styles.layoutHeader}>
