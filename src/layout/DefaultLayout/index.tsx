@@ -12,6 +12,7 @@ import { Suspense, useContext, useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router";
 import styles from "./index.module.scss";
 import SuspendFallback from "@/components/SuspendFallback";
+import AnnouncementGate from "@/components/AnnouncementGate";
 
 const { Content, Sider } = Layout;
 const pageMotion = "animate__animated animate__fadeInUp";
@@ -49,6 +50,7 @@ const DefaultLayout = () => {
     <Layout className={styles.layout}>
       <ErrorBoundary FallbackComponent={FailContainer}>
         <DefaultLayoutHeader />
+        <AnnouncementGate />
       </ErrorBoundary>
       <Layout className={styles.content}>
         <Sider className={styles.sider} trigger={null} collapsible collapsed={collapsed} breakpoint="md">
