@@ -28,6 +28,11 @@ async function hydrateSession() {
   }
 }
 
+function scrubCallbackUrl() {
+  // 立刻清掉 URL 上的 token，避免进历史记录 / Referer
+  window.history.replaceState(null, "", "/oauth/callback");
+}
+
 const OAuthCallback = () => {
   const [params] = useSearchParams();
   const navigate = useNavigate();
@@ -40,11 +45,12 @@ const OAuthCallback = () => {
     ran.current = true;
 
     const mode = params.get("mode") || "login";
-    const provider = params.get("provider") || "github";
+    const provider = params.get("provider") || "oauth";
 
     (async () => {
       if (mode === "bind") {
         if (params.get("bound") === "1") {
+          scrubCallbackUrl();
           message.success(`${provider} 绑定成功`);
           navigate("/account", { replace: true });
           return;
@@ -72,6 +78,7 @@ const OAuthCallback = () => {
           username: params.get("username") || undefined
         }
       });
+      scrubCallbackUrl();
 
       await hydrateSession();
       setValue(getUserState());

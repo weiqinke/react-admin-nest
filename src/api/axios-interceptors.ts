@@ -10,7 +10,9 @@ const PUBLIC_PATHS = [
   "/api/login",
   "/api/token/refresh",
   "/api/oauth/github/authorize",
-  "/api/oauth/github/callback"
+  "/api/oauth/github/callback",
+  "/api/oauth/gitee/authorize",
+  "/api/oauth/gitee/callback"
 ];
 const REFRESH_CODES = new Set([40101, 40102, 40104]);
 
