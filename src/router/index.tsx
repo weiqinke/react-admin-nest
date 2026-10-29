@@ -7,17 +7,14 @@ import { createBrowserRouter } from "react-router";
 const WrapperRoute = (props: any) => {
   const { component, title = "welcome", auth } = props;
   document.title = title;
+  // 公开页（login / oauth 回调）不做登录态校验，避免过期 token 打断 OAuth 回调。
+  if (!auth) return <>{component}</>;
+
   const { value: data }: any = useContext(ProjectContext);
   const { uid, exp } = data;
-  const value = new Date().valueOf();
-  const authEndTime = new Date(exp * 1000).valueOf();
-  // 权限到期了，就跳转到 login
-  if (authEndTime <= value) return <NeedLogin />;
-  if (auth) {
-    // 如果该菜单需要权限检查
-    if (!uid) return <NeedLogin />;
-  }
-  // 权限到期了，就跳转到 login
+  const now = Date.now();
+  const authEndTime = exp ? exp * 1000 : 0;
+  if (!uid || !authEndTime || authEndTime <= now) return <NeedLogin />;
   return <>{component}</>;
 };
 

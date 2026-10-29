@@ -2,7 +2,16 @@ import { message } from "antd";
 import axios from "axios";
 import { clearSession, getAccessToken, getRefreshToken, saveLoginSession } from "./session";
 
-const PUBLIC_PATHS = ["/health", "/api/captcha", "/api/crypto/public-key", "/api/register", "/api/login", "/api/token/refresh"];
+const PUBLIC_PATHS = [
+  "/health",
+  "/api/captcha",
+  "/api/crypto/public-key",
+  "/api/register",
+  "/api/login",
+  "/api/token/refresh",
+  "/api/oauth/github/authorize",
+  "/api/oauth/github/callback"
+];
 const REFRESH_CODES = new Set([40101, 40102, 40104]);
 
 function requestPath(url?: string) {
@@ -35,6 +44,10 @@ function errorText(body: any) {
   if (code === 40902) return serverMessage || "角色约束冲突";
   if (code === 40903) return "动态职责分离冲突，请指定激活角色";
   if (code === 40906) return "用户名已存在";
+  if (code === 40105) return "OAuth 状态无效或已过期，请重试";
+  if (code === 40106) return "OAuth 换票失败，请重试";
+  if (code === 40402) return "该第三方登录未启用";
+  if (code === 40907) return "该第三方账号已绑定其他用户";
   return serverMessage;
 }
 
@@ -47,7 +60,8 @@ function toApiError(body: any, httpStatus?: number) {
 }
 
 function redirectLogin() {
-  if (window.location.pathname.startsWith("/login")) return;
+  const path = window.location.pathname;
+  if (path.startsWith("/login") || path.startsWith("/oauth/")) return;
   window.location.assign("/login");
 }
 
