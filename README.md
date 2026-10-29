@@ -1,34 +1,64 @@
 English | [简体中文](./README.zh_CN.md)
 
-<h1 align="center">Nest Admin</h1>
+# Nest Admin（react-admin-nest）
 
-- 预览: https://nest-admin.com
-- Github: https://github.com/weiqinke/react-admin-nest
-- 欢迎 fork star
+React 管理端，对接后端 [go_ai / goadmin](https://github.com/weiqinke/go_ai)。业务能力以 `feat-ai` 分支为准。
 
-## 📦 Install
+- Preview: https://nest-admin.com
+- Repo: https://github.com/weiqinke/react-admin-nest
+
+## Features
+
+| Area | Notes |
+|------|--------|
+| Auth | Captcha + RSA password, JWT access/refresh, logout |
+| RBAC UI | Users, roles, permissions, menus |
+| Announcements | Admin + required gate + bell “通知” + message center |
+| Labels / Dicts | Global labels; dict types/items for shared dropdowns |
+| Inbox / Todos | Bell tabs + message center; NoticeAdmin to send |
+| Audit | Operation log list / filters / CSV |
+| WebSocket | Online users, force offline, screenshot, presence subscribe |
+| Workbench / charts | Workplace demos (charts, map, etc.) |
+
+## Stack
+
+React 19 · Vite · Ant Design 6 · React Router 8 · Axios · ECharts / D3 · Tailwind 4  
+Node `>= 22.22.0`
+
+## Quick start
 
 ```bash
-$ git clone https://gitee.com/weiqinke/react-admin-nest.git
-$ cd react-admin-nest
-$ npm install
-$ npm dev
-```
-
-## 🔨 Build
-
-```bash
+git clone https://github.com/weiqinke/react-admin-nest.git
+cd react-admin-nest
+git checkout feat-ai   # admin features live here
 npm install
-npm run build
+npm run dev            # Vite, --host
 ```
 
-- :white_check_mark:**通用登录**：完成
-- :white_check_mark:browserHistory
-- :white_check_mark:国际化组件 I18N
-- :white_check_mark:完善 axios 拦截器
-- :white_check_mark:菜单支持 layoutfix 布局
-- :white_check_mark:没有登录时，默认跳转到首页
-- :white_check_mark:展开菜单仅支持展开两个大类或者仅展开一类菜单
-- :white_check_mark:通用切换菜单，右键菜单在点击别的元素时，能自动隐藏：完成
-- [x] 持续开发
-- [ ] 在 nginx 上适配 browserHistory
+Point the API base URL at a running goadmin (default `http://127.0.0.1:8080`). Backend contract: [go_ai docs/API.md](https://github.com/weiqinke/go_ai/blob/main/docs/API.md) and [FRONTEND.md](https://github.com/weiqinke/go_ai/blob/main/docs/FRONTEND.md).
+
+```bash
+npm run build
+npm run lint
+```
+
+## Demo accounts (backend seeds)
+
+| User | Password | Notes |
+|------|----------|--------|
+| `admin` | `admin123` | Full admin |
+| `user` | `user123` | Regular user |
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Dev server |
+| `npm run build` | Production build |
+| `npm run preview` | Preview build |
+| `npm run lint` | ESLint |
+| `npm test` | Vitest |
+
+## License
+
+See repository license file if present.
