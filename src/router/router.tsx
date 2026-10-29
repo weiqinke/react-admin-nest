@@ -21,6 +21,7 @@ const PermissionAdmin = lazy(() => import(/* webpackChunkName: "PermissionAdmin'
 
 const UserAdmin = lazy(() => import(/* webpackChunkName: "UserAdmin'"*/ "@/pages/UserAdmin"));
 const WebsocketAdmin = lazy(() => import(/* webpackChunkName: "WebsocketAdmin'"*/ "@/pages/WebsocketAdmin"));
+const AuditAdmin = lazy(() => import(/* webpackChunkName: "AuditAdmin'"*/ "@/pages/AuditAdmin"));
 
 const AreaChart = lazy(() => import(/* webpackChunkName: "AreaChart'"*/ "@/pages/Chart/AreaChart"));
 const NotFoundPage = lazy(() => import(/* webpackChunkName: "NotFoundPage'"*/ "@/pages/FailPage/NotFoundPage"));
@@ -135,6 +136,11 @@ const RouterPages: any = [
                 path: "websocketadmin",
                 component: <WebsocketAdmin />,
                 title: "在线用户管理"
+              },
+              {
+                path: "auditadmin",
+                component: <AuditAdmin />,
+                title: "操作审计"
               },
               {
                 path: "*",
