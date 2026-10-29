@@ -276,6 +276,23 @@
               "sort": 60,
               "status": 1,
               "is_public": true
+            },
+            {
+              "id": "374060000000000001",
+              "chain_id": "373466091332046848",
+              "parent_id": "373466091332046848",
+              "segment": "auditadmin",
+              "full_path": "/management/auditadmin",
+              "weight": 2,
+              "title": "操作审计",
+              "icon": "",
+              "remark": "seed from react-admin-nest routes",
+              "is_hot": 0,
+              "has_update": 0,
+              "visible_in_menu": 1,
+              "sort": 70,
+              "status": 1,
+              "is_public": false
             }
           ]
         },
