@@ -9,7 +9,8 @@ export const getNoticeList = () => emptyOk([]);
 
 export const getNoticeList2 = () => emptyOk([]);
 
-export const userTokenByOAuth2Code = () => removedApi("第三方登录");
+/** @deprecated 请用 `@/api/oauth` + `/oauth/callback` 处理后端 302 回跳的 token。 */
+export const userTokenByOAuth2Code = () => removedApi("第三方登录（改用 /api/oauth/{provider}/authorize）");
 
 export const getUserMenus = () => emptyOk([]);
 

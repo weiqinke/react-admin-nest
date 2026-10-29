@@ -74,8 +74,8 @@ export function updateUser(payload: any = {}) {
   return updateUserProfile(String(id), profilePayload(payload));
 }
 
-/** OAuth 已不在 goadmin 中提供。 */
-export const userOAuth2 = () => Promise.reject(Object.assign(new Error("当前后端未提供第三方登录"), { code: 40401 }));
+/** @deprecated 请用 `@/api/oauth` 的 authorize / bind / bindings。 */
+export { oauthAuthorizeUrl as userOAuth2 } from "@/api/oauth";
 
 export function logout() {
   const refresh_token = getRefreshToken();

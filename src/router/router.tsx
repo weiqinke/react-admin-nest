@@ -4,6 +4,8 @@ import { Outlet } from "react-router";
 import DefaultLayout from "@/layout/DefaultLayout";
 import ProjectLayout from "@/layout/ProjectLayout";
 import Login from "@/pages/Login";
+import OAuthCallback from "@/pages/OAuth/Callback";
+import OAuthError from "@/pages/OAuth/Error";
 import Account from "@/pages/Account";
 import UserProfile from "@/pages/UserProfile";
 import Subscribe from "@/pages/Subscribe";
@@ -39,6 +41,18 @@ const RouterPages: any = [
         component: <Login />,
         auth: false,
         title: "Login"
+      },
+      {
+        path: "oauth/callback",
+        component: <OAuthCallback />,
+        auth: false,
+        title: "OAuth Callback"
+      },
+      {
+        path: "oauth/error",
+        component: <OAuthError />,
+        auth: false,
+        title: "OAuth Error"
       },
       {
         path: "/",
