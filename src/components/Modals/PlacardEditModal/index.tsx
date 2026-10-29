@@ -1,7 +1,8 @@
 import { createAnnouncement, updateAnnouncement, updateAnnouncementSchedule } from "@/api/announcement";
+import { listDictOptions } from "@/api/dict";
 import { Col, DatePicker, Form, Input, Modal, Row, Select, message } from "antd";
 import dayjs from "dayjs";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 
 const layout = {
   labelCol: { span: 8 },
@@ -16,6 +17,31 @@ function toIso(value) {
 const PlacardEditModal: FC<any> = ({ placard, onOk, onCancel }: any) => {
   const [form] = Form.useForm();
   const locked = placard?.status === "published" || placard?.status === "revoked";
+  const [typeOptions, setTypeOptions] = useState<{ value: string; label: string }[]>([
+    { value: "system", label: "系统公告" },
+    { value: "notification", label: "普通通知" }
+  ]);
+  const [levelOptions, setLevelOptions] = useState<{ value: string; label: string }[]>([
+    { value: "normal", label: "普通" },
+    { value: "required", label: "必须确认" }
+  ]);
+
+  useEffect(() => {
+    listDictOptions("announcement_type")
+      .then(result => {
+        if (result.data.code !== 0) return;
+        const list = (result.data.data || []).map((row: any) => ({ value: row.value, label: row.label }));
+        if (list.length) setTypeOptions(list);
+      })
+      .catch(() => undefined);
+    listDictOptions("announcement_level")
+      .then(result => {
+        if (result.data.code !== 0) return;
+        const list = (result.data.data || []).map((row: any) => ({ value: row.value, label: row.label }));
+        if (list.length) setLevelOptions(list);
+      })
+      .catch(() => undefined);
+  }, []);
 
   const onFinish = async payload => {
     const body = {
@@ -64,23 +90,18 @@ const PlacardEditModal: FC<any> = ({ placard, onOk, onCancel }: any) => {
             <Form.Item name="level" label="等级" rules={[{ required: true }]}>
               <Select
                 disabled={locked}
+                options={levelOptions}
                 onChange={level => {
                   if (level === "required") form.setFieldsValue({ type: "system" });
                 }}
-              >
-                <Select.Option value="normal">普通</Select.Option>
-                <Select.Option value="required">必须确认</Select.Option>
-              </Select>
+              />
             </Form.Item>
           </Col>
           <Col span={20}>
             <Form.Item noStyle shouldUpdate={(prev, next) => prev.level !== next.level}>
               {() => (
                 <Form.Item name="type" label="类型" rules={[{ required: true }]}>
-                  <Select disabled={locked || form.getFieldValue("level") === "required"}>
-                    <Select.Option value="system">系统公告</Select.Option>
-                    <Select.Option value="notification">普通通知</Select.Option>
-                  </Select>
+                  <Select disabled={locked || form.getFieldValue("level") === "required"} options={typeOptions} />
                 </Form.Item>
               )}
             </Form.Item>
