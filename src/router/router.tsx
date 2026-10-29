@@ -129,7 +129,7 @@ const RouterPages: any = [
               {
                 path: "placardadmin",
                 component: <PlacardAdmin />,
-                title: "标签管理"
+                title: "公告管理"
               },
               {
                 path: "websocketadmin",
