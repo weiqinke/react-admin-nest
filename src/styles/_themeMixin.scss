@@ -1,9 +1,12 @@
-@import "./themeVariable.scss"; //导入主题颜色变量
+@use "sass:map";
+@use "./themeVariable" as *;
+
+// 预先声明，避免 !global 在 Sass 2.0 中不能新建变量
+$theme-map: ();
 
 @mixin themeMixin {
-  @each $theme-name, $theme-map in $themes {
-    //!global 把局部变量强升为全局变量
-    $theme-map: $theme-map !global;
+  @each $theme-name, $map in $themes {
+    $theme-map: $map !global;
     [data-theme="#{$theme-name}"] & {
       // #{} 插值表达式
       @content;
@@ -13,7 +16,7 @@
 
 //声明一个根据Key获取颜色的function
 @function themed($key) {
-  @return map-get($theme-map, $key);
+  @return map.get($theme-map, $key);
 }
 
 @mixin get-class-from-key($key, $colorName: $key) {

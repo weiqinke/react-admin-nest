@@ -1,4 +1,4 @@
-@import "@/styles/themeMixin";
+@use "@/styles/themeMixin" as *;
 
 /* 与顶栏 ThemeColor / user 图标共用主题色，其余布局已迁到 Tailwind */
 .icon {

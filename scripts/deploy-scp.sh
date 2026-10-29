@@ -210,8 +210,30 @@ if [ ! -d "$dest" ] || [ ! -w "$dest" ]; then
 fi
 
 echo "父目录不可写，直接更新 ${dest} 里的文件"
-find "$dest" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+# 先写入新文件再删旧文件，避免「先清空」窗口里 /js/* 404 被 Nginx 回成 index.html。
 cp -a "$release"/. "$dest"/
+# 删除目标里有、本包没有的旧 hash 资源（保留目录本身）。
+find "$dest" -mindepth 1 -maxdepth 1 ! -name '.' | while read -r item; do
+  base=$(basename "$item")
+  if [ ! -e "$release/$base" ]; then
+    rm -rf "$item"
+  fi
+done
+# js/css 等子目录：删掉包里已不存在的旧 hash 文件
+for sub in js css png jpg jpeg gif svg woff woff2; do
+  if [ -d "$dest/$sub" ]; then
+    if [ -d "$release/$sub" ]; then
+      find "$dest/$sub" -type f | while read -r f; do
+        rel=${f#"$dest/"}
+        if [ ! -f "$release/$rel" ]; then
+          rm -f "$f"
+        fi
+      done
+    else
+      rm -rf "$dest/$sub"
+    fi
+  fi
+done
 chmod 755 "$dest" || true
 chmod -R a+rX "$dest" || true
 echo "已发布 ${dest}"
