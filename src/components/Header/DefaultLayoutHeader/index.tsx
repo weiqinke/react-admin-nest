@@ -154,6 +154,13 @@ const DefaultLayoutHeader = () => {
       if (payload?.type === "notify.message") {
         notification.info({ message: data.title || "通知", description: data.content });
       }
+      if (payload?.type === "notice.message") {
+        notification.info({
+          message: data.title || (data.kind === "todo" ? "新待办" : "新消息"),
+          description: data.content
+        });
+        window.dispatchEvent(new Event("notice:refresh"));
+      }
       if (payload?.type === "presence.user_online" || payload?.type === "presence.user_offline") {
         const who = data.note ? `${data.note}（${data.username}）` : data.username;
         notification.info({ message: `${who || "用户"} ${payload.type === "presence.user_online" ? "已上线" : "已下线"}` });
