@@ -12,6 +12,7 @@ const BMap = lazy(() => import(/* webpackChunkName: "BMap'"*/ "@/pages/BMap"));
 const About = lazy(() => import(/* webpackChunkName: "About'"*/ "@/pages/About"));
 const AnimateCard = lazy(() => import(/* webpackChunkName: "AnimateCard'"*/ "@/pages/AnimateCard"));
 const LabelsAdmin = lazy(() => import(/* webpackChunkName: "LabelsAdmin'"*/ "@/pages/LabelsAdmin"));
+const DictAdmin = lazy(() => import(/* webpackChunkName: "DictAdmin'"*/ "@/pages/DictAdmin"));
 const MenuAdmin = lazy(() => import(/* webpackChunkName: "MenuAdmin'"*/ "@/pages/MenuAdmin"));
 const Workbench = lazy(() => import(/* webpackChunkName: "Workbench'"*/ "@/pages/Workbench"));
 const Workplace = lazy(() => import(/* webpackChunkName: "Workplace'"*/ "@/pages/Workplace"));
@@ -126,6 +127,11 @@ const RouterPages: any = [
                 path: "labelsadmin",
                 component: <LabelsAdmin />,
                 title: "labelsadmin"
+              },
+              {
+                path: "dictadmin",
+                component: <DictAdmin />,
+                title: "字典管理"
               },
               {
                 path: "placardadmin",
