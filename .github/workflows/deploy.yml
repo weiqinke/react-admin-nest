@@ -69,7 +69,7 @@ jobs:
       - name: Build
         run: pnpm build
         env:
-          # 未配置 Variable 时为空字符串，生产包走同源。本地不设该变量时仍是 http://127.0.0.1:8080。
+          # 空字符串 = 同源（Nginx 反代 /api）。仅当接口在别的域名时，在仓库 Variables 里设置 DEPLOY_API_ORIGIN。
           DEPLOY_API_ORIGIN: ${{ vars.DEPLOY_API_ORIGIN }}
 
       - name: Pack dist

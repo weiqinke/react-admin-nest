@@ -80,6 +80,28 @@ server {
         access_log /var/log/nginx/gows.access.log gows_safe;
     }
 
+    # 带 hash 的构建产物：缺失时必须 404，绝不能回退成 index.html，
+    # 否则浏览器会报 Expected JS module but got MIME type text/html。
+    location /js/ {
+        try_files $uri =404;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        gzip_static on;
+    }
+    location /css/ {
+        try_files $uri =404;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        gzip_static on;
+    }
+    location /png/ {
+        try_files $uri =404;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+
+    # HTML 入口不长期缓存，发布后浏览器才能拿到新的 /js/* hash。
+    location = /index.html {
+        add_header Cache-Control "no-cache";
+    }
+
     location / {
         try_files $uri $uri/ /index.html;
     }

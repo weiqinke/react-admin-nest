@@ -34,4 +34,4 @@ export function updateMyinfo(payload: any = {}) {
   return updateMyProfile(Object.fromEntries(Object.entries(body).filter(([, value]) => value !== undefined)));
 }
 
-export const apiLogout = () => import("@/api/microservice/user").then(mod => mod.logout());
+export { logout as apiLogout } from "@/api/microservice/user";
