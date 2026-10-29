@@ -17,6 +17,7 @@ import { adaptApiMenus, saveMenus } from "@/utils/menuUtils";
 import qrimg from "@/assets/qrcode.png";
 import IconFont from "@/components/IconFont";
 import styles from "./index.module.scss";
+import GiteeAuth from "@/components/OAuth2/GiteeAuth";
 import GithubAuth from "@/components/OAuth2/GithubAuth";
 
 const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser }) => {
@@ -151,12 +152,7 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser }) => {
                 </Button>
               </div>
               <div className={styles.type}>
-                <Button
-                  type="link"
-                  href="https://gitee.com/oauth/authorize?client_id=7cb714b21edaa2130a98b69a108b833f61d3b04cfde1fd64cb387abcd6a378c2&state=gitee&redirect_uri=https%3A%2F%2Fnest-admin.com%2Flogin&response_type=code">
-                  <IconFont type="icon-gitee2" />
-                  Gitee
-                </Button>
+                <GiteeAuth />
               </div>
               <div className={styles.type}>
                 <GithubAuth />

@@ -1,6 +1,13 @@
 import { request } from "@/api/request";
 import { getAccessToken } from "@/api/session";
 
+export type OAuthProvider = "github" | "gitee";
+
+export const OAUTH_PROVIDERS: { key: OAuthProvider; label: string }[] = [
+  { key: "github", label: "GitHub" },
+  { key: "gitee", label: "Gitee" }
+];
+
 function frontendCallbackUrl() {
   return `${window.location.origin}/oauth/callback`;
 }
@@ -13,8 +20,8 @@ function oauthPath(provider: string, action: "authorize" | "bind") {
   return `/api/oauth/${encodeURIComponent(provider)}/${action}`;
 }
 
-/** 浏览器跳转：发起 GitHub 等 OAuth 登录（公开接口）。 */
-export function oauthAuthorizeUrl(provider = "github", redirect = frontendCallbackUrl()) {
+/** 浏览器跳转：发起 GitHub / Gitee 等 OAuth 登录（公开接口）。 */
+export function oauthAuthorizeUrl(provider: OAuthProvider = "github", redirect = frontendCallbackUrl()) {
   const qs = new URLSearchParams({ redirect });
   return `${oauthPath(provider, "authorize")}?${qs}`;
 }
@@ -23,7 +30,7 @@ export function oauthAuthorizeUrl(provider = "github", redirect = frontendCallba
  * 浏览器跳转：已登录绑定。
  * Auth 中间件支持 ?token=（与 WebSocket 一致），因为 location 跳转带不上 Bearer。
  */
-export function oauthBindUrl(provider = "github", redirect = frontendCallbackUrl()) {
+export function oauthBindUrl(provider: OAuthProvider = "github", redirect = frontendCallbackUrl()) {
   const qs = new URLSearchParams({
     redirect,
     token: getAccessToken()
@@ -33,4 +40,5 @@ export function oauthBindUrl(provider = "github", redirect = frontendCallbackUrl
 
 export const listOAuthBindings = () => request("/api/oauth/bindings", "GET");
 
-export const unbindOAuth = (provider: string) => request(`/api/oauth/${encodeURIComponent(provider)}`, "DELETE");
+export const unbindOAuth = (provider: OAuthProvider | string) =>
+  request(`/api/oauth/${encodeURIComponent(provider)}`, "DELETE");

@@ -1,0 +1,345 @@
+/* 移动优先；≥768px / ≥1024px 强化 Web 桌面体验 */
+
+.page {
+  /* 必须用视口单位铺满：body 是 flex + place-items:center，子项 width:100% 会缩成内容宽，右侧露出白底 */
+  position: relative;
+  display: flex;
+  box-sizing: border-box;
+  width: 100vw;
+  min-width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #0b1220;
+  padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right))
+    max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+}
+
+.glowA,
+.glowB {
+  pointer-events: none;
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(40px);
+  opacity: 0.55;
+  will-change: transform, opacity;
+}
+
+.glowA {
+  top: -12%;
+  left: 50%;
+  width: min(720px, 90vw);
+  height: min(420px, 50vh);
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at center, rgba(65, 179, 163, 0.45), transparent 70%);
+  animation: driftA 10s ease-in-out infinite;
+}
+
+.glowB {
+  right: -8%;
+  bottom: -18%;
+  width: min(520px, 70vw);
+  height: min(420px, 45vh);
+  background: radial-gradient(ellipse at center, rgba(247, 37, 133, 0.22), transparent 70%);
+  animation: driftB 12s ease-in-out infinite;
+}
+
+.card {
+  position: relative;
+  box-sizing: border-box;
+  width: min(100%, 28rem);
+  margin: auto;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.96);
+  padding: 1.25rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
+  animation: cardIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  animation: riseIn 0.5s ease both;
+  animation-delay: 0.08s;
+}
+
+.headText {
+  min-width: 0;
+  flex: 1;
+}
+
+.title {
+  margin: 0 !important;
+  font-size: 1.25rem !important;
+  line-height: 1.35 !important;
+  word-break: break-word;
+}
+
+.subtitle {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.8125rem;
+}
+
+.iconWrap {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  height: 2.75rem;
+  width: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: #fef2f2;
+  color: #ef4444;
+  font-size: 1.5rem;
+  animation: iconPop 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: 0.18s;
+}
+
+.iconRing {
+  position: absolute;
+  inset: -4px;
+  border-radius: 9999px;
+  border: 2px solid rgba(239, 68, 68, 0.35);
+  animation: ringPulse 2.2s ease-out infinite;
+  animation-delay: 0.7s;
+}
+
+.body {
+  animation: riseIn 0.5s ease both;
+  animation-delay: 0.2s;
+}
+
+.hint {
+  margin-bottom: 0.75rem !important;
+  font-size: 0.9375rem !important;
+  line-height: 1.65 !important;
+  color: #334155 !important;
+  word-break: break-word;
+}
+
+.detail {
+  margin-bottom: 1.25rem;
+  border-radius: 0.5rem;
+  background: #f8fafc;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1.35rem;
+  color: #64748b;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  animation: riseIn 0.5s ease both;
+  animation-delay: 0.28s;
+}
+
+.detailLabel {
+  font-weight: 600;
+  color: #475569;
+}
+
+.spacer {
+  margin-bottom: 1.25rem;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  animation: riseIn 0.5s ease both;
+  animation-delay: 0.36s;
+}
+
+.actionBtn {
+  width: 100%;
+  height: 2.5rem;
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes iconPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.4) rotate(-12deg);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.08) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes ringPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.55);
+    opacity: 0;
+  }
+}
+
+@keyframes driftA {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateX(-48%) translateY(18px);
+    opacity: 0.75;
+  }
+}
+
+@keyframes driftB {
+  0%,
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translate(-24px, -16px);
+    opacity: 0.65;
+  }
+}
+
+/* 平板 / 窄桌面 */
+@media (min-width: 640px) {
+  .page {
+    padding: 2rem 1.5rem;
+  }
+
+  .card {
+    width: min(100%, 30rem);
+    padding: 1.75rem 2rem;
+  }
+
+  .head {
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .title {
+    font-size: 1.375rem !important;
+  }
+
+  .iconWrap {
+    height: 3.25rem;
+    width: 3.25rem;
+    font-size: 1.75rem;
+  }
+
+  .hint {
+    font-size: 1rem !important;
+    line-height: 1.75 !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .detail {
+    margin-bottom: 1.5rem;
+    font-size: 0.8125rem;
+    padding: 0.75rem 0.875rem;
+  }
+
+  .actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .actionBtn {
+    width: auto;
+    min-width: 7.5rem;
+  }
+
+  .actionPrimary {
+    min-width: 8.5rem;
+  }
+}
+
+/* 常规 Web 桌面 */
+@media (min-width: 1024px) {
+  .page {
+    padding: 3rem 2rem;
+  }
+
+  .card {
+    width: min(100%, 32rem);
+    padding: 2.25rem 2.5rem;
+    border-radius: 1.25rem;
+  }
+
+  .head {
+    margin-bottom: 1.5rem;
+  }
+
+  .title {
+    font-size: 1.5rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .subtitle {
+    font-size: 0.875rem;
+  }
+
+  .iconWrap {
+    height: 3.5rem;
+    width: 3.5rem;
+    font-size: 1.875rem;
+  }
+
+  .actions {
+    gap: 0.875rem;
+  }
+
+  .actionBtn {
+    height: 2.5rem;
+    padding-inline: 1.125rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glowA,
+  .glowB,
+  .card,
+  .head,
+  .iconWrap,
+  .iconRing,
+  .body,
+  .detail,
+  .actions {
+    animation: none !important;
+  }
+}
