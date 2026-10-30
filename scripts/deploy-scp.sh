@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 把已打好的 dist 压缩包用 scp 上传到服务器，再在远端切换到新版本。
+# 把已打好的 dist 压缩包用 scp 上传到服务器，在远端解压到站点目录，并删除旧版本。
 # 连接信息来自环境变量（GitHub Actions Secrets），不要把私钥写进仓库。
 set -euo pipefail
 
@@ -140,7 +140,7 @@ scp_opts=(
 echo "scp ${archive} -> ${DEPLOY_USER}@${DEPLOY_HOST}:${remote_archive}"
 scp "${scp_opts[@]}" "$archive" "${DEPLOY_USER}@${DEPLOY_HOST}:${remote_archive}"
 
-echo "切换站点目录 ${DEPLOY_PATH}"
+echo "上传完成，在服务器解压到 ${DEPLOY_PATH}"
 ssh "${ssh_opts[@]}" "${DEPLOY_USER}@${DEPLOY_HOST}" bash -s -- "$DEPLOY_PATH" "$remote_archive" <<'EOF'
 set -eu
 dest=$1
@@ -148,9 +148,16 @@ archive=$2
 
 parent=$(dirname "$dest")
 name=$(basename "$dest")
-# 先在 /tmp 解压。scp 能写到 /tmp，不依赖 /data/www 是否可写。
+# 先在 /tmp 解压。scp 能写到 /tmp，不依赖站点父目录是否可写。
 release=$(mktemp -d /tmp/nest-admin-release.XXXXXX)
-trap 'rm -rf "$release"' EXIT
+staging=""
+cleanup_tmp() {
+  rm -rf "$release"
+  if [ -n "$staging" ] && [ "$staging" != "$dest" ] && [ -d "$staging" ]; then
+    rm -rf "$staging"
+  fi
+}
+trap cleanup_tmp EXIT
 tar -xzf "$archive" -C "$release" || {
   rm -f "$archive"
   exit 1
@@ -161,80 +168,116 @@ chmod 755 "$release"
 chmod -R a+rX "$release"
 
 if [ ! -f "$release/index.html" ]; then
-  echo "构建包里没有 index.html，停止切换。" >&2
+  echo "构建包里没有 index.html，停止发布。" >&2
   exit 1
 fi
 
-parent_writable=0
-probe="${parent}/.nest-admin-write-probe.$$"
-if mkdir "$probe" 2>/dev/null; then
-  rmdir "$probe"
-  parent_writable=1
-fi
-
-if [ "$parent_writable" -eq 1 ]; then
-  echo "父目录可写，使用符号链接发布"
-  final=$(mktemp -d "$parent/.$name.release.XXXXXX")
-  cp -a "$release"/. "$final"/
-  chmod 755 "$final"
-
-  # 第一次如果目标已经是普通目录，先挪走，避免 mv 覆盖失败，也避免误删旧文件。
-  if [ -e "$dest" ] && [ ! -L "$dest" ]; then
-    backup="${dest}.bak.$(date +%Y%m%d%H%M%S)"
-    mv "$dest" "$backup"
-    echo "原目录不是符号链接，已改名为 ${backup}"
-  fi
-
-  ln -sfn "$final" "${dest}.next"
-  mv -Tf "${dest}.next" "$dest"
-  echo "已发布 ${dest} -> ${final}"
-
-  find "$parent" -mindepth 1 -maxdepth 1 -type d -name ".${name}.release.*" -printf '%T@ %p\n' \
-    | sort -nr \
-    | awk 'NR>3 { print substr($0, index($0, " ") + 1) }' \
-    | while read -r old; do
-        rm -rf "$old"
-        echo "已删除旧版本 ${old}"
-      done
-  exit 0
-fi
-
-# /data/www 常见是 root 所有，站点目录本身才归部署用户。这时直接替换目录里的文件。
-if [ ! -d "$dest" ] || [ ! -w "$dest" ]; then
-  echo "无法在 ${parent} 新建目录，且 ${dest} 不存在或当前用户不可写。" >&2
-  id >&2 || true
-  ls -ld "$parent" "$dest" >&2 || true
-  echo "在服务器执行一次（把用户换成 DEPLOY_USER）：" >&2
-  echo "  sudo mkdir -p ${dest} && sudo chown -R $(id -un) ${dest}" >&2
-  exit 1
-fi
-
-echo "父目录不可写，直接更新 ${dest} 里的文件"
-# 先写入新文件再删旧文件，避免「先清空」窗口里 /js/* 404 被 Nginx 回成 index.html。
-cp -a "$release"/. "$dest"/
-# 删除目标里有、本包没有的旧 hash 资源（保留目录本身）。
-find "$dest" -mindepth 1 -maxdepth 1 ! -name '.' | while read -r item; do
-  base=$(basename "$item")
-  if [ ! -e "$release/$base" ]; then
-    rm -rf "$item"
-  fi
-done
-# js/css 等子目录：删掉包里已不存在的旧 hash 文件
-for sub in js css png jpg jpeg gif svg woff woff2; do
-  if [ -d "$dest/$sub" ]; then
-    if [ -d "$release/$sub" ]; then
-      find "$dest/$sub" -type f | while read -r f; do
-        rel=${f#"$dest/"}
-        if [ ! -f "$release/$rel" ]; then
-          rm -f "$f"
-        fi
-      done
-    else
-      rm -rf "$dest/$sub"
+# 先写入新文件，再删包里已经没有的旧文件，避免先清空导致 /js/* 短暂 404。
+remove_stale_files() {
+  target=$1
+  list=$(mktemp)
+  find "$target" -mindepth 1 -depth >"$list"
+  while IFS= read -r item; do
+    [ -n "$item" ] || continue
+    rel=${item#"$target"/}
+    if [ ! -e "$release/$rel" ] && [ ! -L "$release/$rel" ]; then
+      rm -rf "$item"
     fi
+  done <"$list"
+  rm -f "$list"
+}
+
+install_tree() {
+  target=$1
+  cp -a "$release"/. "$target"/
+  remove_stale_files "$target"
+  chmod 755 "$target" || true
+  chmod -R a+rX "$target" || true
+}
+
+# 清掉以前符号链接发布留下的版本目录，以及失败中途留下的临时目录。
+delete_old_versions() {
+  [ -d "$parent" ] && [ -w "$parent" ] || return 0
+  list=$(mktemp)
+  find "$parent" -mindepth 1 -maxdepth 1 \( \
+    -type d \( \
+      -name ".${name}.release.*" -o \
+      -name ".${name}.incoming.*" -o \
+      -name "${name}.bak.*" \
+    \) -o \
+    -name ".${name}.prev.*" \
+  \) >"$list"
+  while IFS= read -r old; do
+    [ -n "$old" ] || continue
+    [ "$old" = "$dest" ] && continue
+    rm -rf "$old"
+    echo "已删除旧版本 ${old}"
+  done <"$list"
+  rm -f "$list"
+}
+
+if [ -L "$dest" ]; then
+  echo "站点路径当前是符号链接，解压成普通目录 ${dest}"
+  if ! staging=$(mktemp -d "$parent/.$name.incoming.XXXXXX"); then
+    echo "无法在 ${parent} 新建目录，不能把符号链接换成普通目录。" >&2
+    id >&2 || true
+    ls -ld "$parent" "$dest" >&2 || true
+    echo "请执行：sudo chown $(id -un) ${parent}" >&2
+    exit 1
   fi
-done
-chmod 755 "$dest" || true
-chmod -R a+rX "$dest" || true
+  old_target=$(readlink -f "$dest" 2>/dev/null || true)
+  cp -a "$release"/. "$staging"/
+  chmod 755 "$staging" || true
+  chmod -R a+rX "$staging" || true
+  prev="${parent}/.${name}.prev.$$"
+  mv "$dest" "$prev"
+  if ! mv "$staging" "$dest"; then
+    mv "$prev" "$dest"
+    echo "替换 ${dest} 失败，已恢复原符号链接。" >&2
+    exit 1
+  fi
+  # 目录已经改名为站点路径，退出时不要删掉它。
+  staging=""
+  rm -f "$prev"
+  case "$old_target" in
+    "$parent"/.${name}.release.*|"$parent"/${name}.bak.*)
+      if [ -d "$old_target" ] && [ "$old_target" != "$dest" ]; then
+        rm -rf "$old_target"
+        echo "已删除旧版本 ${old_target}"
+      fi
+      ;;
+  esac
+  delete_old_versions
+elif [ -d "$dest" ]; then
+  if [ ! -w "$dest" ]; then
+    echo "目录 ${dest} 当前用户不可写。" >&2
+    id >&2 || true
+    ls -ld "$parent" "$dest" >&2 || true
+    echo "请执行：sudo chown -R $(id -un) ${dest}" >&2
+    exit 1
+  fi
+  echo "解压到 ${dest}"
+  install_tree "$dest"
+  delete_old_versions
+elif [ -e "$dest" ]; then
+  echo "${dest} 已存在但不是目录，停止发布。" >&2
+  exit 1
+else
+  if ! mkdir "$dest"; then
+    echo "无法创建 ${dest}。" >&2
+    id >&2 || true
+    ls -ld "$parent" >&2 || true
+    echo "请执行：sudo mkdir -p ${dest} && sudo chown -R $(id -un) ${dest}" >&2
+    exit 1
+  fi
+  echo "解压到 ${dest}"
+  install_tree "$dest"
+  delete_old_versions
+fi
+
+if [ -L "$dest" ] || [ ! -f "$dest/index.html" ]; then
+  echo "发布后 ${dest} 不是包含 index.html 的普通目录。" >&2
+  exit 1
+fi
 echo "已发布 ${dest}"
 EOF
