@@ -1,4 +1,4 @@
-# 推送到 feat-ai 后自动构建前端，并用 scp 发布到自有服务器。
+# 推送到 master 后自动构建前端，并用 scp 发布到自有服务器。
 # 也可在 Actions 页手动运行 "Deploy"。
 #
 # 密钥不要写进本文件。到 GitHub 仓库：
@@ -34,7 +34,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - feat-ai
+      - master
 
 concurrency:
   group: scp-deploy
