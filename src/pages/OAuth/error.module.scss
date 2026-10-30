@@ -1,7 +1,6 @@
 /* 移动优先；≥768px / ≥1024px 强化 Web 桌面体验 */
 
 .page {
-  /* 必须用视口单位铺满：body 是 flex + place-items:center，子项 width:100% 会缩成内容宽，右侧露出白底 */
   position: relative;
   display: flex;
   box-sizing: border-box;
