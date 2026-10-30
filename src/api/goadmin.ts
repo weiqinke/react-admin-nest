@@ -36,7 +36,7 @@ export const refreshToken = (refresh_token: string) => request("/api/token/refre
 
 export const logout = (refresh_token?: string, options?: any) => request("/api/logout", "POST", refresh_token ? { refresh_token } : {}, options);
 
-export const getMe = () => request("/api/me", "GET");
+export const getMe = (options?: { signal?: AbortSignal }) => request("/api/me", "GET", {}, options);
 
 /** 当前用户可渲染菜单树。登录即可，不要求 menu:read。data 为 { list }。 */
 export const getMyMenus = () => request("/api/me/menus", "GET");
@@ -59,7 +59,7 @@ export const getMenuPermissions = (id: string) => request(`/api/menus/${enc(id)}
 
 export const setMenuPermissions = (id: string, permission_codes: string[]) => request(`/api/menus/${enc(id)}/permissions`, "PUT", { permission_codes });
 
-export const getMyProfile = () => request("/api/me/profile", "GET");
+export const getMyProfile = (options?: { signal?: AbortSignal }) => request("/api/me/profile", "GET", {}, options);
 
 export const updateMyProfile = payload => request("/api/me/profile", "PUT", payload);
 

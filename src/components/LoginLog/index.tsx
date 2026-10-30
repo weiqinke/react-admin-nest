@@ -1,4 +1,4 @@
-import { loginlog } from "@/api/microservice/log";
+import { loginlog } from "@/api/log";
 import { LoginFrequencyChart } from "@/components/Echarts";
 import { getDateTimeFormat } from "@/utils/core";
 import { Table } from "antd";

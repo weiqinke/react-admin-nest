@@ -8,7 +8,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 import { getMyMenus } from "@/api/goadmin";
-import { getCaptcha, login } from "@/api/microservice/user";
+import { getCaptcha, login } from "@/api/user";
 import { saveLoginSession } from "@/api/session";
 import { adaptApiMenus, saveMenus } from "@/utils/menuUtils";
 import qrimg from "@/assets/qrcode.png";

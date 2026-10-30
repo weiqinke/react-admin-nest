@@ -1,38 +1,39 @@
-import ProjectContext from "@/contexts/ProjectContext";
 import NeedLogin from "@/pages/FailPage/NeedLogin";
+import { getUserState, subscribeSession, type UserState } from "@/api/session";
 import RouterPages from "@/router/router";
-import React, { useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { createBrowserRouter } from "react-router";
 
-const WrapperRoute = (props: any) => {
-  const { component, title = "welcome", auth } = props;
+function useSessionState() {
+  const [state, setState] = useState<UserState>(getUserState);
+  useEffect(() => subscribeSession(setState), []);
+  return state;
+}
+
+const WrapperRoute = ({ component, title = "welcome", auth }: { component: React.ReactNode; title?: string; auth?: boolean }) => {
+  const { uid, exp } = useSessionState();
+  // 父路由先渲染、子路由后渲染，后写的标题才是当前页。
   document.title = title;
-  // 公开页（login / oauth 回调）不做登录态校验，避免过期 token 打断 OAuth 回调。
+
   if (!auth) return <>{component}</>;
 
-  const { value: data }: any = useContext(ProjectContext);
-  const { uid, exp } = data;
-  const now = Date.now();
   const authEndTime = exp ? exp * 1000 : 0;
-  if (!uid || !authEndTime || authEndTime <= now) return <NeedLogin />;
+  if (!uid || !authEndTime || authEndTime <= Date.now()) return <NeedLogin />;
   return <>{component}</>;
 };
 
-const ProjectRouter = () => {
-  const crateROuter = (routerItem: string | any[]) => {
-    const routers = [];
-    for (let i = 0; i < routerItem.length; i++) {
-      const item = routerItem[i];
-      item.element = <WrapperRoute {...item} />;
-      if (item.children && item.children.length > 0) {
-        item.children = crateROuter(item.children);
-      }
-      routers.push(item);
-    }
-    return routers;
-  };
+function toRoutes(items: any[]) {
+  return items.map(item => {
+    const { component, children, auth, title, ...route } = item;
+    const next: any = {
+      ...route,
+      element: <WrapperRoute component={component} title={title} auth={auth} />
+    };
+    if (children?.length) next.children = toRoutes(children);
+    return next;
+  });
+}
 
-  return createBrowserRouter(crateROuter(RouterPages));
-};
+const ProjectRouter = () => createBrowserRouter(toRoutes(RouterPages));
 
 export default ProjectRouter;

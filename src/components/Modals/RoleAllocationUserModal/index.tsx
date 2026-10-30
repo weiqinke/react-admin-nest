@@ -1,4 +1,4 @@
-import { updateRoleUsers } from "@/api/microservice/role";
+import { updateRoleUsers } from "@/api/role";
 import { message, Modal, Table } from "antd";
 import React, { FC, useMemo, useState } from "react";
 

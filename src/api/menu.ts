@@ -1,19 +1,4 @@
-import { createMenu, deleteMenu, getMenuPermissions, getMenus, getMyMenus, getPermissions, setMenuPermissions, updateMenu, updateMenuStatus } from "@/api/goadmin";
-
-/** 角色授权页仍用权限码扁平列表（非菜单树）。 */
-export async function menuFind() {
-  const res = await getPermissions();
-  const list = (res.data?.data?.list || []).map(item => ({
-    id: item.code,
-    key: item.code,
-    value: item.code,
-    name: item.name ? `${item.name} (${item.code})` : item.code,
-    title: item.name ? `${item.name} (${item.code})` : item.code,
-    parentUid: 0,
-    sort: 0
-  }));
-  return { ...res, data: { ...res.data, data: list } };
-}
+import { createMenu, deleteMenu, getMenuPermissions, getMenus, getMyMenus, setMenuPermissions, updateMenu, updateMenuStatus } from "@/api/goadmin";
 
 /** 管理端菜单树；失败时回退到当前用户菜单树。 */
 export async function findAdminMenus() {
@@ -24,7 +9,7 @@ export async function findAdminMenus() {
       return { ...res, data: { ...res.data, data: list } };
     }
   } catch {
-    // fall through
+    // 管理端菜单不可用时改读当前用户菜单
   }
   const fallback = await getMyMenus();
   const list = fallback.data?.data?.list || [];

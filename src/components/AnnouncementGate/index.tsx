@@ -1,5 +1,5 @@
 import { hasPermission, listMyAnnouncements, markAnnouncementRead } from "@/api/announcement";
-import { logout as apiLogout } from "@/api/microservice/user";
+import { logout as apiLogout } from "@/api/user";
 import { clearSession } from "@/api/session";
 import { Checkbox, Modal } from "antd";
 import { FC, useCallback, useEffect, useState } from "react";

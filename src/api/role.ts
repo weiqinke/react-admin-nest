@@ -123,6 +123,11 @@ export const saveRolePermissions = (payload: any = {}) => {
   return setRolePermissions(roleCodeOf(payload), codes);
 };
 
+export const giveRoleMenus = (payload: any = {}) => {
+  const codes = (payload.menus || payload.permission_codes || []).map(code => String(code));
+  return setRolePermissions(payload.roleCode || payload.code, codes);
+};
+
 /** 全量权限码候选项（供角色授权弹窗）。 */
 export async function findPermissionOptions() {
   const res = await getPermissions();

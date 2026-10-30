@@ -1,4 +1,4 @@
-import { findPermissionOptions, findRolePermissions, saveRolePermissions } from "@/api/microservice/role";
+import { findPermissionOptions, findRolePermissions, saveRolePermissions } from "@/api/role";
 import { Alert, Checkbox, Modal, Spin, Typography, message } from "antd";
 import { FC, useEffect, useState } from "react";
 

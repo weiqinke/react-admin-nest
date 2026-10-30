@@ -1,12 +1,25 @@
-﻿import React from "react";
+﻿import { message } from "antd";
+import React from "react";
 import ReactDOM from "react-dom/client";
-import ProjectRouter from "./router/index.tsx";
 import { RouterProvider } from "react-router/dom";
+import { setApiErrorReporter } from "./api/feedback";
+import { setAuthExpiredHandler } from "./api/session";
+import ProjectRouter from "./router/index.tsx";
 
 import "./styles/reset.css";
 import "./styles/tailwind.css";
 
 const router = ProjectRouter();
+
+setAuthExpiredHandler(() => {
+  const path = window.location.pathname;
+  if (path.startsWith("/login") || path.startsWith("/oauth/")) return;
+  void router.navigate("/login");
+});
+
+setApiErrorReporter(text => {
+  message.error({ content: text, duration: 2 });
+});
 
 ReactDOM.createRoot(document.getElementById("caravan-root")!).render(
   <React.StrictMode>

@@ -1,6 +1,6 @@
 import { PermissionEditModal } from "@/components/Modals";
 import PageIntroduction from "@/components/PageIntroduction";
-import { findPermissions, removePermissionItem } from "@/api/microservice/permission";
+import { findPermissions, removePermissionItem } from "@/api/permission";
 import { ExclamationCircleOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { Alert, Button, Input, Modal, Space, Table, message } from "antd";
 import { FC, useEffect, useMemo, useState } from "react";

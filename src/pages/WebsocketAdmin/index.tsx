@@ -6,7 +6,7 @@ import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Image, Modal, message } from "antd";
 import { FC, useEffect, useRef, useState } from "react";
 
-import { userinfo } from "@/api/microservice/user";
+import { userinfo } from "@/api/user";
 import SocketCard from "@/components/SocketCard";
 
 const toCard = (user: any) => ({

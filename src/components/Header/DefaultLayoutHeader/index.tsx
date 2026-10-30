@@ -7,7 +7,7 @@ import { useNavigate } from "react-router";
 import HeaderNotice from "../HeaderNotice";
 
 import { uploadWsScreenshot } from "@/api/goadmin";
-import { logout as apiLogout } from "@/api/microservice/user";
+import { logout as apiLogout } from "@/api/user";
 import { clearSession } from "@/api/session";
 import MenuTagContext from "@/contexts/MenuTagContext";
 import styles from "./index.module.scss";

@@ -1,4 +1,4 @@
-﻿import { userinfo } from "@/api/microservice/user";
+﻿import { userinfo } from "@/api/user";
 import avatarImg from "@/assets/user/defaultAvatar.jpg";
 import AvatarData from "@/components/AvatarData";
 import FineDay from "@/components/FineDay";

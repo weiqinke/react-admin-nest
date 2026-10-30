@@ -2,7 +2,7 @@ import { UserEditModal } from "@/components/Modals";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Modal, Space, message } from "antd";
 import { FC, useEffect, useState } from "react";
-import { findUsers, updateUser } from "@/api/microservice/user";
+import { findUsers, updateUser } from "@/api/user";
 import PageIntroduction from "@/components/PageIntroduction";
 import UserTable from "./components/Table";
 

@@ -1,5 +1,5 @@
 import { getPermissions } from "@/api/goadmin";
-import { findMenuPermissions, saveMenuPermissions } from "@/api/microservice/menu";
+import { findMenuPermissions, saveMenuPermissions } from "@/api/menu";
 import { AdminMenuNode } from "@/types/menu";
 import { Alert, Button, Checkbox, Drawer, Space, Spin, Typography, message } from "antd";
 import { FC, useEffect, useState } from "react";

@@ -1,4 +1,4 @@
-import { deleteMenuItem, findAdminMenus, setMenuItemStatus } from "@/api/microservice/menu";
+import { deleteMenuItem, findAdminMenus, setMenuItemStatus } from "@/api/menu";
 import PageIntroduction from "@/components/PageIntroduction";
 import { AdminMenuNode, MenuTreeFilter } from "@/types/menu";
 import { ExclamationCircleOutlined, PlusOutlined, ReloadOutlined, SearchOutlined } from "@ant-design/icons";

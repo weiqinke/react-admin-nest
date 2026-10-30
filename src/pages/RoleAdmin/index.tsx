@@ -1,7 +1,7 @@
 import { OperationRoleModal, RoleAllocationPermModal, RoleAllocationUserModal } from "@/components/Modals";
 import PageIntroduction from "@/components/PageIntroduction";
-import { findRoleUsers, findRoles, removeRole } from "@/api/microservice/role";
-import { findUsers } from "@/api/microservice/user";
+import { findRoleUsers, findRoles, removeRole } from "@/api/role";
+import { findUsers } from "@/api/user";
 import { ExclamationCircleOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { Alert, Button, Modal, Space, Table, Tag, message } from "antd";
 import { FC, useEffect, useState } from "react";

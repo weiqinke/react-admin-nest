@@ -360,7 +360,7 @@ Header 只做轻提示，重连时不挡住业务页。
 | 订阅页                     | 我订阅的 / 谁订阅了我 / 免打扰 / catch_up 缓存                                      |
 | `package.json`             | 确认无引用后删除 `socket.io-client`                                                 |
 
-地址用 `VITE_WS_URL`。未配置时由 HTTP 基址换成 `ws` 或 `wss`，路径 `/gows`。不再连接 Nest `/nestws`。连接在现有布局里 `create()` / `close()`，与现在一样。
+地址用构建注入的 `REACT_APP_WS_ORIGIN`（开发直连本机 goadmin，生产未设 `DEPLOY_API_ORIGIN` 时与页面同源），路径 `/gows`。不再连接 Nest `/nestws`。连接在现有布局里 `create()` / `close()`，与现在一样。
 
 ## 7. 验收
 

@@ -1,5 +1,4 @@
-import { refreshAccessToken } from "@/api/axios-interceptors";
-import { getAccessToken } from "@/api/session";
+import { getAccessToken, refreshAccessToken } from "@/api/session";
 
 export type WsStatus = "idle" | "connecting" | "connected" | "reconnecting" | "offline";
 
@@ -17,16 +16,13 @@ type Listener = (event: SocketEvent) => void;
 const MAX_BACKOFF = 10000;
 
 function wsUrl(token: string) {
-  const configured = (import.meta.env.VITE_WS_URL as string | undefined)?.trim();
-  // 开发环境 HTTP 走 Vite 代理（基址为空），WebSocket 直连 goadmin，避免代理中途断开。
-  const raw = configured || REACT_APP_WS_ORIGIN || REACT_APP_API_URL || window.location.origin;
-  const base = new URL(raw || "/", window.location.origin);
+  // 开发环境 HTTP 走 Vite 代理（基址为空），WebSocket 用构建注入的源直连 goadmin。
+  const raw = (REACT_APP_WS_ORIGIN || "").trim() || window.location.origin;
+  const base = new URL(raw, window.location.origin);
   if (base.protocol === "http:") base.protocol = "ws:";
   else if (base.protocol === "https:") base.protocol = "wss:";
-  if (!configured) {
-    base.pathname = "/gows";
-    base.search = "";
-  }
+  base.pathname = "/gows";
+  base.search = "";
   base.searchParams.set("token", token);
   return base.toString();
 }

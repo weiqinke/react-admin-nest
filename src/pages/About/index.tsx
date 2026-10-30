@@ -3,25 +3,7 @@ import { Descriptions } from "antd";
 import { Link } from "react-router";
 
 const About = () => {
-  const { dependencies, devDependencies, version, lastBuildTime } = REACT_PACKAGE;
-
-  const depResult = [];
-  for (const key in dependencies) {
-    depResult.push({
-      key,
-      label: key,
-      children: dependencies[key]
-    });
-  }
-
-  const devResult = [];
-  for (const key in devDependencies) {
-    devResult.push({
-      key,
-      label: key,
-      children: devDependencies[key]
-    });
-  }
+  const { version, lastBuildTime } = REACT_PACKAGE;
 
   return (
     <div>
@@ -66,12 +48,6 @@ const About = () => {
             }
           ]}
         />
-      </div>
-      <div className="bg-white p-3 m-3">
-        <Descriptions title="生产环境依赖" bordered column={{ xs: 1, sm: 2, md: 3, lg: 4, xl: 4, xxl: 4 }} items={depResult} />
-      </div>
-      <div className="bg-white p-3 m-3">
-        <Descriptions title="开发环境依赖" bordered column={{ xs: 1, sm: 2, md: 3, lg: 4, xl: 4, xxl: 4 }} items={devResult} />
       </div>
     </div>
   );

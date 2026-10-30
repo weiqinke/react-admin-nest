@@ -1,4 +1,4 @@
-import { createMenuItem, updateMenuItem } from "@/api/microservice/menu";
+import { createMenuItem, updateMenuItem } from "@/api/menu";
 import { AdminMenuNode } from "@/types/menu";
 import { Button, Drawer, Form, Input, InputNumber, Space, Switch, message } from "antd";
 import { FC, useEffect, useState } from "react";

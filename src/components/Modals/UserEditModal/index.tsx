@@ -3,7 +3,7 @@ import { Avatar, Col, Form, Input, Modal, Radio, Row, Upload, message } from "an
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 
-import { createUser, updateUser } from "@/api/microservice/user";
+import { createUser, updateUser } from "@/api/user";
 import axios from "axios";
 
 const layout = {

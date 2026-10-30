@@ -1,4 +1,4 @@
-import { apiCount } from "@/api/microservice/log";
+import { apiCount } from "@/api/log";
 import { totalPercentage } from "@/utils/core";
 import { webSocketManager } from "@/utils/ws";
 import { Col, Progress, Row } from "antd";

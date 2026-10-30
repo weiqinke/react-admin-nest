@@ -1,4 +1,4 @@
-﻿import { userRegister } from "@/api/caravan/User";
+﻿import { userRegister } from "@/api/user";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input, message } from "antd";
 import { useState } from "react";

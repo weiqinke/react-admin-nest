@@ -1,4 +1,4 @@
-import { createPermissionItem, updatePermissionItem } from "@/api/microservice/permission";
+import { createPermissionItem, updatePermissionItem } from "@/api/permission";
 import { Col, Form, Input, Modal, Row, message } from "antd";
 import { FC, useEffect, useState } from "react";
 

@@ -3,7 +3,7 @@
  */
 import React, { FC, useEffect, useState } from "react";
 import { Avatar, Card, Col, Divider, Row } from "antd";
-import { getmyuserinfo, updateMyinfo } from "@/api/caravan/User";
+import { getmyuserinfo, updateMyinfo } from "@/api/user";
 import userPoster from "@/assets/header/user-poster.png";
 import MetaDesc from "./MetaDesc";
 import BaseFrom from "./basefrom";

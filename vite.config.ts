@@ -9,7 +9,7 @@ import { visualizer } from "rollup-plugin-visualizer";
 import { compression } from "vite-plugin-compression2";
 import packageJson from "./package.json" with { type: "json" };
 
-const { dependencies, devDependencies, name, version } = packageJson;
+const { name, version } = packageJson;
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const isDev = process.env.NODE_ENV === "development";
@@ -75,8 +75,6 @@ export default defineConfig({
     REACT_APP_API_URL: JSON.stringify(httpUrl),
     REACT_APP_WS_ORIGIN: JSON.stringify(wsUrl),
     REACT_PACKAGE: JSON.stringify({
-      dependencies,
-      devDependencies,
       name,
       version,
       lastBuildTime: dayjs(new Date()).format("YYYY-MM-DD HH:mm:ss")

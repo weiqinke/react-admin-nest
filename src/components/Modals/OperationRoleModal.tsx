@@ -1,4 +1,4 @@
-import { createRole, findRoles, updateRole } from "@/api/microservice/role";
+import { createRole, findRoles, updateRole } from "@/api/role";
 import { Col, Form, Input, Modal, Row, Select, message } from "antd";
 import { FC, useEffect, useState } from "react";
 

@@ -1,6 +1,6 @@
 import { message, Modal, Tree } from "antd";
 import React, { FC, useEffect, useState } from "react";
-import { giveRoleMenus } from "@/api/caravan/Rbac";
+import { giveRoleMenus } from "@/api/role";
 
 const OperationMenuModal: FC<any> = (props: any) => {
   const { title, pendingCallback, changeMenu, allMenu, okText, cancelText, roleCode } = props;

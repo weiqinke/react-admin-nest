@@ -1,6 +1,6 @@
-import { message } from "antd";
 import axios from "axios";
-import { clearSession, getAccessToken, getRefreshToken, saveLoginSession } from "./session";
+import { reportApiError } from "./feedback";
+import { expireSession, getAccessToken, getRefreshToken, refreshAccessToken } from "./session";
 
 const PUBLIC_PATHS = [
   "/health",
@@ -61,37 +61,8 @@ function toApiError(body: any, httpStatus?: number) {
   return error;
 }
 
-function redirectLogin() {
-  const path = window.location.pathname;
-  if (path.startsWith("/login") || path.startsWith("/oauth/")) return;
-  window.location.assign("/login");
-}
-
-let refreshing: Promise<string> | null = null;
-
-export function refreshAccessToken(baseURL?: string) {
-  if (!refreshing) {
-    const refresh_token = getRefreshToken();
-    const raw = axios.create({
-      baseURL,
-      timeout: 20000,
-      validateStatus: () => true
-    });
-    refreshing = raw
-      .post("/api/token/refresh", { refresh_token })
-      .then(res => {
-        const body = res.data;
-        if (!body || body.code !== 0 || !body.data?.token) {
-          throw toApiError(body || { code: 40103, message: "refresh failed" }, res.status);
-        }
-        saveLoginSession(body.data);
-        return body.data.token as string;
-      })
-      .finally(() => {
-        refreshing = null;
-      });
-  }
-  return refreshing;
+function notifyError(config: any, text: string) {
+  if (!config?.skipErrorMessage) reportApiError(text);
 }
 
 const reqCommon = {
@@ -119,7 +90,7 @@ function createResponseHandler(service) {
       const body = response?.data;
       if (!body || typeof body.code !== "number") {
         if (response?.status >= 400) {
-          message.error({ content: "请求错误", duration: 2 });
+          notifyError(response?.config, "请求错误");
           return Promise.reject(toApiError({ code: response.status, message: "请求错误" }, response.status));
         }
         return response;
@@ -140,29 +111,22 @@ function createResponseHandler(service) {
           }
           return service(config);
         } catch (error) {
-          clearSession();
-          redirectLogin();
-          if (!config.skipErrorMessage) {
-            message.error({ content: errorText({ code: 40103, message: "登录已失效，请重新登录" }), duration: 2 });
-          }
+          expireSession();
+          notifyError(config, errorText({ code: 40103, message: "登录已失效，请重新登录" }));
           return Promise.reject(error);
         }
       }
 
       if (body.code === 40103 || ((body.code === 40101 || body.code === 40102) && !isPublic(config.url) && !getRefreshToken())) {
-        clearSession();
-        redirectLogin();
+        expireSession();
       }
 
-      if (!config.skipErrorMessage) {
-        message.error({ content: errorText(body), duration: 2 });
-      }
+      notifyError(config, errorText(body));
       return Promise.reject(toApiError(body, response.status));
     },
     onRejected(error) {
-      if (!error?.config?.skipErrorMessage) {
-        message.error({ content: "网络请求失败", duration: 2 });
-      }
+      if (axios.isCancel(error) || error?.code === "ERR_CANCELED") return Promise.reject(error);
+      notifyError(error?.config, "网络请求失败");
       return Promise.reject(error);
     }
   };
