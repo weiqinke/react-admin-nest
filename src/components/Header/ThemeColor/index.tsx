@@ -18,7 +18,7 @@ const ThemeColor = () => {
   return (
     <Tooltip title="切换主题" placement="bottom">
       <span
-        className="float-right mr-2.5 cursor-pointer select-none px-3 text-base text-header-icon hover:bg-header-icon-hover-bg hover:text-header-icon-hover"
+        className="inline-flex h-12 cursor-pointer select-none items-center px-3 text-base text-header-icon hover:bg-header-icon-hover-bg hover:text-header-icon-hover"
         onClick={handleChangeTheme}>
         <SunOutlined />
       </span>

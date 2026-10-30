@@ -184,9 +184,9 @@ const HeaderNotice: FC = () => {
   };
 
   return (
-    <div className="float-right mr-5 cursor-pointer select-none">
+    <div className="flex h-12 cursor-pointer select-none items-center px-2">
       <Dropdown menu={{ items }} placement="bottomRight" trigger={["hover"]} onOpenChange={handleOpenChange} open={open}>
-        <Badge count={badgeCount} overflowCount={999} offset={[0, 10]}>
+        <Badge count={badgeCount} overflowCount={999}>
           <Avatar
             shape="square"
             size={32}

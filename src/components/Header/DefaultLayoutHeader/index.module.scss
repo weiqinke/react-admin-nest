@@ -1,36 +1,57 @@
 .layoutHeader {
+  display: flex;
+  align-items: center;
   height: 48px;
-  line-height: 48px;
-  overflow: hidden;
   border-bottom: 1px solid var(--line);
 
-  .user {
-    float: right;
-    cursor: pointer;
-    user-select: none;
-  }
-
-  .nameContainer {
-    padding: 0 12px;
-  }
-
-  .name {
-    margin-left: 6px;
-  }
-
   .logo {
-    float: left;
+    display: flex;
+    align-items: center;
+    width: 200px;
+    height: 100%;
+    padding-left: 16px;
     cursor: pointer;
     user-select: none;
-    width: 200px;
-    padding-left: 16px;
-    text-align: left;
   }
 
   .title {
     font-size: 15px;
     font-weight: 600;
+    line-height: 1;
     letter-spacing: 0.01em;
     color: var(--ink);
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin-left: auto;
+  }
+
+  .user {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .nameContainer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 100%;
+    padding: 0 12px;
+  }
+
+  .name,
+  .status {
+    line-height: 1;
+  }
+
+  .status {
+    font-size: 12px;
+    color: var(--muted);
   }
 }
