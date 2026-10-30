@@ -190,11 +190,11 @@ const DefaultLayoutHeader = () => {
   }, [logout]);
 
   return (
-    <div className={styles.layoutHeader}>
+    <div className={`${styles.layoutHeader} bg-header-bg text-header-text`}>
       <div className={styles.logo} onClick={() => navigate("/workplace")}>
         <span className={styles.title}>nest-admin</span>
       </div>
-      <div className={styles.user}>
+      <div className={`${styles.user} bg-header-bg text-header-icon hover:bg-header-icon-hover-bg hover:text-header-icon-hover`}>
         <Dropdown menu={{ items, onClick }}>
           <div className={styles.nameContainer}>
             <Avatar src={profile?.avatar || "https://dr.cdnux.com/18510675/i/2025/01/04/65a29b436889b.jpg"} icon={<UserOutlined />} />

@@ -2,3 +2,12 @@
 @layer theme, base, components, utilities;
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
+
+/* 色值由 applyHeaderTheme 写到 html 上，这里只把变量接进工具类。 */
+@theme inline {
+  --color-header-bg: var(--header-bg);
+  --color-header-text: var(--header-text);
+  --color-header-icon: var(--header-icon);
+  --color-header-icon-hover-bg: var(--header-icon-hover-bg);
+  --color-header-icon-hover: var(--header-icon-hover);
+}

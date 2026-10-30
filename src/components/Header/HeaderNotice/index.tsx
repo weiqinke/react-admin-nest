@@ -5,8 +5,6 @@ import { Avatar, Badge, Dropdown, DropdownProps, Flex, Listy, MenuProps, Tabs, m
 import { FC, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
-import styles from "./index.module.scss";
-
 const HeaderNotice: FC = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -189,7 +187,12 @@ const HeaderNotice: FC = () => {
     <div className="float-right mr-5 cursor-pointer select-none">
       <Dropdown menu={{ items }} placement="bottomRight" trigger={["hover"]} onOpenChange={handleOpenChange} open={open}>
         <Badge count={badgeCount} overflowCount={999} offset={[0, 10]}>
-          <Avatar shape="square" size="large" src={<BellOutlined />} className={styles.icon} />
+          <Avatar
+            shape="square"
+            size="large"
+            src={<BellOutlined />}
+            className="text-[22px] text-header-icon! hover:bg-header-icon-hover-bg! hover:text-header-icon-hover!"
+          />
         </Badge>
       </Dropdown>
     </div>

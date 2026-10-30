@@ -1,21 +1,11 @@
-@use "@/styles/themeMixin" as *;
-
 .layoutHeader {
   height: 50px;
   line-height: 50px;
   overflow: hidden;
-  @include get-class-from-key("background-color");
-  @include get-class-from-key("color", "color-head");
   .user {
     float: right;
     cursor: pointer;
     user-select: none;
-    @include get-class-from-key("background-color");
-    @include get-class-from-key("color", "head-icon-color");
-    &:hover {
-      @include get-class-from-key("background-color", "head-icon-bg");
-      @include get-class-from-key("color", "head-icon-bg-hover");
-    }
   }
 
   .nameContainer {

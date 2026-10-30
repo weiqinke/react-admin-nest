@@ -6,8 +6,11 @@ import { setApiErrorReporter } from "./api/feedback";
 import { setAuthExpiredHandler } from "./api/session";
 import ProjectRouter from "./router/index.tsx";
 
+import { applyHeaderTheme, readStoredTheme } from "./theme/palette";
 import "./styles/reset.css";
 import "./styles/tailwind.css";
+
+applyHeaderTheme(readStoredTheme());
 
 const router = ProjectRouter();
 

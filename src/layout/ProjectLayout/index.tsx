@@ -1,70 +1,30 @@
 import { MenuTagContextProvider } from "@/contexts/MenuTagContext";
 import { ProjectContextProvider } from "@/contexts/ProjectContext";
+import { applyHeaderTheme, readStoredTheme, themePalette, type ThemeName } from "@/theme/palette";
 import { webSocketManager } from "@/utils/ws";
 import { ConfigProvider } from "antd";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { Outlet } from "react-router";
 
 const ProjectLayout = () => {
-  const [theme, setTheme] = useState(localStorage.getItem("data-theme") || "dark");
+  const [theme, setTheme] = useState<ThemeName>(readStoredTheme);
 
   useEffect(() => {
     webSocketManager.create();
   }, []);
 
   useLayoutEffect(() => {
-    localStorage.setItem("data-theme", theme);
-    document.body.setAttribute("data-theme", theme);
-    if (theme === "dark") {
-      setMenusConfig({
-        darkItemSelectedBg: "#41b3a3",
-        // 选中时菜单颜色 和父级选中颜色
-        darkItemSelectedColor: "#fafafc",
-        // 未选中的菜单项颜色
-        darkItemColor: "#fafafc",
-        darkGroupTitleColor: "#000"
-      });
-      setButtonConfig({
-        defaultBg: "#41b3a3",
-        primaryColor: "#fff"
-      });
-    } else {
-      // 粉色背景
-      setMenusConfig({
-        darkItemSelectedBg: "#fedce0",
-        darkPopupBg: "#fedce0",
-        darkSubMenuItemBg: "#000",
-        darkItemBg: "#fedce0",
-        // 选中时菜单颜色 和父级选中颜色
-        darkItemSelectedColor: "#fafafc",
-        darkItemBg: "#001529",
-        // 未选中的菜单项颜色
-        darkItemColor: "#fafafc",
-        darkGroupTitleColor: "#000"
-      });
-
-      setButtonConfig({
-        defaultBg: "#fedce0",
-        primaryColor: "#fff"
-      });
-    }
+    applyHeaderTheme(theme);
   }, [theme]);
 
-  const [menusConfig, setMenusConfig] = useState({
-    darkItemSelectedBg: "#41b3a3"
-  });
-
-  const [ButtonConfig, setButtonConfig] = useState({
-    defaultBg: "#41b3a3",
-    primaryColor: "#fff"
-  });
+  const { menu, button } = themePalette[theme];
 
   return (
     <ConfigProvider
       theme={{
         components: {
-          Button: ButtonConfig,
-          Menu: menusConfig
+          Button: button,
+          Menu: menu
         }
       }}>
       <ProjectContextProvider theme={theme} setTheme={setTheme}>
