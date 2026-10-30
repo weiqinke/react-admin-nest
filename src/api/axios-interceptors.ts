@@ -42,6 +42,7 @@ function errorText(body: any) {
     const wait = body?.data?.retry_after;
     return wait ? `用户名已锁定，请 ${wait} 秒后再试` : "用户名已锁定";
   }
+  if (code === 40305) return "密码已过期，请联系管理员重置或登录后立即改密";
   if (code === 40904) return "受保护，不能修改（不能停用自己或改受保护资源）";
   if (code === 40905) return serverMessage && serverMessage !== "in use" ? serverMessage : "仍被引用，无法删除";
   if (code === 42901) {

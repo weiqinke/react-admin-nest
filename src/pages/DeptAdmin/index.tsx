@@ -1,9 +1,17 @@
+import { hasPermission } from "@/api/announcement";
+import {
+  commitDeptImport,
+  downloadDeptImportTemplate,
+  exportDeptsCsv,
+  previewDeptImport
+} from "@/api/impexp";
 import { createDept, deleteDept, listDepts, toDeptTree, updateDept } from "@/api/platform";
 import { findUserOptions } from "@/api/user";
+import CsvImportModal from "@/components/CsvImportModal";
 import PageIntroduction from "@/components/PageIntroduction";
-import { hasPermission } from "@/api/announcement";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Button, Form, Input, InputNumber, Modal, Select, Space, Table, Tag, TreeSelect, message } from "antd";
+import dayjs from "dayjs";
 import { FC, useEffect, useMemo, useState } from "react";
 
 const infos = [{ title: "系统管理" }, { title: "部门管理" }];
@@ -30,7 +38,10 @@ const DeptAdmin: FC = () => {
   const [form] = Form.useForm();
   const [saving, setSaving] = useState(false);
   const [users, setUsers] = useState<any[]>([]);
+  const [importOpen, setImportOpen] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const canWrite = hasPermission("dept:write");
+  const canRead = hasPermission("dept:read");
   const canPickLeader = hasPermission("user:read");
 
   const load = () => {
@@ -149,13 +160,42 @@ const DeptAdmin: FC = () => {
         introduction="部门是一棵树。人数只统计本部门启用用户，不含下级。可以指定负责人，同一个人可以负责多个部门。清空负责人后保存即取消。"
       />
       <div className="mt-3 bg-white p-3">
-        {canWrite ? (
-          <Button type="primary" className="mb-3" onClick={() => setDraft({ status: 1, sort: 0 })}>
-            添加部门
-          </Button>
-        ) : null}
+        <Space className="mb-3" wrap>
+          {canWrite ? (
+            <Button type="primary" onClick={() => setDraft({ status: 1, sort: 0 })}>
+              添加部门
+            </Button>
+          ) : null}
+          {canRead ? (
+            <Button
+              loading={exporting}
+              onClick={async () => {
+                setExporting(true);
+                try {
+                  await exportDeptsCsv(`depts-${dayjs().format("YYYYMMDD")}.csv`);
+                } catch {
+                  message.error("导出失败");
+                } finally {
+                  setExporting(false);
+                }
+              }}>
+              导出 CSV
+            </Button>
+          ) : null}
+          {canWrite ? <Button onClick={() => setImportOpen(true)}>导入 CSV</Button> : null}
+        </Space>
         <Table rowKey="id" columns={columns} dataSource={asTableTree(tree)} pagination={false} />
       </div>
+      <CsvImportModal
+        open={importOpen}
+        title="导入部门"
+        hint="模板列：code,name,parent_code,sort,status。先预览再确认导入。"
+        onClose={() => setImportOpen(false)}
+        onDownloadTemplate={downloadDeptImportTemplate}
+        onPreview={previewDeptImport}
+        onCommit={commitDeptImport}
+        onDone={load}
+      />
       <Modal
         open={Boolean(draft)}
         title={draft?.id ? "编辑部门" : "添加部门"}

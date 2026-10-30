@@ -40,10 +40,22 @@ const JobAdmin: FC = () => {
     { title: "任务", dataIndex: "name" },
     { title: "编码", dataIndex: "code" },
     {
-      title: "间隔",
-      dataIndex: "interval_seconds",
-      width: 100,
-      render: (value: number) => intervalText(value)
+      title: "调度",
+      width: 160,
+      render: (row: any) =>
+        row.cron_expr ? (
+          <span>
+            cron <code>{row.cron_expr}</code>
+          </span>
+        ) : (
+          intervalText(row.interval_seconds)
+        )
+    },
+    {
+      title: "处理器",
+      dataIndex: "has_handler",
+      width: 90,
+      render: (value: boolean) => (value ? <Tag color="blue">已注册</Tag> : <Tag>无</Tag>)
     },
     {
       title: "启用",
@@ -98,7 +110,7 @@ const JobAdmin: FC = () => {
     <div className="p-3">
       <PageIntroduction
         infos={infos}
-        introduction="任务按固定间隔在本进程内执行。停用后不再自动跑，仍可以手动执行一次。announcement.start 会在预约公告到点后补发「新公告」。日志保留（log.purge）按 log.retention_days 清理登录日志、操作审计和访问日志；参数为 0 时结果是 skipped=1。"
+        introduction="有 cron_expr（五段）时按表达式触发，否则用固定间隔。ticket.due_remind 会给到期未关闭工单发一次提醒。announcement.start 在预约公告到点后补发「新公告」。log.purge 按保留天数清理日志。"
       />
       <div className="mt-3 bg-white p-3">
         <Table rowKey="code" columns={columns} dataSource={list} pagination={false} />

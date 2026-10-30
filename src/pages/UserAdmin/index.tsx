@@ -1,12 +1,20 @@
 import { hasPermission } from "@/api/announcement";
+import {
+  commitUserImport,
+  downloadUserImportTemplate,
+  exportUsersCsv,
+  previewUserImport
+} from "@/api/impexp";
 import { dataScopeLabel, listDepts, toDeptTree } from "@/api/platform";
 import { findRoles } from "@/api/role";
 import { getUserState } from "@/api/session";
 import { findUsers, resetUserPassword, setUserStatus, unlockUser } from "@/api/user";
+import CsvImportModal from "@/components/CsvImportModal";
 import PageIntroduction from "@/components/PageIntroduction";
 import { UserEditModal } from "@/components/Modals";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Alert, Button, Form, Input, Modal, Select, Space, TreeSelect, message } from "antd";
+import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
 import UserTable from "./components/Table";
 
@@ -32,10 +40,13 @@ const UserAdmin: FC = () => {
   const [resetting, setResetting] = useState(false);
   const [deptTree, setDeptTree] = useState<any[]>([]);
   const [roles, setRoles] = useState<any[]>([]);
+  const [importOpen, setImportOpen] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const selfId = String(getUserState().uid || "");
   const canFilterDept = hasPermission("dept:read");
   const canFilterRole = hasPermission("role:read");
   const canWrite = hasPermission("user:write");
+  const canRead = hasPermission("user:read");
 
   const showDeleteConfirm = (item: any) => {
     const id = String(item.id || item.uid || "");
@@ -125,7 +136,7 @@ const UserAdmin: FC = () => {
     <div className="p-3">
       <PageIntroduction
         infos={infos}
-        introduction="用户列表按页返回，并已按当前角色的数据范围过滤。部门筛选只匹配该部门，不含下级；角色筛选只匹配直接分配的角色。解除锁定会清掉连续密码错误的计数。停用会踢掉对方全部会话。"
+        introduction="用户列表按页返回，并已按当前角色的数据范围过滤。支持 CSV 导出与导入（模板列：username,password,department_code,roles）。解除锁定会清掉连续密码错误的计数。停用会踢掉对方全部会话。"
       />
       {dataScope ? (
         <Alert className="mt-3" type="info" showIcon title={`当前数据范围：${dataScopeLabel(dataScope)}`} />
@@ -173,9 +184,35 @@ const UserAdmin: FC = () => {
             </Form.Item>
           ) : null}
           <Form.Item>
-            <Space size={[8, 16]}>
+            <Space size={[8, 16]} wrap>
               <Button htmlType="submit">查询</Button>
-              <Button onClick={() => setUser({})}>添加</Button>
+              {canWrite ? <Button onClick={() => setUser({})}>添加</Button> : null}
+              {canRead ? (
+                <Button
+                  loading={exporting}
+                  onClick={async () => {
+                    const values = form.getFieldsValue();
+                    setExporting(true);
+                    try {
+                      await exportUsersCsv(
+                        {
+                          keyword: values.keyword,
+                          status: values.status,
+                          department_id: values.department_id,
+                          role: values.role
+                        },
+                        `users-${dayjs().format("YYYYMMDD")}.csv`
+                      );
+                    } catch {
+                      message.error("导出失败");
+                    } finally {
+                      setExporting(false);
+                    }
+                  }}>
+                  导出 CSV
+                </Button>
+              ) : null}
+              {canWrite ? <Button onClick={() => setImportOpen(true)}>导入 CSV</Button> : null}
             </Space>
           </Form.Item>
         </Form>
@@ -195,6 +232,16 @@ const UserAdmin: FC = () => {
       </div>
 
       {user && <UserEditModal initUser={user} onOk={() => findAll()} onCancel={() => setUser(null)} />}
+      <CsvImportModal
+        open={importOpen}
+        title="导入用户"
+        hint="先下载模板。roles 用 | 分隔多个角色编码。预览无误后再确认导入。"
+        onClose={() => setImportOpen(false)}
+        onDownloadTemplate={downloadUserImportTemplate}
+        onPreview={previewUserImport}
+        onCommit={commitUserImport}
+        onDone={() => findAll(1)}
+      />
       <Modal
         open={!!resetFor}
         title={`重置密码：${resetFor?.username || ""}`}

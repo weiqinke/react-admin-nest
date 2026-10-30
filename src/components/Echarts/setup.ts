@@ -1,5 +1,5 @@
 import * as echarts from "echarts/core";
-import { BarChart, CustomChart, EffectScatterChart, GraphChart, LineChart, LinesChart, MapChart, PictorialBarChart, PieChart, ScatterChart } from "echarts/charts";
+import { BarChart, CustomChart, EffectScatterChart, FunnelChart, GraphChart, LineChart, LinesChart, MapChart, PictorialBarChart, PieChart, ScatterChart } from "echarts/charts";
 import {
   AxisPointerComponent,
   DatasetComponent,
@@ -20,6 +20,7 @@ echarts.use([
   BarChart,
   CustomChart,
   EffectScatterChart,
+  FunnelChart,
   GraphChart,
   LineChart,
   LinesChart,

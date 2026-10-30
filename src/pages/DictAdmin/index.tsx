@@ -1,8 +1,17 @@
+import { hasPermission } from "@/api/announcement";
 import { deleteDictItem, deleteDictType, listDictItems, listDictTypes, setDictItemStatus, setDictTypeStatus } from "@/api/dict";
+import {
+  commitDictImport,
+  downloadDictImportTemplate,
+  exportDictsCsv,
+  previewDictImport
+} from "@/api/impexp";
+import CsvImportModal from "@/components/CsvImportModal";
 import { OperationDictItemModal, OperationDictTypeModal } from "@/components/Modals";
 import PageIntroduction from "@/components/PageIntroduction";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Button, Input, Modal, Select, Space, Table, Tag, message } from "antd";
+import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
 
 const infos = [{ title: "系统管理" }, { title: "字典管理" }];
@@ -22,6 +31,10 @@ const DictAdmin: FC = () => {
   const [keyword, setKeyword] = useState("");
   const [itemStatus, setItemStatus] = useState<string | undefined>();
   const [dictItem, setDictItem] = useState<any>();
+  const [importOpen, setImportOpen] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const canWrite = hasPermission("dict:write");
+  const canRead = hasPermission("dict:read");
 
   const findTypes = (nextPage = typePage) => {
     listDictTypes({ page: nextPage, page_size: 20, code, name, status })
@@ -194,11 +207,13 @@ const DictAdmin: FC = () => {
 
   return (
     <div className="p-3">
-      <PageIntroduction infos={infos} />
+      <PageIntroduction infos={infos} introduction="字典类型与条目可 CSV 导出导入。模板列：type_code,type_name,item_value,item_label,sort,status。" />
       <Space size={[8, 16]} className="mb-3" wrap>
-        <Button type="primary" onClick={() => setDictType({})}>
-          添加类型
-        </Button>
+        {canWrite ? (
+          <Button type="primary" onClick={() => setDictType({})}>
+            添加类型
+          </Button>
+        ) : null}
         <Input allowClear placeholder="按编码搜索" value={code} onChange={e => setCode(e.target.value)} style={{ width: 160 }} />
         <Input allowClear placeholder="按名称搜索" value={name} onChange={e => setName(e.target.value)} style={{ width: 160 }} />
         <Select
@@ -215,7 +230,34 @@ const DictAdmin: FC = () => {
         <Button type="primary" onClick={() => findTypes(1)}>
           查询
         </Button>
+        {canRead ? (
+          <Button
+            loading={exporting}
+            onClick={async () => {
+              setExporting(true);
+              try {
+                await exportDictsCsv(`dicts-${dayjs().format("YYYYMMDD")}.csv`);
+              } catch {
+                message.error("导出失败");
+              } finally {
+                setExporting(false);
+              }
+            }}>
+            导出 CSV
+          </Button>
+        ) : null}
+        {canWrite ? <Button onClick={() => setImportOpen(true)}>导入 CSV</Button> : null}
       </Space>
+      <CsvImportModal
+        open={importOpen}
+        title="导入字典"
+        hint="模板列：type_code,type_name,item_value,item_label,sort,status。先预览再确认导入。"
+        onClose={() => setImportOpen(false)}
+        onDownloadTemplate={downloadDictImportTemplate}
+        onPreview={previewDictImport}
+        onCommit={commitDictImport}
+        onDone={() => findTypes(1)}
+      />
       <Table
         columns={typeColumns}
         dataSource={types}

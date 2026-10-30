@@ -1,4 +1,5 @@
 import { getHomeSummary } from "@/api/platform";
+import DashboardPanel from "@/components/DashboardPanel";
 import LoginLog from "@/components/LoginLog";
 import SystemInfo from "@/components/SystemInfo";
 import { Alert, Col, Row, Statistic } from "antd";
@@ -30,7 +31,7 @@ const Workbench: FC = () => {
 
   return (
     <div className="p-3">
-      <Alert className="mb-3" type="info" showIcon title="工作台摘要来自 GET /api/me/home，点击卡片可跳转。" />
+      <Alert className="mb-3" type="info" showIcon title="工作台摘要来自 GET /api/me/home；有 stats:read 时下方展示数据看板。" />
       <Row gutter={[12, 12]} className="mb-3">
         <Col xs={12} md={6}>
           <div className="cursor-pointer rounded-md bg-white p-4" onClick={() => navigate("/account")}>
@@ -53,6 +54,7 @@ const Workbench: FC = () => {
           </div>
         </Col>
       </Row>
+      <DashboardPanel />
       <div className="mb-3">
         <SystemInfo />
       </div>

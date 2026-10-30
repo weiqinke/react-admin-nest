@@ -1,9 +1,10 @@
 import { getLoginStats } from "@/api/goadmin";
+import { exportLoginLogsCsv } from "@/api/impexp";
 import { loginlog } from "@/api/log";
 import { dataScopeLabel } from "@/api/platform";
 import { LoginFrequencyChart } from "@/components/Echarts";
 import { getDateTimeFormat } from "@/utils/core";
-import { Alert, Table } from "antd";
+import { Alert, Button, Table, message } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
@@ -55,10 +56,11 @@ const LoginLog = () => {
   const [dataSource, setDataSource] = useState<any[]>();
   const [dataScope, setDataScope] = useState("");
   const [summary, setSummary] = useState<any>(null);
+  const [exporting, setExporting] = useState(false);
+  const from = dayjs().subtract(15, "days").format("YYYY-MM-DD");
+  const to = dayjs().add(1, "days").format("YYYY-MM-DD");
 
   const getLog = () => {
-    const from = dayjs().subtract(15, "days").format("YYYY-MM-DD");
-    const to = dayjs().add(1, "days").format("YYYY-MM-DD");
     loginlog({ from, to, page_size: 100 })
       .then(r => {
         if (r.data.code === 0) {
@@ -89,6 +91,22 @@ const LoginLog = () => {
           }`}
         />
       ) : null}
+      <div className="mb-2 flex justify-end">
+        <Button
+          loading={exporting}
+          onClick={async () => {
+            setExporting(true);
+            try {
+              await exportLoginLogsCsv({ from, to }, `login-logs-${dayjs().format("YYYYMMDD")}.csv`);
+            } catch {
+              message.error("导出失败");
+            } finally {
+              setExporting(false);
+            }
+          }}>
+          导出 CSV
+        </Button>
+      </div>
       <div
         style={{
           padding: "10px 10px 0 10px",

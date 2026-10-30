@@ -124,9 +124,15 @@ const AiChat: FC = () => {
             <div className="flex flex-col gap-3">
               {messages.map(item => {
                 const mine = item.role === "user";
+                const tokens = item.token_usage;
                 return (
                   <div key={item.id} className={mine ? "flex justify-end" : "flex justify-start"}>
-                    <div className={`max-w-[75%] whitespace-pre-wrap px-3 py-2 ${mine ? "bg-blue-50" : "bg-neutral-100"}`}>{item.content}</div>
+                    <div className={`max-w-[75%] ${mine ? "bg-blue-50" : "bg-neutral-100"} px-3 py-2`}>
+                      <div className="whitespace-pre-wrap">{item.content}</div>
+                      {!mine && tokens != null && Number(tokens) > 0 ? (
+                        <div className="mt-1 text-right text-xs text-neutral-400">tokens {tokens}</div>
+                      ) : null}
+                    </div>
                   </div>
                 );
               })}

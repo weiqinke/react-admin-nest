@@ -116,7 +116,17 @@ export function flattenDepts(nodes: any[] = [], bucket: any[] = []) {
 
 export const listConfigs = (group?: string) => request("/api/configs", "GET", compact({ group }));
 
+export const listConfigGroups = () => request("/api/configs/groups", "GET");
+
 export const updateConfig = (key: string, value: string) => request(`/api/configs/${segment(key)}`, "PUT", { value });
+
+export const listMailTemplates = () => request("/api/mail/templates", "GET");
+
+export const upsertMailTemplate = (payload: Record<string, any>) => request("/api/mail/templates", "PUT", payload);
+
+export const testMail = (payload: { to: string; subject: string; body: string }) => request("/api/mail/test", "POST", payload);
+
+export const getDashboard = (query: Record<string, any> = {}) => request("/api/stats/dashboard", "GET", compact(query));
 
 export const listTickets = (query: Record<string, any> = {}) => request("/api/tickets", "GET", compact(query));
 
