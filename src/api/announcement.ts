@@ -12,8 +12,7 @@ export const createAnnouncement = (payload: Record<string, any>) => request("/ap
 
 export const updateAnnouncement = (id: string, payload: Record<string, any>) => request(`/api/announcements/${enc(id)}`, "PUT", payload);
 
-export const updateAnnouncementSchedule = (id: string, payload: Record<string, any>) =>
-  request(`/api/announcements/${enc(id)}/schedule`, "PUT", payload);
+export const updateAnnouncementSchedule = (id: string, payload: Record<string, any>) => request(`/api/announcements/${enc(id)}/schedule`, "PUT", payload);
 
 export const publishAnnouncement = (id: string) => request(`/api/announcements/${enc(id)}/publish`, "PUT", {});
 
@@ -23,8 +22,7 @@ export const revokeAnnouncement = (id: string) => request(`/api/announcements/${
 
 export const deleteAnnouncement = (id: string) => request(`/api/announcements/${enc(id)}`, "DELETE");
 
-export const listAnnouncementReads = (id: string, query: Record<string, any> = {}) =>
-  request(`/api/announcements/${enc(id)}/reads`, "GET", compact(query));
+export const listAnnouncementReads = (id: string, query: Record<string, any> = {}) => request(`/api/announcements/${enc(id)}/reads`, "GET", compact(query));
 
 export const listMyAnnouncements = (query: Record<string, any> = {}) => request("/api/me/announcements", "GET", compact(query));
 

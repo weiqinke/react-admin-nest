@@ -1,10 +1,4 @@
-import {
-  createPermission,
-  deletePermission,
-  getPermission,
-  getPermissions,
-  updatePermission
-} from "@/api/goadmin";
+import { createPermission, deletePermission, getPermission, getPermissions, updatePermission } from "@/api/goadmin";
 
 export async function findPermissions() {
   const res = await getPermissions();
@@ -24,7 +18,6 @@ export const createPermissionItem = (payload: { code: string; name: string }) =>
     name: payload.name || payload.code
   });
 
-export const updatePermissionItem = (code: string, payload: { name: string }) =>
-  updatePermission(String(code), { name: payload.name });
+export const updatePermissionItem = (code: string, payload: { name: string }) => updatePermission(String(code), { name: payload.name });
 
 export const removePermissionItem = (code: string) => deletePermission(String(code));

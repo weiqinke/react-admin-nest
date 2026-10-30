@@ -10,13 +10,7 @@ export function getRefreshToken() {
 }
 
 /** 写入登录 / 刷新返回的双 token。用户 id 保持字符串，避免雪花精度丢失。 */
-export function saveLoginSession(data: {
-  token?: string;
-  refresh_token?: string;
-  expires_at?: string;
-  refresh_expires_at?: string;
-  user?: any;
-}) {
+export function saveLoginSession(data: { token?: string; refresh_token?: string; expires_at?: string; refresh_expires_at?: string; user?: any }) {
   if (data?.token) localStorage.setItem(ACCESS_TOKEN, data.token);
   if (data?.refresh_token) localStorage.setItem(REFRESH_TOKEN, data.refresh_token);
   if (data?.expires_at) localStorage.setItem("expires_at", data.expires_at);
@@ -36,17 +30,7 @@ export function saveLoginSession(data: {
 }
 
 export function clearSession() {
-  [
-    ACCESS_TOKEN,
-    REFRESH_TOKEN,
-    "expires_at",
-    "refresh_expires_at",
-    "uid",
-    "nick",
-    "avatar",
-    "loginState",
-    "permissions",
-    "roles",
-    "active_roles"
-  ].forEach(key => localStorage.removeItem(key));
+  [ACCESS_TOKEN, REFRESH_TOKEN, "expires_at", "refresh_expires_at", "uid", "nick", "avatar", "loginState", "permissions", "roles", "active_roles"].forEach(key =>
+    localStorage.removeItem(key)
+  );
 }

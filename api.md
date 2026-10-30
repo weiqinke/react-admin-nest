@@ -5,20 +5,20 @@
 
 ## 基本约定
 
-| 项 | 说明 |
-|----|------|
-| Base URL | `http://127.0.0.1:8080`（可由 `server.address` 配置） |
-| 数据格式 | JSON，`Content-Type: application/json` |
-| **统一信封** | 所有 HTTP JSON 接口均为 `{ code, message, data }` |
-| 成功 | HTTP **200**，`code=0`，`message="ok"`，业务在 **`data`** |
-| 失败 | **`code` 为业务错误码**（如 `40101`），HTTP 为映射状态；原因在 `message`，附加字段在 `data`（可为 `null`） |
-| 鉴权 | `Authorization: Bearer <access token>`；WebSocket 也可用 `?token=` |
-| 用户 ID | **雪花 ID，JSON 一律字符串**，前端勿转 Number |
-| 权限模型 | Constrained RBAC（角色继承 + SSD/DSD） |
-| 访问日志 | 全站写入 `api_access_log`；URL 中 `token` 等敏感参数脱敏为 `***` |
-| 请求追踪 | 响应头 `X-Request-ID`；可主动传入同名请求头 |
-| 限流 | captcha 30/分、login 10/分、register 5/分、refresh 30/分（按 IP）；超限 HTTP 429 / `code=42901` |
-| 客户端 IP | 见下方「客户端 IP」。访问日志、登录日志、限流使用同一个结果 |
+| 项           | 说明                                                                                                       |
+| ------------ | ---------------------------------------------------------------------------------------------------------- |
+| Base URL     | `http://127.0.0.1:8080`（可由 `server.address` 配置）                                                      |
+| 数据格式     | JSON，`Content-Type: application/json`                                                                     |
+| **统一信封** | 所有 HTTP JSON 接口均为 `{ code, message, data }`                                                          |
+| 成功         | HTTP **200**，`code=0`，`message="ok"`，业务在 **`data`**                                                  |
+| 失败         | **`code` 为业务错误码**（如 `40101`），HTTP 为映射状态；原因在 `message`，附加字段在 `data`（可为 `null`） |
+| 鉴权         | `Authorization: Bearer <access token>`；WebSocket 也可用 `?token=`                                         |
+| 用户 ID      | **雪花 ID，JSON 一律字符串**，前端勿转 Number                                                              |
+| 权限模型     | Constrained RBAC（角色继承 + SSD/DSD）                                                                     |
+| 访问日志     | 全站写入 `api_access_log`；URL 中 `token` 等敏感参数脱敏为 `***`                                           |
+| 请求追踪     | 响应头 `X-Request-ID`；可主动传入同名请求头                                                                |
+| 限流         | captcha 30/分、login 10/分、register 5/分、refresh 30/分（按 IP）；超限 HTTP 429 / `code=42901`            |
+| 客户端 IP    | 见下方「客户端 IP」。访问日志、登录日志、限流使用同一个结果                                                |
 
 ### 响应信封（必读）
 
@@ -26,7 +26,7 @@
 {
   "code": 0,
   "message": "ok",
-  "data": { }
+  "data": {}
 }
 ```
 
@@ -75,13 +75,13 @@ Nginx 对每个反代请求写入：
 
 ### 演示账号
 
-| 用户名 | 密码 | 角色 | 备注 |
-|--------|------|------|------|
-| `admin` | `admin123` | admin | 几乎全部权限 |
-| `user` | `user123` | user | 普通用户 |
-| `cashier1` | `cashier123` | cashier | 出纳 |
-| `accountant1` | `account123` | accountant | 会计；与出纳 SSD 互斥 |
-| `dual1` | `dual123` | manager + cashier | 登录须传 `active_roles`（DSD） |
+| 用户名        | 密码         | 角色              | 备注                           |
+| ------------- | ------------ | ----------------- | ------------------------------ |
+| `admin`       | `admin123`   | admin             | 几乎全部权限                   |
+| `user`        | `user123`    | user              | 普通用户                       |
+| `cashier1`    | `cashier123` | cashier           | 出纳                           |
+| `accountant1` | `account123` | accountant        | 会计；与出纳 SSD 互斥          |
+| `dual1`       | `dual123`    | manager + cashier | 登录须传 `active_roles`（DSD） |
 
 ### 常见权限码
 
@@ -96,6 +96,7 @@ Nginx 对每个反代请求写入：
 无需登录。探测数据库连通性。
 
 **完整信封（正常）**
+
 ```json
 {
   "code": 0,
@@ -122,6 +123,7 @@ Nginx 对每个反代请求写入：
 公开。一次性图形验证码；再次请求即更换。限流 30/分/IP。
 
 **data**
+
 ```json
 {
   "captcha_id": "xxxx",
@@ -136,6 +138,7 @@ Nginx 对每个反代请求写入：
 公开。RSA 公钥，用于加密密码。
 
 **data**
+
 ```json
 {
   "key_id": "rsa-2048",
@@ -152,6 +155,7 @@ Nginx 对每个反代请求写入：
 公开。限流 5/分/IP。成功后自动授予 `user` 角色并创建默认 profile。
 
 **请求**
+
 ```json
 {
   "username": "newuser",
@@ -160,6 +164,7 @@ Nginx 对每个反代请求写入：
 ```
 
 规则：
+
 - `username`：3–32 位，字母/数字/下划线
 - 明文密码 6–64（服务端解密后校验）
 - 用户名已存在 → HTTP 409 / `code=40906`
@@ -167,13 +172,14 @@ Nginx 对每个反代请求写入：
 注册成功后需再调 `POST /api/login` 取 token。
 
 **data 示例**
+
 ```json
 {
   "user": {
     "id": "3733...",
     "username": "newuser",
     "roles": ["user"],
-    "profile": { }
+    "profile": {}
   }
 }
 ```
@@ -183,6 +189,7 @@ Nginx 对每个反代请求写入：
 公开。限流 10/分/IP。需：用户名 + 加密密码 + 验证码。
 
 **请求**
+
 ```json
 {
   "username": "admin",
@@ -199,6 +206,7 @@ Nginx 对每个反代请求写入：
 - `profile.status=0` → HTTP 403 / `code=40302`
 
 **完整信封（成功）**
+
 ```json
 {
   "code": 0,
@@ -214,15 +222,15 @@ Nginx 对每个反代请求写入：
       "roles": ["admin"],
       "active_roles": ["admin"],
       "permissions": ["user:write", "role:read", "..."],
-      "profile": { }
+      "profile": {}
     }
   }
 }
 ```
 
-| 字段 | 说明 |
-|------|------|
-| `token` | access JWT，TTL=`jwt.ttlHours`（默认 24h），用于 Bearer |
+| 字段            | 说明                                                                              |
+| --------------- | --------------------------------------------------------------------------------- |
+| `token`         | access JWT，TTL=`jwt.ttlHours`（默认 24h），用于 Bearer                           |
 | `refresh_token` | refresh JWT，TTL=`jwt.refreshTTLHours`（默认 168h）；**不能**当 Bearer 调业务接口 |
 
 常见失败码：`40002` 验证码、`40003` 密文、`40101` 账密错误、`40302` 禁用、`40903` DSD、`42901` 限流。
@@ -232,28 +240,31 @@ Nginx 对每个反代请求写入：
 公开。限流 30/分/IP。用 refresh 换**新的** access + refresh（**旋转**：旧 refresh 立即作废）。
 
 **请求**
+
 ```json
 { "refresh_token": "<refresh jwt>" }
 ```
 
 **data**：字段同登录（`token` / `expires_at` / `refresh_token` / `refresh_expires_at` / `user`）。
 
-| 情况 | HTTP | code |
-|------|------|------|
-| refresh 无效/吊销/过期 | 401 | `40103` |
-| 账号禁用 | 403 | `40302` |
-| DSD 冲突 | 409 | `40903` |
+| 情况                   | HTTP | code    |
+| ---------------------- | ---- | ------- |
+| refresh 无效/吊销/过期 | 401  | `40103` |
+| 账号禁用               | 403  | `40302` |
+| DSD 冲突               | 409  | `40903` |
 
 ### `POST /api/logout`
 
 需登录（Bearer = access）。吊销当前 access；**建议 body 带 `refresh_token`**，否则 refresh 仍可换新 token。
 
 **请求（可选）**
+
 ```json
 { "refresh_token": "<refresh jwt>" }
 ```
 
 **data**
+
 ```json
 { "status": "ok" }
 ```
@@ -270,14 +281,14 @@ Nginx 对每个反代请求写入：
 
 权限：`login:read`
 
-| Query | 说明 |
-|-------|------|
-| page / page_size | 分页 |
-| from / to | `YYYY-MM-DD` |
-| username | 模糊 |
-| user_id | 雪花 ID |
-| success | `true`/`false` 或 `1`/`0` |
-| ip | 模糊 |
+| Query            | 说明                      |
+| ---------------- | ------------------------- |
+| page / page_size | 分页                      |
+| from / to        | `YYYY-MM-DD`              |
+| username         | 模糊                      |
+| user_id          | 雪花 ID                   |
+| success          | `true`/`false` 或 `1`/`0` |
+| ip               | 模糊                      |
 
 **data**：`{ list, total, page, page_size }`
 
@@ -285,23 +296,20 @@ Nginx 对每个反代请求写入：
 
 权限：`login:read`。默认最近 7 天，最长 90 天。
 
-| Query | 说明 |
-|-------|------|
-| from / to | 日期 |
-| top | `by_user` 条数，默认 10，最大 50 |
+| Query     | 说明                             |
+| --------- | -------------------------------- |
+| from / to | 日期                             |
+| top       | `by_user` 条数，默认 10，最大 50 |
 
 **data**
+
 ```json
 {
   "from": "2026-10-21",
   "to": "2026-10-27",
   "summary": { "day": "", "total": 120, "success": 110, "fail": 10, "unique_users": 18 },
-  "daily": [
-    { "day": "2026-10-21", "total": 15, "success": 14, "fail": 1, "unique_users": 6 }
-  ],
-  "by_user": [
-    { "user_id": "3733...", "username": "admin", "total": 40, "success": 39, "fail": 1 }
-  ]
+  "daily": [{ "day": "2026-10-21", "total": 15, "success": 14, "fail": 1, "unique_users": 6 }],
+  "by_user": [{ "user_id": "3733...", "username": "admin", "total": 40, "success": 39, "fail": 1 }]
 }
 ```
 
@@ -315,24 +323,24 @@ Nginx 对每个反代请求写入：
 
 ### 详情字段（在 `data` 内）
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| user_id | string | 雪花 ID |
-| nickname | string | 昵称 |
-| real_name | string | 真实姓名 |
-| avatar | string | 头像 URL |
-| gender | int | 0未知 1男 2女 3其他 |
-| birthday | string | `YYYY-MM-DD`，可空 |
-| email / phone / mobile | string | 联系方式 |
-| id_card | string | 身份证 |
-| employee_no | string | 工号 |
-| department / job_title / company | string | 组织 |
-| province / city / district / address / postal_code / country | string | 地址 |
-| bio / website / wechat / qq | string | 扩展 |
-| status | int | 1正常 0禁用（本人更新不可改） |
-| remark | string | 备注 |
-| extra_json | string | 扩展 JSON 文本 |
-| created_at / updated_at | string | 时间 |
+| 字段                                                         | 类型   | 说明                          |
+| ------------------------------------------------------------ | ------ | ----------------------------- |
+| user_id                                                      | string | 雪花 ID                       |
+| nickname                                                     | string | 昵称                          |
+| real_name                                                    | string | 真实姓名                      |
+| avatar                                                       | string | 头像 URL                      |
+| gender                                                       | int    | 0未知 1男 2女 3其他           |
+| birthday                                                     | string | `YYYY-MM-DD`，可空            |
+| email / phone / mobile                                       | string | 联系方式                      |
+| id_card                                                      | string | 身份证                        |
+| employee_no                                                  | string | 工号                          |
+| department / job_title / company                             | string | 组织                          |
+| province / city / district / address / postal_code / country | string | 地址                          |
+| bio / website / wechat / qq                                  | string | 扩展                          |
+| status                                                       | int    | 1正常 0禁用（本人更新不可改） |
+| remark                                                       | string | 备注                          |
+| extra_json                                                   | string | 扩展 JSON 文本                |
+| created_at / updated_at                                      | string | 时间                          |
 
 更新字段均为可选（只更新传入字段）。
 
@@ -363,25 +371,26 @@ Nginx 对每个反代请求写入：
 
 ### 4.1 权限码 CRUD
 
-| 方法 | 路径 | 权限 | 说明 |
-|------|------|------|------|
-| GET | `/api/permissions` | `role:read` | 列表 → `data.list` |
-| GET | `/api/permissions/{code}` | `role:read` | 详情 |
-| POST | `/api/permissions` | `role:write` | 创建 `{code,name}` |
-| PUT | `/api/permissions/{code}` | `role:write` | 改名称 `{name}` |
+| 方法   | 路径                      | 权限         | 说明                                          |
+| ------ | ------------------------- | ------------ | --------------------------------------------- |
+| GET    | `/api/permissions`        | `role:read`  | 列表 → `data.list`                            |
+| GET    | `/api/permissions/{code}` | `role:read`  | 详情                                          |
+| POST   | `/api/permissions`        | `role:write` | 创建 `{code,name}`                            |
+| PUT    | `/api/permissions/{code}` | `role:write` | 改名称 `{name}`                               |
 | DELETE | `/api/permissions/{code}` | `role:write` | 删除；**data** `{ deleted, permission_code }` |
 
 ### 4.2 角色 CRUD
 
-| 方法 | 路径 | 权限 | 说明 |
-|------|------|------|------|
-| GET | `/api/roles` | `role:read` | 列表（含 inherits、permissions） |
-| GET | `/api/roles/{code}` | `role:read` | 详情 |
-| POST | `/api/roles` | `role:write` | 创建 `{code,name,inherits?}` |
-| PUT | `/api/roles/{code}` | `role:write` | 更新；`inherits` 数组则整表替换 |
+| 方法   | 路径                | 权限         | 说明                                                   |
+| ------ | ------------------- | ------------ | ------------------------------------------------------ |
+| GET    | `/api/roles`        | `role:read`  | 列表（含 inherits、permissions）                       |
+| GET    | `/api/roles/{code}` | `role:read`  | 详情                                                   |
+| POST   | `/api/roles`        | `role:write` | 创建 `{code,name,inherits?}`                           |
+| PUT    | `/api/roles/{code}` | `role:write` | 更新；`inherits` 数组则整表替换                        |
 | DELETE | `/api/roles/{code}` | `role:write` | 删；`admin` 禁止；仍有用户绑定时拒绝 → `40904`/`40905` |
 
 **data 列表示例**
+
 ```json
 {
   "list": [
@@ -398,21 +407,22 @@ Nginx 对每个反代请求写入：
 
 ### 4.3 角色 ↔ 权限
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/api/roles/{code}/permissions` | 直接绑定（不含继承） |
-| POST | `/api/roles/{code}/permissions` | 追加 `permission_code` 或 `permission_codes` |
-| PUT | `/api/roles/{code}/permissions` | 全量替换 `permission_codes` |
-| DELETE | `/api/roles/{code}/permissions/{perm}` | 解绑单个 |
+| 方法   | 路径                                   | 说明                                         |
+| ------ | -------------------------------------- | -------------------------------------------- |
+| GET    | `/api/roles/{code}/permissions`        | 直接绑定（不含继承）                         |
+| POST   | `/api/roles/{code}/permissions`        | 追加 `permission_code` 或 `permission_codes` |
+| PUT    | `/api/roles/{code}/permissions`        | 全量替换 `permission_codes`                  |
+| DELETE | `/api/roles/{code}/permissions/{perm}` | 解绑单个                                     |
 
 ### 4.4 SSD / DSD 约束
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET/POST | `/api/roles/constraints` | 列表 / 创建 |
+| 方法       | 路径                            | 说明        |
+| ---------- | ------------------------------- | ----------- |
+| GET/POST   | `/api/roles/constraints`        | 列表 / 创建 |
 | PUT/DELETE | `/api/roles/constraints/{code}` | 更新 / 删除 |
 
 创建体：
+
 ```json
 {
   "code": "finance_ssd",
@@ -445,13 +455,13 @@ Nginx 对每个反代请求写入：
 路由：`internal/router/stats.go`  
 权限：均需 `stats:read`
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/api/stats/access` | 按 method+path 汇总 |
-| GET | `/api/stats/access/logs` | 明细分页；`user_id=anonymous` 只查匿名 |
-| GET | `/api/stats/access/daily` | 按天 |
-| GET | `/api/stats/access/users` | 按用户 |
-| GET | `/api/stats/server` | 本机/本进程指标（gopsutil） |
+| 方法 | 路径                      | 说明                                   |
+| ---- | ------------------------- | -------------------------------------- |
+| GET  | `/api/stats/access`       | 按 method+path 汇总                    |
+| GET  | `/api/stats/access/logs`  | 明细分页；`user_id=anonymous` 只查匿名 |
+| GET  | `/api/stats/access/daily` | 按天                                   |
+| GET  | `/api/stats/access/users` | 按用户                                 |
+| GET  | `/api/stats/server`       | 本机/本进程指标（gopsutil）            |
 
 日志 Query：`page` `page_size` `from` `to` `user_id` `path`。  
 明细字段：`method path url ip user_id username anonymous status created_at`。
@@ -479,31 +489,31 @@ Nginx 对每个反代请求写入：
 
 源码：`internal/pkg/response/codes.go`（可用 `Register` 扩展）。
 
-| code | HTTP | 常量 | 说明 |
-|------|------|------|------|
-| 0 | 200 | `CodeOK` | 成功 |
-| 40001 | 400 | `CodeBadRequest` | 通用参数错误 |
-| 40002 | 400 | `CodeInvalidCaptcha` | 验证码无效 |
-| 40003 | 400 | `CodeInvalidCipher` | 密码密文无效 |
-| 40004 | 400 | `CodeValidation` | 字段校验失败 |
-| 40005 | 400 | `CodeInvalidUsername` | 用户名不合法 |
-| 40006 | 400 | `CodeInvalidPassword` | 密码不合法 |
-| 40101 | 401 | `CodeUnauthorized` | 未登录 / 账密错误等 |
-| 40102 | 401 | `CodeInvalidToken` | access 无效或已吊销 |
-| 40103 | 401 | `CodeInvalidRefreshToken` | refresh 无效或已吊销 |
-| 40104 | 401 | `CodeTokenExpired` | 预留：access 过期 |
-| 40301 | 403 | `CodeForbidden` | 无权限；`data.permission` |
-| 40302 | 403 | `CodeUserDisabled` | 账号禁用 |
-| 40401 | 404 | `CodeNotFound` | 资源不存在 |
-| 40901 | 409 | `CodeConflict` | 通用冲突 |
-| 40902 | 409 | `CodeSSDViolation` | SSD |
-| 40903 | 409 | `CodeDSDViolation` | DSD |
-| 40904 | 409 | `CodeProtected` | 受保护资源 |
-| 40905 | 409 | `CodeInUse` | 仍被引用 |
-| 40906 | 409 | `CodeUsernameExists` | 用户名已存在 |
-| 42901 | 429 | `CodeTooManyRequests` | 限流；`data.retry_after`（秒）+ 头 `Retry-After` |
-| 50001 | 500 | `CodeInternal` | 内部错误 |
-| 50301 | 503 | `CodeUnavailable` | 依赖不可用 |
+| code  | HTTP | 常量                      | 说明                                             |
+| ----- | ---- | ------------------------- | ------------------------------------------------ |
+| 0     | 200  | `CodeOK`                  | 成功                                             |
+| 40001 | 400  | `CodeBadRequest`          | 通用参数错误                                     |
+| 40002 | 400  | `CodeInvalidCaptcha`      | 验证码无效                                       |
+| 40003 | 400  | `CodeInvalidCipher`       | 密码密文无效                                     |
+| 40004 | 400  | `CodeValidation`          | 字段校验失败                                     |
+| 40005 | 400  | `CodeInvalidUsername`     | 用户名不合法                                     |
+| 40006 | 400  | `CodeInvalidPassword`     | 密码不合法                                       |
+| 40101 | 401  | `CodeUnauthorized`        | 未登录 / 账密错误等                              |
+| 40102 | 401  | `CodeInvalidToken`        | access 无效或已吊销                              |
+| 40103 | 401  | `CodeInvalidRefreshToken` | refresh 无效或已吊销                             |
+| 40104 | 401  | `CodeTokenExpired`        | 预留：access 过期                                |
+| 40301 | 403  | `CodeForbidden`           | 无权限；`data.permission`                        |
+| 40302 | 403  | `CodeUserDisabled`        | 账号禁用                                         |
+| 40401 | 404  | `CodeNotFound`            | 资源不存在                                       |
+| 40901 | 409  | `CodeConflict`            | 通用冲突                                         |
+| 40902 | 409  | `CodeSSDViolation`        | SSD                                              |
+| 40903 | 409  | `CodeDSDViolation`        | DSD                                              |
+| 40904 | 409  | `CodeProtected`           | 受保护资源                                       |
+| 40905 | 409  | `CodeInUse`               | 仍被引用                                         |
+| 40906 | 409  | `CodeUsernameExists`      | 用户名已存在                                     |
+| 42901 | 429  | `CodeTooManyRequests`     | 限流；`data.retry_after`（秒）+ 头 `Retry-After` |
+| 50001 | 500  | `CodeInternal`            | 内部错误                                         |
+| 50301 | 503  | `CodeUnavailable`         | 依赖不可用                                       |
 
 ### 扩展错误码
 

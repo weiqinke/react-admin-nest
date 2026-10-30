@@ -6,7 +6,6 @@ import { findUsers, updateUser } from "@/api/microservice/user";
 import PageIntroduction from "@/components/PageIntroduction";
 import UserTable from "./components/Table";
 
-
 const infos = [
   {
     title: "系统设置"

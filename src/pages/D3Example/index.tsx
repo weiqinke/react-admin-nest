@@ -24,7 +24,6 @@ const D3Example = () => {
   );
 };
 
- 
 export default withErrorBoundary(D3Example, {
   FallbackComponent: FailContainer
 });

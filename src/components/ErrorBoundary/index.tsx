@@ -18,10 +18,7 @@ interface ErrorBoundaryProps {
   onError?: (error: Error, info: React.ErrorInfo) => void;
   onReset?: () => void;
   resetKeys?: Array<unknown>;
-  onResetKeysChange?: (
-    prevResetKeys: Array<unknown> | undefined,
-    resetKeys: Array<unknown> | undefined
-  ) => void;
+  onResetKeysChange?: (prevResetKeys: Array<unknown> | undefined, resetKeys: Array<unknown> | undefined) => void;
 }
 
 interface ErrorBoundaryState {
@@ -48,9 +45,7 @@ const DefaultFallback = ({ error, resetErrorBoundary }: FallbackProps) => (
       </Button>
     }>
     {import.meta.env.DEV && error.stack ? (
-      <Typography.Paragraph
-        type="secondary"
-        style={{ textAlign: "left", maxHeight: 160, overflow: "auto", fontSize: 12 }}>
+      <Typography.Paragraph type="secondary" style={{ textAlign: "left", maxHeight: 160, overflow: "auto", fontSize: 12 }}>
         <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>{error.stack}</pre>
       </Typography.Paragraph>
     ) : null}
@@ -125,10 +120,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   }
 }
 
-function withErrorBoundary<P extends object>(
-  Component: React.ComponentType<P>,
-  errorBoundaryProps: ErrorBoundaryProps = {}
-): React.ComponentType<P> {
+function withErrorBoundary<P extends object>(Component: React.ComponentType<P>, errorBoundaryProps: ErrorBoundaryProps = {}): React.ComponentType<P> {
   const Wrapped = (props: P) => (
     <ErrorBoundary {...errorBoundaryProps}>
       <Component {...props} />

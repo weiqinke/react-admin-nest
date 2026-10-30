@@ -43,9 +43,7 @@ export const removeRole = (payload: any = {}) => goDeleteRole(roleCodeOf(payload
 export async function findRoleUsers(payload: any = {}) {
   const code = String(roleCodeOf(payload) || "");
   const res = await getUsers();
-  const list = (res.data?.data?.list || [])
-    .filter(user => (user.roles || []).map(String).includes(code))
-    .map(user => String(user.id));
+  const list = (res.data?.data?.list || []).filter(user => (user.roles || []).map(String).includes(code)).map(user => String(user.id));
   return { ...res, data: { ...res.data, data: list } };
 }
 

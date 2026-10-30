@@ -54,10 +54,7 @@ const MenuFormDrawer: FC<Props> = ({ open, mode, parentId, node, onClose, onSucc
         has_update: values.has_update ? 1 : 0,
         visible_in_menu: values.visible_in_menu ? 1 : 0
       };
-      const result =
-        isEdit && node?.id
-          ? await updateMenuItem(node.id, shared)
-          : await createMenuItem({ ...shared, segment: values.segment, parent_id: parentId });
+      const result = isEdit && node?.id ? await updateMenuItem(node.id, shared) : await createMenuItem({ ...shared, segment: values.segment, parent_id: parentId });
       if (result.data?.code !== 0) {
         message.error(result.data?.message || "操作失败");
         return;
@@ -121,9 +118,7 @@ const MenuFormDrawer: FC<Props> = ({ open, mode, parentId, node, onClose, onSucc
             }
           ]}
           extra={
-            parentId
-              ? "只填本级段名（如 permissionadmin）。完整路径由父级自动拼接为 /management/permissionadmin。"
-              : "根菜单只填首段（如 workplace），不要带前导 /。"
+            parentId ? "只填本级段名（如 permissionadmin）。完整路径由父级自动拼接为 /management/permissionadmin。" : "根菜单只填首段（如 workplace），不要带前导 /。"
           }>
           <Input placeholder="例如 permissionadmin" disabled={isEdit} />
         </Form.Item>

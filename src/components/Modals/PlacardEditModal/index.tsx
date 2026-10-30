@@ -78,7 +78,14 @@ const PlacardEditModal: FC<any> = ({ placard, onOk, onCancel }: any) => {
   }, [placard, form]);
 
   return (
-    <Modal open forceRender title={`${placard?.id ? (locked ? "生效时间" : "编辑") : "新增"}公告`} onOk={() => form.submit()} onCancel={onCancel} width={800} getContainer={false}>
+    <Modal
+      open
+      forceRender
+      title={`${placard?.id ? (locked ? "生效时间" : "编辑") : "新增"}公告`}
+      onOk={() => form.submit()}
+      onCancel={onCancel}
+      width={800}
+      getContainer={false}>
       <Form form={form} onFinish={onFinish} initialValues={{ type: "system", level: "normal" }} {...layout} autoComplete="off">
         <Row>
           <Col span={20}>
@@ -116,8 +123,7 @@ const PlacardEditModal: FC<any> = ({ placard, onOk, onCancel }: any) => {
                   required: getFieldValue("level") === "required",
                   message: "必须确认的公告需要填写正文"
                 })
-              ]}
-            >
+              ]}>
               <Input.TextArea rows={4} disabled={locked} maxLength={2000} />
             </Form.Item>
           </Col>

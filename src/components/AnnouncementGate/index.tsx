@@ -83,8 +83,7 @@ const AnnouncementGate: FC = () => {
         okButtonProps={{ disabled: !agreed }}
         onOk={confirmRequired}
         onCancel={leave}
-        width={640}
-      >
+        width={640}>
         <div className="max-h-[360px] overflow-auto whitespace-pre-wrap">{current?.content}</div>
         <Checkbox className="mt-4" checked={agreed} onChange={event => setAgreed(event.target.checked)}>
           我已阅读上述内容
@@ -99,8 +98,7 @@ const AnnouncementGate: FC = () => {
         okText="确认收到"
         cancelButtonProps={{ style: { display: "none" } }}
         onOk={confirmNormal}
-        width={600}
-      >
+        width={600}>
         <div className="max-h-[360px] overflow-auto whitespace-pre-wrap">{normal?.content}</div>
       </Modal>
     </>

@@ -1,0 +1,6 @@
+node_modules
+dist
+dist-ssr
+pnpm-lock.yaml
+package-lock.json
+analysis-chart.html

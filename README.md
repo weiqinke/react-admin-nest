@@ -9,16 +9,16 @@ React 管理端，对接后端 [go_ai / goadmin](https://github.com/weiqinke/go_
 
 ## Features
 
-| Area | Notes |
-|------|--------|
-| Auth | Captcha + RSA password, JWT access/refresh, logout |
-| RBAC UI | Users, roles, permissions, menus |
-| Announcements | Admin + required gate + bell “通知” + message center |
-| Labels / Dicts | Global labels; dict types/items for shared dropdowns |
-| Inbox / Todos | Bell tabs + message center; NoticeAdmin to send |
-| Audit | Operation log list / filters / CSV |
-| WebSocket | Online users, force offline, screenshot, presence subscribe |
-| Workbench / charts | Workplace demos (charts, map, etc.) |
+| Area               | Notes                                                       |
+| ------------------ | ----------------------------------------------------------- |
+| Auth               | Captcha + RSA password, JWT access/refresh, logout          |
+| RBAC UI            | Users, roles, permissions, menus                            |
+| Announcements      | Admin + required gate + bell “通知” + message center        |
+| Labels / Dicts     | Global labels; dict types/items for shared dropdowns        |
+| Inbox / Todos      | Bell tabs + message center; NoticeAdmin to send             |
+| Audit              | Operation log list / filters / CSV                          |
+| WebSocket          | Online users, force offline, screenshot, presence subscribe |
+| Workbench / charts | Workplace demos (charts, map, etc.)                         |
 
 ## Stack
 
@@ -44,19 +44,19 @@ npm run lint
 
 ## Demo accounts (backend seeds)
 
-| User | Password | Notes |
-|------|----------|--------|
-| `admin` | `admin123` | Full admin |
-| `user` | `user123` | Regular user |
+| User    | Password   | Notes        |
+| ------- | ---------- | ------------ |
+| `admin` | `admin123` | Full admin   |
+| `user`  | `user123`  | Regular user |
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Dev server |
-| `npm run build` | Production build |
-| `npm run preview` | Preview build |
-| `npm run lint` | ESLint |
+| Command           | Description      |
+| ----------------- | ---------------- |
+| `npm run dev`     | Dev server       |
+| `npm run build`   | Production build |
+| `npm run preview` | Preview build    |
+| `npm run lint`    | ESLint           |
 
 ## License
 

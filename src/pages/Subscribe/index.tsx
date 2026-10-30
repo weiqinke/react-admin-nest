@@ -133,11 +133,7 @@ const Subscribe = () => {
         <Form form={form} layout="vertical">
           {editing ? null : (
             <Form.Item name="target_user_id" label="用户" rules={[{ required: true, message: "请选择用户" }]}>
-              <Select
-                showSearch
-                optionFilterProp="label"
-                options={users.map(user => ({ value: String(user.id), label: user.username }))}
-              />
+              <Select showSearch optionFilterProp="label" options={users.map(user => ({ value: String(user.id), label: user.username }))} />
             </Form.Item>
           )}
           <Form.Item name="note" label="备注">

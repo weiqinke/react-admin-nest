@@ -57,8 +57,7 @@ export const deleteMenu = (id: string) => request(`/api/menus/${enc(id)}`, "DELE
 /** 菜单直接绑定的权限码。data 为 { permission_codes: string[] }。 */
 export const getMenuPermissions = (id: string) => request(`/api/menus/${enc(id)}/permissions`, "GET");
 
-export const setMenuPermissions = (id: string, permission_codes: string[]) =>
-  request(`/api/menus/${enc(id)}/permissions`, "PUT", { permission_codes });
+export const setMenuPermissions = (id: string, permission_codes: string[]) => request(`/api/menus/${enc(id)}/permissions`, "PUT", { permission_codes });
 
 export const getMyProfile = () => request("/api/me/profile", "GET");
 
@@ -98,8 +97,7 @@ export const getRolePermissions = (code: string) => request(`/api/roles/${enc(co
 
 export const grantRolePermissions = (code: string, payload) => request(`/api/roles/${enc(code)}/permissions`, "POST", payload);
 
-export const setRolePermissions = (code: string, permission_codes: string[]) =>
-  request(`/api/roles/${enc(code)}/permissions`, "PUT", { permission_codes });
+export const setRolePermissions = (code: string, permission_codes: string[]) => request(`/api/roles/${enc(code)}/permissions`, "PUT", { permission_codes });
 
 export const revokeRolePermission = (code: string, perm: string) => request(`/api/roles/${enc(code)}/permissions/${enc(perm)}`, "DELETE");
 
@@ -111,11 +109,9 @@ export const updateConstraint = (code: string, payload) => request(`/api/roles/c
 
 export const deleteConstraint = (code: string) => request(`/api/roles/constraints/${enc(code)}`, "DELETE");
 
-export const assignRole = (payload: { user_id: string; role_code: string }, options?: any) =>
-  request("/api/rbac/assign", "POST", payload, options);
+export const assignRole = (payload: { user_id: string; role_code: string }, options?: any) => request("/api/rbac/assign", "POST", payload, options);
 
-export const revokeRole = (payload: { user_id: string; role_code: string }, options?: any) =>
-  request("/api/rbac/revoke", "POST", payload, options);
+export const revokeRole = (payload: { user_id: string; role_code: string }, options?: any) => request("/api/rbac/revoke", "POST", payload, options);
 
 export const getAccessStats = (query: any = {}) => request("/api/stats/access", "GET", compact(query));
 

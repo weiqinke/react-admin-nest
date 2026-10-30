@@ -1,14 +1,4 @@
-import {
-  createMenu,
-  deleteMenu,
-  getMenuPermissions,
-  getMenus,
-  getMyMenus,
-  getPermissions,
-  setMenuPermissions,
-  updateMenu,
-  updateMenuStatus
-} from "@/api/goadmin";
+import { createMenu, deleteMenu, getMenuPermissions, getMenus, getMyMenus, getPermissions, setMenuPermissions, updateMenu, updateMenuStatus } from "@/api/goadmin";
 
 /** 角色授权页仍用权限码扁平列表（非菜单树）。 */
 export async function menuFind() {
@@ -85,4 +75,7 @@ export async function findMenuPermissions(id: string) {
 }
 
 export const saveMenuPermissions = (id: string, permission_codes: string[] = []) =>
-  setMenuPermissions(String(id), permission_codes.map(code => String(code)));
+  setMenuPermissions(
+    String(id),
+    permission_codes.map(code => String(code))
+  );

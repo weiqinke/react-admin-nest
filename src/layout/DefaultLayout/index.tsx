@@ -64,9 +64,7 @@ const DefaultLayout = () => {
                   {refreshing ? (
                     <SuspendFallback />
                   ) : (
-                    <div
-                      key={`${pathname}-${refreshKey}`}
-                      className={enterMotion ? styles.pageEnter : undefined}>
+                    <div key={`${pathname}-${refreshKey}`} className={enterMotion ? styles.pageEnter : undefined}>
                       <Outlet />
                     </div>
                   )}

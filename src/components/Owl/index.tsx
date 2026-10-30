@@ -42,9 +42,7 @@ const Owl = ({ closeEyes }: { closeEyes: boolean }) => {
             style={bg(handUpRight)}
           />
           <div
-            className={`z-[1] h-full w-full transition-opacity delay-100 duration-100 ease-linear ${
-              closeEyes ? "opacity-100" : "opacity-0"
-            }`}
+            className={`z-[1] h-full w-full transition-opacity delay-100 duration-100 ease-linear ${closeEyes ? "opacity-100" : "opacity-0"}`}
             style={bg(closeEyesImg)}
           />
         </div>

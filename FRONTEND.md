@@ -30,12 +30,12 @@ go run .
 
 ## 2. 给前端 AI 的最小交接包
 
-| 文件 | 用途 |
-|------|------|
+| 文件                    | 用途                                                                   |
+| ----------------------- | ---------------------------------------------------------------------- |
 | **`docs/openapi.yaml`** | OpenAPI 3.0：path/schema/Bearer；**200 schema = data**；错误为完整信封 |
-| **`docs/API.md`** | 人读：业务规则、RBAC/DSD、**§7 业务错误码表** |
-| **`docs/FRONTEND.md`** | 本文：登录流程、Base URL、演示账号 |
-| （可选）`docs/TEST.md` | 后端自测清单 |
+| **`docs/API.md`**       | 人读：业务规则、RBAC/DSD、**§7 业务错误码表**                          |
+| **`docs/FRONTEND.md`**  | 本文：登录流程、Base URL、演示账号                                     |
+| （可选）`docs/TEST.md`  | 后端自测清单                                                           |
 
 **不要**把 `manifest/config/config.yaml`（含数据库口令）发给前端。
 
@@ -113,13 +113,13 @@ async function api<T>(path: string, init?: RequestInit): Promise<T> {
 
 ## 4. 演示账号
 
-| 用户名 | 密码 | 说明 |
-|--------|------|------|
-| `admin` | `admin123` | 管理端联调首选 |
-| `user` | `user123` | 普通用户 |
-| `cashier1` | `cashier123` | 出纳 |
-| `accountant1` | `account123` | 会计（与出纳 SSD 互斥） |
-| `dual1` | `dual123` | 登录须显式传 `active_roles`（DSD） |
+| 用户名        | 密码         | 说明                               |
+| ------------- | ------------ | ---------------------------------- |
+| `admin`       | `admin123`   | 管理端联调首选                     |
+| `user`        | `user123`    | 普通用户                           |
+| `cashier1`    | `cashier123` | 出纳                               |
+| `accountant1` | `account123` | 会计（与出纳 SSD 互斥）            |
+| `dual1`       | `dual123`    | 登录须显式传 `active_roles`（DSD） |
 
 账号 `profile.status = 0` 时登录：HTTP 403 / `code=40302`（`user is disabled`）。
 
@@ -127,29 +127,29 @@ async function api<T>(path: string, init?: RequestInit): Promise<T> {
 
 ## 5. 前端如何「知道每个接口」
 
-1. **人工 / AI 阅读**：`docs/API.md`（认证、用户、RBAC、统计、WS、§7 错误码）。  
-2. **按权限码拆页面**：接口标了权限（如 `user:read`）；用登录返回的 `permissions` 控制菜单与按钮。  
-3. **联调顺序**：health → captcha → public-key → login → `/api/me` → 业务列表 → logout。  
+1. **人工 / AI 阅读**：`docs/API.md`（认证、用户、RBAC、统计、WS、§7 错误码）。
+2. **按权限码拆页面**：接口标了权限（如 `user:read`）；用登录返回的 `permissions` 控制菜单与按钮。
+3. **联调顺序**：health → captcha → public-key → login → `/api/me` → 业务列表 → logout。
 4. **机器可读**：`docs/openapi.yaml` 导入 Swagger / Apifox / Postman，或生成 TypeScript client（注意 200 schema = `data`）。
 
 ---
 
 ## 6. 常见业务错误码（速查）
 
-| code | HTTP | 前端建议 |
-|------|------|----------|
-| 0 | 200 | 使用 `data` |
-| 40002 | 400 | 验证码错：重新拉 captcha |
-| 40003 | 400 | 密文无效：重拉公钥再加密 |
-| 40101 | 401 | 账密错或未登录 |
-| 40102 | 401 | access 无效：尝试 refresh 或重新登录 |
-| 40103 | 401 | refresh 无效：清 token，回登录页 |
-| 40301 | 403 | 无权限：看 `data.permission` |
-| 40302 | 403 | 账号禁用 |
-| 40902/40903 | 409 | SSD/DSD：调整角色选择 |
-| 40906 | 409 | 用户名已存在 |
-| 42901 | 429 | 限流：读 `data.retry_after` / `Retry-After` 再重试 |
-| 50301 | 503 | 依赖不可用（如 DB） |
+| code        | HTTP | 前端建议                                           |
+| ----------- | ---- | -------------------------------------------------- |
+| 0           | 200  | 使用 `data`                                        |
+| 40002       | 400  | 验证码错：重新拉 captcha                           |
+| 40003       | 400  | 密文无效：重拉公钥再加密                           |
+| 40101       | 401  | 账密错或未登录                                     |
+| 40102       | 401  | access 无效：尝试 refresh 或重新登录               |
+| 40103       | 401  | refresh 无效：清 token，回登录页                   |
+| 40301       | 403  | 无权限：看 `data.permission`                       |
+| 40302       | 403  | 账号禁用                                           |
+| 40902/40903 | 409  | SSD/DSD：调整角色选择                              |
+| 40906       | 409  | 用户名已存在                                       |
+| 42901       | 429  | 限流：读 `data.retry_after` / `Retry-After` 再重试 |
+| 50301       | 503  | 依赖不可用（如 DB）                                |
 
 完整表与扩展方式见 `docs/API.md` §7。
 
@@ -157,14 +157,14 @@ async function api<T>(path: string, init?: RequestInit): Promise<T> {
 
 ## 7. 常见坑
 
-| 现象 | 原因 |
-|------|------|
-| 登录 400 / 40002 | 验证码一次性；失败后必须重新拉 captcha |
-| 登录 400 / 40003 | 没用 OAEP-SHA256，或公钥过期（**服务重启后公钥会变**） |
-| 401 / 40102 | access 缺失、过期或已 logout |
-| 401 / 40103 | refresh 无效、过期或已旋转作废 |
-| 403 / 40301 + permission | 当前 `active_roles` 无该权限 |
-| 403 / 40302 | 账号禁用 |
-| 429 / 42901 | captcha 30/分、login 10/分、register 5/分、refresh 30/分 |
-| 雪花 ID 精度丢失 | JSON 里当 number 解析了，应始终当 string |
-| 用 HTTP 状态当业务码 | 业务码在 `code`（五位数），HTTP 只是映射 |
+| 现象                     | 原因                                                     |
+| ------------------------ | -------------------------------------------------------- |
+| 登录 400 / 40002         | 验证码一次性；失败后必须重新拉 captcha                   |
+| 登录 400 / 40003         | 没用 OAEP-SHA256，或公钥过期（**服务重启后公钥会变**）   |
+| 401 / 40102              | access 缺失、过期或已 logout                             |
+| 401 / 40103              | refresh 无效、过期或已旋转作废                           |
+| 403 / 40301 + permission | 当前 `active_roles` 无该权限                             |
+| 403 / 40302              | 账号禁用                                                 |
+| 429 / 42901              | captcha 30/分、login 10/分、register 5/分、refresh 30/分 |
+| 雪花 ID 精度丢失         | JSON 里当 number 解析了，应始终当 string                 |
+| 用 HTTP 状态当业务码     | 业务码在 `code`（五位数），HTTP 只是映射                 |

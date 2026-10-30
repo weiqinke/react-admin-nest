@@ -43,15 +43,7 @@ const OperationDictItemModal: FC<any> = ({ typeId, item, onCancel, onOk }) => {
   }, [form, item]);
 
   return (
-    <Modal
-      open
-      forceRender
-      title={`${editing ? "编辑" : "添加"}字典项`}
-      onOk={() => form.submit()}
-      onCancel={onCancel}
-      width={720}
-      getContainer={false}
-    >
+    <Modal open forceRender title={`${editing ? "编辑" : "添加"}字典项`} onOk={() => form.submit()} onCancel={onCancel} width={720} getContainer={false}>
       <Form form={form} onFinish={onFinish} {...layout} autoComplete="off">
         <Row>
           {editing && (
@@ -80,8 +72,7 @@ const OperationDictItemModal: FC<any> = ({ typeId, item, onCancel, onOk }) => {
                   pattern: /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/,
                   message: "请输入 #RGB 或 #RRGGBB"
                 }
-              ]}
-            >
+              ]}>
               <Input placeholder="#1677ff" maxLength={7} />
             </Form.Item>
           </Col>

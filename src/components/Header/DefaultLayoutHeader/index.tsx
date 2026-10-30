@@ -29,10 +29,14 @@ function toJpeg(source: HTMLCanvasElement) {
   canvas.height = Math.max(1, Math.round(source.height * scale));
   canvas.getContext("2d")?.drawImage(source, 0, 0, canvas.width, canvas.height);
   return new Promise<{ blob: Blob; width: number; height: number }>((resolve, reject) => {
-    canvas.toBlob(blob => {
-      if (!blob) reject(new Error("截屏失败"));
-      else resolve({ blob, width: canvas.width, height: canvas.height });
-    }, "image/jpeg", 0.7);
+    canvas.toBlob(
+      blob => {
+        if (!blob) reject(new Error("截屏失败"));
+        else resolve({ blob, width: canvas.width, height: canvas.height });
+      },
+      "image/jpeg",
+      0.7
+    );
   });
 }
 
@@ -173,9 +177,7 @@ const DefaultLayoutHeader = () => {
               content: (
                 <div>
                   {(webSocketManager.catchUpItems || items).map((item: any) => (
-                    <div key={`${item.user_id}-${item.at}`}>
-                      {(item.note || item.username) + (item.event_type === "offline" ? " 下线" : " 上线")}
-                    </div>
+                    <div key={`${item.user_id}-${item.at}`}>{(item.note || item.username) + (item.event_type === "offline" ? " 下线" : " 上线")}</div>
                   ))}
                 </div>
               )

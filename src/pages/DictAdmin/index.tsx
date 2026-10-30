@@ -1,11 +1,4 @@
-import {
-  deleteDictItem,
-  deleteDictType,
-  listDictItems,
-  listDictTypes,
-  setDictItemStatus,
-  setDictTypeStatus
-} from "@/api/dict";
+import { deleteDictItem, deleteDictType, listDictItems, listDictTypes, setDictItemStatus, setDictTypeStatus } from "@/api/dict";
 import { OperationDictItemModal, OperationDictTypeModal } from "@/components/Modals";
 import PageIntroduction from "@/components/PageIntroduction";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
@@ -102,8 +95,7 @@ const DictAdmin: FC = () => {
       title: "状态",
       dataIndex: "status",
       width: 90,
-      render: (value: string) =>
-        value === "disabled" ? <Tag color="#f50">停用</Tag> : <Tag color="#2db7f5">启用</Tag>
+      render: (value: string) => (value === "disabled" ? <Tag color="#f50">停用</Tag> : <Tag color="#2db7f5">启用</Tag>)
     },
     {
       title: "操作",
@@ -119,17 +111,10 @@ const DictAdmin: FC = () => {
               confirmAction(item.status === "enabled" ? "确认停用该类型？" : "确认启用该类型？", () =>
                 setDictTypeStatus(item.id, item.status === "enabled" ? "disabled" : "enabled")
               )
-            }
-          >
+            }>
             {item.status === "enabled" ? "停用" : "启用"}
           </Button>
-          <Button
-            size="small"
-            danger
-            onClick={() =>
-              confirmAction("确认删除该字典类型？其下条目将一并软删。", () => deleteDictType(item.id))
-            }
-          >
+          <Button size="small" danger onClick={() => confirmAction("确认删除该字典类型？其下条目将一并软删。", () => deleteDictType(item.id))}>
             删除
           </Button>
         </Space>
@@ -169,8 +154,7 @@ const DictAdmin: FC = () => {
       title: "状态",
       dataIndex: "status",
       width: 90,
-      render: (value: string) =>
-        value === "disabled" ? <Tag color="#f50">停用</Tag> : <Tag color="#2db7f5">启用</Tag>
+      render: (value: string) => (value === "disabled" ? <Tag color="#f50">停用</Tag> : <Tag color="#2db7f5">启用</Tag>)
     },
     {
       title: "操作",
@@ -188,17 +172,19 @@ const DictAdmin: FC = () => {
                 () => setDictItemStatus(item.id, item.status === "enabled" ? "disabled" : "enabled"),
                 () => findItems(selected.id)
               )
-            }
-          >
+            }>
             {item.status === "enabled" ? "停用" : "启用"}
           </Button>
           <Button
             size="small"
             danger
             onClick={() =>
-              confirmAction("确认删除该字典项？", () => deleteDictItem(item.id), () => findItems(selected.id))
-            }
-          >
+              confirmAction(
+                "确认删除该字典项？",
+                () => deleteDictItem(item.id),
+                () => findItems(selected.id)
+              )
+            }>
             删除
           </Button>
         </Space>
@@ -213,20 +199,8 @@ const DictAdmin: FC = () => {
         <Button type="primary" onClick={() => setDictType({})}>
           添加类型
         </Button>
-        <Input
-          allowClear
-          placeholder="按编码搜索"
-          value={code}
-          onChange={e => setCode(e.target.value)}
-          style={{ width: 160 }}
-        />
-        <Input
-          allowClear
-          placeholder="按名称搜索"
-          value={name}
-          onChange={e => setName(e.target.value)}
-          style={{ width: 160 }}
-        />
+        <Input allowClear placeholder="按编码搜索" value={code} onChange={e => setCode(e.target.value)} style={{ width: 160 }} />
+        <Input allowClear placeholder="按名称搜索" value={name} onChange={e => setName(e.target.value)} style={{ width: 160 }} />
         <Select
           allowClear
           placeholder="状态"
@@ -270,13 +244,7 @@ const DictAdmin: FC = () => {
             <Button type="primary" onClick={() => setDictItem({})}>
               添加条目
             </Button>
-            <Input
-              allowClear
-              placeholder="搜索 value / label"
-              value={keyword}
-              onChange={e => setKeyword(e.target.value)}
-              style={{ width: 180 }}
-            />
+            <Input allowClear placeholder="搜索 value / label" value={keyword} onChange={e => setKeyword(e.target.value)} style={{ width: 180 }} />
             <Select
               allowClear
               placeholder="状态"

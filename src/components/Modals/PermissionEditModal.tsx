@@ -48,22 +48,11 @@ const PermissionEditModal: FC<Props> = ({ permission, onOk, onCancel }) => {
   };
 
   return (
-    <Modal
-      open
-      title={`${isEdit ? "编辑" : "新增"}权限`}
-      onOk={() => form.submit()}
-      onCancel={onCancel}
-      confirmLoading={saving}
-      width={640}
-      destroyOnHidden>
+    <Modal open title={`${isEdit ? "编辑" : "新增"}权限`} onOk={() => form.submit()} onCancel={onCancel} confirmLoading={saving} width={640} destroyOnHidden>
       <Form form={form} onFinish={onFinish} {...layout} autoComplete="off">
         <Row>
           <Col span={24}>
-            <Form.Item
-              name="code"
-              label="权限码"
-              rules={[{ required: true, message: "请输入权限码" }]}
-              extra="例如 menu:read、user:write；创建后不可修改。">
+            <Form.Item name="code" label="权限码" rules={[{ required: true, message: "请输入权限码" }]} extra="例如 menu:read、user:write；创建后不可修改。">
               <Input placeholder="resource:action" disabled={isEdit} autoComplete="off" />
             </Form.Item>
           </Col>

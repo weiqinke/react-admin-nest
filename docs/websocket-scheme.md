@@ -9,9 +9,9 @@
 
 ## 分工
 
-| 侧 | 做这些 | 不要做 |
-|----|--------|--------|
-| Go | Hub、信封、房间、订阅表、离线补推、截屏状态机、签名 URL、强制下线吊销会话、审计、更新 API 文档 | 不改前端页面 |
+| 侧   | 做这些                                                                                                      | 不要做       |
+| ---- | ----------------------------------------------------------------------------------------------------------- | ------------ |
+| Go   | Hub、信封、房间、订阅表、离线补推、截屏状态机、签名 URL、强制下线吊销会话、审计、更新 API 文档              | 不改前端页面 |
 | 前端 | 重写 `src/utils/ws.ts`、连接态、refresh 重连、Header 截屏确认、WebsocketAdmin、通知、订阅页、去掉 socket.io | 不改 Go 路由 |
 
 建议顺序：Go 先打通 `welcome` / `ping` / `presence`，前端即可联调；截屏和订阅可并行。
@@ -60,12 +60,12 @@ sequenceDiagram
 
 ## 1. 连接与身份
 
-| 项 | 约定 |
-|----|------|
-| URL | `ws://{host}/gows?token={access_jwt}`。浏览器只能放 query；升级前 Bearer 仅给非浏览器客户端 |
-| 权限 | `ws:connect` 连接和订阅；`ws:admin` 监控、截屏、强制下线；`ws:notify` 发全站通知 |
-| 身份 | JWT 的 `user_id` 为雪花字符串。每条连接一个 `conn_id`（UUID） |
-| 多标签 | 截屏按 `conn_id`。上线/下线按 user：连接数 0 到 1、以及回到 0，各只推一次 |
+| 项     | 约定                                                                                        |
+| ------ | ------------------------------------------------------------------------------------------- |
+| URL    | `ws://{host}/gows?token={access_jwt}`。浏览器只能放 query；升级前 Bearer 仅给非浏览器客户端 |
+| 权限   | `ws:connect` 连接和订阅；`ws:admin` 监控、截屏、强制下线；`ws:notify` 发全站通知            |
+| 身份   | JWT 的 `user_id` 为雪花字符串。每条连接一个 `conn_id`（UUID）                               |
+| 多标签 | 截屏按 `conn_id`。上线/下线按 user：连接数 0 到 1、以及回到 0，各只推一次                   |
 
 连接成功后服务端立刻发送：
 
@@ -133,11 +133,11 @@ Header 只做轻提示，重连时不挡住业务页。
 - `room -> conn_id 集合`
 - `target_user_id -> subscriber_user_id 集合`（与订阅表同步）
 
-| room | 加入 | 用途 |
-|------|------|------|
-| `online` | 连接成功自动加入 | 在线索引 |
+| room          | 加入                                 | 用途     |
+| ------------- | ------------------------------------ | -------- |
+| `online`      | 连接成功自动加入                     | 在线索引 |
 | `admin-watch` | 持有 `ws:admin` 后客户端 `room.join` | 在线列表 |
-| `notify` | 自动加入 | 运营通知 |
+| `notify`      | 自动加入                             | 运营通知 |
 
 客户端发送 `room.join` / `room.leave`，`payload.room`。服务端校验权限后再加入。订阅不是房间。
 
@@ -222,26 +222,26 @@ Header 只做轻提示，重连时不挡住业务页。
 
 表 `ws_user_subscription`：
 
-| 列 | 说明 |
-|----|------|
-| subscriber_user_id | 谁关心 |
-| target_user_id | 关心谁 |
-| note | 备注，最长 64，可空 |
-| notify_level | `all`、`online_only`、`mute`，默认 `all` |
-| created_at / updated_at | 时间 |
-| UNIQUE | (subscriber_user_id, target_user_id) |
+| 列                      | 说明                                     |
+| ----------------------- | ---------------------------------------- |
+| subscriber_user_id      | 谁关心                                   |
+| target_user_id          | 关心谁                                   |
+| note                    | 备注，最长 64，可空                      |
+| notify_level            | `all`、`online_only`、`mute`，默认 `all` |
+| created_at / updated_at | 时间                                     |
+| UNIQUE                  | (subscriber_user_id, target_user_id)     |
 
 表 `ws_presence_offline_event`：
 
-| 列 | 说明 |
-|----|------|
-| id | 主键 |
-| subscriber_user_id | 应收的人 |
-| target_user_id | 事件主体 |
-| event_type | `online` 或 `offline` |
-| payload_json | username、reason、ts、note |
-| created_at | 事件时间 |
-| delivered_at | 空表示未投递 |
+| 列                 | 说明                       |
+| ------------------ | -------------------------- |
+| id                 | 主键                       |
+| subscriber_user_id | 应收的人                   |
+| target_user_id     | 事件主体                   |
+| event_type         | `online` 或 `offline`      |
+| payload_json       | username、reason、ts、note |
+| created_at         | 事件时间                   |
+| delivered_at       | 空表示未投递               |
 
 规则：
 
@@ -252,11 +252,11 @@ Header 只做轻提示，重连时不挡住业务页。
 - 备注只由订阅者填写。粉丝列表能看到对方写的备注，看不到对方的 `notify_level`。`subscribe.fans` 只能查自己的粉丝。
 - 订阅写操作每用户每分钟最多 60 次。
 
-| notify_level | 实时上线 | 实时下线 | 离线补推 |
-|--------------|----------|----------|----------|
-| all | 是 | 是 | 上线和下线都记 |
-| online_only | 是 | 否 | 只记上线 |
-| mute | 否 | 否 | 否 |
+| notify_level | 实时上线 | 实时下线 | 离线补推       |
+| ------------ | -------- | -------- | -------------- |
+| all          | 是       | 是       | 上线和下线都记 |
+| online_only  | 是       | 否       | 只记上线       |
+| mute         | 否       | 否       | 否             |
 
 上行：
 
@@ -333,17 +333,17 @@ Header 只做轻提示，重连时不挡住业务页。
 
 ## 5. Go 文件
 
-| 路径 | 职责 |
-|------|------|
-| `internal/pkg/ws/hub.go` | 连接、房间、在线、倒排、写泵 |
-| `internal/pkg/ws/protocol.go` | 事件名和结构体 |
-| `internal/pkg/ws/subscribe_store.go` | 订阅、免打扰、离线事件 |
-| `internal/pkg/ws/screenshot_sign.go` | URL 签名和校验 |
-| `internal/pkg/ws/audit.go` | 管理操作审计 |
-| `internal/controller/ws.go` | 升级和分发 |
-| `internal/controller/ws_screenshot.go` | 上传、签名下载、过期清理 |
-| 迁移 | `ws_user_subscription`、`ws_presence_offline_event`、`ws_admin_audit` |
-| `docs/API.md` 与 openapi | 与本文同步 |
+| 路径                                   | 职责                                                                  |
+| -------------------------------------- | --------------------------------------------------------------------- |
+| `internal/pkg/ws/hub.go`               | 连接、房间、在线、倒排、写泵                                          |
+| `internal/pkg/ws/protocol.go`          | 事件名和结构体                                                        |
+| `internal/pkg/ws/subscribe_store.go`   | 订阅、免打扰、离线事件                                                |
+| `internal/pkg/ws/screenshot_sign.go`   | URL 签名和校验                                                        |
+| `internal/pkg/ws/audit.go`             | 管理操作审计                                                          |
+| `internal/controller/ws.go`            | 升级和分发                                                            |
+| `internal/controller/ws_screenshot.go` | 上传、签名下载、过期清理                                              |
+| 迁移                                   | `ws_user_subscription`、`ws_presence_offline_event`、`ws_admin_audit` |
+| `docs/API.md` 与 openapi               | 与本文同步                                                            |
 
 `ws_admin_audit` 字段：`action`、`actor_user_id`、`target_user_id`、`target_conn_id`、`request_id`、`meta_json`、`created_at`。至少记录强制下线、截屏 request、accept、denied、ready、timeout，带上 IP。
 
@@ -351,14 +351,14 @@ Header 只做轻提示，重连时不挡住业务页。
 
 ## 6. 前端文件
 
-| 路径 | 职责 |
-|------|------|
-| `src/utils/ws.ts` | 原生 WebSocket、心跳、退避重连（上限 10 秒）、状态、`auth.expired` 后走现有 refresh |
-| `src/api/goadmin.ts` | `uploadWsScreenshot(file, requestId)` |
-| Header | 截屏确认、强制下线、连接状态 |
-| `src/pages/WebsocketAdmin` | 在线列表和截屏回显 |
-| 订阅页 | 我订阅的 / 谁订阅了我 / 免打扰 / catch_up 缓存 |
-| `package.json` | 确认无引用后删除 `socket.io-client` |
+| 路径                       | 职责                                                                                |
+| -------------------------- | ----------------------------------------------------------------------------------- |
+| `src/utils/ws.ts`          | 原生 WebSocket、心跳、退避重连（上限 10 秒）、状态、`auth.expired` 后走现有 refresh |
+| `src/api/goadmin.ts`       | `uploadWsScreenshot(file, requestId)`                                               |
+| Header                     | 截屏确认、强制下线、连接状态                                                        |
+| `src/pages/WebsocketAdmin` | 在线列表和截屏回显                                                                  |
+| 订阅页                     | 我订阅的 / 谁订阅了我 / 免打扰 / catch_up 缓存                                      |
+| `package.json`             | 确认无引用后删除 `socket.io-client`                                                 |
 
 地址用 `VITE_WS_URL`。未配置时由 HTTP 基址换成 `ws` 或 `wss`，路径 `/gows`。不再连接 Nest `/nestws`。连接在现有布局里 `create()` / `close()`，与现在一样。
 

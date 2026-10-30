@@ -34,10 +34,7 @@ const MessageCenter: FC = () => {
         .catch(() => setDataSource([]));
       return;
     }
-    const query =
-      tab === "inbox"
-        ? { kind: "inbox", page: 1, page_size: 50 }
-        : { kind: "todo", page: 1, page_size: 50 };
+    const query = tab === "inbox" ? { kind: "inbox", page: 1, page_size: 50 } : { kind: "todo", page: 1, page_size: 50 };
     listMyNotices(query)
       .then(result => {
         if (result.data.code !== 0) return;
@@ -132,8 +129,7 @@ const MessageCenter: FC = () => {
                           await setNoticeTodo(row.id, "done");
                           message.success("已完成");
                           load();
-                        }}
-                      >
+                        }}>
                         完成
                       </a>
                       <a
@@ -141,8 +137,7 @@ const MessageCenter: FC = () => {
                           await setNoticeTodo(row.id, "dismissed");
                           message.success("已忽略");
                           load();
-                        }}
-                      >
+                        }}>
                         忽略
                       </a>
                     </Space>

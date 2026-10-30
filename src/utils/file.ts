@@ -25,29 +25,29 @@ function canvas2Base64(canvas: any, width: any, height: any) {
 }
 // 文件大小
 enum FileSizes {
-  "K" = 1024,
-  "M" = 1048576,
-  "G" = 1073741824,
-  "T" = 1099511627776
+  K = 1024,
+  M = 1048576,
+  G = 1073741824,
+  T = 1099511627776
 }
 
 // 文件图标
 enum Icons {
-  "doc" = "iconword",
-  "docx" = "iconword",
-  "xls" = "iconexcel",
-  "xlsx" = "iconexcel",
-  "ppt" = "iconppt",
-  "pptx" = "iconppt",
-  "pdf" = "iconpdf",
-  "zip" = "iconzip",
-  "rar" = "iconzip",
-  "jpg" = "iconimage",
-  "jpeg" = "iconimage",
-  "png" = "iconimage",
-  "gif" = "iconimage",
-  "bmp" = "iconimage",
-  "file" = "iconcolorfile"
+  doc = "iconword",
+  docx = "iconword",
+  xls = "iconexcel",
+  xlsx = "iconexcel",
+  ppt = "iconppt",
+  pptx = "iconppt",
+  pdf = "iconpdf",
+  zip = "iconzip",
+  rar = "iconzip",
+  jpg = "iconimage",
+  jpeg = "iconimage",
+  png = "iconimage",
+  gif = "iconimage",
+  bmp = "iconimage",
+  file = "iconcolorfile"
 }
 
 // 计算文件大小

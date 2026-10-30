@@ -16,7 +16,6 @@ export const createLabel = (payload: Record<string, any>) => request("/api/label
 
 export const updateLabel = (id: string, payload: Record<string, any>) => request(`/api/labels/${enc(id)}`, "PUT", payload);
 
-export const setLabelStatus = (id: string, status: "enabled" | "disabled") =>
-  request(`/api/labels/${enc(id)}/status`, "PUT", { status });
+export const setLabelStatus = (id: string, status: "enabled" | "disabled") => request(`/api/labels/${enc(id)}/status`, "PUT", { status });
 
 export const deleteLabel = (id: string) => request(`/api/labels/${enc(id)}`, "DELETE");

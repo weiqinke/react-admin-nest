@@ -75,10 +75,7 @@ const AuditAdmin: FC = () => {
       .catch(() => message.error("导出失败"));
   };
 
-  const actionOptions =
-    modules
-      .find((item: any) => item.code === module)
-      ?.actions?.map((value: string) => ({ value, label: value })) || [];
+  const actionOptions = modules.find((item: any) => item.code === module)?.actions?.map((value: string) => ({ value, label: value })) || [];
 
   const columns: any = [
     {
@@ -128,15 +125,7 @@ const AuditAdmin: FC = () => {
           }}
           options={modules.map((item: any) => ({ value: item.code, label: item.name || item.code }))}
         />
-        <Select
-          allowClear
-          placeholder="动作"
-          style={{ width: 160 }}
-          value={action}
-          onChange={setAction}
-          options={actionOptions}
-          disabled={!module}
-        />
+        <Select allowClear placeholder="动作" style={{ width: 160 }} value={action} onChange={setAction} options={actionOptions} disabled={!module} />
         <Select
           allowClear
           placeholder="结果"
@@ -155,12 +144,7 @@ const AuditAdmin: FC = () => {
         </Button>
         <Button onClick={onExport}>导出 CSV</Button>
       </Space>
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={dataSource}
-        pagination={{ current: page, total, pageSize: 20, onChange: next => findAll(next) }}
-      />
+      <Table rowKey="id" columns={columns} dataSource={dataSource} pagination={{ current: page, total, pageSize: 20, onChange: next => findAll(next) }} />
       <Drawer title="审计详情" open={Boolean(detail)} width={520} onClose={() => setDetail(null)}>
         {detail && (
           <Space direction="vertical" size={12} style={{ width: "100%" }}>
@@ -171,9 +155,7 @@ const AuditAdmin: FC = () => {
             <Typography.Text>
               动作：{detail.module}.{detail.action}
             </Typography.Text>
-            <Typography.Text>
-              对象：{[detail.target_type, detail.target_id, detail.target_name].filter(Boolean).join(" / ") || "—"}
-            </Typography.Text>
+            <Typography.Text>对象：{[detail.target_type, detail.target_id, detail.target_name].filter(Boolean).join(" / ") || "—"}</Typography.Text>
             <Typography.Text>
               结果：{detail.result === "failure" ? "失败" : "成功"}
               {detail.error_code ? ` (${detail.error_code})` : ""}
@@ -182,9 +164,7 @@ const AuditAdmin: FC = () => {
             <Typography.Text>IP：{detail.ip || "—"}</Typography.Text>
             <Typography.Text>Request ID：{detail.request_id || "—"}</Typography.Text>
             <Typography.Paragraph>
-              <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
-                {JSON.stringify(detail.detail || {}, null, 2)}
-              </pre>
+              <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{JSON.stringify(detail.detail || {}, null, 2)}</pre>
             </Typography.Paragraph>
           </Space>
         )}

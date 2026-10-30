@@ -1,16 +1,7 @@
-import {
-  deleteMenuItem,
-  findAdminMenus,
-  setMenuItemStatus
-} from "@/api/microservice/menu";
+import { deleteMenuItem, findAdminMenus, setMenuItemStatus } from "@/api/microservice/menu";
 import PageIntroduction from "@/components/PageIntroduction";
 import { AdminMenuNode, MenuTreeFilter } from "@/types/menu";
-import {
-  ExclamationCircleOutlined,
-  PlusOutlined,
-  ReloadOutlined,
-  SearchOutlined
-} from "@ant-design/icons";
+import { ExclamationCircleOutlined, PlusOutlined, ReloadOutlined, SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Modal, Select, Space, Spin, Tree, message } from "antd";
 import type { DataNode } from "antd/es/tree";
 import { FC, Key, useCallback, useEffect, useMemo, useState } from "react";
@@ -41,7 +32,11 @@ function filterTree(nodes: AdminMenuNode[], keyword: string, filter: MenuTreeFil
   };
   const matchKw = (node: AdminMenuNode) => {
     if (!kw) return true;
-    return [node.title, node.segment, node.full_path].some(v => String(v || "").toLowerCase().includes(kw));
+    return [node.title, node.segment, node.full_path].some(v =>
+      String(v || "")
+        .toLowerCase()
+        .includes(kw)
+    );
   };
 
   const walk = (list: AdminMenuNode[]): AdminMenuNode[] => {
@@ -129,10 +124,7 @@ const MenusAdmin: FC = () => {
     confirm({
       title: "提示",
       icon: <ExclamationCircleOutlined />,
-      content:
-        next === 0
-          ? `禁用「${node.title}」会级联禁用其所有子菜单，是否继续？`
-          : `是否启用「${node.title}」？（若父级仍禁用将失败）`,
+      content: next === 0 ? `禁用「${node.title}」会级联禁用其所有子菜单，是否继续？` : `是否启用「${node.title}」？（若父级仍禁用将失败）`,
       okText: "确定",
       okType: next === 0 ? "danger" : "primary",
       cancelText: "取消",
@@ -182,16 +174,7 @@ const MenusAdmin: FC = () => {
 
   const mapNode = (node: AdminMenuNode): DataNode => ({
     key: node.id,
-    title: (
-      <MenuTreeNode
-        node={node}
-        onAddChild={n => openCreate(n.id)}
-        onEdit={openEdit}
-        onAuth={openAuth}
-        onToggleStatus={toggleStatus}
-        onDelete={removeNode}
-      />
-    ),
+    title: <MenuTreeNode node={node} onAddChild={n => openCreate(n.id)} onEdit={openEdit} onAuth={openAuth} onToggleStatus={toggleStatus} onDelete={removeNode} />,
     children: node.children?.length ? node.children.map(mapNode) : undefined
   });
   const treeData: DataNode[] = visibleList.map(mapNode);

@@ -94,73 +94,73 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser }) => {
       <h1 className={styles.title}>Nest-Admin</h1>
       <div className={`${styles.flip} ${isFlipped ? styles.flipped : ""}`}>
         <div className={styles.flipInner}>
-        <div className={styles.front}>
-          <Spin spinning={loading} delay={500}>
-            <Form name="basic" initialValues={initialValues} onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete="off">
-              <Form.Item name="username" rules={[{ required: true, message: "请输入用户名!" }]}>
-                <Input placeholder="admin" prefix={<UserOutlined />} onBlur={onBlur} onFocus={onFocus} />
-              </Form.Item>
-
-              <Form.Item name="password" rules={[{ required: true, message: "请输入密码!" }]}>
-                <Input type="password" placeholder={registeredUser ? "请输入刚设置的密码" : "admin123"} prefix={<LockOutlined />} onBlur={onBlur} onFocus={onFocus} />
-              </Form.Item>
-
-              <Form.Item className={styles.captchaLogin}>
-                <Form.Item name="captcha_code" rules={[{ required: true, message: "请输入验证码!" }]} noStyle>
-                  <Input placeholder="请输入验证码" className={styles.captchaInput} onBlur={onBlur} onFocus={onFocus} />
+          <div className={styles.front}>
+            <Spin spinning={loading} delay={500}>
+              <Form name="basic" initialValues={initialValues} onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete="off">
+                <Form.Item name="username" rules={[{ required: true, message: "请输入用户名!" }]}>
+                  <Input placeholder="admin" prefix={<UserOutlined />} onBlur={onBlur} onFocus={onFocus} />
                 </Form.Item>
-                <img
-                  src={captcha.image || undefined}
-                  alt="captcha"
-                  width={140}
-                  height={32}
-                  className={styles.captchaContainer}
-                  title="看不清？点击换一张。"
-                  onClick={loadCaptcha}
-                />
-              </Form.Item>
 
-              <div className={styles.other}>
-                <Form.Item noStyle>
-                  <span className={styles.register} onClick={setRegister}>
-                    注册账号
-                  </span>
+                <Form.Item name="password" rules={[{ required: true, message: "请输入密码!" }]}>
+                  <Input type="password" placeholder={registeredUser ? "请输入刚设置的密码" : "admin123"} prefix={<LockOutlined />} onBlur={onBlur} onFocus={onFocus} />
                 </Form.Item>
-                <Form.Item noStyle>
-                  <span className={styles.forgetPassword}>忘记密码</span>
+
+                <Form.Item className={styles.captchaLogin}>
+                  <Form.Item name="captcha_code" rules={[{ required: true, message: "请输入验证码!" }]} noStyle>
+                    <Input placeholder="请输入验证码" className={styles.captchaInput} onBlur={onBlur} onFocus={onFocus} />
+                  </Form.Item>
+                  <img
+                    src={captcha.image || undefined}
+                    alt="captcha"
+                    width={140}
+                    height={32}
+                    className={styles.captchaContainer}
+                    title="看不清？点击换一张。"
+                    onClick={loadCaptcha}
+                  />
                 </Form.Item>
-              </div>
-              <div className={styles.submit}>
-                <Form.Item noStyle>
-                  <Button block type="primary" htmlType="submit">
-                    登录
+
+                <div className={styles.other}>
+                  <Form.Item noStyle>
+                    <span className={styles.register} onClick={setRegister}>
+                      注册账号
+                    </span>
+                  </Form.Item>
+                  <Form.Item noStyle>
+                    <span className={styles.forgetPassword}>忘记密码</span>
+                  </Form.Item>
+                </div>
+                <div className={styles.submit}>
+                  <Form.Item noStyle>
+                    <Button block type="primary" htmlType="submit">
+                      登录
+                    </Button>
+                  </Form.Item>
+                </div>
+              </Form>
+
+              <Divider plain style={{ borderWidth: 13 }}>
+                第三方登录
+              </Divider>
+              <div className={styles.ohter}>
+                <div className={styles.type}>
+                  <Button type="link" href="https://ssr.nest-admin.com">
+                    <IconFont type="icon-cib-next-js" />
+                    SSR
                   </Button>
-                </Form.Item>
+                </div>
+                <div className={styles.type}>
+                  <GiteeAuth />
+                </div>
+                <div className={styles.type}>
+                  <GithubAuth />
+                </div>
               </div>
-            </Form>
-
-            <Divider plain style={{ borderWidth: 13 }}>
-              第三方登录
-            </Divider>
-            <div className={styles.ohter}>
-              <div className={styles.type}>
-                <Button type="link" href="https://ssr.nest-admin.com">
-                  <IconFont type="icon-cib-next-js" />
-                  SSR
-                </Button>
-              </div>
-              <div className={styles.type}>
-                <GiteeAuth />
-              </div>
-              <div className={styles.type}>
-                <GithubAuth />
-              </div>
-            </div>
-          </Spin>
-        </div>
-        <div className={`${styles.card} ${styles.back}`}>
-          <Image width={200} src={qrimg} />
-        </div>
+            </Spin>
+          </div>
+          <div className={`${styles.card} ${styles.back}`}>
+            <Image width={200} src={qrimg} />
+          </div>
         </div>
       </div>
     </div>

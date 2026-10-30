@@ -206,7 +206,12 @@ const MusicChart = () => {
               }>
               {music.dataSource.map((musicItem, k) => {
                 return (
-                  <Card.Grid hoverable={false} key={k} style={gridStyle} onClick={() => onClick(musicItem, music)} className="cursor-pointer select-none p-3 text-base hover:bg-[#DDD]">
+                  <Card.Grid
+                    hoverable={false}
+                    key={k}
+                    style={gridStyle}
+                    onClick={() => onClick(musicItem, music)}
+                    className="cursor-pointer select-none p-3 text-base hover:bg-[#DDD]">
                     <div>
                       <MusicItem data={musicItem} />
                     </div>

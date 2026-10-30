@@ -92,8 +92,7 @@ const LabelsAdmin: FC = () => {
       title: "状态",
       dataIndex: "status",
       width: 100,
-      render: (value: string) =>
-        value === "disabled" ? <Tag color="#f50">停用</Tag> : <Tag color="#2db7f5">启用</Tag>
+      render: (value: string) => (value === "disabled" ? <Tag color="#f50">停用</Tag> : <Tag color="#2db7f5">启用</Tag>)
     },
     {
       title: "操作",
@@ -109,15 +108,10 @@ const LabelsAdmin: FC = () => {
               confirmAction(item.status === "enabled" ? "确认停用该标签？" : "确认启用该标签？", () =>
                 setLabelStatus(item.id, item.status === "enabled" ? "disabled" : "enabled")
               )
-            }
-          >
+            }>
             {item.status === "enabled" ? "停用" : "启用"}
           </Button>
-          <Button
-            size="small"
-            danger
-            onClick={() => confirmAction("确认删除该标签？删除后不可在列表中恢复。", () => deleteLabel(item.id))}
-          >
+          <Button size="small" danger onClick={() => confirmAction("确认删除该标签？删除后不可在列表中恢复。", () => deleteLabel(item.id))}>
             删除
           </Button>
         </Space>
@@ -132,13 +126,7 @@ const LabelsAdmin: FC = () => {
         <Button type="primary" onClick={() => setLabel({})}>
           添加标签
         </Button>
-        <Input
-          allowClear
-          placeholder="按名称搜索"
-          value={name}
-          onChange={e => setName(e.target.value)}
-          style={{ width: 180 }}
-        />
+        <Input allowClear placeholder="按名称搜索" value={name} onChange={e => setName(e.target.value)} style={{ width: 180 }} />
         <Select
           allowClear
           placeholder="状态"

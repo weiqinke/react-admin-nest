@@ -93,8 +93,7 @@ const RoleList: FC = () => {
       title: "继承",
       dataIndex: "inherits",
       responsive: ["lg"],
-      render: (inherits: string[] = []) =>
-        inherits?.length ? inherits.map(code => <Tag key={code}>{code}</Tag>) : <span style={{ color: "rgba(0,0,0,0.45)" }}>无</span>
+      render: (inherits: string[] = []) => (inherits?.length ? inherits.map(code => <Tag key={code}>{code}</Tag>) : <span style={{ color: "rgba(0,0,0,0.45)" }}>无</span>)
     },
     {
       title: "操作",
@@ -127,10 +126,7 @@ const RoleList: FC = () => {
         />
       </div>
 
-      <PageIntroduction
-        infos={infos}
-        introduction="本页维护角色、给角色分配人员和权限码。不要在角色上挂菜单 ID；受控菜单请在菜单管理中绑定权限码。"
-      />
+      <PageIntroduction infos={infos} introduction="本页维护角色、给角色分配人员和权限码。不要在角色上挂菜单 ID；受控菜单请在菜单管理中绑定权限码。" />
       <div className="mt-3 bg-white px-3">
         <Space size={[8, 16]} className="my-3">
           <Button type="primary" icon={<SearchOutlined />} iconPosition="end" onClick={findAllRole}>
@@ -143,13 +139,7 @@ const RoleList: FC = () => {
         <Table rowKey="code" columns={columns} dataSource={dataSource} />
       </div>
 
-      {role && (
-        <OperationRoleModal
-          role={role}
-          onOk={() => findAllRole()}
-          onCancel={() => setRole(null)}
-        />
-      )}
+      {role && <OperationRoleModal role={role} onOk={() => findAllRole()} onCancel={() => setRole(null)} />}
       {shareUsers && (
         <RoleAllocationUserModal
           dataSource={userDataSource}

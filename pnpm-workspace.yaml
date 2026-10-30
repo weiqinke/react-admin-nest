@@ -1,5 +1,5 @@
 allowBuilds:
-  '@parcel/watcher': true
+  "@parcel/watcher": true
 
 peerDependencyRules:
   allowedVersions:

@@ -13,8 +13,7 @@ type ContextMenuState = {
 };
 
 const TagsView: FC = () => {
-  const { tags, activeUrl, switchTo, removeTag, closeOtherTags, closeLeftTags, closeRightTags, refreshPage } =
-    useContext(MenuTagContext);
+  const { tags, activeUrl, switchTo, removeTag, closeOtherTags, closeLeftTags, closeRightTags, refreshPage } = useContext(MenuTagContext);
 
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
 

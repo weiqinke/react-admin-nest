@@ -31,9 +31,7 @@ const RoleAllocationUserModal: FC<any> = ({ dataSource, onOk, onCancel, initUIDs
       }
       const { assigned = 0, revoked = 0, failures = [], conflictCount = 0 } = res.data?.data || {};
       if (failures.length) {
-        const conflictHint = conflictCount
-          ? `其中 ${conflictCount} 人因角色互斥（40902）未能授予。`
-          : "";
+        const conflictHint = conflictCount ? `其中 ${conflictCount} 人因角色互斥（40902）未能授予。` : "";
         message.warning(`完成：授予 ${assigned}、撤销 ${revoked}；失败 ${failures.length}。${conflictHint}`);
       } else {
         message.success(`操作成功（授予 ${assigned}、撤销 ${revoked}）`);

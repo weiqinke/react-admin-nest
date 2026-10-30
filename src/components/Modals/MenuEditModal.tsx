@@ -22,7 +22,7 @@ const MenuEditModal: FC<any> = ({ onOk, initMenuItem, parentUid, onCancel }) => 
       parentUid,
       ...data,
       version: 1,
-      delete:0,
+      delete: 0
     };
     if (payload.id) {
       result = await updateMenuItem(payload);

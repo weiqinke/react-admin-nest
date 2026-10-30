@@ -1,11 +1,5 @@
 import { listMyAnnouncements, markAllAnnouncementsRead, markAnnouncementRead } from "@/api/announcement";
-import {
-  listMyNotices,
-  markAllNoticesRead,
-  markNoticeRead,
-  noticeSummary,
-  setNoticeTodo
-} from "@/api/notice";
+import { listMyNotices, markAllNoticesRead, markNoticeRead, noticeSummary, setNoticeTodo } from "@/api/notice";
 import { BellOutlined } from "@ant-design/icons";
 import { Avatar, Badge, Dropdown, DropdownProps, Flex, Listy, MenuProps, Tabs, message } from "antd";
 import { FC, useCallback, useEffect, useState } from "react";
@@ -174,8 +168,7 @@ const HeaderNotice: FC = () => {
                 onClick={() => {
                   setOpen(false);
                   navigate("/account");
-                }}
-              >
+                }}>
                 <span>查看更多</span>
               </div>
             </div>

@@ -40,5 +40,4 @@ export function oauthBindUrl(provider: OAuthProvider = "github", redirect = fron
 
 export const listOAuthBindings = () => request("/api/oauth/bindings", "GET");
 
-export const unbindOAuth = (provider: OAuthProvider | string) =>
-  request(`/api/oauth/${encodeURIComponent(provider)}`, "DELETE");
+export const unbindOAuth = (provider: OAuthProvider | string) => request(`/api/oauth/${encodeURIComponent(provider)}`, "DELETE");

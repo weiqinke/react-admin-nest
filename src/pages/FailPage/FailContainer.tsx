@@ -13,9 +13,7 @@ const FailContainer = ({ error, resetErrorBoundary }: FallbackProps) => {
         </Button>
       }>
       {import.meta.env.DEV && error.stack ? (
-        <Typography.Paragraph
-          type="secondary"
-          style={{ textAlign: "left", maxHeight: 160, overflow: "auto", fontSize: 12 }}>
+        <Typography.Paragraph type="secondary" style={{ textAlign: "left", maxHeight: 160, overflow: "auto", fontSize: 12 }}>
           <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>{error.stack}</pre>
         </Typography.Paragraph>
       ) : null}

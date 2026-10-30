@@ -115,8 +115,7 @@ const NoticeAdmin: FC = () => {
                   findAll();
                 }
               })
-            }
-          >
+            }>
             关闭
           </Button>
         ) : null
@@ -152,31 +151,13 @@ const NoticeAdmin: FC = () => {
             { value: "closed", label: "已关闭" }
           ]}
         />
-        <Input
-          allowClear
-          placeholder="搜索标题/内容"
-          value={keyword}
-          onChange={e => setKeyword(e.target.value)}
-          style={{ width: 180 }}
-        />
+        <Input allowClear placeholder="搜索标题/内容" value={keyword} onChange={e => setKeyword(e.target.value)} style={{ width: 180 }} />
         <Button type="primary" onClick={() => findAll(1)}>
           查询
         </Button>
       </Space>
-      <Table
-        columns={columns}
-        dataSource={dataSource}
-        rowKey="id"
-        pagination={{ current: page, total, pageSize: 20, onChange: next => findAll(next) }}
-      />
-      <Modal
-        open={open}
-        title="发送站内信 / 待办"
-        onCancel={() => setOpen(false)}
-        onOk={() => form.submit()}
-        width={640}
-        destroyOnHidden
-      >
+      <Table columns={columns} dataSource={dataSource} rowKey="id" pagination={{ current: page, total, pageSize: 20, onChange: next => findAll(next) }} />
+      <Modal open={open} title="发送站内信 / 待办" onCancel={() => setOpen(false)} onOk={() => form.submit()} width={640} destroyOnHidden>
         <Form form={form} layout="vertical" onFinish={onSend} initialValues={{ kind: "inbox", level: "info", category: "system" }}>
           <Form.Item name="kind" label="类型" rules={[{ required: true }]}>
             <Select

@@ -41,15 +41,7 @@ const OperationDictTypeModal: FC<any> = ({ dictType, onCancel, onOk }) => {
   }, [form, dictType]);
 
   return (
-    <Modal
-      open
-      forceRender
-      title={`${editing ? "编辑" : "添加"}字典类型`}
-      onOk={() => form.submit()}
-      onCancel={onCancel}
-      width={720}
-      getContainer={false}
-    >
+    <Modal open forceRender title={`${editing ? "编辑" : "添加"}字典类型`} onOk={() => form.submit()} onCancel={onCancel} width={720} getContainer={false}>
       <Form form={form} onFinish={onFinish} {...layout} autoComplete="off">
         <Row>
           {editing && (
@@ -66,8 +58,7 @@ const OperationDictTypeModal: FC<any> = ({ dictType, onCancel, onOk }) => {
               rules={[
                 { required: true, message: "请输入编码" },
                 { pattern: /^[a-z][a-z0-9_]{1,63}$/, message: "须为 snake_case，如 gender" }
-              ]}
-            >
+              ]}>
               <Input placeholder="如 gender、order_status" maxLength={64} disabled={editing} />
             </Form.Item>
           </Col>

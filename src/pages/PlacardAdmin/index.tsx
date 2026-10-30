@@ -1,12 +1,5 @@
 import { PlacardEditModal } from "@/components/Modals";
-import {
-  deleteAnnouncement,
-  listAnnouncementReads,
-  listAnnouncements,
-  publishAnnouncement,
-  republishAnnouncement,
-  revokeAnnouncement
-} from "@/api/announcement";
+import { deleteAnnouncement, listAnnouncementReads, listAnnouncements, publishAnnouncement, republishAnnouncement, revokeAnnouncement } from "@/api/announcement";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import PageIntroduction from "@/components/PageIntroduction";
 import { Button, Drawer, Input, Modal, Radio, Space, Table, Tag, message } from "antd";
@@ -140,8 +133,7 @@ const PlacardAdmin: FC = () => {
               setReadFlag("1");
               setUsername("");
               loadReads(row, "1", "");
-            }}
-          >
+            }}>
             阅读情况
           </Button>
           <Button
@@ -152,8 +144,7 @@ const PlacardAdmin: FC = () => {
               confirmAction("是否删除该公告？", async () => {
                 await deleteAnnouncement(row.id);
               })
-            }
-          >
+            }>
             删除
           </Button>
         </Space>
@@ -207,8 +198,7 @@ const PlacardAdmin: FC = () => {
               const next = event.target.value;
               setReadFlag(next);
               loadReads(readsFor, next, username);
-            }}
-          >
+            }}>
             <Radio.Button value="1">已读 {reads.read_count}</Radio.Button>
             <Radio.Button value="0">未读 {reads.unread_count}</Radio.Button>
           </Radio.Group>

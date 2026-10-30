@@ -36,10 +36,7 @@ export default tseslint.config(
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": "off",
-      "@typescript-eslint/no-unused-expressions": [
-        "error",
-        { allowShortCircuit: true, allowTernary: true, allowTaggedTemplates: true }
-      ],
+      "@typescript-eslint/no-unused-expressions": ["error", { allowShortCircuit: true, allowTernary: true, allowTaggedTemplates: true }],
       "unused-imports/no-unused-imports": "error",
       "unused-imports/no-unused-vars": [
         "error",

@@ -1078,7 +1078,7 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: 登录后获得的 **access** JWT（不要用 refresh）。Header: Authorization: Bearer <token>
+      description: "登录后获得的 **access** JWT（不要用 refresh）。Header: Authorization: Bearer <token>"
 
   parameters:
     page:
@@ -1258,7 +1258,7 @@ components:
           type: string
           minLength: 3
           maxLength: 32
-          pattern: '^[A-Za-z0-9_]+$'
+          pattern: "^[A-Za-z0-9_]+$"
         password_encrypted:
           type: string
           description: Base64(RSA-OAEP-SHA256(明文密码))
