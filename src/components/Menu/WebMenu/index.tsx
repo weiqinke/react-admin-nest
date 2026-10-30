@@ -4,7 +4,7 @@ import ProjectContext from "@/contexts/ProjectContext";
 import { formatURL, getLocalStorageMenus, getMenus, getOpenKeysByUrls, setLocalStorage } from "@/utils/menuUtils";
 import { AppstoreOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
-import { useContext, useLayoutEffect, useState } from "react";
+import { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 
 const createMenuIcon = item => {
@@ -24,6 +24,7 @@ const WebMenu = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [openKeys, setOpenkeys] = useState([]);
+  const [menuTick, setMenuTick] = useState(0);
 
   // 点击 menuItem 触发的事件
   const onClick = props => {
@@ -47,6 +48,12 @@ const WebMenu = () => {
     addTag(urls, key);
   };
 
+  useEffect(() => {
+    const refresh = () => setMenuTick(value => value + 1);
+    window.addEventListener("menus:refresh", refresh);
+    return () => window.removeEventListener("menus:refresh", refresh);
+  }, []);
+
   useLayoutEffect(() => {
     // 说明：
     // (1)
@@ -61,7 +68,7 @@ const WebMenu = () => {
     setMenuItems(items);
     setOpenkeys(openKeys);
     setSelectedKeys(currentKey);
-  }, [pathname]);
+  }, [pathname, menuTick]);
 
   // 展开/关闭的回调
   const onOpenChange = (openKeys: any) => {

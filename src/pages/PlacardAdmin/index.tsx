@@ -2,6 +2,7 @@ import { PlacardEditModal } from "@/components/Modals";
 import { deleteAnnouncement, listAnnouncementReads, listAnnouncements, publishAnnouncement, republishAnnouncement, revokeAnnouncement } from "@/api/announcement";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import PageIntroduction from "@/components/PageIntroduction";
+import LabelBind from "@/components/LabelBind";
 import { Button, Drawer, Input, Modal, Radio, Space, Table, Tag, message } from "antd";
 import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
@@ -30,6 +31,7 @@ const PlacardAdmin: FC = () => {
   const [readFlag, setReadFlag] = useState("1");
   const [username, setUsername] = useState("");
   const [reads, setReads] = useState<any>({ list: [], total: 0, read_count: 0, unread_count: 0 });
+  const [labelFor, setLabelFor] = useState<any>(null);
 
   const findAllPlacards = (nextPage = page) => {
     listAnnouncements({ page: nextPage, page_size: 20 })
@@ -136,6 +138,9 @@ const PlacardAdmin: FC = () => {
             }}>
             阅读情况
           </Button>
+          <Button type="link" size="small" onClick={() => setLabelFor(row)}>
+            标签
+          </Button>
           <Button
             danger
             type="link"
@@ -221,6 +226,9 @@ const PlacardAdmin: FC = () => {
           />
         </Space>
       </Drawer>
+      <Modal open={Boolean(labelFor)} title={`标签：${labelFor?.title || ""}`} footer={null} destroyOnHidden onCancel={() => setLabelFor(null)}>
+        {labelFor ? <LabelBind targetType="announcement" targetId={String(labelFor.id)} /> : null}
+      </Modal>
     </div>
   );
 };

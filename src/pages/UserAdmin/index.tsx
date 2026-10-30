@@ -1,6 +1,6 @@
 import { UserEditModal } from "@/components/Modals";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { Alert, Button, Form, Input, Modal, Space, message } from "antd";
+import { Alert, Button, Form, Input, Modal, Select, Space, message } from "antd";
 import { FC, useEffect, useState } from "react";
 import { dataScopeLabel } from "@/api/platform";
 import { getUserState } from "@/api/session";
@@ -22,6 +22,9 @@ const UserAdmin: FC = () => {
   const [resetForm] = Form.useForm();
   const [dataSource, setDataSource] = useState([]);
   const [dataScope, setDataScope] = useState("");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const pageSize = 20;
   const [user, setUser] = useState(null);
   const [resetFor, setResetFor] = useState<any>(null);
   const [resetting, setResetting] = useState(false);
@@ -44,7 +47,7 @@ const UserAdmin: FC = () => {
       onOk: async () => {
         await setUserStatus(id, nextStatus);
         message.success(nextStatus === 0 ? "已停用" : "已启用");
-        findAll();
+        findAll(page);
       }
     });
   };
@@ -63,47 +66,53 @@ const UserAdmin: FC = () => {
     }
   };
 
-  const findAll = () => {
+  const findAll = (next = 1) => {
     setUser(null);
-    const { username, email, mobile } = form.getFieldsValue();
-    const payload = { banned: false, recycle: false };
-    if (username) payload.username = username;
-    if (email) payload.email = email;
-    if (mobile) payload.mobile = mobile;
-
-    findUsers(payload)
+    const { keyword, status } = form.getFieldsValue();
+    findUsers({ page: next, page_size: pageSize, keyword, status })
       .then(result => {
         if (result.data.code === 0) {
           setDataSource(result.data.data || []);
           setDataScope(result.data.data_scope || "");
+          setTotal(result.data.total || 0);
+          setPage(result.data.page || next);
         } else {
           setDataSource([]);
+          setTotal(0);
         }
       })
       .catch(() => {
         setDataSource([]);
+        setTotal(0);
       });
   };
-  useEffect(findAll, []);
+  useEffect(() => {
+    findAll(1);
+  }, []);
   return (
     <div className="p-3">
       <PageIntroduction
         infos={infos}
-        introduction="用户列表已按当前角色的数据范围过滤。新建账号由管理员创建，停用会踢掉对方全部会话，重置密码后对方需要重新登录。"
+        introduction="用户列表按页返回，并已按当前角色的数据范围过滤。用户名搜索和状态筛选发生在范围之后。停用会踢掉对方全部会话。"
       />
       {dataScope ? (
         <Alert className="mt-3" type="info" showIcon title={`当前数据范围：${dataScopeLabel(dataScope)}`} />
       ) : null}
       <div className="my-3 rounded-md bg-white p-3">
-        <Form form={form} name="horizontal_login" layout="inline" autoComplete="off" onFinish={findAll}>
-          <Form.Item name="username" label="用户名">
-            <Input placeholder="username" autoComplete="off" />
+        <Form form={form} name="horizontal_login" layout="inline" autoComplete="off" onFinish={() => findAll(1)}>
+          <Form.Item name="keyword" label="用户名">
+            <Input placeholder="用户名包含" autoComplete="off" allowClear />
           </Form.Item>
-          <Form.Item name="email" label="邮箱">
-            <Input placeholder="email" />
-          </Form.Item>
-          <Form.Item name="mobile" label="电话">
-            <Input placeholder="mobile" />
+          <Form.Item name="status" label="状态">
+            <Select
+              allowClear
+              placeholder="全部"
+              style={{ width: 120 }}
+              options={[
+                { value: 1, label: "启用" },
+                { value: 0, label: "停用" }
+              ]}
+            />
           </Form.Item>
           <Form.Item>
             <Space size={[8, 16]}>
@@ -115,7 +124,14 @@ const UserAdmin: FC = () => {
       </div>
 
       <div className="mt-3 rounded-md bg-white">
-        <UserTable dataSource={dataSource} selfId={selfId} setUser={setUser} showDeleteConfirm={showDeleteConfirm} onReset={setResetFor} />
+        <UserTable
+          dataSource={dataSource}
+          selfId={selfId}
+          setUser={setUser}
+          showDeleteConfirm={showDeleteConfirm}
+          onReset={setResetFor}
+          pagination={{ current: page, pageSize, total, showSizeChanger: false, onChange: next => findAll(next) }}
+        />
       </div>
 
       {user && <UserEditModal initUser={user} onOk={() => findAll()} onCancel={() => setUser(null)} />}

@@ -2,7 +2,7 @@ import { OperationRoleModal, RoleAllocationPermModal, RoleAllocationUserModal } 
 import PageIntroduction from "@/components/PageIntroduction";
 import { dataScopeLabel } from "@/api/platform";
 import { findRoleUsers, findRoles, removeRole } from "@/api/role";
-import { findUsers } from "@/api/user";
+import { findUserOptions } from "@/api/user";
 import { ExclamationCircleOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { Alert, Button, Modal, Space, Table, Tag, message } from "antd";
 import { FC, useEffect, useState } from "react";
@@ -32,7 +32,7 @@ const RoleList: FC = () => {
 
   useEffect(() => {
     findAllRole();
-    findUsers({})
+    findUserOptions()
       .then(res => setUserDatasource(res.data.data || []))
       .catch(() => setUserDatasource([]));
   }, []);

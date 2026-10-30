@@ -65,9 +65,9 @@ export const updateMyProfile = payload => request("/api/me/profile", "PUT", payl
 
 export const getLoginLogs = (query: any = {}) => request("/api/login/logs", "GET", compact(query));
 
-export const getLoginStats = (query: any = {}) => request("/api/login/stats", "GET", compact(query));
+export const getLoginStats = (query: any = {}, options: any = {}) => request("/api/login/stats", "GET", compact(query), options);
 
-export const getUsers = () => request("/api/users", "GET");
+export const getUsers = (query: Record<string, any> = {}) => request("/api/users", "GET", compact(query));
 
 /** 管理员建账号。密码只以 RSA-OAEP 密文提交，默认角色 user、状态启用。 */
 export async function createManagedUser(payload: { username: string; password: string }) {

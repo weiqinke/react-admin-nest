@@ -1,6 +1,6 @@
 import { Button, Table, Tag } from "antd";
 
-const UserTable = ({ dataSource, selfId, setUser, showDeleteConfirm, onReset }) => {
+const UserTable = ({ dataSource, selfId, setUser, showDeleteConfirm, onReset, pagination }) => {
   const columns: any = [
     {
       title: "账号",
@@ -24,6 +24,11 @@ const UserTable = ({ dataSource, selfId, setUser, showDeleteConfirm, onReset }) 
       title: "部门",
       dataIndex: ["profile", "department"],
       render: (text: string) => text || "未归属"
+    },
+    {
+      title: "岗位",
+      dataIndex: ["profile", "job_title"],
+      render: (text: string) => text || "未任职"
     },
     {
       title: "状态",
@@ -57,7 +62,7 @@ const UserTable = ({ dataSource, selfId, setUser, showDeleteConfirm, onReset }) 
       }
     }
   ];
-  return <Table dataSource={dataSource} columns={columns} rowKey="uid" />;
+  return <Table dataSource={dataSource} columns={columns} rowKey="uid" pagination={pagination} />;
 };
 
 export default UserTable;

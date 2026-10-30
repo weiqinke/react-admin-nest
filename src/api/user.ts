@@ -13,7 +13,7 @@ import {
   updateMyProfile,
   updateUserProfile
 } from "@/api/goadmin";
-import { setUserDepartment } from "@/api/platform";
+import { setUserDepartment, setUserPosition } from "@/api/platform";
 import { getRefreshToken } from "@/api/session";
 
 export { getCaptcha, getPublicKey };
@@ -75,19 +75,46 @@ export async function createUser(payload) {
   if (id && payload.department_id) {
     await setUserDepartment(String(id), String(payload.department_id));
   }
+  if (id && payload.position_id) {
+    await setUserPosition(String(id), String(payload.position_id));
+  }
   return result;
 }
 
 export async function findUsers(query: any = {}) {
-  const res = await getUsers();
+  const res = await getUsers({
+    page: query.page || 1,
+    page_size: query.page_size || query.pageSize || 20,
+    keyword: query.keyword || query.username,
+    status: query.status
+  });
   const payload = res.data?.data || {};
-  let list = payload.list || [];
-  if (query.username) list = list.filter(item => item.username?.includes(query.username));
-  if (query.email) list = list.filter(item => (item.profile?.email || "").includes(query.email));
-  if (query.mobile) {
-    list = list.filter(item => (item.profile?.mobile || item.profile?.phone || "").includes(query.mobile));
+  const list = payload.list || [];
+  return {
+    ...res,
+    data: {
+      ...res.data,
+      data: list.map(normalizeUser),
+      total: payload.total || 0,
+      page: payload.page || 1,
+      page_size: payload.page_size || 20,
+      data_scope: payload.data_scope || ""
+    }
+  };
+}
+
+/** 下拉选项。按页拉满当前数据范围内的用户，最多 10 页。 */
+export async function findUserOptions() {
+  const pageSize = 100;
+  const first = await findUsers({ page: 1, page_size: pageSize });
+  const data = [...(first.data.data || [])];
+  const total = Number(first.data.total || data.length);
+  const pages = Math.min(Math.ceil(total / pageSize) || 1, 10);
+  for (let page = 2; page <= pages; page += 1) {
+    const next = await findUsers({ page, page_size: pageSize });
+    data.push(...(next.data.data || []));
   }
-  return { ...res, data: { ...res.data, data: list.map(normalizeUser), data_scope: payload.data_scope || "" } };
+  return { ...first, data: { ...first.data, data } };
 }
 
 export function updateUser(payload: any = {}) {

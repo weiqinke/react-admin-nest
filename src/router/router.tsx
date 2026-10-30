@@ -30,6 +30,7 @@ const UserAdmin = lazy(() => import("@/pages/UserAdmin"));
 const WebsocketAdmin = lazy(() => import("@/pages/WebsocketAdmin"));
 const AuditAdmin = lazy(() => import("@/pages/AuditAdmin"));
 const DeptAdmin = lazy(() => import("@/pages/DeptAdmin"));
+const PostAdmin = lazy(() => import("@/pages/PostAdmin"));
 const ConfigAdmin = lazy(() => import("@/pages/ConfigAdmin"));
 const TicketAdmin = lazy(() => import("@/pages/TicketAdmin"));
 const JobAdmin = lazy(() => import("@/pages/JobAdmin"));
@@ -131,6 +132,7 @@ const routes: RouteObject[] = [
                   route(WebsocketAdmin, { path: "websocketadmin", title: "在线用户管理" }),
                   route(AuditAdmin, { path: "auditadmin", title: "操作审计" }),
                   route(DeptAdmin, { path: "deptadmin", title: "部门管理" }),
+                  route(PostAdmin, { path: "postadmin", title: "岗位管理" }),
                   route(ConfigAdmin, { path: "configadmin", title: "系统参数" }),
                   route(TicketAdmin, { path: "ticketadmin", title: "工单处理" }),
                   route(JobAdmin, { path: "jobadmin", title: "定时任务" }),

@@ -41,12 +41,26 @@ export const updateRole = (payload: any = {}) =>
 
 export const removeRole = (payload: any = {}) => goDeleteRole(roleCodeOf(payload));
 
+async function listUsersInScope() {
+  const pageSize = 100;
+  const first = await getUsers({ page: 1, page_size: pageSize });
+  const payload = first.data?.data || {};
+  const list = [...(payload.list || [])];
+  const total = Number(payload.total || list.length);
+  const pages = Math.min(Math.ceil(total / pageSize) || 1, 10);
+  for (let page = 2; page <= pages; page += 1) {
+    const next = await getUsers({ page, page_size: pageSize });
+    list.push(...(next.data?.data?.list || []));
+  }
+  return { first, list };
+}
+
 /** 从用户列表筛出拥有该角色的 user id。 */
 export async function findRoleUsers(payload: any = {}) {
   const code = String(roleCodeOf(payload) || "");
-  const res = await getUsers();
-  const list = (res.data?.data?.list || []).filter(user => (user.roles || []).map(String).includes(code)).map(user => String(user.id));
-  return { ...res, data: { ...res.data, data: list } };
+  const { first, list } = await listUsersInScope();
+  const ids = list.filter(user => (user.roles || []).map(String).includes(code)).map(user => String(user.id));
+  return { ...first, data: { ...first.data, data: ids } };
 }
 
 /**
@@ -57,7 +71,7 @@ export async function updateRoleUsers(payload: any = {}) {
   const code = String(roleCodeOf(payload) || "");
   const nextIds: string[] = (payload.uids || payload.user_ids || []).map(id => String(id));
   const next = new Set<string>(nextIds);
-  const users = (await getUsers()).data?.data?.list || [];
+  const users = (await listUsersInScope()).list;
   const current = users.filter(user => (user.roles || []).map(String).includes(code)).map(user => String(user.id));
 
   const failures: { user_id: string; action: "assign" | "revoke"; code: number; message: string }[] = [];

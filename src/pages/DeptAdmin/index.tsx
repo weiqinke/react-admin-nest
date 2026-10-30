@@ -1,4 +1,5 @@
 import { createDept, deleteDept, listDepts, toDeptTree, updateDept } from "@/api/platform";
+import { findUserOptions } from "@/api/user";
 import PageIntroduction from "@/components/PageIntroduction";
 import { hasPermission } from "@/api/announcement";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
@@ -28,7 +29,9 @@ const DeptAdmin: FC = () => {
   const [draft, setDraft] = useState<any>(null);
   const [form] = Form.useForm();
   const [saving, setSaving] = useState(false);
+  const [users, setUsers] = useState<any[]>([]);
   const canWrite = hasPermission("dept:write");
+  const canPickLeader = hasPermission("user:read");
 
   const load = () => {
     listDepts()
@@ -38,7 +41,11 @@ const DeptAdmin: FC = () => {
 
   useEffect(() => {
     load();
-  }, []);
+    if (!canPickLeader) return;
+    findUserOptions()
+      .then(res => setUsers(res.data?.data || []))
+      .catch(() => setUsers([]));
+  }, [canPickLeader]);
 
   useEffect(() => {
     if (!draft) return;
@@ -47,7 +54,8 @@ const DeptAdmin: FC = () => {
       code: draft.code || "",
       parent_id: draft.parent_id || undefined,
       sort: draft.sort ?? 0,
-      status: draft.status ?? 1
+      status: draft.status ?? 1,
+      leader_user_id: draft.leader_user_id || undefined
     });
   }, [draft, form]);
 
@@ -56,13 +64,14 @@ const DeptAdmin: FC = () => {
   const save = async (values: any) => {
     setSaving(true);
     try {
-      const body = {
+      const body: Record<string, any> = {
         name: values.name,
         code: values.code,
         parent_id: values.parent_id || "",
         sort: values.sort ?? 0,
         status: values.status
       };
+      if (canPickLeader) body.leader_user_id = values.leader_user_id || "";
       if (draft?.id) await updateDept(String(draft.id), body);
       else await createDept(body);
       message.success("已保存");
@@ -94,6 +103,14 @@ const DeptAdmin: FC = () => {
     { title: "编码", dataIndex: "code" },
     { title: "排序", dataIndex: "sort", width: 80 },
     {
+      title: "负责人",
+      dataIndex: "leader_user_id",
+      render: (id: string) => {
+        if (!id) return "未设置";
+        return users.find(item => String(item.uid || item.id) === String(id))?.username || id;
+      }
+    },
+    {
       title: "状态",
       dataIndex: "status",
       width: 90,
@@ -121,7 +138,7 @@ const DeptAdmin: FC = () => {
 
   return (
     <div className="p-3">
-      <PageIntroduction infos={infos} introduction="部门是一棵树。用户归属在用户管理里调整，停用的部门不能再被选中。" />
+      <PageIntroduction infos={infos} introduction="部门是一棵树。可以指定负责人，同一个人可以负责多个部门。清空负责人后保存即取消。" />
       <div className="mt-3 bg-white p-3">
         {canWrite ? (
           <Button type="primary" className="mb-3" onClick={() => setDraft({ status: 1, sort: 0 })}>
@@ -134,6 +151,8 @@ const DeptAdmin: FC = () => {
         open={Boolean(draft)}
         title={draft?.id ? "编辑部门" : "添加部门"}
         confirmLoading={saving}
+        okText="保存"
+        cancelText="取消"
         onOk={() => form.submit()}
         onCancel={() => setDraft(null)}
         destroyOnHidden>
@@ -156,6 +175,17 @@ const DeptAdmin: FC = () => {
           <Form.Item name="sort" label="排序">
             <InputNumber min={0} className="w-full" />
           </Form.Item>
+          {canPickLeader ? (
+            <Form.Item name="leader_user_id" label="负责人" extra="同一个人可以负责多个部门。清空后保存即取消。">
+              <Select
+                allowClear
+                showSearch
+                optionFilterProp="label"
+                placeholder="选择用户"
+                options={users.map(item => ({ value: String(item.uid || item.id), label: item.username }))}
+              />
+            </Form.Item>
+          ) : null}
           <Form.Item name="status" label="状态" rules={[{ required: true }]}>
             <Select
               options={[

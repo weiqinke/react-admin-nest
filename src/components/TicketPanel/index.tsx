@@ -13,7 +13,8 @@ import {
   toDeptTree
 } from "@/api/platform";
 import { getUserState } from "@/api/session";
-import { findUsers } from "@/api/user";
+import LabelBind from "@/components/LabelBind";
+import { findUserOptions } from "@/api/user";
 import { Button, Descriptions, Drawer, Form, Input, Select, Space, Tag, Timeline, TreeSelect, message } from "antd";
 import { FC, useEffect, useState } from "react";
 
@@ -65,7 +66,7 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
   useEffect(() => {
     if (mine || !canWrite) return;
     if (hasPermission("user:read")) {
-      findUsers({})
+      findUserOptions()
         .then(res => setUsers(res.data?.data || []))
         .catch(() => setUsers([]));
     }
@@ -132,6 +133,12 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
             <Descriptions.Item label="内容">{ticket.content}</Descriptions.Item>
             {ticket.close_reason ? <Descriptions.Item label="关闭原因">{ticket.close_reason}</Descriptions.Item> : null}
           </Descriptions>
+          {hasPermission("label:read") ? (
+            <div className="mt-3">
+              <div className="mb-2">标签</div>
+              <LabelBind targetType="ticket" targetId={String(ticket.id)} />
+            </div>
+          ) : null}
           <div className="mt-4 mb-2">处理记录</div>
           <Timeline
             items={(ticket.events || []).map((event: any) => ({

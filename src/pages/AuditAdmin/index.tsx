@@ -1,7 +1,8 @@
 import { getAuditLog, listAuditLogs, listAuditModules, exportAuditLogsURL } from "@/api/audit";
 import { getAccessToken } from "@/api/session";
 import PageIntroduction from "@/components/PageIntroduction";
-import { Button, DatePicker, Drawer, Input, Select, Space, Table, Tag, Typography, message } from "antd";
+import { dataScopeLabel } from "@/api/platform";
+import { Alert, Button, DatePicker, Drawer, Input, Select, Space, Table, Tag, Typography, message } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import { FC, useEffect, useState } from "react";
 
@@ -19,6 +20,7 @@ const AuditAdmin: FC = () => {
   const [range, setRange] = useState<[Dayjs, Dayjs] | null>([dayjs().subtract(6, "day").startOf("day"), dayjs().endOf("day")]);
   const [modules, setModules] = useState<any[]>([]);
   const [detail, setDetail] = useState<any>();
+  const [dataScope, setDataScope] = useState("");
 
   const queryBase = () => ({
     page_size: 20,
@@ -37,6 +39,7 @@ const AuditAdmin: FC = () => {
         if (res.data.code !== 0) return;
         setDataSource(res.data.data?.list || []);
         setTotal(res.data.data?.total || 0);
+        setDataScope(res.data.data?.data_scope || "");
         setPage(nextPage);
       })
       .catch(() => setDataSource([]));
@@ -52,10 +55,12 @@ const AuditAdmin: FC = () => {
   }, []);
 
   const openDetail = (row: any) => {
-    getAuditLog(row.id).then(res => {
-      if (res.data.code === 0) setDetail(res.data.data);
-      else message.error(res.data.message || "加载详情失败");
-    });
+    getAuditLog(row.id)
+      .then(res => {
+        if (res.data.code === 0) setDetail(res.data.data);
+        else message.error(res.data.message || "加载详情失败");
+      })
+      .catch(() => undefined);
   };
 
   const onExport = () => {
@@ -111,7 +116,8 @@ const AuditAdmin: FC = () => {
 
   return (
     <div className="p-3">
-      <PageIntroduction infos={infos} introduction="记录管理端写操作与失败原因，可按模块筛选并导出 CSV。" />
+      <PageIntroduction infos={infos} introduction="记录管理端写操作与失败原因，并按当前角色的数据范围过滤。部门范围看不到其他部门的记录，超出范围的详情会提示不存在。" />
+      {dataScope ? <Alert className="mb-3" type="info" showIcon title={`当前数据范围：${dataScopeLabel(dataScope)}`} /> : null}
       <Space size={[8, 16]} className="mb-3" wrap>
         <DatePicker.RangePicker value={range as any} onChange={value => setRange(value as any)} />
         <Select
@@ -145,7 +151,7 @@ const AuditAdmin: FC = () => {
         <Button onClick={onExport}>导出 CSV</Button>
       </Space>
       <Table rowKey="id" columns={columns} dataSource={dataSource} pagination={{ current: page, total, pageSize: 20, onChange: next => findAll(next) }} />
-      <Drawer title="审计详情" open={Boolean(detail)} width={520} onClose={() => setDetail(null)}>
+      <Drawer title="审计详情" open={Boolean(detail)} size={520} onClose={() => setDetail(null)}>
         {detail && (
           <Space direction="vertical" size={12} style={{ width: "100%" }}>
             <Typography.Text>时间：{dayjs(detail.occurred_at).format("YYYY-MM-DD HH:mm:ss")}</Typography.Text>

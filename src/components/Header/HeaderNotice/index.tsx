@@ -60,7 +60,12 @@ const HeaderNotice: FC = () => {
 
   const openInbox = async (item: any) => {
     await markNoticeRead(item.id);
-    if (item.link_path) navigate(item.link_path);
+    const announcementId = item.payload?.announcement_id;
+    if (announcementId) {
+      navigate(`/workplace?announcement_id=${encodeURIComponent(String(announcementId))}`);
+    } else if (item.link_path) {
+      navigate(item.link_path);
+    }
     refresh();
   };
 

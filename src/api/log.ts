@@ -4,7 +4,7 @@ import { request } from "@/api/request";
 export async function loginlog(payload: any = {}) {
   const res = await getLoginLogs({
     page: payload.page || 1,
-    page_size: payload.page_size || payload.pageSize || 200,
+    page_size: Math.min(Number(payload.page_size || payload.pageSize || 100), 100),
     from: payload.from || payload.st,
     to: payload.to || payload.et,
     username: payload.username,
@@ -19,7 +19,15 @@ export async function loginlog(payload: any = {}) {
     host: item.ip,
     created: item.created_at || item.created
   }));
-  return { ...res, data: { ...res.data, data: list } };
+  return {
+    ...res,
+    data: {
+      ...res.data,
+      data: list,
+      total: res.data?.data?.total || list.length,
+      data_scope: res.data?.data?.data_scope || ""
+    }
+  };
 }
 
 /** 访问日志总数。无 stats:read 时静默失败，不打断工作台。 */

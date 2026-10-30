@@ -65,6 +65,17 @@ export const createDept = (payload: Record<string, any>) => request("/api/depts"
 
 export const updateDept = (id: string, payload: Record<string, any>) => request(`/api/depts/${segment(id)}`, "PUT", payload);
 
+export const listPositions = (department_id?: string) => request("/api/positions", "GET", compact({ department_id }));
+
+export const createPosition = (payload: Record<string, any>) => request("/api/positions", "POST", payload);
+
+export const updatePosition = (id: string, payload: Record<string, any>) => request(`/api/positions/${segment(id)}`, "PUT", payload);
+
+export const deletePosition = (id: string) => request(`/api/positions/${segment(id)}`, "DELETE");
+
+/** 任职。position_id 传空字符串表示取消，并清空资料里的岗位名称。 */
+export const setUserPosition = (id: string, position_id: string) => request(`/api/users/${segment(id)}/position`, "PUT", { position_id });
+
 export const deleteDept = (id: string) => request(`/api/depts/${segment(id)}`, "DELETE");
 
 export const setUserDepartment = (id: string, departmentId: string) =>

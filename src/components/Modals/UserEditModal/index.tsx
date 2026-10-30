@@ -1,8 +1,9 @@
 import { hasPermission } from "@/api/announcement";
-import { listDepts, setUserDepartment, toDeptTree } from "@/api/platform";
+import { listDepts, listPositions, setUserDepartment, setUserPosition, toDeptTree } from "@/api/platform";
+import LabelBind from "@/components/LabelBind";
 import { createUser, resetUserPassword, updateUser } from "@/api/user";
 import { UserOutlined } from "@ant-design/icons";
-import { Avatar, Col, Form, Input, Modal, Radio, Row, TreeSelect, Upload, message } from "antd";
+import { Avatar, Col, Form, Input, Modal, Radio, Row, Select, TreeSelect, Upload, message } from "antd";
 import axios from "axios";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
@@ -22,7 +23,10 @@ const UserEditModal: FC<any> = (props: any) => {
   const [uploading, setuploading] = useState(false);
   const [deptTree, setDeptTree] = useState<any[]>([]);
   const [departmentId, setDepartmentId] = useState(initUser?.profile?.department_id || "");
+  const [positionId, setPositionId] = useState(initUser?.profile?.position_id || "");
+  const [positions, setPositions] = useState<any[]>([]);
   const canAssignDept = hasPermission("user:write") && hasPermission("dept:read");
+  const canAssignPosition = hasPermission("user:write") && hasPermission("position:read");
   const getBase64 = async (img: any, callback: any) => {
     const reader = new FileReader();
     reader.addEventListener("load", () => callback(reader.result));
@@ -110,7 +114,12 @@ const UserEditModal: FC<any> = (props: any) => {
       if (result.data.code === 0 && password) {
         result = await resetUserPassword(String(initUser.uid), String(password).trim());
       }
+      const previousPosition = initUser?.profile?.position_id || "";
+      if (result.data.code === 0 && canAssignPosition && String(positionId || "") !== String(previousPosition)) {
+        result = await setUserPosition(String(initUser.uid), positionId || "");
+      }
     } else {
+      if (positionId) payload.position_id = positionId;
       result = await createUser(payload);
     }
 
@@ -134,11 +143,19 @@ const UserEditModal: FC<any> = (props: any) => {
     if (initUser) {
       setAvatarUrl(initUser?.profile?.avatar || "");
       setDepartmentId(initUser?.profile?.department_id || "");
+      setPositionId(initUser?.profile?.position_id || "");
     }
     if (!initUser?.id) {
       form.setFieldsValue({ sex: "1" });
     }
   }, [initUser, form]);
+
+  useEffect(() => {
+    if (!canAssignPosition) return;
+    listPositions()
+      .then(res => setPositions(res.data?.data?.list || []))
+      .catch(() => setPositions([]));
+  }, [canAssignPosition]);
 
   return (
     <Modal open title={`${title}用户`} width={800} onCancel={onCancel} onOk={creatRoleSubmit} okText="确定" cancelText="取消" maskClosable={false}>
@@ -243,6 +260,35 @@ const UserEditModal: FC<any> = (props: any) => {
                   treeData={toDeptTree(deptTree, { disableOff: true, keepId: departmentId })}
                   onChange={value => setDepartmentId(value || "")}
                 />
+              </Form.Item>
+            </Col>
+          ) : null}
+          <Col span={20}>
+            <Form.Item label="岗位" extra="岗位名称由任职带出，不能在这里手写。">
+              <Input value={initUser?.profile?.job_title || "未任职"} disabled />
+            </Form.Item>
+          </Col>
+          {canAssignPosition ? (
+            <Col span={20}>
+              <Form.Item label="调整岗位">
+                <Select
+                  allowClear
+                  showSearch
+                  optionFilterProp="label"
+                  placeholder="选择岗位，清空则取消任职"
+                  value={positionId || undefined}
+                  options={positions
+                    .filter(item => Number(item.status) === 1 || String(item.id) === String(positionId))
+                    .map(item => ({ value: String(item.id), label: item.name }))}
+                  onChange={value => setPositionId(value || "")}
+                />
+              </Form.Item>
+            </Col>
+          ) : null}
+          {initUser?.uid ? (
+            <Col span={20}>
+              <Form.Item label="标签">
+                <LabelBind targetType="user" targetId={String(initUser.uid)} />
               </Form.Item>
             </Col>
           ) : null}
