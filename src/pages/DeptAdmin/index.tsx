@@ -103,6 +103,12 @@ const DeptAdmin: FC = () => {
     { title: "编码", dataIndex: "code" },
     { title: "排序", dataIndex: "sort", width: 80 },
     {
+      title: "人数",
+      dataIndex: "member_count",
+      width: 90,
+      render: (count: number) => count ?? 0
+    },
+    {
       title: "负责人",
       dataIndex: "leader_user_id",
       render: (id: string) => {
@@ -138,7 +144,10 @@ const DeptAdmin: FC = () => {
 
   return (
     <div className="p-3">
-      <PageIntroduction infos={infos} introduction="部门是一棵树。可以指定负责人，同一个人可以负责多个部门。清空负责人后保存即取消。" />
+      <PageIntroduction
+        infos={infos}
+        introduction="部门是一棵树。人数只统计本部门启用用户，不含下级。可以指定负责人，同一个人可以负责多个部门。清空负责人后保存即取消。"
+      />
       <div className="mt-3 bg-white p-3">
         {canWrite ? (
           <Button type="primary" className="mb-3" onClick={() => setDraft({ status: 1, sort: 0 })}>

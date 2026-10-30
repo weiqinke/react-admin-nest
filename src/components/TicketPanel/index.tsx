@@ -10,6 +10,7 @@ import {
   getTicket,
   listDepts,
   processTicket,
+  ticketOverdue,
   TICKET_PRIORITY,
   TICKET_STATUS,
   toDeptTree
@@ -18,6 +19,7 @@ import { getUserState } from "@/api/session";
 import LabelBind from "@/components/LabelBind";
 import { findUserOptions } from "@/api/user";
 import { Button, Descriptions, Drawer, Form, Input, Select, Space, Tag, Timeline, TreeSelect, message } from "antd";
+import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
 
 const statusColor: Record<string, string> = {
@@ -150,6 +152,20 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
             <Descriptions.Item label="优先级">{TICKET_PRIORITY[ticket.priority] || ticket.priority}</Descriptions.Item>
             <Descriptions.Item label="处理人">{userName(ticket.assignee_id)}</Descriptions.Item>
             <Descriptions.Item label="部门">{deptName(ticket.department_id)}</Descriptions.Item>
+            <Descriptions.Item label="截止">
+              {ticket.due_at ? (
+                <span>
+                  {dayjs(ticket.due_at).format("YYYY-MM-DD HH:mm")}
+                  {ticketOverdue(ticket) ? (
+                    <Tag color="red" className="ml-1">
+                      已过期
+                    </Tag>
+                  ) : null}
+                </span>
+              ) : (
+                "未设置"
+              )}
+            </Descriptions.Item>
             <Descriptions.Item label="内容">{ticket.content}</Descriptions.Item>
             {ticket.close_reason ? <Descriptions.Item label="关闭原因">{ticket.close_reason}</Descriptions.Item> : null}
           </Descriptions>
@@ -234,7 +250,7 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
               <Form.Item
                 name="content"
                 label="留言"
-                extra="留言不会改变工单状态。"
+                extra="留言不会改变工单状态。有处理人时会通知对方。"
                 rules={[
                   { required: true, whitespace: true, message: "请填写留言" },
                   { max: 1024, message: "留言不超过 1024 个字符" }

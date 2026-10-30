@@ -1,22 +1,30 @@
 import { listMyAnnouncements, markAnnouncementRead } from "@/api/announcement";
+import { getHomeSummary } from "@/api/platform";
 import { PieBorderRadius } from "@/components/Echarts";
-import { DingdingOutlined, QqOutlined, WechatOutlined, WeiboOutlined } from "@ant-design/icons";
+import Round from "@/components/Echarts/Round";
+import { BellOutlined, CheckSquareOutlined, FileTextOutlined, NotificationOutlined } from "@ant-design/icons";
 import { Button, Col, List, Modal, Row, Tag } from "antd";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import CountUpImport from "react-countup";
 
 const CountUp = (CountUpImport as any).default ?? CountUpImport;
 
 import styles from "./index.module.scss";
-import Round from "@/components/Echarts/Round";
 
 const Workplace = () => {
+  const navigate = useNavigate();
   const toMygit = () => window.open("https://github.com/weiqinke/react-admin-nest", "topFrame");
   const src = "https://dr.cdnux.com/18510675/i/2024/12/31/7xt4r.webp";
   const [params, setParams] = useSearchParams();
   const [announcements, setAnnouncements] = useState<any[]>([]);
   const [current, setCurrent] = useState<any>(null);
+  const [home, setHome] = useState({
+    inbox_unread: 0,
+    todo_pending: 0,
+    open_tickets: 0,
+    unread_announcements: 0
+  });
 
   const loadAnnouncements = () => {
     listMyAnnouncements({ page: 1, page_size: 20 })
@@ -24,8 +32,23 @@ const Workplace = () => {
       .catch(() => setAnnouncements([]));
   };
 
+  const loadHome = () => {
+    getHomeSummary()
+      .then(res => {
+        const data = res.data?.data || {};
+        setHome({
+          inbox_unread: Number(data.inbox_unread || 0),
+          todo_pending: Number(data.todo_pending || 0),
+          open_tickets: Number(data.open_tickets || 0),
+          unread_announcements: Number(data.unread_announcements || 0)
+        });
+      })
+      .catch(() => undefined);
+  };
+
   useEffect(() => {
     loadAnnouncements();
+    loadHome();
   }, []);
 
   useEffect(() => {
@@ -40,6 +63,7 @@ const Workplace = () => {
     if (!item.read) {
       await markAnnouncementRead(String(item.id));
       loadAnnouncements();
+      loadHome();
     }
   };
 
@@ -83,40 +107,46 @@ const Workplace = () => {
       </Modal>
       <Row gutter={[12, 12]} className={styles.header}>
         <Col xs={24} sm={12} md={12} lg={6} xl={6} xxl={6}>
-          <div className={styles.wechat}>
-            <WechatOutlined className={styles.iconStyle} />
+          <div className={styles.wechat} style={{ cursor: "pointer" }} onClick={() => navigate("/account")}>
+            <BellOutlined className={styles.iconStyle} />
             <div>
-              <CountUp end={69999} start={0} duration={1.75} />
-              <div className={styles.baseTitle}>微信</div>
+              <CountUp end={home.inbox_unread} start={0} duration={1.25} />
+              <div className={styles.baseTitle}>未读消息</div>
             </div>
           </div>
         </Col>
         <Col xs={24} sm={12} md={12} lg={6} xl={6} xxl={6}>
-          <div className={styles.qq}>
-            <QqOutlined className={styles.iconStyle} />
+          <div className={styles.qq} style={{ cursor: "pointer" }} onClick={() => navigate("/account")}>
+            <CheckSquareOutlined className={styles.iconStyle} />
             <div>
-              <CountUp end={30366} start={0} duration={1.75} />
-              <div className={styles.baseTitle}>QQ</div>
+              <CountUp end={home.todo_pending} start={0} duration={1.25} />
+              <div className={styles.baseTitle}>待办</div>
             </div>
           </div>
         </Col>
         <Col xs={24} sm={12} md={12} lg={6} xl={6} xxl={6}>
-          <div className={styles.weibo}>
-            <WeiboOutlined className={styles.iconStyle} />
+          <div className={styles.weibo} style={{ cursor: "pointer" }} onClick={() => navigate("/mytickets")}>
+            <FileTextOutlined className={styles.iconStyle} />
             <div>
-              <CountUp end={19093} start={0} duration={1.75} />
-              <div className={styles.baseTitle}>微博</div>
+              <CountUp end={home.open_tickets} start={0} duration={1.25} />
+              <div className={styles.baseTitle}>未关闭工单</div>
             </div>
           </div>
         </Col>
         <Col xs={24} sm={12} md={12} lg={6} xl={6} xxl={6}>
-          <div className={styles.dingding}>
-            <DingdingOutlined className={styles.iconStyle} />
+          <div className={styles.dingding} style={{ position: "relative", cursor: "pointer" }} onClick={loadAnnouncements}>
+            <NotificationOutlined className={styles.iconStyle} />
             <div>
-              <CountUp end={21816} start={0} duration={1.75} />
-              <div className={styles.baseTitle}>钉钉</div>
+              <CountUp end={home.unread_announcements} start={0} duration={1.25} />
+              <div className={styles.baseTitle}>未读公告</div>
             </div>
-            <span onClick={toMygit} className={styles.githubCorner}></span>
+            <span
+              onClick={event => {
+                event.stopPropagation();
+                toMygit();
+              }}
+              className={styles.githubCorner}
+            />
           </div>
         </Col>
       </Row>

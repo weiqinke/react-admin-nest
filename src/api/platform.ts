@@ -47,6 +47,16 @@ export const API_KEY_SCOPES = [
 
 export const getSite = () => request("/api/site", "GET");
 
+/** 工作台摘要：未读站内信、待办、未关闭工单、未读公告。 */
+export const getHomeSummary = () => request("/api/me/home", "GET");
+
+/** due_at 已过且未关闭。 */
+export function ticketOverdue(ticket?: { due_at?: string; status?: string } | null) {
+  if (!ticket?.due_at || ticket.status === "closed") return false;
+  const due = Date.parse(ticket.due_at);
+  return Number.isFinite(due) && due < Date.now();
+}
+
 export async function changePassword(oldPassword: string, newPassword: string) {
   const keyRes = await getPublicKey();
   const pem = keyRes.data?.data?.public_key;
@@ -119,7 +129,8 @@ export const processTicket = (id: string, note?: string) => request(`/api/ticket
 
 export const closeTicket = (id: string, close_reason: string) => request(`/api/tickets/${segment(id)}/close`, "PUT", { close_reason });
 
-export const createTicket = (payload: { title: string; content: string; priority: string }) => request("/api/tickets", "POST", payload);
+export const createTicket = (payload: { title: string; content: string; priority: string; due_at?: string }) =>
+  request("/api/tickets", "POST", compact(payload));
 
 export const listMyTickets = (query: Record<string, any> = {}) => request("/api/me/tickets", "GET", compact(query));
 
