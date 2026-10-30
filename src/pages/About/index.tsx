@@ -2,8 +2,15 @@
 import { Descriptions } from "antd";
 import { Link } from "react-router";
 
+const dependencyItems = (deps: Record<string, string> = {}) =>
+  Object.entries(deps).map(([key, value]) => ({
+    key,
+    label: key,
+    children: value
+  }));
+
 const About = () => {
-  const { version, lastBuildTime } = REACT_PACKAGE;
+  const { dependencies, devDependencies, version, lastBuildTime } = REACT_PACKAGE;
 
   return (
     <div>
@@ -48,6 +55,12 @@ const About = () => {
             }
           ]}
         />
+      </div>
+      <div className="bg-white p-3 m-3">
+        <Descriptions title="生产环境依赖" bordered column={{ xs: 1, sm: 2, md: 3, lg: 4, xl: 4, xxl: 4 }} items={dependencyItems(dependencies)} />
+      </div>
+      <div className="bg-white p-3 m-3">
+        <Descriptions title="开发环境依赖" bordered column={{ xs: 1, sm: 2, md: 3, lg: 4, xl: 4, xxl: 4 }} items={dependencyItems(devDependencies)} />
       </div>
     </div>
   );

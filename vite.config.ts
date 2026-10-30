@@ -1,4 +1,5 @@
 import path from "path";
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 // https://vitejs.dev/config/
@@ -7,10 +8,11 @@ import react from "@vitejs/plugin-react";
 import dayjs from "dayjs";
 import { visualizer } from "rollup-plugin-visualizer";
 import { compression } from "vite-plugin-compression2";
-import packageJson from "./package.json" with { type: "json" };
 
-const { name, version } = packageJson;
 const dirname = path.dirname(fileURLToPath(import.meta.url));
+// 配置文件会被 Vite 再打包，JSON import 会丢掉未静态引用的字段，这里直接读原文。
+const packageJson = JSON.parse(readFileSync(path.join(dirname, "package.json"), "utf8"));
+const { dependencies, devDependencies, name, version } = packageJson;
 
 const isDev = process.env.NODE_ENV === "development";
 // 浏览器请求默认同源（开发 Vite 代理 / 生产 Nginx 反代 /api）。
@@ -75,6 +77,8 @@ export default defineConfig({
     REACT_APP_API_URL: JSON.stringify(httpUrl),
     REACT_APP_WS_ORIGIN: JSON.stringify(wsUrl),
     REACT_PACKAGE: JSON.stringify({
+      dependencies,
+      devDependencies,
       name,
       version,
       lastBuildTime: dayjs(new Date()).format("YYYY-MM-DD HH:mm:ss")
