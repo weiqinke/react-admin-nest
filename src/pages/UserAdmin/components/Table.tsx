@@ -21,6 +21,11 @@ const UserTable = ({ dataSource, setUser, showDeleteConfirm }) => {
       responsive: ["xxl", "xl", "lg", "md"]
     },
     {
+      title: "部门",
+      dataIndex: ["profile", "department"],
+      render: (text: string) => text || "未归属"
+    },
+    {
       title: "状态",
       dataIndex: "banned",
       responsive: ["xxl", "xl", "lg", "md"],

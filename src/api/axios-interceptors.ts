@@ -9,6 +9,8 @@ const PUBLIC_PATHS = [
   "/api/register",
   "/api/login",
   "/api/token/refresh",
+  "/api/site",
+  "/version",
   "/api/oauth/github/authorize",
   "/api/oauth/github/callback",
   "/api/oauth/gitee/authorize",
@@ -35,6 +37,8 @@ function errorText(body: any) {
   const serverMessage = body?.message || "请求失败";
   if (code === 40301 && body?.data?.permission) return `无权限：${body.data.permission}`;
   if (code === 40302) return "账号已禁用";
+  if (code === 40303) return "注册已关闭";
+  if (code === 40905) return serverMessage && serverMessage !== "in use" ? serverMessage : "仍被引用，无法删除";
   if (code === 42901) {
     const wait = body?.data?.retry_after;
     return wait ? `请求过于频繁，请 ${wait} 秒后再试` : "请求过于频繁";

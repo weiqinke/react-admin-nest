@@ -1,7 +1,8 @@
+import { getSite } from "@/api/platform";
 import Copyright from "@/components/Footer/Copyright";
 import LoginForm from "@/components/Forms/LoginForm";
 import RegisterForm from "@/components/Forms/RegisterForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Snowflake from "./snowflake";
 import styles from "./index.module.scss";
 import Owl from "@/components/Owl";
@@ -12,6 +13,17 @@ const Login = () => {
   const [random] = useState(Math.random());
   const [closeEyes, setCloseEyes] = useState(false);
   const [registeredUser, setRegisteredUser] = useState("");
+  const [allowRegister, setAllowRegister] = useState(true);
+  useEffect(() => {
+    getSite()
+      .then(res => {
+        if (res.data?.data?.allow_register === false) setAllowRegister(false);
+      })
+      .catch(() => {});
+  }, []);
+  useEffect(() => {
+    if (!allowRegister) setRegister(0);
+  }, [allowRegister]);
   const leaveRegister = () => {
     setCloseEyes(false);
     setRegister(0);
@@ -24,7 +36,7 @@ const Login = () => {
           <Owl closeEyes={closeEyes} />
         </div>
         <div>
-          {register % 2 ? (
+          {register % 2 && allowRegister ? (
             <RegisterForm
               goBack={leaveRegister}
               onRegistered={username => {
@@ -34,7 +46,7 @@ const Login = () => {
               setCloseEyes={setCloseEyes}
             />
           ) : (
-            <LoginForm setRegister={onClick} setCloseEyes={setCloseEyes} username={registeredUser} />
+            <LoginForm allowRegister={allowRegister} setRegister={onClick} setCloseEyes={setCloseEyes} username={registeredUser} />
           )}
         </div>
       </div>

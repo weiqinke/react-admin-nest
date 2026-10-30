@@ -10,6 +10,7 @@ import {
   updateMyProfile,
   updateUserProfile
 } from "@/api/goadmin";
+import { setUserDepartment } from "@/api/platform";
 import { getRefreshToken } from "@/api/session";
 
 export { getCaptcha, getPublicKey };
@@ -64,19 +65,26 @@ export async function createUser(payload) {
   const created = await goRegister({ username: payload.username, password: payload.password });
   const id = created.data?.data?.user?.id;
   const profile = profilePayload(payload);
-  if (!id || Object.keys(profile).length === 0) return created;
-  return updateUserProfile(String(id), profile);
+  let result = created;
+  if (id && Object.keys(profile).length > 0) {
+    result = await updateUserProfile(String(id), profile);
+  }
+  if (id && payload.department_id) {
+    await setUserDepartment(String(id), String(payload.department_id));
+  }
+  return result;
 }
 
 export async function findUsers(query: any = {}) {
   const res = await getUsers();
-  let list = res.data?.data?.list || [];
+  const payload = res.data?.data || {};
+  let list = payload.list || [];
   if (query.username) list = list.filter(item => item.username?.includes(query.username));
   if (query.email) list = list.filter(item => (item.profile?.email || "").includes(query.email));
   if (query.mobile) {
     list = list.filter(item => (item.profile?.mobile || item.profile?.phone || "").includes(query.mobile));
   }
-  return { ...res, data: { ...res.data, data: list.map(normalizeUser) } };
+  return { ...res, data: { ...res.data, data: list.map(normalizeUser), data_scope: payload.data_scope || "" } };
 }
 
 export function updateUser(payload: any = {}) {

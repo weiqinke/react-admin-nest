@@ -1,10 +1,11 @@
+import { hasPermission } from "@/api/announcement";
+import { listDepts, setUserDepartment, toDeptTree } from "@/api/platform";
+import { createUser, updateUser } from "@/api/user";
 import { UserOutlined } from "@ant-design/icons";
-import { Avatar, Col, Form, Input, Modal, Radio, Row, Upload, message } from "antd";
+import { Avatar, Col, Form, Input, Modal, Radio, Row, TreeSelect, Upload, message } from "antd";
+import axios from "axios";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
-
-import { createUser, updateUser } from "@/api/user";
-import axios from "axios";
 
 const layout = {
   labelCol: { span: 8 },
@@ -20,6 +21,9 @@ const UserEditModal: FC<any> = (props: any) => {
   const [avatarUrl, setAvatarUrl] = useState(initialValues.avatar || "");
   const [fileList, setfileList] = useState<any[]>([]);
   const [uploading, setuploading] = useState(false);
+  const [deptTree, setDeptTree] = useState<any[]>([]);
+  const [departmentId, setDepartmentId] = useState(initUser?.profile?.department_id || "");
+  const canAssignDept = hasPermission("user:write") && hasPermission("dept:read");
   const getBase64 = async (img: any, callback: any) => {
     const reader = new FileReader();
     reader.addEventListener("load", () => callback(reader.result));
@@ -97,8 +101,13 @@ const UserEditModal: FC<any> = (props: any) => {
       }
     };
     if (password) payload.password = String(password).trim();
+    if (!initUser?.uid && departmentId) payload.department_id = departmentId;
     if (initUser?.uid) {
       result = await updateUser(payload);
+      const previous = initUser?.profile?.department_id || "";
+      if (result.data.code === 0 && canAssignDept && String(departmentId || "") !== String(previous)) {
+        result = await setUserDepartment(String(initUser.uid), departmentId || "");
+      }
     } else {
       result = await createUser(payload);
     }
@@ -117,8 +126,16 @@ const UserEditModal: FC<any> = (props: any) => {
   };
 
   useEffect(() => {
+    if (!canAssignDept) return;
+    listDepts()
+      .then(res => setDeptTree(res.data?.data?.list || []))
+      .catch(() => setDeptTree([]));
+  }, [canAssignDept]);
+
+  useEffect(() => {
     if (initUser) {
       setAvatarUrl(initUser?.profile?.avatar || "");
+      setDepartmentId(initUser?.profile?.department_id || "");
     }
     if (!initUser?.id) {
       form.setFieldsValue({ sex: "1" });
@@ -189,6 +206,27 @@ const UserEditModal: FC<any> = (props: any) => {
               <Input />
             </Form.Item>
           </Col>
+          <Col span={20}>
+            <Form.Item label="部门" extra="部门名称只读。调整归属走单独接口，不会随资料一起保存。">
+              <Input value={initUser?.profile?.department || "未归属"} disabled />
+            </Form.Item>
+          </Col>
+          {canAssignDept ? (
+            <Col span={20}>
+              <Form.Item label="调整部门">
+                <TreeSelect
+                  allowClear
+                  showSearch
+                  treeDefaultExpandAll
+                  treeNodeFilterProp="title"
+                  placeholder="选择部门，清空则取消归属"
+                  value={departmentId || undefined}
+                  treeData={toDeptTree(deptTree, { disableOff: true, keepId: departmentId })}
+                  onChange={value => setDepartmentId(value || "")}
+                />
+              </Form.Item>
+            </Col>
+          ) : null}
         </Row>
       </Form>
     </Modal>

@@ -1,5 +1,6 @@
 import { OperationRoleModal, RoleAllocationPermModal, RoleAllocationUserModal } from "@/components/Modals";
 import PageIntroduction from "@/components/PageIntroduction";
+import { dataScopeLabel } from "@/api/platform";
 import { findRoleUsers, findRoles, removeRole } from "@/api/role";
 import { findUsers } from "@/api/user";
 import { ExclamationCircleOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
@@ -88,6 +89,12 @@ const RoleList: FC = () => {
     {
       title: "角色名称",
       dataIndex: "name"
+    },
+    {
+      title: "数据范围",
+      dataIndex: "data_scope",
+      width: 140,
+      render: (scope: string) => dataScopeLabel(scope)
     },
     {
       title: "继承",

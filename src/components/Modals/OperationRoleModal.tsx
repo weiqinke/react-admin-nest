@@ -1,3 +1,4 @@
+import { DATA_SCOPE_OPTIONS } from "@/api/platform";
 import { createRole, findRoles, updateRole } from "@/api/role";
 import { Col, Form, Input, Modal, Row, Select, message } from "antd";
 import { FC, useEffect, useState } from "react";
@@ -33,7 +34,8 @@ const RoleEditModal: FC<any> = ({ role, onCancel, onOk }: any) => {
       form.setFieldsValue({
         code: role.code,
         name: role.name,
-        inherits: role.inherits || []
+        inherits: role.inherits || [],
+        data_scope: role.data_scope || "self"
       });
     }
   }, [role, form]);
@@ -44,7 +46,8 @@ const RoleEditModal: FC<any> = ({ role, onCancel, onOk }: any) => {
       const payload = {
         code: data.code,
         name: data.name,
-        inherits: data.inherits || []
+        inherits: data.inherits || [],
+        data_scope: data.data_scope || "self"
       };
       const result: any = isEdit ? await updateRole(payload) : await createRole(payload);
       if (result.data?.code !== 0) {
@@ -77,6 +80,11 @@ const RoleEditModal: FC<any> = ({ role, onCancel, onOk }: any) => {
           <Col span={24}>
             <Form.Item name="inherits" label="继承角色" extra="可选。子角色会继承父角色权限（以后端为准）。">
               <Select mode="multiple" allowClear options={roleOptions} placeholder="选择要继承的角色" />
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item name="data_scope" label="数据范围" initialValue="self" extra="多个角色同时激活时，取最宽的一个。">
+              <Select options={DATA_SCOPE_OPTIONS} />
             </Form.Item>
           </Col>
         </Row>

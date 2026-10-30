@@ -29,6 +29,14 @@ const PermissionAdmin = lazy(() => import("@/pages/PermissionAdmin"));
 const UserAdmin = lazy(() => import("@/pages/UserAdmin"));
 const WebsocketAdmin = lazy(() => import("@/pages/WebsocketAdmin"));
 const AuditAdmin = lazy(() => import("@/pages/AuditAdmin"));
+const DeptAdmin = lazy(() => import("@/pages/DeptAdmin"));
+const ConfigAdmin = lazy(() => import("@/pages/ConfigAdmin"));
+const TicketAdmin = lazy(() => import("@/pages/TicketAdmin"));
+const JobAdmin = lazy(() => import("@/pages/JobAdmin"));
+const ApiKeyAdmin = lazy(() => import("@/pages/ApiKeyAdmin"));
+const AiAdmin = lazy(() => import("@/pages/AiAdmin"));
+const AiChat = lazy(() => import("@/pages/AiChat"));
+const MyTickets = lazy(() => import("@/pages/MyTickets"));
 
 const AreaChart = lazy(() => import("@/pages/Chart/AreaChart"));
 const NotFoundPage = lazy(() => import("@/pages/FailPage/NotFoundPage"));
@@ -122,6 +130,12 @@ const routes: RouteObject[] = [
                   route(PlacardAdmin, { path: "placardadmin", title: "公告管理" }),
                   route(WebsocketAdmin, { path: "websocketadmin", title: "在线用户管理" }),
                   route(AuditAdmin, { path: "auditadmin", title: "操作审计" }),
+                  route(DeptAdmin, { path: "deptadmin", title: "部门管理" }),
+                  route(ConfigAdmin, { path: "configadmin", title: "系统参数" }),
+                  route(TicketAdmin, { path: "ticketadmin", title: "工单处理" }),
+                  route(JobAdmin, { path: "jobadmin", title: "定时任务" }),
+                  route(ApiKeyAdmin, { path: "apikeyadmin", title: "API 密钥" }),
+                  route(AiAdmin, { path: "aiadmin", title: "模型管理" }),
                   route(NotFoundPage, { path: "*", title: "notFound" })
                 ]
               }),
@@ -129,6 +143,8 @@ const routes: RouteObject[] = [
               route(Account, { path: "account", auth: true, title: "个人信息" }),
               route(UserProfile, { path: "profile", auth: true, title: "个人中心" }),
               route(Subscribe, { path: "subscribe", auth: true, title: "订阅" }),
+              route(AiChat, { path: "aichat", auth: true, title: "AI 对话" }),
+              route(MyTickets, { path: "mytickets", auth: true, title: "我的工单" }),
               route(About, { index: true, auth: true, title: "关于" }),
               route(NotFoundPage, { path: "*", auth: true, title: "NotFound" })
             ]

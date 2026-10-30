@@ -28,13 +28,15 @@ export const createRole = (payload: any = {}) =>
   goCreateRole({
     code: payload.code || payload.name,
     name: payload.name,
-    inherits: payload.inherits
+    inherits: payload.inherits,
+    data_scope: payload.data_scope
   });
 
 export const updateRole = (payload: any = {}) =>
   goUpdateRole(roleCodeOf(payload), {
     name: payload.name,
-    inherits: payload.inherits
+    inherits: payload.inherits,
+    data_scope: payload.data_scope
   });
 
 export const removeRole = (payload: any = {}) => goDeleteRole(roleCodeOf(payload));

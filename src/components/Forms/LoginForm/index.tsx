@@ -17,7 +17,7 @@ import styles from "./index.module.scss";
 import GiteeAuth from "@/components/OAuth2/GiteeAuth";
 import GithubAuth from "@/components/OAuth2/GithubAuth";
 
-const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser }) => {
+const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowRegister = true }) => {
   const navigate = useNavigate();
   const { setValue }: any = useContext(ProjectContext);
   const { setTags } = useContext(MenuTagContext);
@@ -121,11 +121,13 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser }) => {
                 </Form.Item>
 
                 <div className={styles.other}>
-                  <Form.Item noStyle>
-                    <span className={styles.register} onClick={setRegister}>
-                      注册账号
-                    </span>
-                  </Form.Item>
+                  {allowRegister ? (
+                    <Form.Item noStyle>
+                      <span className={styles.register} onClick={setRegister}>
+                        注册账号
+                      </span>
+                    </Form.Item>
+                  ) : null}
                   <Form.Item noStyle>
                     <span className={styles.forgetPassword}>忘记密码</span>
                   </Form.Item>

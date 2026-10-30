@@ -1,7 +1,8 @@
 import { UserEditModal } from "@/components/Modals";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Modal, Space, message } from "antd";
+import { Alert, Button, Form, Input, Modal, Space, message } from "antd";
 import { FC, useEffect, useState } from "react";
+import { dataScopeLabel } from "@/api/platform";
 import { findUsers, updateUser } from "@/api/user";
 import PageIntroduction from "@/components/PageIntroduction";
 import UserTable from "./components/Table";
@@ -18,6 +19,7 @@ const infos = [
 const UserAdmin: FC = () => {
   const [form] = Form.useForm();
   const [dataSource, setDataSource] = useState([]);
+  const [dataScope, setDataScope] = useState("");
   const [user, setUser] = useState(null);
 
   const showDeleteConfirm = (item: any) => {
@@ -53,6 +55,7 @@ const UserAdmin: FC = () => {
       .then(result => {
         if (result.data.code === 0) {
           setDataSource(result.data.data || []);
+          setDataScope(result.data.data_scope || "");
         } else {
           setDataSource([]);
         }
@@ -64,7 +67,10 @@ const UserAdmin: FC = () => {
   useEffect(findAll, []);
   return (
     <div className="p-3">
-      <PageIntroduction infos={infos} introduction="本页面是操作系统中的用户，可以用来添加和编辑用户。" />
+      <PageIntroduction infos={infos} introduction="用户列表已按当前角色的数据范围过滤。部门归属在编辑里单独调整，不会写进个人资料字段。" />
+      {dataScope ? (
+        <Alert className="mt-3" type="info" showIcon title={`当前数据范围：${dataScopeLabel(dataScope)}`} />
+      ) : null}
       <div className="my-3 rounded-md bg-white p-3">
         <Form form={form} name="horizontal_login" layout="inline" autoComplete="off" onFinish={findAll}>
           <Form.Item name="username" label="用户名">

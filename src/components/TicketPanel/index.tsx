@@ -1,0 +1,206 @@
+import { hasPermission } from "@/api/announcement";
+import {
+  assignTicket,
+  closeMyTicket,
+  closeTicket,
+  flattenDepts,
+  getMyTicket,
+  getTicket,
+  listDepts,
+  processTicket,
+  TICKET_PRIORITY,
+  TICKET_STATUS,
+  toDeptTree
+} from "@/api/platform";
+import { findUsers } from "@/api/user";
+import { Button, Descriptions, Drawer, Form, Input, Select, Space, Tag, Timeline, TreeSelect, message } from "antd";
+import { FC, useEffect, useState } from "react";
+
+const statusColor: Record<string, string> = {
+  open: "gold",
+  assigned: "blue",
+  processing: "cyan",
+  closed: "default"
+};
+
+const actionLabel: Record<string, string> = {
+  create: "提交",
+  assign: "分派",
+  process: "开始处理",
+  close: "关闭"
+};
+
+type Props = {
+  ticketId: string;
+  mine?: boolean;
+  onClose: () => void;
+  onChanged: () => void;
+};
+
+const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
+  const [ticket, setTicket] = useState<any>(null);
+  const [action, setAction] = useState("");
+  const [users, setUsers] = useState<any[]>([]);
+  const [depts, setDepts] = useState<any[]>([]);
+  const [form] = Form.useForm();
+  const [saving, setSaving] = useState(false);
+  const canWrite = !mine && hasPermission("ticket:write");
+
+  const load = () => {
+    const request = mine ? getMyTicket(ticketId) : getTicket(ticketId);
+    request.then(res => setTicket(res.data?.data || null)).catch(() => setTicket(null));
+  };
+
+  useEffect(() => {
+    setAction("");
+    form.resetFields();
+    const request = mine ? getMyTicket(ticketId) : getTicket(ticketId);
+    request.then(res => setTicket(res.data?.data || null)).catch(() => setTicket(null));
+  }, [ticketId, mine, form]);
+
+  useEffect(() => {
+    if (mine || !canWrite) return;
+    if (hasPermission("user:read")) {
+      findUsers({})
+        .then(res => setUsers(res.data?.data || []))
+        .catch(() => setUsers([]));
+    }
+    if (hasPermission("dept:read")) {
+      listDepts()
+        .then(res => setDepts(res.data?.data?.list || []))
+        .catch(() => setDepts([]));
+    }
+  }, [mine, canWrite]);
+
+  const deptName = (id?: string) => {
+    if (!id) return "未分派";
+    return flattenDepts(depts).find(item => String(item.id) === String(id))?.name || id;
+  };
+
+  const userName = (id?: string) => {
+    if (!id) return "未分派";
+    return users.find(item => String(item.uid || item.id) === String(id))?.username || id;
+  };
+
+  const submit = async (values: any) => {
+    setSaving(true);
+    try {
+      if (action === "assign") {
+        if (!values.assignee_id && !values.department_id) {
+          message.warning("处理人和部门至少填一个");
+          return;
+        }
+        await assignTicket(ticketId, {
+          assignee_id: values.assignee_id || "",
+          department_id: values.department_id || ""
+        });
+      } else if (action === "process") {
+        await processTicket(ticketId, values.note);
+      } else if (action === "close") {
+        const close = mine ? closeMyTicket : closeTicket;
+        await close(ticketId, values.close_reason);
+      }
+      message.success("已更新");
+      setAction("");
+      form.resetFields();
+      load();
+      onChanged();
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const movable = ticket && (ticket.status === "open" || ticket.status === "assigned");
+  const open = ticket && ticket.status !== "closed";
+
+  return (
+    <Drawer open title={ticket?.title || "工单"} size={560} onClose={onClose} destroyOnHidden>
+      {ticket ? (
+        <>
+          <Descriptions column={1} size="small">
+            <Descriptions.Item label="状态">
+              <Tag color={statusColor[ticket.status] || "default"}>{TICKET_STATUS[ticket.status] || ticket.status}</Tag>
+            </Descriptions.Item>
+            <Descriptions.Item label="优先级">{TICKET_PRIORITY[ticket.priority] || ticket.priority}</Descriptions.Item>
+            <Descriptions.Item label="处理人">{userName(ticket.assignee_id)}</Descriptions.Item>
+            <Descriptions.Item label="部门">{deptName(ticket.department_id)}</Descriptions.Item>
+            <Descriptions.Item label="内容">{ticket.content}</Descriptions.Item>
+            {ticket.close_reason ? <Descriptions.Item label="关闭原因">{ticket.close_reason}</Descriptions.Item> : null}
+          </Descriptions>
+          <div className="mt-4 mb-2">处理记录</div>
+          <Timeline
+            items={(ticket.events || []).map((event: any) => ({
+              key: event.id,
+              content: (
+                <div>
+                  <div>{actionLabel[event.action] || event.action}</div>
+                  <div className="text-xs text-neutral-500">
+                    {event.created_at}
+                    {event.note ? ` · ${event.note}` : ""}
+                  </div>
+                </div>
+              )
+            }))}
+          />
+          {canWrite && movable ? (
+            <Space className="mb-3" wrap>
+              <Button onClick={() => setAction("assign")}>分派</Button>
+              <Button onClick={() => setAction("process")}>开始处理</Button>
+            </Space>
+          ) : null}
+          {open && (mine || canWrite) ? (
+            <Button className="mb-3" onClick={() => setAction("close")}>
+              关闭工单
+            </Button>
+          ) : null}
+          {action ? (
+            <Form form={form} layout="vertical" onFinish={submit}>
+              {action === "assign" ? (
+                <>
+                  <Form.Item name="assignee_id" label="处理人">
+                    {users.length ? (
+                      <Select
+                        allowClear
+                        showSearch
+                        optionFilterProp="label"
+                        placeholder="选择处理人"
+                        options={users.map(item => ({ value: String(item.uid || item.id), label: item.username }))}
+                      />
+                    ) : (
+                      <Input placeholder="处理人的用户 ID" />
+                    )}
+                  </Form.Item>
+                  <Form.Item name="department_id" label="部门">
+                    {depts.length ? (
+                      <TreeSelect allowClear treeDefaultExpandAll placeholder="选择部门" treeData={toDeptTree(depts, { disableOff: true })} />
+                    ) : (
+                      <Input placeholder="部门 ID，可留空" />
+                    )}
+                  </Form.Item>
+                </>
+              ) : null}
+              {action === "process" ? (
+                <Form.Item name="note" label="备注">
+                  <Input.TextArea rows={3} maxLength={1024} placeholder="可选" />
+                </Form.Item>
+              ) : null}
+              {action === "close" ? (
+                <Form.Item name="close_reason" label="关闭原因" rules={[{ required: true, message: "请填写关闭原因" }]}>
+                  <Input.TextArea rows={3} maxLength={512} />
+                </Form.Item>
+              ) : null}
+              <Space>
+                <Button type="primary" htmlType="submit" loading={saving}>
+                  确定
+                </Button>
+                <Button onClick={() => setAction("")}>取消</Button>
+              </Space>
+            </Form>
+          ) : null}
+        </>
+      ) : null}
+    </Drawer>
+  );
+};
+
+export default TicketPanel;
