@@ -1,6 +1,6 @@
 import useCalculativeWidth from "@/hooks/useCalculativeWidth";
 import { ReactNode, RefObject, useEffect, useRef, useState } from "react";
-import { throttle, cloneDeep } from "lodash-es";
+import { throttle } from "@/utils/throttle";
 
 /**瀑布流的元素，必须含有这个scale数据 （可以自己改个名）*/
 export interface waterfallItem {
@@ -45,7 +45,7 @@ const Waterfall = <T extends waterfallItem>(props: waterfallProps<T>) => {
   };
   /**把获取到的列表，按照规律放入二维数组中。 注，需要监听list的变化，再做这个函数，否则无法获取到最新的colList */
   const listToColList = (list: T[]) => {
-    const _colList = cloneDeep(colList); //进行深拷贝
+    const _colList = structuredClone(colList);
     const colHeightObject = { minValue: 1, minIndex: "0" };
     for (let index = 0; index < cols; index++) {
       colHeightObject[index] = 0;

@@ -57,7 +57,6 @@ npm run lint
 | `npm run build` | Production build |
 | `npm run preview` | Preview build |
 | `npm run lint` | ESLint |
-| `npm test` | Vitest |
 
 ## License
 

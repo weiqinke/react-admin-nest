@@ -1,4 +1,4 @@
-import * as echarts from "echarts";
+import echarts from "./setup";
 import React, { useEffect, useRef } from "react";
 
 const data = [

@@ -1,5 +1,3 @@
-import qs from "qs";
-
 export const SYSTEM_TOKEN = "token";
 
 function decodeJwtPayload(token: string) {
@@ -90,14 +88,6 @@ export const getURLParams = (url: string): any => {
   }
   return JSON.parse('{"' + decodeURIComponent(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}');
 };
-
-/**
- * 序列化请求参数
- */
-
-export function paramsSerializer(params = {}) {
-  return qs.stringify(params, { arrayFormat: "repeat" });
-}
 
 /**
  * 判断数据类型

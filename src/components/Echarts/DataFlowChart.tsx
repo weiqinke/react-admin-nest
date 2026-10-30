@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef } from "react";
-import * as echarts from "echarts";
+import echarts from "./setup";
 import axios from "axios";
 
 const DataFlowChart: FC = () => {

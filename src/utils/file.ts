@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-duplicate-enum-values */
-import html2canvas from "html2canvas";
 
 const createBodyImg = async () => {
+  const { domToCanvas } = await import("modern-screenshot");
   const body: any = document.querySelector("body");
-  const canvas = await html2canvas(body);
+  const canvas = await domToCanvas(body);
   const context: any = canvas.getContext("2d");
   // 关闭抗锯齿形
   context.mozImageSmoothingEnabled = false;

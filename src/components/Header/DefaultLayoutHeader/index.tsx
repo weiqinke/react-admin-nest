@@ -2,7 +2,6 @@
 import { webSocketManager } from "@/utils/ws";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Dropdown, MenuProps, Modal, notification } from "antd";
-import html2canvas from "html2canvas";
 import { useContext, useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router";
 import HeaderNotice from "../HeaderNotice";
@@ -95,10 +94,9 @@ const DefaultLayoutHeader = () => {
   };
 
   const captureScreen = async (requestId: string) => {
-    const result = await html2canvas(document.body, {
-      useCORS: true,
-      scale: window.devicePixelRatio < 3 ? window.devicePixelRatio : 2,
-      allowTaint: true
+    const { domToCanvas } = await import("modern-screenshot");
+    const result = await domToCanvas(document.body, {
+      scale: window.devicePixelRatio < 3 ? window.devicePixelRatio : 2
     });
     const shot = await toJpeg(result);
     const uploaded = await uploadWsScreenshot(shot.blob, requestId);

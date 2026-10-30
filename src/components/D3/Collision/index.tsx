@@ -1,4 +1,8 @@
-import * as d3 from "d3";
+import { forceCollide, forceManyBody, forceSimulation, forceX, forceY } from "d3-force";
+import { randomUniform } from "d3-random";
+import { scaleOrdinal } from "d3-scale";
+import { schemeTableau10 } from "d3-scale-chromatic";
+import { pointer, select } from "d3-selection";
 import { useEffect, useRef } from "react";
 
 const width = 600;
@@ -6,7 +10,7 @@ const height = 300;
 
 const createData = () => {
   const k = width / 200;
-  const r = d3.randomUniform(k, k * 4);
+  const r = randomUniform(k, k * 4);
   const n = 4;
   return Array.from({ length: 200 }, (_, i) => ({
     r: r(),
@@ -17,32 +21,31 @@ const data = createData();
 const nodes = data.map(Object.create);
 
 const Collision = () => {
-  const svgRef = useRef<SVGSVGElement | null>(null);
+  const svgRef = useRef<HTMLCanvasElement | null>(null);
 
   const pointermoved = event => {
-    const [x, y] = d3.pointer(event);
+    const [x, y] = pointer(event);
     nodes[0].fx = x - width / 2;
     nodes[0].fy = y - height / 2;
   };
 
   useEffect(() => {
-    const color = d3.scaleOrdinal(d3.schemeTableau10);
+    const color = scaleOrdinal(schemeTableau10);
     const context = svgRef.current.getContext("2d");
-    d3.forceSimulation(nodes)
+    forceSimulation(nodes)
       .alphaTarget(0.3) // stay hot
       .velocityDecay(0.1) // low friction
-      .force("x", d3.forceX().strength(0.01))
-      .force("y", d3.forceY().strength(0.01))
+      .force("x", forceX().strength(0.01))
+      .force("y", forceY().strength(0.01))
       .force(
         "collide",
-        d3
-          .forceCollide()
-          .radius(d => d.r + 1)
+        forceCollide()
+          .radius((d: { r: number }) => d.r + 1)
           .iterations(3)
       )
       .force(
         "charge",
-        d3.forceManyBody().strength((d, i) => (i ? 0 : (-width * 2) / 3))
+        forceManyBody().strength((_d, i) => (i ? 0 : (-width * 2) / 3))
       )
       .on("tick", () => {
         context.clearRect(0, 0, width, height);
@@ -59,7 +62,7 @@ const Collision = () => {
         context.restore();
       });
 
-    d3.select(context.canvas)
+    select(context.canvas)
       .on("touchmove", event => event.preventDefault())
       .on("pointermove", pointermoved);
   }, []);

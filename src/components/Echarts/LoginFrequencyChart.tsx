@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import * as echarts from "echarts";
+import echarts from "./setup";
 import React, { useEffect, useRef } from "react";
 
 const LoginFrequencyChart = ({ dataSource = [] }) => {

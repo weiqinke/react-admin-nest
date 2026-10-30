@@ -1,27 +1,5 @@
 allowBuilds:
-  '@parcel/watcher': set this to true or false
-  core-js: true
-
-minimumReleaseAgeExclude:
-  - "@typescript-eslint/eslint-plugin@8.72.1"
-  - "@typescript-eslint/parser@8.72.1"
-  - "@typescript-eslint/project-service@8.72.1"
-  - "@typescript-eslint/scope-manager@8.72.1"
-  - "@typescript-eslint/tsconfig-utils@8.72.1"
-  - "@typescript-eslint/type-utils@8.72.1"
-  - "@typescript-eslint/types@8.72.1"
-  - "@typescript-eslint/typescript-estree@8.72.1"
-  - "@typescript-eslint/utils@8.72.1"
-  - "@typescript-eslint/visitor-keys@8.72.1"
-  - typescript-eslint@8.72.1
-  - vite-plugin-compression2@2.5.4
-  - axios@1.21.0
-
-overrides:
-  react: 19.3.1
-  react-dom: 19.3.1
-  "@types/react": 19.3.0
-  "@types/react-dom": 19.3.0
+  '@parcel/watcher': true
 
 peerDependencyRules:
   allowedVersions:

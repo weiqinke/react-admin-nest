@@ -6,16 +6,14 @@ import TagsView from "@/components/TagsView";
 import MenuTagContext from "@/contexts/MenuTagContext";
 import FailContainer from "@/pages/FailPage/FailContainer";
 import { Layout } from "antd";
-import "animate.css";
-import { throttle } from "lodash-es";
 import { Suspense, useContext, useEffect, useState } from "react";
+import { throttle } from "@/utils/throttle";
 import { Outlet, useLocation } from "react-router";
 import styles from "./index.module.scss";
 import SuspendFallback from "@/components/SuspendFallback";
 import AnnouncementGate from "@/components/AnnouncementGate";
 
 const { Content, Sider } = Layout;
-const pageMotion = "animate__animated animate__fadeInUp";
 
 const DefaultLayout = () => {
   const { refreshKey, refreshing } = useContext(MenuTagContext);
@@ -68,7 +66,7 @@ const DefaultLayout = () => {
                   ) : (
                     <div
                       key={`${pathname}-${refreshKey}`}
-                      className={`${enterMotion ? pageMotion : ""} ${styles.pageEnter}`.trim()}>
+                      className={enterMotion ? styles.pageEnter : undefined}>
                       <Outlet />
                     </div>
                   )}

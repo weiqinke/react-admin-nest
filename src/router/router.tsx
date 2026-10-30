@@ -10,27 +10,27 @@ import Account from "@/pages/Account";
 import UserProfile from "@/pages/UserProfile";
 import Subscribe from "@/pages/Subscribe";
 import MusicChart from "@/pages/MusicChart";
-const BMap = lazy(() => import(/* webpackChunkName: "BMap'"*/ "@/pages/BMap"));
-const About = lazy(() => import(/* webpackChunkName: "About'"*/ "@/pages/About"));
-const AnimateCard = lazy(() => import(/* webpackChunkName: "AnimateCard'"*/ "@/pages/AnimateCard"));
-const LabelsAdmin = lazy(() => import(/* webpackChunkName: "LabelsAdmin'"*/ "@/pages/LabelsAdmin"));
-const DictAdmin = lazy(() => import(/* webpackChunkName: "DictAdmin'"*/ "@/pages/DictAdmin"));
-const NoticeAdmin = lazy(() => import(/* webpackChunkName: "NoticeAdmin'"*/ "@/pages/NoticeAdmin"));
-const MenuAdmin = lazy(() => import(/* webpackChunkName: "MenuAdmin'"*/ "@/pages/MenuAdmin"));
-const Workbench = lazy(() => import(/* webpackChunkName: "Workbench'"*/ "@/pages/Workbench"));
-const Workplace = lazy(() => import(/* webpackChunkName: "Workplace'"*/ "@/pages/Workplace"));
-const PlacardAdmin = lazy(() => import(/* webpackChunkName: "PlacardAdmin'"*/ "@/pages/PlacardAdmin"));
-const RoleAdmin = lazy(() => import(/* webpackChunkName: "RoleAdmin'"*/ "@/pages/RoleAdmin"));
-const PermissionAdmin = lazy(() => import(/* webpackChunkName: "PermissionAdmin'"*/ "@/pages/PermissionAdmin"));
+const BMap = lazy(() => import("@/pages/BMap"));
+const About = lazy(() => import("@/pages/About"));
+const AnimateCard = lazy(() => import("@/pages/AnimateCard"));
+const LabelsAdmin = lazy(() => import("@/pages/LabelsAdmin"));
+const DictAdmin = lazy(() => import("@/pages/DictAdmin"));
+const NoticeAdmin = lazy(() => import("@/pages/NoticeAdmin"));
+const MenuAdmin = lazy(() => import("@/pages/MenuAdmin"));
+const Workbench = lazy(() => import("@/pages/Workbench"));
+const Workplace = lazy(() => import("@/pages/Workplace"));
+const PlacardAdmin = lazy(() => import("@/pages/PlacardAdmin"));
+const RoleAdmin = lazy(() => import("@/pages/RoleAdmin"));
+const PermissionAdmin = lazy(() => import("@/pages/PermissionAdmin"));
 
-const UserAdmin = lazy(() => import(/* webpackChunkName: "UserAdmin'"*/ "@/pages/UserAdmin"));
-const WebsocketAdmin = lazy(() => import(/* webpackChunkName: "WebsocketAdmin'"*/ "@/pages/WebsocketAdmin"));
-const AuditAdmin = lazy(() => import(/* webpackChunkName: "AuditAdmin'"*/ "@/pages/AuditAdmin"));
+const UserAdmin = lazy(() => import("@/pages/UserAdmin"));
+const WebsocketAdmin = lazy(() => import("@/pages/WebsocketAdmin"));
+const AuditAdmin = lazy(() => import("@/pages/AuditAdmin"));
 
-const AreaChart = lazy(() => import(/* webpackChunkName: "AreaChart'"*/ "@/pages/Chart/AreaChart"));
-const NotFoundPage = lazy(() => import(/* webpackChunkName: "NotFoundPage'"*/ "@/pages/FailPage/NotFoundPage"));
+const AreaChart = lazy(() => import("@/pages/Chart/AreaChart"));
+const NotFoundPage = lazy(() => import("@/pages/FailPage/NotFoundPage"));
 
-const D3Example = lazy(() => import(/* webpackChunkName: "D3Example'"*/ "@/pages/D3Example"));
+const D3Example = lazy(() => import("@/pages/D3Example"));
 
 const RouterPages: any = [
   {

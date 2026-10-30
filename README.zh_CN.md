@@ -61,7 +61,6 @@ npm run lint
 | `npm run build` | 生产构建 |
 | `npm run preview` | 预览构建产物 |
 | `npm run lint` | ESLint |
-| `npm test` | Vitest |
 
 ## 主要页面（管理）
 

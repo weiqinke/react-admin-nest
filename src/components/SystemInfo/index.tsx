@@ -2,11 +2,24 @@ import { apiCount } from "@/api/microservice/log";
 import { totalPercentage } from "@/utils/core";
 import { webSocketManager } from "@/utils/ws";
 import { Col, Progress, Row } from "antd";
-import bytes from "bytes";
 import dayjs from "dayjs";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import styles from "./index.module.scss";
+
+function formatBytes(value: number) {
+  if (value == null || Number.isNaN(value)) return "";
+  const units = ["B", "KB", "MB", "GB", "TB", "PB"];
+  const negative = value < 0;
+  let size = Math.abs(value);
+  let unit = 0;
+  while (size >= 1024 && unit < units.length - 1) {
+    size /= 1024;
+    unit += 1;
+  }
+  const text = unit === 0 ? String(size) : String(Number(size.toFixed(2)));
+  return `${negative ? "-" : ""}${text}${units[unit]}`;
+}
 
 const statusColor = (percentage: number) => {
   if (percentage < 40) return "#52c41a";
@@ -162,7 +175,7 @@ const SystemInfo: React.FC = () => {
             <div className={styles.title}>{`内存使用率(${memPercentage}%)`}</div>
             <div className={styles.mem}>
               <Progress type="circle" percent={memPercentage} strokeColor={statusColor(memPercentage)} format={percent => percent + "%"} />
-              <div className={styles.surplus}>剩余{bytes(OsInfo.freemem)}</div>
+              <div className={styles.surplus}>剩余{formatBytes(OsInfo.freemem)}</div>
             </div>
           </div>
         </div>

@@ -48,34 +48,27 @@ const goAdminProxy = {
   "/health": goAdminProxyEntry()
 };
 
-function vendorChunkName(id: string) {
-  // pnpm: .../node_modules/.pnpm/<pkg>@ver/node_modules/<pkg>/...
-  // npm/yarn: .../node_modules/<pkg>/...
-  const match = id.match(/node_modules\/(?:\.pnpm\/[^/]+\/node_modules\/)?((?:@[^/]+\/)?[^/]+)/);
-  return match?.[1] || "vendor";
-}
-
 export default defineConfig({
-  // Vite 8 CJS 默认导出互操作变更：部分 CJS 包（如 react-card-flip、react-countup）
-  // 的 default import 会变成 { default: Component }，导致 JSX 报 type is invalid。
-  // 临时恢复旧行为；后续可改为 `import X from 'pkg'; const Comp = X.default ?? X`
+  // Vite 8 CJS 默认导出互操作变更：react-countup 的 default import
+  // 会变成 { default: Component }，导致 JSX 报 type is invalid。
   legacy: {
     inconsistentCjsInterop: true
   },
   plugins: [
     tailwindcss(),
     react(),
-    // 构建时生成 gzip 预压缩资源（替代已停更的 vite-plugin-compression）
+    // deploy/nginx.conf.example 对 /js、/css 开了 gzip_static，构建时预生成 .gz
     compression({
       algorithms: ["gzip"],
       threshold: 10240,
       logLevel: "info"
     }),
-    visualizer({
-      emitFile: false,
-      filename: "analysis-chart.html", // 分析图生成的文件名
-      open: false // 打包后不自动打开，避免 CI/本地构建被打断
-    })
+    process.env.ANALYZE === "1" &&
+      visualizer({
+        emitFile: false,
+        filename: "analysis-chart.html",
+        open: false
+      })
   ],
   define: {
     // 打进浏览器包的基址：生产默认同源空字符串。代理目标 goAdminOrigin 仅用于 Vite server/preview。
@@ -87,8 +80,7 @@ export default defineConfig({
       name,
       version,
       lastBuildTime: dayjs(new Date()).format("YYYY-MM-DD HH:mm:ss")
-    }),
-    NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+    })
   },
   resolve: {
     // 强制全项目使用同一份 React，避免 Vite 预构建误解析到残留的 react@18
@@ -108,36 +100,22 @@ export default defineConfig({
     proxy: goAdminProxy
   },
   server: {
-    hmr: {},
     proxy: goAdminProxy
   },
   build: {
-    minify: "terser", // 必须开启：使用 terserOptions 才有效果
-    terserOptions: {
-      compress: {
-        drop_console: process.env.NODE_ENV === "production" ? true : false,
-        drop_debugger: process.env.NODE_ENV === "production" ? true : false
-      }
-    },
     rolldownOptions: {
-      // 静态资源分类打包
       output: {
-        // 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量
-        globals: {},
         chunkFileNames: "js/[name]-[hash].js",
         entryFileNames: "js/[name]-[hash].js",
         assetFileNames: "[ext]/[name]-[hash].[ext]",
-        // Vite 8 / Rolldown：用 codeSplitting 替代已弃用的 manualChunks
-        codeSplitting: {
-          groups: [
-            {
-              test: /node_modules/,
-              debugName: "vendor-by-package",
-              name(id: string) {
-                return vendorChunkName(id);
-              }
-            }
-          ]
+        // 默认压缩器是 Oxc。显式打开 mangle / codegen，避免只传 compress 时退回未压缩产物。
+        minify: {
+          compress: {
+            dropConsole: true,
+            dropDebugger: true
+          },
+          mangle: true,
+          codegen: true
         }
       }
     }

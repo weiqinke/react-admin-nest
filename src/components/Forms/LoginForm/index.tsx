@@ -5,9 +5,6 @@ import { webSocketManager } from "@/utils/ws";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Divider, Form, Image, Input, Spin, Tooltip, message } from "antd";
 import { useCallback, useContext, useEffect, useState } from "react";
-import ReactCardFlipImport from "react-card-flip";
-
-const ReactCardFlip = (ReactCardFlipImport as any).default ?? ReactCardFlipImport;
 import { useNavigate } from "react-router";
 
 import { getMyMenus } from "@/api/goadmin";
@@ -95,8 +92,9 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser }) => {
         </Tooltip>
       </div>
       <h1 className={styles.title}>Nest-Admin</h1>
-      <ReactCardFlip isFlipped={isFlipped}>
-        <div>
+      <div className={`${styles.flip} ${isFlipped ? styles.flipped : ""}`}>
+        <div className={styles.flipInner}>
+        <div className={styles.front}>
           <Spin spinning={loading} delay={500}>
             <Form name="basic" initialValues={initialValues} onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete="off">
               <Form.Item name="username" rules={[{ required: true, message: "请输入用户名!" }]}>
@@ -160,10 +158,11 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser }) => {
             </div>
           </Spin>
         </div>
-        <div className={styles.card}>
+        <div className={`${styles.card} ${styles.back}`}>
           <Image width={200} src={qrimg} />
         </div>
-      </ReactCardFlip>
+        </div>
+      </div>
     </div>
   );
 };

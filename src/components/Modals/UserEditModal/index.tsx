@@ -1,6 +1,5 @@
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Col, Form, Input, Modal, Radio, Row, Upload, message } from "antd";
-import { trim } from "lodash-es";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 
@@ -97,7 +96,7 @@ const UserEditModal: FC<any> = (props: any) => {
         avatar
       }
     };
-    if (password) payload.password = trim(password);
+    if (password) payload.password = String(password).trim();
     if (initUser?.uid) {
       result = await updateUser(payload);
     } else {

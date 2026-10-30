@@ -104,6 +104,39 @@
   margin-top: 45px;
 }
 
+.flip {
+  perspective: 1000px;
+}
+
+.flipInner {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+}
+
+.flipped .flipInner {
+  transform: rotateY(180deg);
+}
+
+.front,
+.back {
+  backface-visibility: hidden;
+}
+
+.back {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
+}
+
+.flipped .front {
+  pointer-events: none;
+}
+
+.flip:not(.flipped) .back {
+  pointer-events: none;
+}
+
 .register {
   cursor: pointer;
   color: #1677ff;

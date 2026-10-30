@@ -208,7 +208,7 @@ Header 只做轻提示，重连时不挡住业务页。
    - 拒绝：`screen.denied` `{ request_id }`。仅 `pending` 可变为 `denied`，只回给发起这条请求的连接。
    - 同意：`screen.accept` `{ request_id }`。仅目标自己的连接、且状态为 `pending` 时变为 `accepted`。
    - 30 秒仍是 `pending`：改为超时，双方收到 `screen.error` `{ request_id, message: "timeout" }`。之后 accept 和上传都无效。
-4. 只有 `accepted` 之后才截屏。先关掉确认框再 `html2canvas`。JPEG quality 0.7，最长边 1920。
+4. 只有 `accepted` 之后才截屏。先关掉确认框再 `modern-screenshot`。JPEG quality 0.7，最长边 1920。
 5. `POST /api/ws/screenshots`，Bearer，权限 `ws:connect`。`multipart` 字段 `file`、`request_id`。文件不超过 2MB，仅 JPEG。请求必须属于当前用户、状态为 `accepted` 且未过期，否则 `40301` 或 `40901`。响应 `{ url, expires_at }`。`url` 为 HMAC 签名，5 分钟有效，例如 `/api/ws/screenshots/{id}?exp=...&sig=...`。下载不看 Cookie，过期 403。
 6. 目标发送 `screen.ready`：`{ request_id, url, expires_at, width, height }`。服务端确认已经上传成功后改为 `ready`。
 7. `screen.ready` 只发给发起这条 `screen.request` 的连接。图片不进 `admin-watch`，目标本人和其它在线用户都收不到。超时或断开的 `screen.error` 发给发起连接，并同时发给目标连接，用来关掉确认框。
