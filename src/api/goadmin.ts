@@ -86,6 +86,9 @@ export async function resetManagedUserPassword(id: string, password: string) {
   return request(`/api/users/${enc(id)}/password`, "PUT", { password_encrypted });
 }
 
+/** 解除登录锁定，并清掉该用户名的失败次数。 */
+export const unlockManagedUser = (id: string) => request(`/api/users/${enc(id)}/unlock`, "PUT", {});
+
 export const getUserProfile = (id: string) => request(`/api/users/${enc(id)}/profile`, "GET");
 
 export const updateUserProfile = (id: string, payload) => request(`/api/users/${enc(id)}/profile`, "PUT", payload);

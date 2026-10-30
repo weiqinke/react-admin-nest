@@ -1,4 +1,5 @@
 import { apiCount } from "@/api/log";
+import { dataScopeLabel } from "@/api/platform";
 import { totalPercentage } from "@/utils/core";
 import { webSocketManager } from "@/utils/ws";
 import { Col, Progress, Row } from "antd";
@@ -65,7 +66,7 @@ const SystemInfo: React.FC = () => {
   const [curSystemTime, setCurSystemTime] = useState("加载中。。。");
   const [, setMessageList] = useState<any>();
   const [, setLoading] = useState(true);
-  const [apiCounts, setApiCounts] = useState({ total: 0, today: 0 });
+  const [apiCounts, setApiCounts] = useState({ total: 0, today: 0, data_scope: "" });
   const memPercentage = useMemo(() => {
     return totalPercentage(OsInfo.totalmem, OsInfo.freemem);
   }, []);
@@ -162,6 +163,15 @@ const SystemInfo: React.FC = () => {
             <div className={styles.itemText}>
               <em>API今日调用次数 {apiCounts.today}</em>
             </div>
+            {apiCounts.data_scope ? (
+              <div className={styles.itemText}>
+                <em>
+                  {apiCounts.data_scope === "all"
+                    ? "全站统计，含匿名访问"
+                    : `${dataScopeLabel(apiCounts.data_scope)}，不含匿名访问`}
+                </em>
+              </div>
+            ) : null}
           </div>
         </div>
       </Col>

@@ -44,6 +44,7 @@ const ConfigAdmin: FC = () => {
     { title: "名称", dataIndex: "name" },
     { title: "键", dataIndex: "key", responsive: ["lg"] },
     { title: "值", dataIndex: "value", ellipsis: true },
+    { title: "说明", dataIndex: "remark", ellipsis: true, responsive: ["lg"] },
     { title: "类型", dataIndex: "value_type", width: 90 },
     {
       title: "操作",
@@ -65,7 +66,10 @@ const ConfigAdmin: FC = () => {
 
   return (
     <div className="p-3">
-      <PageIntroduction infos={infos} introduction="站点参数在这里修改。布尔值请填 true 或 false。启动用的 bootstrap 参数不会出现在列表里。" />
+      <PageIntroduction
+        infos={infos}
+        introduction="站点参数在这里修改。布尔值请填 true 或 false。登录失败次数、锁定分钟、日志保留天数填 0 表示关闭。启动用的 bootstrap 参数不会出现在列表里。"
+      />
       <div className="mt-3 bg-white p-3">
         <Space className="mb-3" wrap>
           <Select

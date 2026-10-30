@@ -3,6 +3,8 @@ import {
   assignTicket,
   closeMyTicket,
   closeTicket,
+  commentMyTicket,
+  commentTicket,
   flattenDepts,
   getMyTicket,
   getTicket,
@@ -29,7 +31,8 @@ const actionLabel: Record<string, string> = {
   create: "提交",
   assign: "分派",
   process: "开始处理",
-  close: "关闭"
+  close: "关闭",
+  comment: "留言"
 };
 
 type Props = {
@@ -45,6 +48,7 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
   const [users, setUsers] = useState<any[]>([]);
   const [depts, setDepts] = useState<any[]>([]);
   const [form] = Form.useForm();
+  const [commentForm] = Form.useForm();
   const [saving, setSaving] = useState(false);
   const canWrite = !mine && hasPermission("ticket:write");
 
@@ -59,9 +63,10 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
   useEffect(() => {
     setAction("");
     form.resetFields();
+    commentForm.resetFields();
     const request = mine ? getMyTicket(ticketId) : getTicket(ticketId);
     request.then(res => setTicket(res.data?.data || null)).catch(() => setTicket(null));
-  }, [ticketId, mine, form]);
+  }, [ticketId, mine, form, commentForm]);
 
   useEffect(() => {
     if (mine || !canWrite) return;
@@ -115,8 +120,23 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
     }
   };
 
+  const submitComment = async (values: { content: string }) => {
+    setSaving(true);
+    try {
+      const send = mine ? commentMyTicket : commentTicket;
+      const res = await send(ticketId, values.content);
+      setTicket(res.data?.data || null);
+      commentForm.resetFields();
+      message.success("已留言");
+      onChanged();
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const movable = ticket && (ticket.status === "open" || ticket.status === "assigned");
   const open = ticket && ticket.status !== "closed";
+  const canComment = Boolean(open && (mine || canWrite));
 
   return (
     <Drawer open title={ticket?.title || "工单"} size={560} onClose={onClose} destroyOnHidden>
@@ -207,6 +227,23 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
                 </Button>
                 <Button onClick={() => setAction("")}>取消</Button>
               </Space>
+            </Form>
+          ) : null}
+          {canComment ? (
+            <Form form={commentForm} layout="vertical" onFinish={submitComment} className="mt-3">
+              <Form.Item
+                name="content"
+                label="留言"
+                extra="留言不会改变工单状态。"
+                rules={[
+                  { required: true, whitespace: true, message: "请填写留言" },
+                  { max: 1024, message: "留言不超过 1024 个字符" }
+                ]}>
+                <Input.TextArea rows={3} maxLength={1024} placeholder="补充说明" />
+              </Form.Item>
+              <Button htmlType="submit" loading={saving}>
+                发送留言
+              </Button>
             </Form>
           ) : null}
         </>

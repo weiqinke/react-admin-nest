@@ -10,6 +10,7 @@ import {
   register as goRegister,
   resetManagedUserPassword,
   setManagedUserStatus,
+  unlockManagedUser,
   updateMyProfile,
   updateUserProfile
 } from "@/api/goadmin";
@@ -18,7 +19,7 @@ import { getRefreshToken } from "@/api/session";
 
 export { getCaptcha, getPublicKey };
 export { goRegister as userRegister };
-export { resetManagedUserPassword as resetUserPassword, setManagedUserStatus as setUserStatus };
+export { resetManagedUserPassword as resetUserPassword, setManagedUserStatus as setUserStatus, unlockManagedUser as unlockUser };
 
 function normalizeUser(user) {
   const profile = user?.profile || {};
@@ -86,7 +87,9 @@ export async function findUsers(query: any = {}) {
     page: query.page || 1,
     page_size: query.page_size || query.pageSize || 20,
     keyword: query.keyword || query.username,
-    status: query.status
+    status: query.status,
+    department_id: query.department_id,
+    role: query.role
   });
   const payload = res.data?.data || {};
   const list = payload.list || [];

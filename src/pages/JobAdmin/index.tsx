@@ -96,7 +96,10 @@ const JobAdmin: FC = () => {
 
   return (
     <div className="p-3">
-      <PageIntroduction infos={infos} introduction="任务按固定间隔在本进程内执行。停用后不再自动跑，仍可以手动执行一次。" />
+      <PageIntroduction
+        infos={infos}
+        introduction="任务按固定间隔在本进程内执行。停用后不再自动跑，仍可以手动执行一次。日志保留（log.purge）按系统参数 log.retention_days 清理登录日志、操作审计和访问日志；参数为 0 时结果是 skipped=1。"
+      />
       <div className="mt-3 bg-white p-3">
         <Table rowKey="code" columns={columns} dataSource={list} pagination={false} />
       </div>

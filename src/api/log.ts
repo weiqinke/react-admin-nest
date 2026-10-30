@@ -30,9 +30,34 @@ export async function loginlog(payload: any = {}) {
   };
 }
 
-/** 访问日志总数。无 stats:read 时静默失败，不打断工作台。 */
-export function apiCount() {
-  return request("/api/stats/access/logs", "GET", { page: 1, page_size: 1 }, { skipErrorMessage: true })
-    .then(res => ({ ...res, data: { ...res.data, data: { total: res.data?.data?.total || 0, today: 0 } } }))
-    .catch(() => ({ status: 200, data: { code: 0, message: "ok", data: { total: 0, today: 0 } } }));
+function todayISO() {
+  const now = new Date();
+  const pad = (value: number) => String(value).padStart(2, "0");
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+}
+
+/** 访问日志总数。已按 data_scope 过滤，self / dept 不含匿名。无 stats:read 时静默失败。 */
+export async function apiCount() {
+  const empty = { status: 200, data: { code: 0, message: "ok", data: { total: 0, today: 0, data_scope: "" } } };
+  try {
+    const today = todayISO();
+    const logs = await request("/api/stats/access/logs", "GET", { page: 1, page_size: 1 }, { skipErrorMessage: true });
+    let todayCount = 0;
+    let scope = logs.data?.data?.data_scope || "";
+    try {
+      const daily = await request("/api/stats/access/daily", "GET", { from: today, to: today }, { skipErrorMessage: true });
+      const list = daily.data?.data?.list || [];
+      const row = list.find((item: any) => String(item.day || "").slice(0, 10) === today) || list[0];
+      todayCount = Number(row?.total_count || 0);
+      scope = scope || daily.data?.data?.data_scope || "";
+    } catch {
+      todayCount = 0;
+    }
+    return {
+      status: 200,
+      data: { code: 0, message: "ok", data: { total: logs.data?.data?.total || 0, today: todayCount, data_scope: scope } }
+    };
+  } catch {
+    return empty;
+  }
 }

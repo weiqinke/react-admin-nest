@@ -1,11 +1,13 @@
+import { hasPermission } from "@/api/announcement";
+import { dataScopeLabel, listDepts, toDeptTree } from "@/api/platform";
+import { findRoles } from "@/api/role";
+import { getUserState } from "@/api/session";
+import { findUsers, resetUserPassword, setUserStatus, unlockUser } from "@/api/user";
+import PageIntroduction from "@/components/PageIntroduction";
 import { UserEditModal } from "@/components/Modals";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { Alert, Button, Form, Input, Modal, Select, Space, message } from "antd";
+import { Alert, Button, Form, Input, Modal, Select, Space, TreeSelect, message } from "antd";
 import { FC, useEffect, useState } from "react";
-import { dataScopeLabel } from "@/api/platform";
-import { getUserState } from "@/api/session";
-import { findUsers, resetUserPassword, setUserStatus } from "@/api/user";
-import PageIntroduction from "@/components/PageIntroduction";
 import UserTable from "./components/Table";
 
 const infos = [
@@ -28,7 +30,12 @@ const UserAdmin: FC = () => {
   const [user, setUser] = useState(null);
   const [resetFor, setResetFor] = useState<any>(null);
   const [resetting, setResetting] = useState(false);
+  const [deptTree, setDeptTree] = useState<any[]>([]);
+  const [roles, setRoles] = useState<any[]>([]);
   const selfId = String(getUserState().uid || "");
+  const canFilterDept = hasPermission("dept:read");
+  const canFilterRole = hasPermission("role:read");
+  const canWrite = hasPermission("user:write");
 
   const showDeleteConfirm = (item: any) => {
     const id = String(item.id || item.uid || "");
@@ -66,10 +73,25 @@ const UserAdmin: FC = () => {
     }
   };
 
+  const unlock = (item: any) => {
+    const id = String(item.id || item.uid || "");
+    Modal.confirm({
+      title: "解除登录锁定",
+      icon: <ExclamationCircleOutlined />,
+      content: `清除 ${item.username || "该用户"} 的连续密码错误次数和锁定。未锁定时也会把计数清零。`,
+      okText: "解除",
+      cancelText: "取消",
+      onOk: async () => {
+        await unlockUser(id);
+        message.success("已解除锁定");
+      }
+    });
+  };
+
   const findAll = (next = 1) => {
     setUser(null);
-    const { keyword, status } = form.getFieldsValue();
-    findUsers({ page: next, page_size: pageSize, keyword, status })
+    const { keyword, status, department_id, role } = form.getFieldsValue();
+    findUsers({ page: next, page_size: pageSize, keyword, status, department_id, role })
       .then(result => {
         if (result.data.code === 0) {
           setDataSource(result.data.data || []);
@@ -88,12 +110,22 @@ const UserAdmin: FC = () => {
   };
   useEffect(() => {
     findAll(1);
+    if (canFilterDept) {
+      listDepts()
+        .then(res => setDeptTree(res.data?.data?.list || []))
+        .catch(() => setDeptTree([]));
+    }
+    if (canFilterRole) {
+      findRoles()
+        .then(res => setRoles(res.data?.data || []))
+        .catch(() => setRoles([]));
+    }
   }, []);
   return (
     <div className="p-3">
       <PageIntroduction
         infos={infos}
-        introduction="用户列表按页返回，并已按当前角色的数据范围过滤。用户名搜索和状态筛选发生在范围之后。停用会踢掉对方全部会话。"
+        introduction="用户列表按页返回，并已按当前角色的数据范围过滤。部门筛选只匹配该部门，不含下级；角色筛选只匹配直接分配的角色。解除锁定会清掉连续密码错误的计数。停用会踢掉对方全部会话。"
       />
       {dataScope ? (
         <Alert className="mt-3" type="info" showIcon title={`当前数据范围：${dataScopeLabel(dataScope)}`} />
@@ -114,6 +146,32 @@ const UserAdmin: FC = () => {
               ]}
             />
           </Form.Item>
+          {canFilterDept ? (
+            <Form.Item name="department_id" label="部门">
+              <TreeSelect
+                allowClear
+                showSearch={{ treeNodeFilterProp: "title" }}
+                treeDefaultExpandAll
+                placeholder="精确匹配，不含下级"
+                style={{ width: 220 }}
+                treeData={toDeptTree(deptTree)}
+              />
+            </Form.Item>
+          ) : null}
+          {canFilterRole ? (
+            <Form.Item name="role" label="角色">
+              <Select
+                allowClear
+                showSearch={{ optionFilterProp: "label" }}
+                placeholder="直接分配的角色"
+                style={{ width: 200 }}
+                options={roles.map(item => ({
+                  value: item.code,
+                  label: item.name ? `${item.name}（${item.code}）` : item.code
+                }))}
+              />
+            </Form.Item>
+          ) : null}
           <Form.Item>
             <Space size={[8, 16]}>
               <Button htmlType="submit">查询</Button>
@@ -127,9 +185,11 @@ const UserAdmin: FC = () => {
         <UserTable
           dataSource={dataSource}
           selfId={selfId}
+          canUnlock={canWrite}
           setUser={setUser}
           showDeleteConfirm={showDeleteConfirm}
           onReset={setResetFor}
+          onUnlock={unlock}
           pagination={{ current: page, pageSize, total, showSizeChanger: false, onChange: next => findAll(next) }}
         />
       </div>

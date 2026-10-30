@@ -127,6 +127,12 @@ export const getMyTicket = (id: string) => request(`/api/me/tickets/${segment(id
 
 export const closeMyTicket = (id: string, close_reason: string) => request(`/api/me/tickets/${segment(id)}/close`, "PUT", { close_reason });
 
+/** 创建人或处理人留言。不改变状态。已关闭的工单会被拒绝。 */
+export const commentMyTicket = (id: string, content: string) => request(`/api/me/tickets/${segment(id)}/comments`, "POST", { content });
+
+/** 管理端留言。需要 ticket:write，并先过数据范围。 */
+export const commentTicket = (id: string, content: string) => request(`/api/tickets/${segment(id)}/comments`, "POST", { content });
+
 export const listJobs = () => request("/api/jobs", "GET");
 
 export const setJobEnabled = (code: string, enabled: boolean) => request(`${jobPath(code)}/status`, "PUT", { enabled });

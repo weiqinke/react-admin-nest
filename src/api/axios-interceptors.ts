@@ -38,6 +38,10 @@ function errorText(body: any) {
   if (code === 40301 && body?.data?.permission) return `无权限：${body.data.permission}`;
   if (code === 40302) return "账号已禁用";
   if (code === 40303) return "注册已关闭";
+  if (code === 40304) {
+    const wait = body?.data?.retry_after;
+    return wait ? `用户名已锁定，请 ${wait} 秒后再试` : "用户名已锁定";
+  }
   if (code === 40904) return "受保护，不能修改（不能停用自己或改受保护资源）";
   if (code === 40905) return serverMessage && serverMessage !== "in use" ? serverMessage : "仍被引用，无法删除";
   if (code === 42901) {

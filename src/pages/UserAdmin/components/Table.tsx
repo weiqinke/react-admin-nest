@@ -1,6 +1,6 @@
-import { Button, Table, Tag } from "antd";
+import { Button, Space, Table, Tag } from "antd";
 
-const UserTable = ({ dataSource, selfId, setUser, showDeleteConfirm, onReset, pagination }) => {
+const UserTable = ({ dataSource, selfId, canUnlock, setUser, showDeleteConfirm, onReset, onUnlock, pagination }) => {
   const columns: any = [
     {
       title: "账号",
@@ -45,19 +45,24 @@ const UserTable = ({ dataSource, selfId, setUser, showDeleteConfirm, onReset, pa
       render: (item: any) => {
         const isSelf = String(item.uid || item.id || "") === String(selfId || "");
         return (
-          <div>
-            <Button size="small" type="primary" onClick={() => setUser(item)} style={{ marginRight: "10px" }}>
+          <Space wrap size={8}>
+            <Button size="small" type="primary" onClick={() => setUser(item)}>
               编辑
             </Button>
-            <Button size="small" style={{ marginRight: "10px" }} onClick={() => onReset(item)}>
+            <Button size="small" onClick={() => onReset(item)}>
               重置密码
             </Button>
+            {canUnlock ? (
+              <Button size="small" onClick={() => onUnlock(item)}>
+                解除锁定
+              </Button>
+            ) : null}
             {isSelf && !item.banned ? null : (
               <Button size="small" type="primary" onClick={() => showDeleteConfirm(item)} danger={!item.banned}>
                 {item.banned ? "启用" : "停用"}
               </Button>
             )}
-          </div>
+          </Space>
         );
       }
     }
