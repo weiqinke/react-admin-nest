@@ -12,8 +12,8 @@
 #                  本机生成示例：
 #                    ssh-keygen -t ed25519 -f deploy_key -C github-actions-nest-admin
 #   DEPLOY_PATH    站点目录，必须是绝对路径，例如 /data/www/nest-admin.com
-#                  父目录可写时，这里会变成指向本次发布的符号链接。
-#                  父目录不可写（常见）时，目录必须已存在且该用户可写，脚本只替换里面的文件。
+#                  压缩包上传后在服务器解压到这个普通目录，不会改成符号链接。
+#                  目录里本次构建没有的旧文件会被删掉。目录不存在时，父目录必须可写。
 #
 # Secrets（可选）：
 #   DEPLOY_PORT         SSH 端口。不创建这个 Secret 时使用 22
@@ -27,6 +27,7 @@
 # 服务器需要 OpenSSH、bash、GNU tar / mv / find / cp。Nginx 示例见 deploy/nginx.conf.example。
 # 父目录不可写时，请先准备好站点目录，例如：
 #   sudo mkdir -p /data/www/nest-admin.com && sudo chown -R <DEPLOY_USER> /data/www/nest-admin.com
+# 若该路径已经是以前发布留下的符号链接，父目录需要可写，脚本才会把它换成普通目录并删掉旧版本目录。
 
 name: Deploy
 
