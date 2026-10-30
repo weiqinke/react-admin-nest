@@ -1,4 +1,5 @@
 import {
+  createManagedUser,
   getCaptcha,
   getMe,
   getMyProfile,
@@ -7,6 +8,8 @@ import {
   login as goLogin,
   logout as goLogout,
   register as goRegister,
+  resetManagedUserPassword,
+  setManagedUserStatus,
   updateMyProfile,
   updateUserProfile
 } from "@/api/goadmin";
@@ -15,15 +18,17 @@ import { getRefreshToken } from "@/api/session";
 
 export { getCaptcha, getPublicKey };
 export { goRegister as userRegister };
+export { resetManagedUserPassword as resetUserPassword, setManagedUserStatus as setUserStatus };
 
 function normalizeUser(user) {
   const profile = user?.profile || {};
+  const accountStatus = user?.status != null ? Number(user.status) : Number(profile.status);
   return {
     ...user,
     uid: user?.id,
     email: profile.email || "",
     mobile: profile.mobile || profile.phone || "",
-    banned: profile.status === 0,
+    banned: accountStatus === 0,
     profile: {
       ...profile,
       nick: profile.nickname || user?.username || ""
@@ -43,8 +48,6 @@ function profilePayload(payload: any = {}) {
     bio: profile.signature ?? payload.signature
   };
   if (profile.sex != null && profile.sex !== "") body.gender = Number(profile.sex);
-  if (payload.banned != null) body.status = payload.banned ? 0 : 1;
-  if (payload.status != null) body.status = payload.status;
   return Object.fromEntries(Object.entries(body).filter(([, value]) => value !== undefined && value !== ""));
 }
 
@@ -62,8 +65,8 @@ export async function userinfo(options?: { signal?: AbortSignal }) {
 }
 
 export async function createUser(payload) {
-  const created = await goRegister({ username: payload.username, password: payload.password });
-  const id = created.data?.data?.user?.id;
+  const created = await createManagedUser({ username: payload.username, password: payload.password });
+  const id = created.data?.data?.id;
   const profile = profilePayload(payload);
   let result = created;
   if (id && Object.keys(profile).length > 0) {

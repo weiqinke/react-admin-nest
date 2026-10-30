@@ -83,7 +83,7 @@ const PlacardAdmin: FC = () => {
     {
       title: "状态",
       dataIndex: "visibility",
-      render: (text: string) => visibilityText[text] || text
+      render: (text: string, row: any) => (row.status === "expired" ? "已过期" : visibilityText[text] || text)
     },
     {
       title: "发布时间",
@@ -154,7 +154,7 @@ const PlacardAdmin: FC = () => {
 
   return (
     <div className="p-3">
-      <PageIntroduction infos={infos} introduction="本页面是操作系统中的公告，可以用来添加、发布和查看已读情况。" />
+      <PageIntroduction infos={infos} introduction="本页面是操作系统中的公告，可以用来添加、发布和查看已读情况。到期任务会把已过窗口的公告标成已过期，已过期的可以再次发布。" />
       <div className="mt-3 bg-white px-3">
         <Space size={[8, 16]} className="my-3">
           <Button type="primary" onClick={() => findAllPlacards()}>

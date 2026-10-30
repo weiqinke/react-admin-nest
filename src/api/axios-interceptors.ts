@@ -38,6 +38,7 @@ function errorText(body: any) {
   if (code === 40301 && body?.data?.permission) return `无权限：${body.data.permission}`;
   if (code === 40302) return "账号已禁用";
   if (code === 40303) return "注册已关闭";
+  if (code === 40904) return "受保护，不能修改（不能停用自己或改受保护资源）";
   if (code === 40905) return serverMessage && serverMessage !== "in use" ? serverMessage : "仍被引用，无法删除";
   if (code === 42901) {
     const wait = body?.data?.retry_after;
@@ -45,6 +46,8 @@ function errorText(body: any) {
   }
   if (code === 40002) return "验证码错误，请重新获取";
   if (code === 40003) return "密码加密无效，请重试";
+  if (code === 40005) return "用户名需为 3-32 位字母、数字或下划线";
+  if (code === 40006) return "密码长度需为 6-64 位";
   if (code === 40103) return "登录已失效，请重新登录";
   if (code === 40901) return serverMessage === "conflict" ? "资源冲突：同级 segment 可能已存在" : serverMessage;
   if (code === 40902) return serverMessage || "角色约束冲突";

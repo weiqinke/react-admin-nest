@@ -1,7 +1,7 @@
-import { listTickets, TICKET_PRIORITY, TICKET_STATUS } from "@/api/platform";
+import { dataScopeLabel, listTickets, TICKET_PRIORITY, TICKET_STATUS } from "@/api/platform";
 import PageIntroduction from "@/components/PageIntroduction";
 import TicketPanel from "@/components/TicketPanel";
-import { Button, Select, Space, Table, Tag } from "antd";
+import { Alert, Button, Select, Space, Table, Tag } from "antd";
 import { FC, useEffect, useState } from "react";
 
 const infos = [{ title: "系统管理" }, { title: "工单处理" }];
@@ -19,12 +19,14 @@ const TicketAdmin: FC = () => {
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState<string | undefined>();
   const [current, setCurrent] = useState("");
+  const [dataScope, setDataScope] = useState("");
 
   const load = (next = page, nextStatus = status) => {
     listTickets({ page: next, page_size: 20, status: nextStatus })
       .then(res => {
         setList(res.data?.data?.list || []);
         setTotal(res.data?.data?.total || 0);
+        setDataScope(res.data?.data?.data_scope || "");
         setPage(next);
       })
       .catch(() => setList([]));
@@ -35,6 +37,7 @@ const TicketAdmin: FC = () => {
       .then(res => {
         setList(res.data?.data?.list || []);
         setTotal(res.data?.data?.total || 0);
+        setDataScope(res.data?.data?.data_scope || "");
         setPage(1);
       })
       .catch(() => setList([]));
@@ -68,7 +71,8 @@ const TicketAdmin: FC = () => {
 
   return (
     <div className="p-3">
-      <PageIntroduction infos={infos} introduction="待处理工单可以分派或直接开始处理，处理中的工单只能关闭。关闭时要填写原因。" />
+      <PageIntroduction infos={infos} introduction="列表已按当前角色的数据范围过滤。指定处理人会给他发待办；只分派到部门不会。关闭后会通知提单人，自己关自己的不会再发一条。" />
+      {dataScope ? <Alert className="mt-3" type="info" showIcon title={`当前数据范围：${dataScopeLabel(dataScope)}`} /> : null}
       <div className="mt-3 bg-white p-3">
         <Space className="mb-3" wrap>
           <Select

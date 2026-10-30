@@ -1,6 +1,6 @@
 import { Button, Table, Tag } from "antd";
 
-const UserTable = ({ dataSource, setUser, showDeleteConfirm }) => {
+const UserTable = ({ dataSource, selfId, setUser, showDeleteConfirm, onReset }) => {
   const columns: any = [
     {
       title: "账号",
@@ -38,14 +38,20 @@ const UserTable = ({ dataSource, setUser, showDeleteConfirm }) => {
     {
       title: "操作",
       render: (item: any) => {
+        const isSelf = String(item.uid || item.id || "") === String(selfId || "");
         return (
           <div>
             <Button size="small" type="primary" onClick={() => setUser(item)} style={{ marginRight: "10px" }}>
               编辑
             </Button>
-            <Button size="small" type="primary" onClick={() => showDeleteConfirm(item)} danger={!item.banned}>
-              {item.banned ? "启用" : "禁用"}
+            <Button size="small" style={{ marginRight: "10px" }} onClick={() => onReset(item)}>
+              重置密码
             </Button>
+            {isSelf && !item.banned ? null : (
+              <Button size="small" type="primary" onClick={() => showDeleteConfirm(item)} danger={!item.banned}>
+                {item.banned ? "启用" : "停用"}
+              </Button>
+            )}
           </div>
         );
       }

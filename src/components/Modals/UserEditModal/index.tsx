@@ -1,6 +1,6 @@
 import { hasPermission } from "@/api/announcement";
 import { listDepts, setUserDepartment, toDeptTree } from "@/api/platform";
-import { createUser, updateUser } from "@/api/user";
+import { createUser, resetUserPassword, updateUser } from "@/api/user";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Col, Form, Input, Modal, Radio, Row, TreeSelect, Upload, message } from "antd";
 import axios from "axios";
@@ -17,7 +17,6 @@ const UserEditModal: FC<any> = (props: any) => {
   const initialValues = { ...initUser, ...initUser.profile };
   const title = initUser?.uid ? "编辑" : "添加";
   const [form] = Form.useForm();
-  const [type, setType] = useState("text");
   const [avatarUrl, setAvatarUrl] = useState(initialValues.avatar || "");
   const [fileList, setfileList] = useState<any[]>([]);
   const [uploading, setuploading] = useState(false);
@@ -108,6 +107,9 @@ const UserEditModal: FC<any> = (props: any) => {
       if (result.data.code === 0 && canAssignDept && String(departmentId || "") !== String(previous)) {
         result = await setUserDepartment(String(initUser.uid), departmentId || "");
       }
+      if (result.data.code === 0 && password) {
+        result = await resetUserPassword(String(initUser.uid), String(password).trim());
+      }
     } else {
       result = await createUser(payload);
     }
@@ -116,13 +118,9 @@ const UserEditModal: FC<any> = (props: any) => {
       message.info("操作失败");
       return;
     }
-    message.info("操作成功");
+    message.info(initUser?.uid && password ? "已保存，该用户需要重新登录" : "操作成功");
     setuploading(false);
     onOk();
-  };
-
-  const setInputType = () => {
-    setType("password");
   };
 
   useEffect(() => {
@@ -140,9 +138,6 @@ const UserEditModal: FC<any> = (props: any) => {
     if (!initUser?.id) {
       form.setFieldsValue({ sex: "1" });
     }
-    return () => {
-      setType("text");
-    };
   }, [initUser, form]);
 
   return (
@@ -164,13 +159,37 @@ const UserEditModal: FC<any> = (props: any) => {
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item label="账号" name="username" rules={[{ required: true }]}>
+            <Form.Item
+              label="账号"
+              name="username"
+              rules={
+                initUser?.uid
+                  ? [{ required: true, message: "请填写账号" }]
+                  : [
+                      { required: true, message: "请填写账号" },
+                      { pattern: /^[A-Za-z0-9_]{3,32}$/, message: "账号为 3-32 位字母、数字或下划线" }
+                    ]
+              }>
               <Input autoComplete="off" placeholder="请输入账号" readOnly={initUser?.uid} />
             </Form.Item>
           </Col>
           <Col span={20}>
-            <Form.Item label="密码" name="password" rules={[{ required: !initUser?.uid }]}>
-              <Input placeholder="请输入密码" type={type} onChange={setInputType} />
+            <Form.Item
+              label="密码"
+              name="password"
+              extra={initUser?.uid ? "留空则不改。填写后会重置密码，该用户需要重新登录。" : "新建账号的密码由管理员设置，不会走公开注册。"}
+              rules={[
+                { required: !initUser?.uid, message: "请填写密码" },
+                {
+                  validator: (_, value) => {
+                    if (!value) return Promise.resolve();
+                    const text = String(value);
+                    if (text.length < 6 || text.length > 64) return Promise.reject(new Error("密码长度为 6-64 位"));
+                    return Promise.resolve();
+                  }
+                }
+              ]}>
+              <Input.Password autoComplete="new-password" placeholder="请输入密码" />
             </Form.Item>
           </Col>
           <Col span={20}>

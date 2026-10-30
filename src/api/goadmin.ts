@@ -69,6 +69,23 @@ export const getLoginStats = (query: any = {}) => request("/api/login/stats", "G
 
 export const getUsers = () => request("/api/users", "GET");
 
+/** 管理员建账号。密码只以 RSA-OAEP 密文提交，默认角色 user、状态启用。 */
+export async function createManagedUser(payload: { username: string; password: string }) {
+  const keyRes = await getPublicKey();
+  const password_encrypted = await encryptPassword(keyRes.data.data.public_key, payload.password);
+  return request("/api/users", "POST", { username: payload.username, password_encrypted });
+}
+
+/** 启用或停用。停用会踢掉该用户的全部会话；不能停用自己。 */
+export const setManagedUserStatus = (id: string, status: 0 | 1) => request(`/api/users/${enc(id)}/status`, "PUT", { status });
+
+/** 重置密码。成功后该用户全部会话失效，响应里没有明文。 */
+export async function resetManagedUserPassword(id: string, password: string) {
+  const keyRes = await getPublicKey();
+  const password_encrypted = await encryptPassword(keyRes.data.data.public_key, password);
+  return request(`/api/users/${enc(id)}/password`, "PUT", { password_encrypted });
+}
+
 export const getUserProfile = (id: string) => request(`/api/users/${enc(id)}/profile`, "GET");
 
 export const updateUserProfile = (id: string, payload) => request(`/api/users/${enc(id)}/profile`, "PUT", payload);

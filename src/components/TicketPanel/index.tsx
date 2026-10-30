@@ -12,6 +12,7 @@ import {
   TICKET_STATUS,
   toDeptTree
 } from "@/api/platform";
+import { getUserState } from "@/api/session";
 import { findUsers } from "@/api/user";
 import { Button, Descriptions, Drawer, Form, Input, Select, Space, Tag, Timeline, TreeSelect, message } from "antd";
 import { FC, useEffect, useState } from "react";
@@ -50,6 +51,9 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
     const request = mine ? getMyTicket(ticketId) : getTicket(ticketId);
     request.then(res => setTicket(res.data?.data || null)).catch(() => setTicket(null));
   };
+
+  const viewerId = String(getUserState().uid || "");
+  const isCreator = !!ticket && String(ticket.creator_id) === viewerId;
 
   useEffect(() => {
     setAction("");
@@ -117,6 +121,7 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
     <Drawer open title={ticket?.title || "工单"} size={560} onClose={onClose} destroyOnHidden>
       {ticket ? (
         <>
+          {mine && !isCreator ? <div className="mb-3 text-neutral-500">这张工单分派给你。关闭只能由提单人，或有工单处理权限的管理员操作。</div> : null}
           <Descriptions column={1} size="small">
             <Descriptions.Item label="状态">
               <Tag color={statusColor[ticket.status] || "default"}>{TICKET_STATUS[ticket.status] || ticket.status}</Tag>
@@ -148,7 +153,7 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
               <Button onClick={() => setAction("process")}>开始处理</Button>
             </Space>
           ) : null}
-          {open && (mine || canWrite) ? (
+          {open && ((mine && isCreator) || (!mine && canWrite)) ? (
             <Button className="mb-3" onClick={() => setAction("close")}>
               关闭工单
             </Button>
@@ -157,7 +162,7 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
             <Form form={form} layout="vertical" onFinish={submit}>
               {action === "assign" ? (
                 <>
-                  <Form.Item name="assignee_id" label="处理人">
+                  <Form.Item name="assignee_id" label="处理人" extra="指定处理人会给他发一条待办，入口是我的工单。只选部门不会发待办。">
                     {users.length ? (
                       <Select
                         allowClear
@@ -198,7 +203,9 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
             </Form>
           ) : null}
         </>
-      ) : null}
+      ) : (
+        <div>工单不存在，或已超出当前数据范围</div>
+      )}
     </Drawer>
   );
 };
