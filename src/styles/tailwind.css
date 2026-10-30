@@ -10,4 +10,11 @@
   --color-header-icon: var(--header-icon);
   --color-header-icon-hover-bg: var(--header-icon-hover-bg);
   --color-header-icon-hover: var(--header-icon-hover);
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
 }

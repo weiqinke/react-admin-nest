@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "skills": {
+    "ant-design": {
+      "source": "ant-design/antd-skill",
+      "sourceType": "github",
+      "skillPath": "skills/ant-design/SKILL.md",
+      "computedHash": "4d0447d48fced080b2825ecc0fb4d7ca836c8015882899c643acca0b864d5179"
+    },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-design/SKILL.md",
+      "computedHash": "106acf230014cbb43ca34e6410371321b56ca742f9ee0442e8ec05bf02eb0384"
+    },
+    "web-design-guidelines": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/web-design-guidelines/SKILL.md",
+      "computedHash": "f3bc47f890f42a44db1007ab390709ec368e4b8c089baee6b0007182236ac474"
+    }
+  }
+}

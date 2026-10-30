@@ -16,9 +16,9 @@ const ThemeColor = () => {
     setTheme(nextTheme[current]);
   }
   return (
-    <Tooltip title="切换 Theme" placement="bottom" className="text-header-icon hover:bg-header-icon-hover-bg">
+    <Tooltip title="切换主题" placement="bottom">
       <span
-        className="float-right mr-2.5 cursor-pointer select-none px-3 text-[22px] text-header-icon hover:bg-header-icon-hover-bg hover:text-header-icon-hover"
+        className="float-right mr-2.5 cursor-pointer select-none px-3 text-base text-header-icon hover:bg-header-icon-hover-bg hover:text-header-icon-hover"
         onClick={handleChangeTheme}>
         <SunOutlined />
       </span>

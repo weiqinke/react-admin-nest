@@ -1,5 +1,6 @@
 ﻿import IconFont from "@/components/IconFont";
 import MenuTagContext from "@/contexts/MenuTagContext";
+import ProjectContext from "@/contexts/ProjectContext";
 import { formatURL, getLocalStorageMenus, getMenus, getOpenKeysByUrls, setLocalStorage } from "@/utils/menuUtils";
 import { AppstoreOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
@@ -16,6 +17,7 @@ const createMenuIcon = item => {
 
 const WebMenu = () => {
   const { addTag } = useContext(MenuTagContext);
+  const { theme } = useContext<any>(ProjectContext);
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const menusList = JSON.parse(getLocalStorageMenus() || "");
@@ -71,7 +73,7 @@ const WebMenu = () => {
     <div style={{ width: "100%" }}>
       <Menu
         mode="inline"
-        theme="dark"
+        theme={theme === "dark" ? "dark" : "light"}
         onClick={onClick}
         selectedKeys={selectedKeys}
         openKeys={openKeys}

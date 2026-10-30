@@ -1,6 +1,6 @@
 import { MenuTagContextProvider } from "@/contexts/MenuTagContext";
 import { ProjectContextProvider } from "@/contexts/ProjectContext";
-import { applyHeaderTheme, readStoredTheme, themePalette, type ThemeName } from "@/theme/palette";
+import { applyHeaderTheme, buildAntdTheme, readStoredTheme, type ThemeName } from "@/theme/palette";
 import { webSocketManager } from "@/utils/ws";
 import { ConfigProvider } from "antd";
 import { useEffect, useLayoutEffect, useState } from "react";
@@ -17,16 +17,8 @@ const ProjectLayout = () => {
     applyHeaderTheme(theme);
   }, [theme]);
 
-  const { menu, button } = themePalette[theme];
-
   return (
-    <ConfigProvider
-      theme={{
-        components: {
-          Button: button,
-          Menu: menu
-        }
-      }}>
+    <ConfigProvider theme={buildAntdTheme(theme)}>
       <ProjectContextProvider theme={theme} setTheme={setTheme}>
         <MenuTagContextProvider>
           <div id="default-layout">

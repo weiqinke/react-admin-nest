@@ -4,6 +4,7 @@ import DefaultLayoutHeader from "@/components/Header/DefaultLayoutHeader";
 import WebMenu from "@/components/Menu/WebMenu";
 import TagsView from "@/components/TagsView";
 import MenuTagContext from "@/contexts/MenuTagContext";
+import ProjectContext from "@/contexts/ProjectContext";
 import FailContainer from "@/pages/FailPage/FailContainer";
 import { Layout } from "antd";
 import { Suspense, useContext, useEffect, useState } from "react";
@@ -17,6 +18,7 @@ const { Content, Sider } = Layout;
 
 const DefaultLayout = () => {
   const { refreshKey, refreshing } = useContext(MenuTagContext);
+  const { theme } = useContext<any>(ProjectContext);
   const [collapsed, setCollapsed] = useState(false);
   const { pathname } = useLocation();
   // 入场动画只在路由切换时播；真刷新用 loading，避免像重新进路由。
@@ -24,7 +26,7 @@ const DefaultLayout = () => {
 
   useEffect(() => {
     setEnterMotion(true);
-    const timer = window.setTimeout(() => setEnterMotion(false), 350);
+    const timer = window.setTimeout(() => setEnterMotion(false), 200);
     return () => window.clearTimeout(timer);
   }, [pathname]);
 
@@ -51,7 +53,7 @@ const DefaultLayout = () => {
         <AnnouncementGate />
       </ErrorBoundary>
       <Layout className={styles.content}>
-        <Sider className={styles.sider} trigger={null} collapsible collapsed={collapsed} breakpoint="md">
+        <Sider className={styles.sider} theme={theme === "dark" ? "dark" : "light"} trigger={null} collapsible collapsed={collapsed} breakpoint="md">
           <WebMenu />
         </Sider>
 

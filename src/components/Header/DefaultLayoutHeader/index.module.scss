@@ -1,7 +1,9 @@
 .layoutHeader {
-  height: 50px;
-  line-height: 50px;
+  height: 48px;
+  line-height: 48px;
   overflow: hidden;
+  border-bottom: 1px solid var(--line);
+
   .user {
     float: right;
     cursor: pointer;
@@ -21,42 +23,14 @@
     cursor: pointer;
     user-select: none;
     width: 200px;
-    text-align: center;
-    font-size: 30px;
-    font-weight: bold;
+    padding-left: 16px;
+    text-align: left;
   }
 
   .title {
-    /*渐变背景*/
-    background-image: -webkit-linear-gradient(
-      left,
-      #3498db,
-      #f47920 10%,
-      #d71345 20%,
-      #f7acbc 30%,
-      #ffd400 40%,
-      #3498db 50%,
-      #f47920 60%,
-      #d71345 70%,
-      #f7acbc 80%,
-      #ffd400 90%,
-      #3498db
-    );
-    color: transparent; /*文字填充色为透明*/
-    -webkit-text-fill-color: transparent;
-    -webkit-background-clip: text;
-    background-clip: text;
-    background-size: 200% 100%;
-    /* 动画 */
-    animation: masked-animation 4s infinite linear;
-  }
-}
-
-@keyframes masked-animation {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: -100% 0;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--ink);
   }
 }

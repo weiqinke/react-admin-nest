@@ -189,9 +189,9 @@ const HeaderNotice: FC = () => {
         <Badge count={badgeCount} overflowCount={999} offset={[0, 10]}>
           <Avatar
             shape="square"
-            size="large"
+            size={32}
             src={<BellOutlined />}
-            className="text-[22px] text-header-icon! hover:bg-header-icon-hover-bg! hover:text-header-icon-hover!"
+            className="text-base text-header-icon! hover:bg-header-icon-hover-bg! hover:text-header-icon-hover!"
           />
         </Badge>
       </Dropdown>

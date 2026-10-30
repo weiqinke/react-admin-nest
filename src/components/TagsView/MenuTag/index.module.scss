@@ -1,54 +1,55 @@
 .container {
   position: relative;
   margin: 0;
-  padding: 2px 20px 2px 16px;
-  border-bottom: 2px solid #000;
-  border-radius: 4px 4px 0 0;
-  background: #fafafa;
+  padding: 6px 22px 6px 16px;
+  border-bottom: 2px solid transparent;
+  background: transparent;
   white-space: nowrap;
   user-select: none;
 }
 
 .active {
-  border-bottom-color: #41b3a3;
+  border-bottom-color: #1f6f5b;
 }
 
 .round {
   position: absolute;
-  top: 9px;
-  left: 7px;
-  width: 9px;
-  height: 9px;
+  top: 50%;
+  left: 6px;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
   border-radius: 50%;
-  background: #ccc;
+  background: #e6e8ec;
 }
 
 .activeRound {
-  background: #41b3a3;
+  background: #1f6f5b;
 }
 
 .name {
-  margin: 0 5px;
-  color: #575757;
+  margin: 0 4px;
+  color: #5c6570;
+}
 
-  &:hover {
-    color: #313653;
-    opacity: 0.85;
-  }
+.active .name {
+  color: #1c1f24;
+  font-weight: 600;
 }
 
 .close {
   position: absolute;
-  top: 3px;
-  margin-top: 3px;
+  top: 50%;
+  right: 2px;
+  margin-top: -8px;
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background: transparent no-repeat 100% 100%;
+  background: transparent no-repeat center;
   background-size: cover;
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAHhlWElmTU0AKgAAAAgABAEaAAUAAAABAAAAPgEbAAUAAAABAAAARgEoAAMAAAABAAIAAIdpAAQAAAABAAAATgAAAAAAAACQAAAAAQAAAJAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAACCgAwAEAAAAAQAAACAAAAAAfgvaUgAAAAlwSFlzAAAWJQAAFiUBSVIk8AAAAalJREFUWAntlr9OwzAQxm2XAV4DIfEQTFHE2p3B5+hSiQ5d+jh0BKlZUJ6i8BxUUBt/up5kOU7iM38W4sWxc3ffz2dfYqWm9t8zoOME7HYv1859Lo3Re6Xspqqq99hGMm6a5lwps7DWXSl1XNV1/Rr6n4UDerYPWus755TS2tz4APNSiLZtLw6Hj0cf69bHVM7NIHEfappwgGfn3BvPwdHTb2kVPJvXw4fF2YOyyiPqOwDG2LWHfWazEohT2rfkS5Eopt1wXO47ZwAvBgKMbofUNwlQCiEVh04vgBSiRHwUIBeiVDwLYAwC71EpiQM3el7gObgFMODWv0qULsqV2um0Z4nDIxsAxikIzHOTisNPBACHPogSccTrfIgw+ZdNlIG+1TNwSRayM9Aj/kSihFDy2c7KQEqcV0vSv1iGQ+L8m86x4W2K+8EMSAJLbEOIXoCSgCU+SYCSQLwqqW8HQBqAhcNeEiNRhmbxnW87QOhw2nlcotaaZQiK5w4A3V7JjEuNT3vsPDROQfiL6WXsk7gVH1e4vf7EtRwQfjt8JuharvVsHQNM4ykDX94FYhBKOJraAAAAAElFTkSuQmCC);
 
   &:hover {
-    background-color: #1772f6;
+    background-color: #e7f2ef;
   }
 }

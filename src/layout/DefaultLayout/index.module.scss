@@ -1,16 +1,17 @@
 .layout {
   width: 100vw;
-  background-color: #f0f2f5;
+  background-color: var(--canvas);
 }
 
 .content {
-  background-color: #f0f2f5;
+  background-color: var(--canvas);
 }
 
 .sider {
-  height: calc(100vh - 52px);
+  height: calc(100vh - 48px);
   overflow: auto;
   user-select: none;
+  border-right: 1px solid var(--line);
 }
 
 .pageContent {
@@ -19,27 +20,30 @@
 }
 
 .outletContainer {
-  height: calc(100vh - 88px);
+  height: calc(100vh - 86px);
   overflow: auto;
 }
 
 .pageOutlet {
-  min-height: calc(100vh - 110px);
-  border-left: 4px solid #fff;
+  min-height: calc(100vh - 108px);
 }
 
 .pageEnter {
-  animation: pageFadeInUp 0.3s both;
+  animation: pageFade 160ms ease both;
 }
 
-@keyframes pageFadeInUp {
+@keyframes pageFade {
   from {
     opacity: 0;
-    transform: translate3d(0, 100%, 0);
   }
 
   to {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pageEnter {
+    animation: none;
   }
 }

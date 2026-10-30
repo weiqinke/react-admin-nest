@@ -1,26 +1,22 @@
 .tagsdiv {
   background: #fff;
-  padding: 6px 4px 0 4px;
+  border-bottom: 1px solid #e6e8ec;
+  padding: 0 8px;
 
   :global {
-    .ant-tabs-nav-list {
+    .ant-tabs-nav {
+      margin: 0;
+    }
+
+    .ant-tabs-nav-list .ant-tabs-tab {
+      background: transparent;
+      border: 0;
       padding: 0;
+      margin: 0 2px 0 0;
+    }
 
-      &:last-child {
-        margin-right: auto;
-      }
-
-      .ant-tabs-tab {
-        background: #fafafa;
-        border: 1px solid #e8e8e8;
-        padding: 0;
-        margin: 0;
-        margin-right: 2px;
-      }
-
-      .ant-tabs-ink-bar {
-        background: transparent;
-      }
+    .ant-tabs-ink-bar {
+      background: transparent;
     }
   }
 }

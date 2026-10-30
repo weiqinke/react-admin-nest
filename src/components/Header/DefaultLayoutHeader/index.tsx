@@ -199,7 +199,7 @@ const DefaultLayoutHeader = () => {
           <div className={styles.nameContainer}>
             <Avatar src={profile?.avatar || "https://dr.cdnux.com/18510675/i/2025/01/04/65a29b436889b.jpg"} icon={<UserOutlined />} />
             <span className={styles.name}>{profile?.nick}</span>
-            <span className="ml-2 text-xs text-[#898989]">{statusText[wsStatus] || wsStatus}</span>
+            <span className="ml-2 text-xs text-muted">{statusText[wsStatus] || wsStatus}</span>
           </div>
         </Dropdown>
       </div>
