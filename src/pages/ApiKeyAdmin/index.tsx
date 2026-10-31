@@ -88,8 +88,7 @@ const ApiKeyAdmin: FC = () => {
         const color = Number(days) <= 7 ? "red" : Number(days) <= 30 ? "orange" : "default";
         return (
           <span>
-            {value}{" "}
-            <Tag color={color}>{Number(days) < 0 ? "已过期" : `剩余 ${days} 天`}</Tag>
+            {value} <Tag color={color}>{Number(days) < 0 ? "已过期" : `剩余 ${days} 天`}</Tag>
           </span>
         );
       }

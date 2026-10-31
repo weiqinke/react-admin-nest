@@ -74,9 +74,7 @@ const LoginLog = () => {
       .then(r => {
         if (r.data.code === 0) {
           // 接口按 created_at 倒序，最新在前；勿再 reverse
-          const list = [...(r?.data?.data || [])].sort(
-            (a, b) => new Date(b.created).valueOf() - new Date(a.created).valueOf()
-          );
+          const list = [...(r?.data?.data || [])].sort((a, b) => new Date(b.created).valueOf() - new Date(a.created).valueOf());
           setDataSource(list);
           setDataScope(r.data.data_scope || "");
         }

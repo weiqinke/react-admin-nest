@@ -70,9 +70,7 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
 
   const loadWatchers = () => {
     const request = mine ? listMyTicketWatchers(ticketId) : listTicketWatchers(ticketId);
-    request
-      .then(res => setWatchers((res.data?.data?.list || []).map(String)))
-      .catch(() => setWatchers([]));
+    request.then(res => setWatchers((res.data?.data?.list || []).map(String))).catch(() => setWatchers([]));
   };
 
   const load = () => {
@@ -251,9 +249,7 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
                 placeholder="添加关注人"
                 showSearch
                 optionFilterProp="label"
-                options={users
-                  .map(item => ({ value: String(item.uid || item.id), label: item.username }))
-                  .filter(item => !watchers.includes(item.value))}
+                options={users.map(item => ({ value: String(item.uid || item.id), label: item.username })).filter(item => !watchers.includes(item.value))}
                 onSelect={async (userId: string) => {
                   await addTicketWatcher(ticketId, userId);
                   message.success("已添加关注");
@@ -344,9 +340,7 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
               ) : null}
               {action === "priority" ? (
                 <Form.Item name="priority" label="优先级" rules={[{ required: true, message: "请选择优先级" }]} initialValue={ticket.priority}>
-                  <Select
-                    options={Object.entries(TICKET_PRIORITY).map(([value, label]) => ({ value, label }))}
-                  />
+                  <Select options={Object.entries(TICKET_PRIORITY).map(([value, label]) => ({ value, label }))} />
                 </Form.Item>
               ) : null}
               {action === "rate" ? (

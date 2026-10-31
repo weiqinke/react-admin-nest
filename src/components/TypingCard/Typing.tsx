@@ -69,7 +69,11 @@ class Typing {
   constructor(opts: { data?: string; output: { current: HTMLElement | null }; delay?: number }) {
     this.output = opts.output;
     this.delay = opts.delay || 120;
-    this.tokens = tokenizeText(toPlainText(opts.data || "").replace(/\s+/g, " ").trim());
+    this.tokens = tokenizeText(
+      toPlainText(opts.data || "")
+        .replace(/\s+/g, " ")
+        .trim()
+    );
   }
 
   start() {
@@ -96,13 +100,16 @@ class Typing {
     }
 
     const token = this.tokens[this.index]!;
-    this.timer = setTimeout(() => {
-      if (this.doneState) return;
-      this.index += 1;
-      this.shown += token;
-      if (this.textNode) this.textNode.nodeValue = this.shown;
-      this.scheduleNext();
-    }, tokenDelay(this.delay, token));
+    this.timer = setTimeout(
+      () => {
+        if (this.doneState) return;
+        this.index += 1;
+        this.shown += token;
+        if (this.textNode) this.textNode.nodeValue = this.shown;
+        this.scheduleNext();
+      },
+      tokenDelay(this.delay, token)
+    );
   };
 
   done() {

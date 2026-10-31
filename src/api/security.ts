@@ -15,8 +15,7 @@ export const confirmTotpSetup = (code: string) => request("/api/me/totp/confirm"
 export const disableTotp = (code: string) => request("/api/me/totp", "DELETE", {}, { data: { code } });
 
 /** Step-up：密码或 totp_code 二选一。data: { token, expires_at } */
-export const createConfirmation = (payload: { password?: string; totp_code?: string }) =>
-  request("/api/me/confirmations", "POST", payload);
+export const createConfirmation = (payload: { password?: string; totp_code?: string }) => request("/api/me/confirmations", "POST", payload);
 
 /** 找回密码（需 mail.enabled）。公开接口。 */
 export const forgotPassword = (account: string) => request("/api/password/forgot", "POST", { account });

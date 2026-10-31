@@ -1,13 +1,5 @@
 import { hasPermission } from "@/api/announcement";
-import {
-  WEBHOOK_EVENT_OPTIONS,
-  createWebhook,
-  deleteWebhook,
-  listWebhookDeliveries,
-  listWebhooks,
-  replayWebhookDelivery,
-  testWebhook
-} from "@/api/ops";
+import { WEBHOOK_EVENT_OPTIONS, createWebhook, deleteWebhook, listWebhookDeliveries, listWebhooks, replayWebhookDelivery, testWebhook } from "@/api/ops";
 import PageIntroduction from "@/components/PageIntroduction";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Modal, Select, Space, Table, Tag, message } from "antd";
@@ -143,10 +135,7 @@ const WebhookAdmin: FC = () => {
 
   return (
     <div className="admin-page">
-      <PageIntroduction
-        infos={infos}
-        introduction="出站 Webhook 按事件投递；失败由 webhook.retry 退避重试，死信可手动重放。测试会投递 webhook.ping。"
-      />
+      <PageIntroduction infos={infos} introduction="出站 Webhook 按事件投递；失败由 webhook.retry 退避重试，死信可手动重放。测试会投递 webhook.ping。" />
       <div className="admin-card">
         <div className="admin-toolbar">
           <Button onClick={load}>刷新订阅</Button>

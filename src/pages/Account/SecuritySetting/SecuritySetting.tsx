@@ -150,9 +150,7 @@ const SecuritySetting: FC = function () {
       </Col>
       <Col span={24} lg={12}>
         <Space direction="vertical" style={{ width: "100%" }} size="middle">
-          <div>
-            状态：{totpEnabled ? <Tag color="green">已启用</Tag> : <Tag>未启用</Tag>}
-          </div>
+          <div>状态：{totpEnabled ? <Tag color="green">已启用</Tag> : <Tag>未启用</Tag>}</div>
           {totpEnabled ? (
             <Button danger onClick={turnOffTotp}>
               关闭双因素

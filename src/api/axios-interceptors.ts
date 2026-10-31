@@ -116,10 +116,7 @@ function createResponseHandler(service) {
       const body = response?.data;
       if (!body || typeof body.code !== "number") {
         if (response?.status >= 400) {
-          const text =
-            response?.status === 503
-              ? "系统维护中，请稍后再试"
-              : "请求错误";
+          const text = response?.status === 503 ? "系统维护中，请稍后再试" : "请求错误";
           notifyError(response?.config, text);
           return Promise.reject(toApiError({ code: response.status, message: text }, response.status));
         }

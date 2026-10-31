@@ -5,20 +5,20 @@
 
 ## 基本约定
 
-| 项 | 说明 |
-|----|------|
-| Base URL | `http://127.0.0.1:8080`（可由 `server.address` 配置） |
-| 数据格式 | JSON，`Content-Type: application/json` |
-| **统一信封** | 所有 HTTP JSON 接口均为 `{ code, message, data }` |
-| 成功 | HTTP **200**，`code=0`，`message="ok"`，业务在 **`data`** |
-| 失败 | **`code` 为业务错误码**（如 `40101`），HTTP 为映射状态；原因在 `message`，附加字段在 `data`（可为 `null`） |
-| 鉴权 | `Authorization: Bearer <access token>`；WebSocket 也可用 `?token=` |
-| 用户 ID | **雪花 ID，JSON 一律字符串**，前端勿转 Number |
-| 权限模型 | Constrained RBAC（角色继承 + SSD/DSD） |
-| 访问日志 | 全站写入 `api_access_log`；URL 中 `token` 等敏感参数脱敏为 `***` |
-| 请求追踪 | 响应头 `X-Request-ID`；可主动传入同名请求头 |
-| 限流 | captcha 30/分、login 10/分、register 5/分、refresh 30/分（按 IP）；超限 HTTP 429 / `code=42901` |
-| 客户端 IP | 见下方「客户端 IP」。访问日志、登录日志、限流、WebSocket 握手使用同一个结果 |
+| 项           | 说明                                                                                                       |
+| ------------ | ---------------------------------------------------------------------------------------------------------- |
+| Base URL     | `http://127.0.0.1:8080`（可由 `server.address` 配置）                                                      |
+| 数据格式     | JSON，`Content-Type: application/json`                                                                     |
+| **统一信封** | 所有 HTTP JSON 接口均为 `{ code, message, data }`                                                          |
+| 成功         | HTTP **200**，`code=0`，`message="ok"`，业务在 **`data`**                                                  |
+| 失败         | **`code` 为业务错误码**（如 `40101`），HTTP 为映射状态；原因在 `message`，附加字段在 `data`（可为 `null`） |
+| 鉴权         | `Authorization: Bearer <access token>`；WebSocket 也可用 `?token=`                                         |
+| 用户 ID      | **雪花 ID，JSON 一律字符串**，前端勿转 Number                                                              |
+| 权限模型     | Constrained RBAC（角色继承 + SSD/DSD）                                                                     |
+| 访问日志     | 全站写入 `api_access_log`；URL 中 `token` 等敏感参数脱敏为 `***`                                           |
+| 请求追踪     | 响应头 `X-Request-ID`；可主动传入同名请求头                                                                |
+| 限流         | captcha 30/分、login 10/分、register 5/分、refresh 30/分（按 IP）；超限 HTTP 429 / `code=42901`            |
+| 客户端 IP    | 见下方「客户端 IP」。访问日志、登录日志、限流、WebSocket 握手使用同一个结果                                |
 
 ### 响应信封（必读）
 
@@ -26,7 +26,7 @@
 {
   "code": 0,
   "message": "ok",
-  "data": { }
+  "data": {}
 }
 ```
 
@@ -75,13 +75,13 @@ Nginx 对每个反代请求写入：
 
 ### 演示账号
 
-| 用户名 | 密码 | 角色 | 备注 |
-|--------|------|------|------|
-| `admin` | `admin123` | admin | 几乎全部权限 |
-| `user` | `user123` | user | 普通用户 |
-| `cashier1` | `cashier123` | cashier | 出纳 |
-| `accountant1` | `account123` | accountant | 会计；与出纳 SSD 互斥 |
-| `dual1` | `dual123` | manager + cashier | 登录须传 `active_roles`（DSD） |
+| 用户名        | 密码         | 角色              | 备注                           |
+| ------------- | ------------ | ----------------- | ------------------------------ |
+| `admin`       | `admin123`   | admin             | 几乎全部权限                   |
+| `user`        | `user123`    | user              | 普通用户                       |
+| `cashier1`    | `cashier123` | cashier           | 出纳                           |
+| `accountant1` | `account123` | accountant        | 会计；与出纳 SSD 互斥          |
+| `dual1`       | `dual123`    | manager + cashier | 登录须传 `active_roles`（DSD） |
 
 ### 常见权限码
 
@@ -96,6 +96,7 @@ Nginx 对每个反代请求写入：
 无需登录。探测数据库连通性。
 
 **完整信封（正常）**
+
 ```json
 {
   "code": 0,
@@ -117,6 +118,7 @@ Nginx 对每个反代请求写入：
 `commit` 是完整 git hash，`branch` 是编译时所在分支。发布构建通过 `-ldflags` 写入这两个值。本地 `go run` / `go build` 未传时，`commit` 取 Go 构建信息中的 `vcs.revision`，仍缺失的字段再从工作区 `git` 读取。都没有时为 `unknown`。`started_at` 是进程启动时间（RFC3339），进程存活期间不变。
 
 **data**
+
 ```json
 {
   "commit": "a1b2c3d4e5f6789012345678901234567890abcd",
@@ -137,6 +139,7 @@ Nginx 对每个反代请求写入：
 公开。一次性图形验证码；再次请求即更换。限流 30/分/IP。
 
 **data**
+
 ```json
 {
   "captcha_id": "xxxx",
@@ -151,6 +154,7 @@ Nginx 对每个反代请求写入：
 公开。RSA 公钥，用于加密密码。
 
 **data**
+
 ```json
 {
   "key_id": "rsa-2048",
@@ -167,6 +171,7 @@ Nginx 对每个反代请求写入：
 公开。限流 5/分/IP。成功后自动授予 `user` 角色并创建默认 profile。
 
 **请求**
+
 ```json
 {
   "username": "newuser",
@@ -175,6 +180,7 @@ Nginx 对每个反代请求写入：
 ```
 
 规则：
+
 - `username`：3–32 位，字母/数字/下划线
 - 明文密码 6–64（服务端解密后校验）
 - 用户名已存在 → HTTP 409 / `code=40906`
@@ -183,13 +189,14 @@ Nginx 对每个反代请求写入：
 注册成功后需再调 `POST /api/login` 取 token。
 
 **data 示例**
+
 ```json
 {
   "user": {
     "id": "3733...",
     "username": "newuser",
     "roles": ["user"],
-    "profile": { }
+    "profile": {}
   }
 }
 ```
@@ -199,6 +206,7 @@ Nginx 对每个反代请求写入：
 公开。限流 10/分/IP。需：用户名 + 加密密码 + 验证码。
 
 **请求**
+
 ```json
 {
   "username": "admin",
@@ -215,6 +223,7 @@ Nginx 对每个反代请求写入：
 - `profile.status=0` → HTTP 403 / `code=40302`
 
 **完整信封（成功）**
+
 ```json
 {
   "code": 0,
@@ -230,15 +239,15 @@ Nginx 对每个反代请求写入：
       "roles": ["admin"],
       "active_roles": ["admin"],
       "permissions": ["user:write", "role:read", "..."],
-      "profile": { }
+      "profile": {}
     }
   }
 }
 ```
 
-| 字段 | 说明 |
-|------|------|
-| `token` | access JWT，TTL=`jwt.ttlHours`（默认 24h），用于 Bearer |
+| 字段            | 说明                                                                              |
+| --------------- | --------------------------------------------------------------------------------- |
+| `token`         | access JWT，TTL=`jwt.ttlHours`（默认 24h），用于 Bearer                           |
 | `refresh_token` | refresh JWT，TTL=`jwt.refreshTTLHours`（默认 168h）；**不能**当 Bearer 调业务接口 |
 
 常见失败码：`40002` 验证码、`40003` 密文、`40101` 账密错误、`40302` 禁用、`40304` 用户名锁定、`40903` DSD、`42901` 限流。锁定规则见 §22。
@@ -248,28 +257,31 @@ Nginx 对每个反代请求写入：
 公开。限流 30/分/IP。用 refresh 换**新的** access + refresh（**旋转**：旧 refresh 立即作废）。
 
 **请求**
+
 ```json
 { "refresh_token": "<refresh jwt>" }
 ```
 
 **data**：字段同登录（`token` / `expires_at` / `refresh_token` / `refresh_expires_at` / `user`）。
 
-| 情况 | HTTP | code |
-|------|------|------|
-| refresh 无效/吊销/过期 | 401 | `40103` |
-| 账号禁用 | 403 | `40302` |
-| DSD 冲突 | 409 | `40903` |
+| 情况                   | HTTP | code    |
+| ---------------------- | ---- | ------- |
+| refresh 无效/吊销/过期 | 401  | `40103` |
+| 账号禁用               | 403  | `40302` |
+| DSD 冲突               | 409  | `40903` |
 
 ### `POST /api/logout`
 
 需登录（Bearer = access）。吊销当前 access；**建议 body 带 `refresh_token`**，否则 refresh 仍可换新 token。
 
 **请求（可选）**
+
 ```json
 { "refresh_token": "<refresh jwt>" }
 ```
 
 **data**
+
 ```json
 { "status": "ok" }
 ```
@@ -286,14 +298,14 @@ Nginx 对每个反代请求写入：
 
 权限：`login:read`
 
-| Query | 说明 |
-|-------|------|
-| page / page_size | 分页 |
-| from / to | `YYYY-MM-DD` |
-| username | 模糊 |
-| user_id | 雪花 ID |
-| success | `true`/`false` 或 `1`/`0` |
-| ip | 模糊 |
+| Query            | 说明                      |
+| ---------------- | ------------------------- |
+| page / page_size | 分页                      |
+| from / to        | `YYYY-MM-DD`              |
+| username         | 模糊                      |
+| user_id          | 雪花 ID                   |
+| success          | `true`/`false` 或 `1`/`0` |
+| ip               | 模糊                      |
 
 **data**：`{ list, total, page, page_size }`
 
@@ -301,23 +313,20 @@ Nginx 对每个反代请求写入：
 
 权限：`login:read`。默认最近 7 天，最长 90 天。
 
-| Query | 说明 |
-|-------|------|
-| from / to | 日期 |
-| top | `by_user` 条数，默认 10，最大 50 |
+| Query     | 说明                             |
+| --------- | -------------------------------- |
+| from / to | 日期                             |
+| top       | `by_user` 条数，默认 10，最大 50 |
 
 **data**
+
 ```json
 {
   "from": "2026-10-21",
   "to": "2026-10-27",
   "summary": { "day": "", "total": 120, "success": 110, "fail": 10, "unique_users": 18 },
-  "daily": [
-    { "day": "2026-10-21", "total": 15, "success": 14, "fail": 1, "unique_users": 6 }
-  ],
-  "by_user": [
-    { "user_id": "3733...", "username": "admin", "total": 40, "success": 39, "fail": 1 }
-  ]
+  "daily": [{ "day": "2026-10-21", "total": 15, "success": 14, "fail": 1, "unique_users": 6 }],
+  "by_user": [{ "user_id": "3733...", "username": "admin", "total": 40, "success": 39, "fail": 1 }]
 }
 ```
 
@@ -346,10 +355,10 @@ Nginx 对每个反代请求写入：
 公开。平台回调：`code` + `state`。  
 成功：**302** 到 `oauth.frontendSuccessUrl`（或 authorize 时的 `redirect`），query 含：
 
-| mode | query |
-|------|--------|
+| mode  | query                                                                                                                |
+| ----- | -------------------------------------------------------------------------------------------------------------------- |
 | login | `provider`, `mode=login`, `access_token`, `refresh_token`, `expires_at`, `refresh_expires_at`, `user_id`, `username` |
-| bind | `provider`, `mode=bind`, `bound=1`, `user_id` |
+| bind  | `provider`, `mode=bind`, `bound=1`, `user_id`                                                                        |
 
 失败：**302** 到 `oauth.frontendErrorUrl?code=&message=`。
 
@@ -365,6 +374,7 @@ Nginx 对每个反代请求写入：
 需登录。列出当前用户已绑平台（不含 access_token）。
 
 **data**
+
 ```json
 {
   "items": [
@@ -396,25 +406,25 @@ Nginx 对每个反代请求写入：
 
 ### 详情字段（在 `data` 内）
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| user_id | string | 雪花 ID |
-| nickname | string | 昵称 |
-| real_name | string | 真实姓名 |
-| avatar | string | 头像 URL |
-| gender | int | 0未知 1男 2女 3其他 |
-| birthday | string | `YYYY-MM-DD`，可空 |
-| email / phone / mobile | string | 联系方式 |
-| id_card | string | 身份证 |
-| employee_no | string | 工号 |
-| department / job_title / company | string | 组织。`department` 只读，改归属用 `PUT /api/users/{id}/department` |
-| department_id | string | 部门雪花 ID，空字符串表示未归属 |
-| province / city / district / address / postal_code / country | string | 地址 |
-| bio / website / wechat / qq | string | 扩展 |
-| status | int | 1正常 0禁用（本人更新不可改） |
-| remark | string | 备注 |
-| extra_json | string | 扩展 JSON 文本 |
-| created_at / updated_at | string | 时间 |
+| 字段                                                         | 类型   | 说明                                                               |
+| ------------------------------------------------------------ | ------ | ------------------------------------------------------------------ |
+| user_id                                                      | string | 雪花 ID                                                            |
+| nickname                                                     | string | 昵称                                                               |
+| real_name                                                    | string | 真实姓名                                                           |
+| avatar                                                       | string | 头像 URL                                                           |
+| gender                                                       | int    | 0未知 1男 2女 3其他                                                |
+| birthday                                                     | string | `YYYY-MM-DD`，可空                                                 |
+| email / phone / mobile                                       | string | 联系方式                                                           |
+| id_card                                                      | string | 身份证                                                             |
+| employee_no                                                  | string | 工号                                                               |
+| department / job_title / company                             | string | 组织。`department` 只读，改归属用 `PUT /api/users/{id}/department` |
+| department_id                                                | string | 部门雪花 ID，空字符串表示未归属                                    |
+| province / city / district / address / postal_code / country | string | 地址                                                               |
+| bio / website / wechat / qq                                  | string | 扩展                                                               |
+| status                                                       | int    | 1正常 0禁用（本人更新不可改）                                      |
+| remark                                                       | string | 备注                                                               |
+| extra_json                                                   | string | 扩展 JSON 文本                                                     |
+| created_at / updated_at                                      | string | 时间                                                               |
 
 更新字段均为可选（只更新传入字段）。
 
@@ -445,25 +455,26 @@ Nginx 对每个反代请求写入：
 
 ### 4.1 权限码 CRUD
 
-| 方法 | 路径 | 权限 | 说明 |
-|------|------|------|------|
-| GET | `/api/permissions` | `role:read` | 列表 → `data.list` |
-| GET | `/api/permissions/{code}` | `role:read` | 详情 |
-| POST | `/api/permissions` | `role:write` | 创建 `{code,name}` |
-| PUT | `/api/permissions/{code}` | `role:write` | 改名称 `{name}` |
+| 方法   | 路径                      | 权限         | 说明                                          |
+| ------ | ------------------------- | ------------ | --------------------------------------------- |
+| GET    | `/api/permissions`        | `role:read`  | 列表 → `data.list`                            |
+| GET    | `/api/permissions/{code}` | `role:read`  | 详情                                          |
+| POST   | `/api/permissions`        | `role:write` | 创建 `{code,name}`                            |
+| PUT    | `/api/permissions/{code}` | `role:write` | 改名称 `{name}`                               |
 | DELETE | `/api/permissions/{code}` | `role:write` | 删除；**data** `{ deleted, permission_code }` |
 
 ### 4.2 角色 CRUD
 
-| 方法 | 路径 | 权限 | 说明 |
-|------|------|------|------|
-| GET | `/api/roles` | `role:read` | 列表（含 inherits、permissions、data_scope） |
-| GET | `/api/roles/{code}` | `role:read` | 详情 |
-| POST | `/api/roles` | `role:write` | 创建 `{code,name,inherits?,data_scope?}` |
-| PUT | `/api/roles/{code}` | `role:write` | 更新；`inherits` 数组则整表替换；`data_scope` 为 `all`/`dept`/`self`，省略则不改 |
-| DELETE | `/api/roles/{code}` | `role:write` | 删；`admin` 禁止；仍有用户绑定时拒绝 → `40904`/`40905` |
+| 方法   | 路径                | 权限         | 说明                                                                             |
+| ------ | ------------------- | ------------ | -------------------------------------------------------------------------------- |
+| GET    | `/api/roles`        | `role:read`  | 列表（含 inherits、permissions、data_scope）                                     |
+| GET    | `/api/roles/{code}` | `role:read`  | 详情                                                                             |
+| POST   | `/api/roles`        | `role:write` | 创建 `{code,name,inherits?,data_scope?}`                                         |
+| PUT    | `/api/roles/{code}` | `role:write` | 更新；`inherits` 数组则整表替换；`data_scope` 为 `all`/`dept`/`self`，省略则不改 |
+| DELETE | `/api/roles/{code}` | `role:write` | 删；`admin` 禁止；仍有用户绑定时拒绝 → `40904`/`40905`                           |
 
 **data 列表示例**
+
 ```json
 {
   "list": [
@@ -480,21 +491,22 @@ Nginx 对每个反代请求写入：
 
 ### 4.3 角色 ↔ 权限
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/api/roles/{code}/permissions` | 直接绑定（不含继承） |
-| POST | `/api/roles/{code}/permissions` | 追加 `permission_code` 或 `permission_codes` |
-| PUT | `/api/roles/{code}/permissions` | 全量替换 `permission_codes` |
-| DELETE | `/api/roles/{code}/permissions/{perm}` | 解绑单个 |
+| 方法   | 路径                                   | 说明                                         |
+| ------ | -------------------------------------- | -------------------------------------------- |
+| GET    | `/api/roles/{code}/permissions`        | 直接绑定（不含继承）                         |
+| POST   | `/api/roles/{code}/permissions`        | 追加 `permission_code` 或 `permission_codes` |
+| PUT    | `/api/roles/{code}/permissions`        | 全量替换 `permission_codes`                  |
+| DELETE | `/api/roles/{code}/permissions/{perm}` | 解绑单个                                     |
 
 ### 4.4 SSD / DSD 约束
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET/POST | `/api/roles/constraints` | 列表 / 创建 |
+| 方法       | 路径                            | 说明        |
+| ---------- | ------------------------------- | ----------- |
+| GET/POST   | `/api/roles/constraints`        | 列表 / 创建 |
 | PUT/DELETE | `/api/roles/constraints/{code}` | 更新 / 删除 |
 
 创建体：
+
 ```json
 {
   "code": "finance_ssd",
@@ -534,7 +546,7 @@ Nginx 对每个反代请求写入：
 - 每节点雪花 `id` 唯一；`segment` 可跨支重复；同级同名拒绝 `40901`
 - `weight`：根=1，子=`parent.weight+1`（服务端算）
 - `chain_id`：根=`自身 id`，子继承父
-- 展示字段：`title` `icon` `remark` `is_hot` `has_update` `visible_in_menu` `sort` `status`  
+- 展示字段：`title` `icon` `remark` `is_hot` `has_update` `visible_in_menu` `sort` `status`
   - `visible_in_menu`：`1` 在侧栏/菜单组件显示，`0` 隐藏（路由仍可返回，由前端决定是否注册）
 - **直接权限为空 = 公开菜单**（可见性不做权限码校验）
 - 有直接权限时，effective = 自身直接 ∪ 祖先直接；用户须全部具备
@@ -552,16 +564,16 @@ Nginx 对每个反代请求写入：
 
 ### 管理端
 
-| 方法 | 路径 | 权限 | 说明 |
-|------|------|------|------|
-| GET | `/api/menus` | `menu:read` | 全量树（含禁用；带 `status`/`is_public`/`permissions`/`effective_permissions`） |
-| GET | `/api/menus/{id}` | `menu:read` | 详情 |
-| GET | `/api/menus/{id}/permissions` | `menu:read` | 该菜单直接绑定的权限码，`data.permission_codes`；未绑定为 `[]` |
-| POST | `/api/menus` | `menu:write` | 逐级创建 |
-| PUT | `/api/menus/{id}` | `menu:write` | 改 title/icon/remark/is_hot/has_update/visible_in_menu/sort |
-| PUT | `/api/menus/{id}/status` | `menu:write` | `{ "status": 0\|1 }`；禁用级联子孙；启用须父已启用 |
-| PUT | `/api/menus/{id}/permissions` | `menu:write` | `{ "permission_codes":[] }`；空数组变公开 |
-| DELETE | `/api/menus/{id}` | `menu:write` | 有子则 `40905` |
+| 方法   | 路径                          | 权限         | 说明                                                                            |
+| ------ | ----------------------------- | ------------ | ------------------------------------------------------------------------------- |
+| GET    | `/api/menus`                  | `menu:read`  | 全量树（含禁用；带 `status`/`is_public`/`permissions`/`effective_permissions`） |
+| GET    | `/api/menus/{id}`             | `menu:read`  | 详情                                                                            |
+| GET    | `/api/menus/{id}/permissions` | `menu:read`  | 该菜单直接绑定的权限码，`data.permission_codes`；未绑定为 `[]`                  |
+| POST   | `/api/menus`                  | `menu:write` | 逐级创建                                                                        |
+| PUT    | `/api/menus/{id}`             | `menu:write` | 改 title/icon/remark/is_hot/has_update/visible_in_menu/sort                     |
+| PUT    | `/api/menus/{id}/status`      | `menu:write` | `{ "status": 0\|1 }`；禁用级联子孙；启用须父已启用                              |
+| PUT    | `/api/menus/{id}/permissions` | `menu:write` | `{ "permission_codes":[] }`；空数组变公开                                       |
+| DELETE | `/api/menus/{id}`             | `menu:write` | 有子则 `40905`                                                                  |
 
 **创建 body 示例**
 
@@ -591,13 +603,13 @@ Nginx 对每个反代请求写入：
 路由：`internal/router/stats.go`  
 权限：均需 `stats:read`
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/api/stats/access` | 按 method+path 汇总 |
-| GET | `/api/stats/access/logs` | 明细分页；`user_id=anonymous` 只查匿名。按数据范围过滤，见 §21 |
-| GET | `/api/stats/access/daily` | 按天。按数据范围过滤，见 §21 |
-| GET | `/api/stats/access/users` | 按用户。按数据范围过滤，见 §21 |
-| GET | `/api/stats/server` | 本机/本进程指标（gopsutil）。不按人裁剪 |
+| 方法 | 路径                      | 说明                                                           |
+| ---- | ------------------------- | -------------------------------------------------------------- |
+| GET  | `/api/stats/access`       | 按 method+path 汇总                                            |
+| GET  | `/api/stats/access/logs`  | 明细分页；`user_id=anonymous` 只查匿名。按数据范围过滤，见 §21 |
+| GET  | `/api/stats/access/daily` | 按天。按数据范围过滤，见 §21                                   |
+| GET  | `/api/stats/access/users` | 按用户。按数据范围过滤，见 §21                                 |
+| GET  | `/api/stats/server`       | 本机/本进程指标（gopsutil）。不按人裁剪                        |
 
 日志 Query：`page` `page_size` `from` `to` `user_id` `path`。  
 明细字段：`method path url ip user_id username anonymous status created_at`。
@@ -631,10 +643,10 @@ Nginx 对每个反代请求写入：
 
 连接已经建立后，access 过期或被吊销：先发 `auth.expired`（过期码 `40104`，吊销码 `40102`），再关连接。
 
-| 房间 | 加入 | 用途 |
-|------|------|------|
-| `online` | 连接成功自动加入 | 在线索引 |
-| `notify` | 自动加入 | 全站通知 |
+| 房间          | 加入                            | 用途     |
+| ------------- | ------------------------------- | -------- |
+| `online`      | 连接成功自动加入                | 在线索引 |
+| `notify`      | 自动加入                        | 全站通知 |
 | `admin-watch` | `ws:admin` 后客户端 `room.join` | 在线列表 |
 
 `room.join` / `room.leave` 的 `payload.room` 只接受 `admin-watch`。
@@ -679,11 +691,11 @@ WebSocket 帧里不传图片。
 
 关系落库，重连不用重新订阅。不能订阅自己（`40001`）。每人最多 200 个（`40901`）。目标用户必须存在（`40401`）。备注最长 64，档位只允许 `all`、`online_only`、`mute`，否则 `40004`。写操作每用户每分钟最多 60 次（`42901`）。
 
-| notify_level | 实时上线 | 实时下线 | 离线补推 |
-|--------------|----------|----------|----------|
-| `all` | 是 | 是 | 上线和下线 |
-| `online_only` | 是 | 否 | 只记上线 |
-| `mute` | 否 | 否 | 否 |
+| notify_level  | 实时上线 | 实时下线 | 离线补推   |
+| ------------- | -------- | -------- | ---------- |
+| `all`         | 是       | 是       | 上线和下线 |
+| `online_only` | 是       | 否       | 只记上线   |
+| `mute`        | 否       | 否       | 否         |
 
 - `subscribe.add` `{ target_user_id, note?, notify_level? }` → `subscribe.added`。新建缺省 `note=""`、`notify_level=all`；已存在时，没带的字段保持原值。
 - `subscribe.update` 至少改一项，没有关系则 `40401` → `subscribe.updated`。
@@ -711,39 +723,39 @@ WebSocket 帧里不传图片。
 
 源码：`internal/pkg/response/codes.go`（可用 `Register` 扩展）。
 
-| code | HTTP | 常量 | 说明 |
-|------|------|------|------|
-| 0 | 200 | `CodeOK` | 成功 |
-| 40001 | 400 | `CodeBadRequest` | 通用参数错误 |
-| 40002 | 400 | `CodeInvalidCaptcha` | 验证码无效 |
-| 40003 | 400 | `CodeInvalidCipher` | 密码密文无效 |
-| 40004 | 400 | `CodeValidation` | 字段校验失败 |
-| 40005 | 400 | `CodeInvalidUsername` | 用户名不合法 |
-| 40006 | 400 | `CodeInvalidPassword` | 密码不合法 |
-| 40101 | 401 | `CodeUnauthorized` | 未登录 / 账密错误等 |
-| 40102 | 401 | `CodeInvalidToken` | access 无效或已吊销 |
-| 40103 | 401 | `CodeInvalidRefreshToken` | refresh 无效或已吊销 |
-| 40104 | 401 | `CodeTokenExpired` | access 已过期；前端应 `POST /api/token/refresh` 后续期，勿与 `40102`（吊销/伪造）混用 |
-| 40105 | 401 | `CodeOAuthInvalidState` | OAuth state 无效/过期 |
-| 40106 | 401 | `CodeOAuthExchange` | OAuth 换票/拉用户失败 |
-| 40301 | 403 | `CodeForbidden` | 无权限；`data.permission` |
-| 40302 | 403 | `CodeUserDisabled` | 账号禁用 |
-| 40303 | 403 | `CodeRegistrationClosed` | 注册已关闭（`site.allow_register=false`） |
-| 40304 | 403 | `CodeAccountLocked` | 用户名因连续密码错误被锁定；`data.retry_after` 为剩余秒数 |
-| 40305 | 403 | `CodePasswordExpired` | 密码超过 `security.password_max_age_days`；须改密后才能发 token |
-| 40306 | 403 | `CodeTOTPRequired` | 已启用 TOTP，需正确 `totp_code` |
-| 40401 | 404 | `CodeNotFound` | 资源不存在 |
-| 40402 | 404 | `CodeOAuthProviderNotFound` | OAuth provider 未知/未启用 |
-| 40901 | 409 | `CodeConflict` | 通用冲突 |
-| 40902 | 409 | `CodeSSDViolation` | SSD |
-| 40903 | 409 | `CodeDSDViolation` | DSD |
-| 40904 | 409 | `CodeProtected` | 受保护资源 |
-| 40905 | 409 | `CodeInUse` | 仍被引用 |
-| 40906 | 409 | `CodeUsernameExists` | 用户名已存在 |
-| 40907 | 409 | `CodeOAuthIdentityBound` | 外部身份已绑其他账号 |
-| 42901 | 429 | `CodeTooManyRequests` | 限流；`data.retry_after`（秒）+ 头 `Retry-After` |
-| 50001 | 500 | `CodeInternal` | 内部错误 |
-| 50301 | 503 | `CodeUnavailable` | 依赖不可用 |
+| code  | HTTP | 常量                        | 说明                                                                                  |
+| ----- | ---- | --------------------------- | ------------------------------------------------------------------------------------- |
+| 0     | 200  | `CodeOK`                    | 成功                                                                                  |
+| 40001 | 400  | `CodeBadRequest`            | 通用参数错误                                                                          |
+| 40002 | 400  | `CodeInvalidCaptcha`        | 验证码无效                                                                            |
+| 40003 | 400  | `CodeInvalidCipher`         | 密码密文无效                                                                          |
+| 40004 | 400  | `CodeValidation`            | 字段校验失败                                                                          |
+| 40005 | 400  | `CodeInvalidUsername`       | 用户名不合法                                                                          |
+| 40006 | 400  | `CodeInvalidPassword`       | 密码不合法                                                                            |
+| 40101 | 401  | `CodeUnauthorized`          | 未登录 / 账密错误等                                                                   |
+| 40102 | 401  | `CodeInvalidToken`          | access 无效或已吊销                                                                   |
+| 40103 | 401  | `CodeInvalidRefreshToken`   | refresh 无效或已吊销                                                                  |
+| 40104 | 401  | `CodeTokenExpired`          | access 已过期；前端应 `POST /api/token/refresh` 后续期，勿与 `40102`（吊销/伪造）混用 |
+| 40105 | 401  | `CodeOAuthInvalidState`     | OAuth state 无效/过期                                                                 |
+| 40106 | 401  | `CodeOAuthExchange`         | OAuth 换票/拉用户失败                                                                 |
+| 40301 | 403  | `CodeForbidden`             | 无权限；`data.permission`                                                             |
+| 40302 | 403  | `CodeUserDisabled`          | 账号禁用                                                                              |
+| 40303 | 403  | `CodeRegistrationClosed`    | 注册已关闭（`site.allow_register=false`）                                             |
+| 40304 | 403  | `CodeAccountLocked`         | 用户名因连续密码错误被锁定；`data.retry_after` 为剩余秒数                             |
+| 40305 | 403  | `CodePasswordExpired`       | 密码超过 `security.password_max_age_days`；须改密后才能发 token                       |
+| 40306 | 403  | `CodeTOTPRequired`          | 已启用 TOTP，需正确 `totp_code`                                                       |
+| 40401 | 404  | `CodeNotFound`              | 资源不存在                                                                            |
+| 40402 | 404  | `CodeOAuthProviderNotFound` | OAuth provider 未知/未启用                                                            |
+| 40901 | 409  | `CodeConflict`              | 通用冲突                                                                              |
+| 40902 | 409  | `CodeSSDViolation`          | SSD                                                                                   |
+| 40903 | 409  | `CodeDSDViolation`          | DSD                                                                                   |
+| 40904 | 409  | `CodeProtected`             | 受保护资源                                                                            |
+| 40905 | 409  | `CodeInUse`                 | 仍被引用                                                                              |
+| 40906 | 409  | `CodeUsernameExists`        | 用户名已存在                                                                          |
+| 40907 | 409  | `CodeOAuthIdentityBound`    | 外部身份已绑其他账号                                                                  |
+| 42901 | 429  | `CodeTooManyRequests`       | 限流；`data.retry_after`（秒）+ 头 `Retry-After`                                      |
+| 50001 | 500  | `CodeInternal`              | 内部错误                                                                              |
+| 50301 | 503  | `CodeUnavailable`           | 依赖不可用                                                                            |
 
 ### 扩展错误码
 
@@ -1020,11 +1032,11 @@ go run ./scripts/apitest -base http://127.0.0.1:8080 -report docs/TEST_RESULTS.m
 
 权限 `user:write`。密码字段与登录一样，先取公钥再做 RSA-OAEP-SHA256。
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| POST | `/api/users` | body `{username, password_encrypted}`。成功后默认角色 `user`，`status=1` |
-| PUT | `/api/users/{id}/status` | body `{status}`，`1` 启用，`0` 停用。停用会吊销该用户全部会话。不能停用自己 → `40904` |
-| PUT | `/api/users/{id}/password` | body `{password_encrypted}`。重置后吊销该用户全部会话，响应里没有明文密码 |
+| 方法 | 路径                       | 说明                                                                                  |
+| ---- | -------------------------- | ------------------------------------------------------------------------------------- |
+| POST | `/api/users`               | body `{username, password_encrypted}`。成功后默认角色 `user`，`status=1`              |
+| PUT  | `/api/users/{id}/status`   | body `{status}`，`1` 启用，`0` 停用。停用会吊销该用户全部会话。不能停用自己 → `40904` |
+| PUT  | `/api/users/{id}/password` | body `{password_encrypted}`。重置后吊销该用户全部会话，响应里没有明文密码             |
 
 用户名已存在 → `40906`。用户名不合法 → `40005`。密码长度不合法 → `40006`。密文无效 → `40003`。
 
@@ -1034,22 +1046,22 @@ go run ./scripts/apitest -base http://127.0.0.1:8080 -report docs/TEST_RESULTS.m
 
 登录与刷新的 **data** 增加 `session_id`（JWT claim `sid`）。`GET /api/me` 同样返回 `session_id`。
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/api/me/sessions` | 未吊销且未过期的会话。`current=true` 为当前 access |
-| DELETE | `/api/me/sessions/{id}` | 下线该会话。当前会话被下线后 token 立即失效 |
+| 方法   | 路径                    | 说明                                               |
+| ------ | ----------------------- | -------------------------------------------------- |
+| GET    | `/api/me/sessions`      | 未吊销且未过期的会话。`current=true` 为当前 access |
+| DELETE | `/api/me/sessions/{id}` | 下线该会话。当前会话被下线后 token 立即失效        |
 
 OAuth 登录也会写入会话。进程重启后，已吊销会话仍保持失效。
 
 ### 部门
 
-| 方法 | 路径 | 权限 |
-|------|------|------|
-| GET | `/api/depts` | `dept:read`，**data** `{list}` 树，`children` |
-| POST | `/api/depts` | `dept:write`，body `name` `code` `parent_id?` `sort?` `status?` `leader_user_id?` |
-| PUT | `/api/depts/{id}` | `dept:write`。`parent_id` 空字符串改为根 |
-| DELETE | `/api/depts/{id}` | 有子部门或仍有用户 → `40905` |
-| PUT | `/api/users/{id}/department` | `user:write`，body `{department_id}`。空/null 取消归属，并同步 `profile.department` 名称 |
+| 方法   | 路径                         | 权限                                                                                     |
+| ------ | ---------------------------- | ---------------------------------------------------------------------------------------- |
+| GET    | `/api/depts`                 | `dept:read`，**data** `{list}` 树，`children`                                            |
+| POST   | `/api/depts`                 | `dept:write`，body `name` `code` `parent_id?` `sort?` `status?` `leader_user_id?`        |
+| PUT    | `/api/depts/{id}`            | `dept:write`。`parent_id` 空字符串改为根                                                 |
+| DELETE | `/api/depts/{id}`            | 有子部门或仍有用户 → `40905`                                                             |
+| PUT    | `/api/users/{id}/department` | `user:write`，body `{department_id}`。空/null 取消归属，并同步 `profile.department` 名称 |
 
 `code`：`^[a-z][a-z0-9_]{1,31}$`。演示部门 `it` / `biz` / `finance` / `ops` 会按资料里的部门名称回填 `department_id`（仅空值）。
 
@@ -1057,11 +1069,11 @@ OAuth 登录也会写入会话。进程重启后，已吊销会话仍保持失�
 
 ### 系统参数
 
-| 方法 | 路径 | 权限 |
-|------|------|------|
-| GET | `/api/site` | 公开。`{name, allow_register}` |
-| GET | `/api/configs?group=` | `config:read`。不返回 `bootstrap.*` |
-| PUT | `/api/configs/{key}` | `config:write`，body `{value}` |
+| 方法 | 路径                  | 权限                                |
+| ---- | --------------------- | ----------------------------------- |
+| GET  | `/api/site`           | 公开。`{name, allow_register}`      |
+| GET  | `/api/configs?group=` | `config:read`。不返回 `bootstrap.*` |
+| PUT  | `/api/configs/{key}`  | `config:write`，body `{value}`      |
 
 种子：`site.name=goadmin`，`site.allow_register=true`。bool 值用 `true`/`false`。
 
@@ -1083,17 +1095,17 @@ OAuth 登录也会写入会话。进程重启后，已吊销会话仍保持失�
 
 ## 16. 工单
 
-| 方法 | 路径 | 权限 |
-|------|------|------|
-| POST | `/api/tickets` | 登录。`title`、`content` 必填，`priority` 为 `low`/`normal`/`high` |
-| GET | `/api/me/tickets` | 登录。创建人或处理人。query `status` `page` `page_size` |
-| GET | `/api/me/tickets/{id}` | 创建人或处理人，含 `events` |
-| PUT | `/api/me/tickets/{id}/close` | 创建人。`close_reason` 必填 |
-| GET | `/api/tickets` | `ticket:read`。按数据范围过滤，响应带 `data_scope` |
-| GET | `/api/tickets/{id}` | `ticket:read`。超出范围视为不存在 |
-| PUT | `/api/tickets/{id}/assign` | `ticket:write`。`assignee_id` 与 `department_id` 至少一个。仅 `open`/`assigned` |
-| PUT | `/api/tickets/{id}/process` | `ticket:write`。`open`/`assigned` → `processing`，`note` 可选 |
-| PUT | `/api/tickets/{id}/close` | `ticket:write` |
+| 方法 | 路径                         | 权限                                                                            |
+| ---- | ---------------------------- | ------------------------------------------------------------------------------- |
+| POST | `/api/tickets`               | 登录。`title`、`content` 必填，`priority` 为 `low`/`normal`/`high`              |
+| GET  | `/api/me/tickets`            | 登录。创建人或处理人。query `status` `page` `page_size`                         |
+| GET  | `/api/me/tickets/{id}`       | 创建人或处理人，含 `events`                                                     |
+| PUT  | `/api/me/tickets/{id}/close` | 创建人。`close_reason` 必填                                                     |
+| GET  | `/api/tickets`               | `ticket:read`。按数据范围过滤，响应带 `data_scope`                              |
+| GET  | `/api/tickets/{id}`          | `ticket:read`。超出范围视为不存在                                               |
+| PUT  | `/api/tickets/{id}/assign`   | `ticket:write`。`assignee_id` 与 `department_id` 至少一个。仅 `open`/`assigned` |
+| PUT  | `/api/tickets/{id}/process`  | `ticket:write`。`open`/`assigned` → `processing`，`note` 可选                   |
+| PUT  | `/api/tickets/{id}/close`    | `ticket:write`                                                                  |
 
 状态：`open` → `assigned` → `processing` → `closed`。`open` 也可以直接 `processing` 或 `closed`。非法迁移 → `40004`。
 
@@ -1107,21 +1119,21 @@ OAuth 登录也会写入会话。进程重启后，已吊销会话仍保持失�
 
 单进程调度，每 30 秒检查一次。内置两个任务：
 
-| code | 间隔 | 作用 |
-|------|------|------|
-| `stats.daily` | 86400 秒 | 统计昨日 `api_access_log` 条数 |
-| `announcement.expire` | 300 秒 | 把已发布且 `expires_at` 已到的公告 `status` 写成 `expired` |
-| `announcement.start` | 300 秒 | 给已到 `starts_at`、尚未发过站内信的已发布公告补发一次。见 §23 |
-| `log.purge` | 86400 秒 | 按 `log.retention_days` 清理登录日志、操作审计和访问日志。见 §22 |
+| code                  | 间隔     | 作用                                                             |
+| --------------------- | -------- | ---------------------------------------------------------------- |
+| `stats.daily`         | 86400 秒 | 统计昨日 `api_access_log` 条数                                   |
+| `announcement.expire` | 300 秒   | 把已发布且 `expires_at` 已到的公告 `status` 写成 `expired`       |
+| `announcement.start`  | 300 秒   | 给已到 `starts_at`、尚未发过站内信的已发布公告补发一次。见 §23   |
+| `log.purge`           | 86400 秒 | 按 `log.retention_days` 清理登录日志、操作审计和访问日志。见 §22 |
 
 `expired` 不再出现在用户公告列表。管理端可以重新发布。到期前用户列表仍按查询时的窗口过滤；任务负责把管理列表里的状态改成已过期。已有库在下次启动时补上 `announcement.expire`，不会改已有任务的启停。
 
-| 方法 | 路径 | 权限 |
-|------|------|------|
-| GET | `/api/jobs` | `job:read` |
-| PUT | `/api/jobs/{code}/status` | `job:write`，body `{enabled:true/false}` |
-| POST | `/api/jobs/{code}/run` | `job:write`。停用也可以手动跑 |
-| GET | `/api/jobs/{code}/runs?limit=` | `job:read` |
+| 方法 | 路径                           | 权限                                     |
+| ---- | ------------------------------ | ---------------------------------------- |
+| GET  | `/api/jobs`                    | `job:read`                               |
+| PUT  | `/api/jobs/{code}/status`      | `job:write`，body `{enabled:true/false}` |
+| POST | `/api/jobs/{code}/run`         | `job:write`。停用也可以手动跑            |
+| GET  | `/api/jobs/{code}/runs?limit=` | `job:read`                               |
 
 `code` 含点号，例如 `stats.daily`，作为单个路径段。
 
@@ -1129,11 +1141,11 @@ OAuth 登录也会写入会话。进程重启后，已吊销会话仍保持失�
 
 ## 18. API 密钥
 
-| 方法 | 路径 | 权限 |
-|------|------|------|
-| GET | `/api/api-keys` | `apikey:read` |
-| POST | `/api/api-keys` | `apikey:write`。body `{name, scopes, expires_at?}`。**data.key 只返回一次** |
-| DELETE | `/api/api-keys/{id}` | `apikey:write`，状态改为 0 |
+| 方法   | 路径                 | 权限                                                                        |
+| ------ | -------------------- | --------------------------------------------------------------------------- |
+| GET    | `/api/api-keys`      | `apikey:read`                                                               |
+| POST   | `/api/api-keys`      | `apikey:write`。body `{name, scopes, expires_at?}`。**data.key 只返回一次** |
+| DELETE | `/api/api-keys/{id}` | `apikey:write`，状态改为 0                                                  |
 
 `scopes` 只能是：`user:read` `dict:read` `label:read` `announcement:read` `dept:read` `stats:read`。
 
@@ -1143,17 +1155,17 @@ OAuth 登录也会写入会话。进程重启后，已吊销会话仍保持失�
 
 ## 19. AI 对话
 
-| 方法 | 路径 | 权限 |
-|------|------|------|
-| GET | `/api/ai/models/options` | `ai:use`。启用中的模型，无密钥 |
-| GET | `/api/ai/models` | `ai:read`。`api_key_set`、`api_key_hint`，不回传密钥 |
-| POST | `/api/ai/models` | `ai:write` |
-| PUT | `/api/ai/models/{id}` | `ai:write`。`api_key` 空则保留原值 |
-| DELETE | `/api/ai/models/{id}` | `ai:write`。已有对话 → `40905` |
-| GET | `/api/ai/conversations` | `ai:use`，只看自己，最多 50 条 |
-| POST | `/api/ai/conversations` | `ai:use`。`{model_id, content}` |
-| GET | `/api/ai/conversations/{id}` | `ai:use` |
-| POST | `/api/ai/conversations/{id}/messages` | `ai:use`。`{content}` |
+| 方法   | 路径                                  | 权限                                                 |
+| ------ | ------------------------------------- | ---------------------------------------------------- |
+| GET    | `/api/ai/models/options`              | `ai:use`。启用中的模型，无密钥                       |
+| GET    | `/api/ai/models`                      | `ai:read`。`api_key_set`、`api_key_hint`，不回传密钥 |
+| POST   | `/api/ai/models`                      | `ai:write`                                           |
+| PUT    | `/api/ai/models/{id}`                 | `ai:write`。`api_key` 空则保留原值                   |
+| DELETE | `/api/ai/models/{id}`                 | `ai:write`。已有对话 → `40905`                       |
+| GET    | `/api/ai/conversations`               | `ai:use`，只看自己，最多 50 条                       |
+| POST   | `/api/ai/conversations`               | `ai:use`。`{model_id, content}`                      |
+| GET    | `/api/ai/conversations/{id}`          | `ai:use`                                             |
+| POST   | `/api/ai/conversations/{id}/messages` | `ai:use`。`{content}`                                |
 
 `provider`：`none` 或 `openai`。`none` 或 `base_url` 为空时，助手回复固定为「模型未接入，已记录本次调用。」`openai` 走 `{base_url}/v1/chat/completions`（地址已含 `/chat/completions` 则不改）。普通用户通过继承拥有 `ai:use`。每次对话写入操作审计 `module=ai` `action=chat`。
 
@@ -1169,10 +1181,10 @@ OAuth 登录也会写入会话。进程重启后，已吊销会话仍保持失�
 
 `GET /api/login/logs`、`GET /api/login/stats`、`GET /api/audit/logs`、`GET /api/audit/logs/export`、`GET /api/audit/logs/{id}` 使用角色 `data_scope`。
 
-| 范围 | 能看到 |
-|------|--------|
-| `all` | 全部 |
-| `self` | 自己的登录记录，或自己作为操作者的审计 |
+| 范围   | 能看到                                                    |
+| ------ | --------------------------------------------------------- |
+| `all`  | 全部                                                      |
+| `self` | 自己的登录记录，或自己作为操作者的审计                    |
 | `dept` | 本部门及下级用户产生的记录。查看者没有部门时退化为 `self` |
 
 登录失败且没有 `user_id` 的行，在 `self` / `dept` 下不会出现。响应增加 `data_scope`。超出范围的审计详情是 `40401`。
@@ -1189,22 +1201,22 @@ OAuth 登录也会写入会话。进程重启后，已吊销会话仍保持失�
 
 ### 岗位
 
-| 方法 | 路径 | 权限 |
-|------|------|------|
-| GET | `/api/positions?department_id=` | `position:read` |
-| POST | `/api/positions` | `position:write`。`department_id` `name` `code` 必填 |
-| PUT | `/api/positions/{id}` | `position:write`。改名会同步已任职用户的 `job_title` |
-| DELETE | `/api/positions/{id}` | 仍有人任职 → `40905` |
-| PUT | `/api/users/{id}/position` | `user:write`。`{position_id}`，空/null 取消任职并清空 `job_title` |
+| 方法   | 路径                            | 权限                                                              |
+| ------ | ------------------------------- | ----------------------------------------------------------------- |
+| GET    | `/api/positions?department_id=` | `position:read`                                                   |
+| POST   | `/api/positions`                | `position:write`。`department_id` `name` `code` 必填              |
+| PUT    | `/api/positions/{id}`           | `position:write`。改名会同步已任职用户的 `job_title`              |
+| DELETE | `/api/positions/{id}`           | 仍有人任职 → `40905`                                              |
+| PUT    | `/api/users/{id}/position`      | `user:write`。`{position_id}`，空/null 取消任职并清空 `job_title` |
 
 `code` 规则与部门相同。资料更新忽略 `job_title`。`profile.position_id` 是当前任职。侧栏 `/management/postadmin` 需要 `position:read`。种子岗位：信息技术部 `engineer`，业务部 `sales`。
 
 ### 标签挂接
 
-| 方法 | 路径 | 权限 |
-|------|------|------|
-| GET | `/api/labels/bindings?target_type=&target_id=` | `label:read` |
-| PUT | `/api/labels/bindings` | `label:write`。body `{target_type, target_id, label_ids}`。整单替换，空数组表示解绑 |
+| 方法 | 路径                                           | 权限                                                                                |
+| ---- | ---------------------------------------------- | ----------------------------------------------------------------------------------- |
+| GET  | `/api/labels/bindings?target_type=&target_id=` | `label:read`                                                                        |
+| PUT  | `/api/labels/bindings`                         | `label:write`。body `{target_type, target_id, label_ids}`。整单替换，空数组表示解绑 |
 
 `target_type` 只能是 `ticket`、`user`、`announcement`。只能挂启用中的标签。标签列表的 `binding_count` 会跟着变。
 
@@ -1220,10 +1232,10 @@ OAuth 登录也会写入会话。进程重启后，已吊销会话仍保持失�
 
 `GET /api/users` 增加 query：
 
-| 参数 | 说明 |
-|------|------|
+| 参数            | 说明                                                                                      |
+| --------------- | ----------------------------------------------------------------------------------------- |
 | `department_id` | 只保留资料里归属该部门的用户。精确匹配，不含下级。部门不存在 → `40401`，ID 非法 → `40004` |
-| `role` | 只保留直接分配了该角色的用户，不含继承展开。角色不存在 → `40401`，编码非法 → `40004` |
+| `role`          | 只保留直接分配了该角色的用户，不含继承展开。角色不存在 → `40401`，编码非法 → `40004`      |
 
 两个条件与 `keyword`、`status`、数据范围同时生效。范围内没有人时 `total=0`，不是错误。
 
@@ -1231,10 +1243,10 @@ OAuth 登录也会写入会话。进程重启后，已吊销会话仍保持失�
 
 `GET /api/stats/access/logs`、`GET /api/stats/access/daily`、`GET /api/stats/access/users` 使用角色 `data_scope`，响应增加 `data_scope`。
 
-| 范围 | 能看到 |
-|------|--------|
-| `all` | 全部，含匿名 |
-| `self` | 自己产生的访问 |
+| 范围   | 能看到                                                    |
+| ------ | --------------------------------------------------------- |
+| `all`  | 全部，含匿名                                              |
+| `self` | 自己产生的访问                                            |
 | `dept` | 本部门及下级用户产生的访问。查看者没有部门时退化为 `self` |
 
 `self` / `dept` 下匿名行不出现。`user_id=anonymous` 在这两种范围下得到空列表。`GET /api/stats/access` 仍是全站按路径汇总。`GET /api/stats/server` 仍是整机指标。
@@ -1253,10 +1265,10 @@ OAuth 登录也会写入会话。进程重启后，已吊销会话仍保持失�
 
 ### 工单留言
 
-| 方法 | 路径 | 谁能用 |
-|------|------|--------|
-| POST | `/api/me/tickets/{id}/comments` | 创建人或处理人 |
-| POST | `/api/tickets/{id}/comments` | `ticket:write`，并先过数据范围 |
+| 方法 | 路径                            | 谁能用                         |
+| ---- | ------------------------------- | ------------------------------ |
+| POST | `/api/me/tickets/{id}/comments` | 创建人或处理人                 |
+| POST | `/api/tickets/{id}/comments`    | `ticket:write`，并先过数据范围 |
 
 body `{content}`，1 到 1024 个字符。状态不变，详情 `events` 增加 `action=comment`。已关闭的工单返回 `40004`。空内容同样是 `40004`。
 
@@ -1272,11 +1284,11 @@ body `{content}`，1 到 1024 个字符。状态不变，详情 `events` 增加 
 
 `GET /api/tickets` 与 `GET /api/me/tickets` 增加 query：
 
-| 参数 | 说明 |
-|------|------|
-| `keyword` | 标题包含，最长按 64 个字符截断 |
-| `priority` | `low`、`normal`、`high`。非法值 → `40004` |
-| `overdue` | `1` 时只保留 `due_at` 已过且状态不是 `closed` |
+| 参数       | 说明                                          |
+| ---------- | --------------------------------------------- |
+| `keyword`  | 标题包含，最长按 64 个字符截断                |
+| `priority` | `low`、`normal`、`high`。非法值 → `40004`     |
+| `overdue`  | `1` 时只保留 `due_at` 已过且状态不是 `closed` |
 
 筛选与 `status`、数据范围同时生效。
 
@@ -1294,12 +1306,12 @@ body `{content}`，1 到 1024 个字符。状态不变，详情 `events` 增加 
 
 `GET /api/me/home`，登录即可。
 
-| 字段 | 含义 |
-|------|------|
-| `inbox_unread` | 未读站内信 |
-| `todo_pending` | 未办结待办 |
-| `open_tickets` | 自己创建或被分派、且未关闭的工单数 |
-| `unread_announcements` | 当前可见且未读的公告，含必读 |
+| 字段                   | 含义                               |
+| ---------------------- | ---------------------------------- |
+| `inbox_unread`         | 未读站内信                         |
+| `todo_pending`         | 未办结待办                         |
+| `open_tickets`         | 自己创建或被分派、且未关闭的工单数 |
+| `unread_announcements` | 当前可见且未读的公告，含必读       |
 
 ### 部门人数
 
@@ -1313,25 +1325,25 @@ body `{content}`，1 到 1024 个字符。状态不变，详情 `events` 增加 
 
 与审计导出相同：直接写 `text/csv`，最多 31 天窗、最多 5000 行。
 
-| 方法 | 路径 | 权限 |
-|------|------|------|
-| GET | `/api/users/export` | `user:read` |
-| GET | `/api/login/logs/export` | `login:read`（须 `from`/`to`） |
-| GET | `/api/stats/access/logs/export` | `stats:read`（须 `from`/`to`） |
-| GET | `/api/export/depts` | `dept:read` |
-| GET | `/api/export/dicts` | `dict:read` |
+| 方法 | 路径                            | 权限                           |
+| ---- | ------------------------------- | ------------------------------ |
+| GET  | `/api/users/export`             | `user:read`                    |
+| GET  | `/api/login/logs/export`        | `login:read`（须 `from`/`to`） |
+| GET  | `/api/stats/access/logs/export` | `stats:read`（须 `from`/`to`） |
+| GET  | `/api/export/depts`             | `dept:read`                    |
+| GET  | `/api/export/dicts`             | `dict:read`                    |
 
 ### CSV 导入（Excel 可打开，UTF-8 BOM）
 
 `multipart/form-data` 字段名 `file`。先 `preview` 再提交。
 
-| 方法 | 路径 | 权限 |
-|------|------|------|
-| GET | `/api/import/users/template` | `user:write` |
-| POST | `/api/import/users/preview` | `user:write` |
-| POST | `/api/import/users` | `user:write` |
-| GET/POST | `/api/import/depts/...` | `dept:write` |
-| GET/POST | `/api/import/dicts/...` | `dict:write` |
+| 方法     | 路径                         | 权限         |
+| -------- | ---------------------------- | ------------ |
+| GET      | `/api/import/users/template` | `user:write` |
+| POST     | `/api/import/users/preview`  | `user:write` |
+| POST     | `/api/import/users`          | `user:write` |
+| GET/POST | `/api/import/depts/...`      | `dept:write` |
+| GET/POST | `/api/import/dicts/...`      | `dict:write` |
 
 用户模板列：`username,password,department_code,roles`（roles 用 `|` 分隔）。
 
@@ -1349,11 +1361,11 @@ body `{content}`，1 到 1024 个字符。状态不变，详情 `events` 增加 
 
 ### 邮件模板
 
-| 方法 | 路径 | 权限 |
-|------|------|------|
-| GET | `/api/mail/templates` | `config:read` |
-| PUT | `/api/mail/templates` | `config:write` |
-| POST | `/api/mail/test` | `config:write` |
+| 方法 | 路径                  | 权限           |
+| ---- | --------------------- | -------------- |
+| GET  | `/api/mail/templates` | `config:read`  |
+| PUT  | `/api/mail/templates` | `config:write` |
+| POST | `/api/mail/test`      | `config:write` |
 
 `mail.enabled=false` 时只打日志不发信。正文支持 `{{key}}` 占位。
 
@@ -1377,13 +1389,13 @@ body `{content}`，1 到 1024 个字符。状态不变，详情 `events` 增加 
 
 ### 探针与关闭
 
-| 路径 | 说明 |
-|------|------|
-| `GET /livez` | 进程存活 |
-| `GET /readyz` | 可接流量；库失败或 draining → 503 |
-| `GET /health` | 兼容旧探活 |
-| `GET /metrics` | Prometheus 文本（`metrics.enabled`） |
-| `GET /api/openapi.yaml` | 仓库 OpenAPI（`openapi.enabled`） |
+| 路径                    | 说明                                 |
+| ----------------------- | ------------------------------------ |
+| `GET /livez`            | 进程存活                             |
+| `GET /readyz`           | 可接流量；库失败或 draining → 503    |
+| `GET /health`           | 兼容旧探活                           |
+| `GET /metrics`          | Prometheus 文本（`metrics.enabled`） |
+| `GET /api/openapi.yaml` | 仓库 OpenAPI（`openapi.enabled`）    |
 
 响应头：`X-API-Version: 1`。优雅关闭：`shutdown.drainSeconds` 内 `/readyz` 先变 draining。
 
@@ -1401,12 +1413,12 @@ body `{content}`，1 到 1024 个字符。状态不变，详情 `events` 增加 
 
 ### Webhook / 机器人 / Flag / TOTP
 
-| 路径 | 权限 |
-|------|------|
-| `/api/webhooks` | `config:read` / `config:write` |
-| `/api/bots/test` | `config:write` |
-| `/api/flags`、`/api/me/flags` | config / 登录 |
-| `/api/me/totp*` | 登录 |
+| 路径                          | 权限                           |
+| ----------------------------- | ------------------------------ |
+| `/api/webhooks`               | `config:read` / `config:write` |
+| `/api/bots/test`              | `config:write`                 |
+| `/api/flags`、`/api/me/flags` | config / 登录                  |
+| `/api/me/totp*`               | 登录                           |
 
 登录可带 `totp_code`；已绑定时缺码或错码 → **40306**。新 IP 登录（30 天内未见）发站内信。
 
@@ -1537,4 +1549,3 @@ body `{content}`，1 到 1024 个字符。状态不变，详情 `events` 增加 
 - 权限 `description`；`/api/site` 含 `maintenance` / `maintenance_at` / `maintenance_message`
 - `GET /api/announcements/{id}/stats` → audience / read / rate
 - 慢请求审计 `module=http` `action=slow`（同 path 每分钟最多 1 条）
-

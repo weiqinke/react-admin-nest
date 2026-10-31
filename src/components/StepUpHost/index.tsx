@@ -55,15 +55,7 @@ const StepUpHost = () => {
   };
 
   return (
-    <Modal
-      title={title}
-      open={open}
-      okText="确认"
-      cancelText="取消"
-      confirmLoading={loading}
-      destroyOnHidden
-      onCancel={() => finish(null)}
-      onOk={submit}>
+    <Modal title={title} open={open} okText="确认" cancelText="取消" confirmLoading={loading} destroyOnHidden onCancel={() => finish(null)} onOk={submit}>
       <Radio.Group
         value={mode}
         onChange={e => {

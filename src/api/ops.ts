@@ -17,15 +17,13 @@ export const WEBHOOK_EVENT_OPTIONS = [
 
 export const listWebhooks = () => request("/api/webhooks", "GET");
 
-export const createWebhook = (payload: { name: string; url: string; secret?: string; events: string[] }) =>
-  request("/api/webhooks", "POST", payload);
+export const createWebhook = (payload: { name: string; url: string; secret?: string; events: string[] }) => request("/api/webhooks", "POST", payload);
 
 export const deleteWebhook = (id: string) => request(`/api/webhooks/${segment(id)}`, "DELETE");
 
 export const testWebhook = (id: string) => request(`/api/webhooks/${segment(id)}/test`, "POST", {});
 
-export const listWebhookDeliveries = (query: { status?: string; limit?: number } = {}) =>
-  request("/api/webhooks/deliveries", "GET", query);
+export const listWebhookDeliveries = (query: { status?: string; limit?: number } = {}) => request("/api/webhooks/deliveries", "GET", query);
 
 export const replayWebhookDelivery = (id: string) => request(`/api/webhooks/deliveries/${segment(id)}/replay`, "POST", {});
 
@@ -34,8 +32,7 @@ export const listFlags = () => request("/api/flags", "GET");
 /** 当前用户生效的 flag 映射。登录即可。 */
 export const listMyFlags = () => request("/api/me/flags", "GET");
 
-export const upsertFlag = (payload: { code: string; name: string; description?: string; enabled: boolean }) =>
-  request("/api/flags", "PUT", payload);
+export const upsertFlag = (payload: { code: string; name: string; description?: string; enabled: boolean }) => request("/api/flags", "PUT", payload);
 
 /** 侧栏固定 / 最近。data: { pins, recent } */
 export const getMenuPins = () => request("/api/me/menu-pins", "GET");

@@ -162,8 +162,7 @@ export const reopenMyTicket = (id: string, reason = "") => request(`/api/me/tick
 export const setTicketPriority = (id: string, priority: string) => request(`/api/tickets/${segment(id)}/priority`, "PUT", { priority });
 
 /** 创建人对已关闭工单评分 1–5。 */
-export const rateMyTicket = (id: string, rating: number, comment = "") =>
-  request(`/api/me/tickets/${segment(id)}/rate`, "POST", { rating, comment });
+export const rateMyTicket = (id: string, rating: number, comment = "") => request(`/api/me/tickets/${segment(id)}/rate`, "POST", { rating, comment });
 
 /** 关注工单（管理端）。user_id 走 query，缺省为自己。 */
 export const addTicketWatcher = (id: string, user_id?: string) => {
@@ -171,8 +170,7 @@ export const addTicketWatcher = (id: string, user_id?: string) => {
   return request(`/api/tickets/${segment(id)}/watchers${q}`, "POST", {});
 };
 
-export const removeTicketWatcher = (id: string, user_id: string) =>
-  request(`/api/tickets/${segment(id)}/watchers/${segment(user_id)}`, "DELETE");
+export const removeTicketWatcher = (id: string, user_id: string) => request(`/api/tickets/${segment(id)}/watchers/${segment(user_id)}`, "DELETE");
 
 export const listTicketWatchers = (id: string) => request(`/api/tickets/${segment(id)}/watchers`, "GET");
 
