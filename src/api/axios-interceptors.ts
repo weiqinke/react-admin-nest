@@ -17,7 +17,11 @@ const PUBLIC_PATHS = [
   "/api/oauth/github/authorize",
   "/api/oauth/github/callback",
   "/api/oauth/gitee/authorize",
-  "/api/oauth/gitee/callback"
+  "/api/oauth/gitee/callback",
+  "/api/oauth/oidc/authorize",
+  "/api/oauth/oidc/callback",
+  "/api/auth/ldap/status",
+  "/api/auth/ldap/login"
 ];
 const REFRESH_CODES = new Set([40101, 40102, 40104]);
 

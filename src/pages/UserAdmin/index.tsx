@@ -4,12 +4,12 @@ import { createInvite } from "@/api/ops";
 import { batchUserStatus, dataScopeLabel, listDepts, toDeptTree } from "@/api/platform";
 import { findRoles } from "@/api/role";
 import { getUserState } from "@/api/session";
-import { findUsers, resetUserPassword, setUserStatus, unlockUser } from "@/api/user";
+import { forcePasswordChange, findUsers, resetUserPassword, setUserStatus, unlockUser } from "@/api/user";
 import CsvImportModal from "@/components/CsvImportModal";
 import PageIntroduction from "@/components/PageIntroduction";
 import { UserEditModal } from "@/components/Modals";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { Alert, Button, Form, Input, InputNumber, Modal, Select, Space, TreeSelect, Typography, message } from "antd";
+import { Alert, Button, Checkbox, Form, Input, InputNumber, Modal, Select, Space, TreeSelect, Typography, message } from "antd";
 import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
 import UserTable from "./components/Table";
@@ -150,6 +150,33 @@ const UserAdmin: FC = () => {
       onOk: async () => {
         await unlockUser(id);
         message.success("已解除锁定");
+        findAll(page);
+      }
+    });
+  };
+
+  const forceChangePassword = (item: any) => {
+    const id = String(item.id || item.uid || "");
+    let revokeSessions = true;
+    Modal.confirm({
+      title: "强制下次改密",
+      icon: <ExclamationCircleOutlined />,
+      content: (
+        <div>
+          <p>
+            用户 <Typography.Text strong>{item.username || id}</Typography.Text> 下次登录须先修改密码，改密前无法进行其它写操作。
+          </p>
+          <Checkbox defaultChecked onChange={e => (revokeSessions = e.target.checked)}>
+            同时踢掉该用户全部会话
+          </Checkbox>
+        </div>
+      ),
+      okText: "确定",
+      cancelText: "取消",
+      onOk: async () => {
+        await forcePasswordChange(id, { revoke_sessions: revokeSessions });
+        message.success("已要求下次改密");
+        findAll(page);
       }
     });
   };
@@ -157,8 +184,17 @@ const UserAdmin: FC = () => {
   const findAll = (next = 1) => {
     setUser(null);
     setTableLoading(true);
-    const { keyword, status, department_id, role } = form.getFieldsValue();
-    findUsers({ page: next, page_size: pageSize, keyword, status, department_id, role })
+    const { keyword, status, department_id, role, sort, never_login } = form.getFieldsValue();
+    findUsers({
+      page: next,
+      page_size: pageSize,
+      keyword,
+      status,
+      department_id,
+      role,
+      sort: sort || undefined,
+      never_login: never_login ? 1 : undefined
+    })
       .then(result => {
         if (result.data.code === 0) {
           setDataSource(result.data.data || []);
@@ -193,7 +229,7 @@ const UserAdmin: FC = () => {
     <div className="admin-page">
       <PageIntroduction
         infos={infos}
-        introduction="用户列表按页返回，并已按当前角色的数据范围过滤。支持 CSV 导出与导入（模板列：username,password,department_code,roles）。解除锁定会清掉连续密码错误的计数。停用会踢掉对方全部会话。"
+        introduction="用户列表按页返回，并已按当前角色的数据范围过滤。支持按最近登录排序、从未登录筛选。强制改密后对方须先改密才能写操作。解除锁定会清掉连续密码错误计数。停用会踢掉对方全部会话。"
       />
       {dataScope ? <Alert className="mt-3" type="info" showIcon title={`当前数据范围：${dataScopeLabel(dataScope)}`} /> : null}
       <div className="admin-card">
@@ -212,6 +248,17 @@ const UserAdmin: FC = () => {
                   { value: 0, label: "停用" }
                 ]}
               />
+            </Form.Item>
+            <Form.Item name="sort" label="排序">
+              <Select
+                allowClear
+                placeholder="默认"
+                style={{ width: 130 }}
+                options={[{ value: "last_login", label: "最近登录" }]}
+              />
+            </Form.Item>
+            <Form.Item name="never_login" label="从未登录" valuePropName="checked">
+              <Checkbox />
             </Form.Item>
             {canFilterDept ? (
               <Form.Item name="department_id" label="部门">
@@ -296,6 +343,7 @@ const UserAdmin: FC = () => {
           loading={tableLoading}
           selfId={selfId}
           canUnlock={canWrite}
+          canForcePassword={canWrite}
           canSelect={canWrite}
           selectedKeys={selectedKeys}
           onSelectChange={setSelectedKeys}
@@ -303,6 +351,7 @@ const UserAdmin: FC = () => {
           showDeleteConfirm={showDeleteConfirm}
           onReset={setResetFor}
           onUnlock={unlock}
+          onForcePassword={forceChangePassword}
           pagination={{ current: page, pageSize, total, showSizeChanger: false, onChange: next => findAll(next) }}
         />
       </div>

@@ -69,6 +69,10 @@ export async function resetManagedUserPassword(id: string, password: string) {
 /** 解除登录锁定，并清掉该用户名的失败次数。 */
 export const unlockManagedUser = (id: string) => request(`/api/users/${enc(id)}/unlock`, "PUT", {});
 
+/** 强制下次登录改密。可选踢掉该用户全部会话。 */
+export const forcePasswordChange = (id: string, payload: { revoke_sessions?: boolean } = {}) =>
+  request(`/api/users/${enc(id)}/force-password-change`, "POST", payload);
+
 export const getUserProfile = (id: string) => request(`/api/users/${enc(id)}/profile`, "GET");
 
 export const updateUserProfile = (id: string, payload) => request(`/api/users/${enc(id)}/profile`, "PUT", payload);

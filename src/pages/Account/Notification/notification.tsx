@@ -1,5 +1,13 @@
-import { NOTIFY_CHANNEL_LABELS, NOTIFY_EVENT_LABELS, getNotifyPrefs, getPreferences, putNotifyPrefs, putPreferences } from "@/api/ops";
-import { Button, Divider, Form, Input, Select, Switch, Table, message } from "antd";
+import {
+  NOTIFY_CHANNEL_LABELS,
+  NOTIFY_EVENT_LABELS,
+  getNotifyPrefs,
+  getNotifyPrefsCatalog,
+  getPreferences,
+  putNotifyPrefs,
+  putPreferences
+} from "@/api/ops";
+import { Button, Divider, Form, Input, Select, Space, Switch, Table, message } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 
 const NotificationPage: React.FC = function () {
@@ -10,10 +18,38 @@ const NotificationPage: React.FC = function () {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [prefForm] = Form.useForm();
+  const [batchForm] = Form.useForm();
+  const [eventLabels, setEventLabels] = useState<Record<string, string>>(NOTIFY_EVENT_LABELS);
+  const [channelLabels, setChannelLabels] = useState<Record<string, string>>(NOTIFY_CHANNEL_LABELS);
+  const [channels, setChannels] = useState<string[]>(Object.keys(NOTIFY_CHANNEL_LABELS));
+  const [categories, setCategories] = useState<{ code: string; name: string; events: string[] }[]>([]);
 
   const load = () => {
     setLoading(true);
     Promise.all([
+      getNotifyPrefsCatalog()
+        .then(res => {
+          const data = res.data?.data || {};
+          const nextEvents: Record<string, string> = { ...NOTIFY_EVENT_LABELS };
+          (data.events || []).forEach((item: any) => {
+            if (item?.code) nextEvents[item.code] = item.name || item.code;
+          });
+          setEventLabels(nextEvents);
+
+          const nextChannels: Record<string, string> = { ...NOTIFY_CHANNEL_LABELS };
+          const channelCodes: string[] = [];
+          (data.channels || []).forEach((item: any) => {
+            if (!item?.code) return;
+            nextChannels[item.code] = item.name || item.code;
+            channelCodes.push(item.code);
+          });
+          if (channelCodes.length) {
+            setChannelLabels(nextChannels);
+            setChannels(channelCodes);
+          }
+          setCategories(data.categories || []);
+        })
+        .catch(() => undefined),
       getNotifyPrefs()
         .then(res => {
           const data = res.data?.data || {};
@@ -49,14 +85,18 @@ const NotificationPage: React.FC = function () {
       row[item.channel] = Boolean(item.enabled);
       map.set(item.event, row);
     });
-    return Array.from(map.entries()).map(([event, channels]) => ({ event, ...channels }));
+    return Array.from(map.entries()).map(([event, channelMap]) => ({ event, ...channelMap }));
   }, [items]);
 
   const toggle = async (event: string, channel: string, enabled: boolean) => {
     setSaving(true);
     try {
       await putNotifyPrefs({ items: [{ event, channel, enabled }] });
-      setItems(prev => prev.map(item => (item.event === event && item.channel === channel ? { ...item, enabled } : item)));
+      setItems(prev => {
+        const found = prev.some(item => item.event === event && item.channel === channel);
+        if (found) return prev.map(item => (item.event === event && item.channel === channel ? { ...item, enabled } : item));
+        return [...prev, { event, channel, enabled }];
+      });
       message.success("已更新");
     } catch {
       load();
@@ -70,6 +110,25 @@ const NotificationPage: React.FC = function () {
     try {
       await putNotifyPrefs({ quiet_hours_start: quietStart, quiet_hours_end: quietEnd });
       message.success("静默时段已保存");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const saveBatchCategory = async (values: any) => {
+    setSaving(true);
+    try {
+      await putNotifyPrefs({
+        categories: [
+          {
+            category: values.category,
+            channel: values.channel,
+            enabled: Boolean(values.enabled)
+          }
+        ]
+      });
+      message.success("已按类别更新");
+      load();
     } finally {
       setSaving(false);
     }
@@ -92,8 +151,6 @@ const NotificationPage: React.FC = function () {
     }
   };
 
-  const channels = Object.keys(NOTIFY_CHANNEL_LABELS);
-
   return (
     <div>
       <Divider titlePlacement="left" plain>
@@ -110,10 +167,10 @@ const NotificationPage: React.FC = function () {
           {
             title: "事件",
             dataIndex: "event",
-            render: (event: string) => NOTIFY_EVENT_LABELS[event] || event
+            render: (event: string) => eventLabels[event] || event
           },
           ...channels.map(channel => ({
-            title: NOTIFY_CHANNEL_LABELS[channel] || channel,
+            title: channelLabels[channel] || channel,
             dataIndex: channel,
             width: 100,
             render: (enabled: boolean, row: any) => (
@@ -122,6 +179,35 @@ const NotificationPage: React.FC = function () {
           }))
         ]}
       />
+
+      <Divider titlePlacement="left" plain>
+        按类别批量
+      </Divider>
+      <Form form={batchForm} layout="inline" className="mb-4" onFinish={saveBatchCategory} initialValues={{ enabled: true }}>
+        <Form.Item name="category" rules={[{ required: true, message: "选择类别" }]}>
+          <Select
+            placeholder="类别"
+            style={{ width: 140 }}
+            options={categories.map(item => ({ value: item.code, label: item.name || item.code }))}
+          />
+        </Form.Item>
+        <Form.Item name="channel" rules={[{ required: true, message: "选择渠道" }]}>
+          <Select
+            placeholder="渠道"
+            style={{ width: 140 }}
+            options={channels.map(code => ({ value: code, label: channelLabels[code] || code }))}
+          />
+        </Form.Item>
+        <Form.Item name="enabled" label="启用" valuePropName="checked">
+          <Switch />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" loading={saving} disabled={!categories.length}>
+            应用到类别
+          </Button>
+        </Form.Item>
+      </Form>
+      <div className="mb-4 text-black/45">按类别会展开该类别下全部事件，一次写入对应渠道开关。短信渠道为占位，仅记日志。</div>
 
       <Divider titlePlacement="left" plain>
         静默时段
@@ -167,9 +253,11 @@ const NotificationPage: React.FC = function () {
         <Form.Item name="sidebar_collapsed" label="侧栏默认收起" valuePropName="checked">
           <Switch />
         </Form.Item>
-        <Button type="primary" htmlType="submit" loading={saving}>
-          保存偏好
-        </Button>
+        <Space>
+          <Button type="primary" htmlType="submit" loading={saving}>
+            保存偏好
+          </Button>
+        </Space>
       </Form>
     </div>
   );

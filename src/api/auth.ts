@@ -25,3 +25,22 @@ export async function login(payload) {
   if (Array.isArray(body.active_roles) && body.active_roles.length === 0) delete body.active_roles;
   return request("/api/login", "POST", body);
 }
+
+/** LDAP 是否启用及连接摘要。公开接口。 */
+export const getLdapStatus = () => request("/api/auth/ldap/status", "GET");
+
+/**
+ * LDAP 登录。密码保持明文（目录协议校验），不要走 RSA。
+ * body: username, password, captcha_id, captcha_code, active_roles?
+ */
+export function ldapLogin(payload: {
+  username: string;
+  password: string;
+  captcha_id: string;
+  captcha_code: string;
+  active_roles?: string[];
+}) {
+  const body: Record<string, any> = { ...payload };
+  if (Array.isArray(body.active_roles) && body.active_roles.length === 0) delete body.active_roles;
+  return request("/api/auth/ldap/login", "POST", body);
+}

@@ -1,11 +1,12 @@
 import { request } from "@/api/request";
 import { getAccessToken } from "@/api/session";
 
-export type OAuthProvider = "github" | "gitee";
+export type OAuthProvider = "github" | "gitee" | "oidc";
 
 export const OAUTH_PROVIDERS: { key: OAuthProvider; label: string }[] = [
   { key: "github", label: "GitHub" },
-  { key: "gitee", label: "Gitee" }
+  { key: "gitee", label: "Gitee" },
+  { key: "oidc", label: "企业 SSO" }
 ];
 
 function frontendCallbackUrl() {

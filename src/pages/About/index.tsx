@@ -1,5 +1,8 @@
-﻿import TypingCard from "@/components/TypingCard";
-import { Descriptions } from "antd";
+﻿import { listPublishedChangelogs } from "@/api/changelog";
+import TypingCard from "@/components/TypingCard";
+import { Descriptions, Empty, List, Tag } from "antd";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import pkg from "../../../package.json";
 
@@ -10,10 +13,25 @@ const dependencyItems = (deps: Record<string, string> = {}) =>
     children: value
   }));
 
+function formatTime(value?: string | null) {
+  if (!value) return "";
+  return dayjs(value).format("YYYY-MM-DD HH:mm");
+}
+
 const About = () => {
   const { version, lastBuildTime } = REACT_PACKAGE;
   const dependencies = (pkg.dependencies || {}) as Record<string, string>;
   const devDependencies = (pkg.devDependencies || {}) as Record<string, string>;
+  const [changelogs, setChangelogs] = useState<any[]>([]);
+  const [changelogLoading, setChangelogLoading] = useState(false);
+
+  useEffect(() => {
+    setChangelogLoading(true);
+    listPublishedChangelogs({ page: 1, page_size: 10 })
+      .then(res => setChangelogs(res.data?.data?.list || []))
+      .catch(() => setChangelogs([]))
+      .finally(() => setChangelogLoading(false));
+  }, []);
 
   return (
     <div>
@@ -23,6 +41,33 @@ const About = () => {
           title=""
           source={`nest-admin-react 是一个基于 React、 Ant design、TypeScript、 Nest.js
           和 Mysql 构建的后台通用管理系统。持续更新。`}
+        />
+      </div>
+
+      <div className="bg-white p-3 m-3">
+        <Descriptions title="变更日志" column={1} />
+        <List
+          loading={changelogLoading}
+          locale={{ emptyText: <Empty description="暂无已发布变更" /> }}
+          dataSource={changelogs}
+          renderItem={item => (
+            <List.Item>
+              <List.Item.Meta
+                title={
+                  <span>
+                    <Tag color="blue">{item.version}</Tag>
+                    {item.title}
+                  </span>
+                }
+                description={
+                  <div>
+                    <div className="mb-1 text-black/45">{formatTime(item.published_at)}</div>
+                    <div className="whitespace-pre-wrap">{item.body}</div>
+                  </div>
+                }
+              />
+            </List.Item>
+          )}
         />
       </div>
 

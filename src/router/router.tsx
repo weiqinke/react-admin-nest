@@ -39,6 +39,7 @@ const TicketAdmin = lazy(() => import("@/pages/TicketAdmin"));
 const JobAdmin = lazy(() => import("@/pages/JobAdmin"));
 const ApiKeyAdmin = lazy(() => import("@/pages/ApiKeyAdmin"));
 const AiAdmin = lazy(() => import("@/pages/AiAdmin"));
+const ChangelogAdmin = lazy(() => import("@/pages/ChangelogAdmin"));
 const AiChat = lazy(() => import("@/pages/AiChat"));
 const MyTickets = lazy(() => import("@/pages/MyTickets"));
 const PasswordForgot = lazy(() => import("@/pages/Password/Forgot"));
@@ -149,6 +150,7 @@ const routes: RouteObject[] = [
                   route(JobAdmin, { path: "jobadmin", title: "定时任务" }),
                   route(ApiKeyAdmin, { path: "apikeyadmin", title: "API 密钥" }),
                   route(AiAdmin, { path: "aiadmin", title: "模型管理" }),
+                  route(ChangelogAdmin, { path: "changelogadmin", title: "变更日志" }),
                   route(NotFoundPage, { path: "*", title: "notFound" })
                 ]
               }),

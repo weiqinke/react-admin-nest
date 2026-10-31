@@ -1,6 +1,6 @@
 import { listOAuthBindings, OAUTH_PROVIDERS, oauthBindUrl, type OAuthProvider, unbindOAuth } from "@/api/oauth";
 import IconFont from "@/components/IconFont";
-import { GithubOutlined } from "@ant-design/icons";
+import { GithubOutlined, SafetyCertificateOutlined } from "@ant-design/icons";
 import { Button, Divider, Flex, Listy, Spin, message } from "antd";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -15,6 +15,9 @@ type Binding = {
 function providerIcon(provider: OAuthProvider) {
   if (provider === "gitee") {
     return <IconFont type="icon-gitee2" className="mt-3 text-[40px]" />;
+  }
+  if (provider === "oidc") {
+    return <SafetyCertificateOutlined className="mt-3 text-[40px]" />;
   }
   return <GithubOutlined className="mt-3 text-[40px]" />;
 }

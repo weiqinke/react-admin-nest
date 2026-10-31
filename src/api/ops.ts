@@ -77,11 +77,19 @@ export const NOTIFY_EVENT_LABELS: Record<string, string> = {
 export const NOTIFY_CHANNEL_LABELS: Record<string, string> = {
   inbox: "站内信",
   mail: "邮件",
-  bot: "机器人"
+  bot: "机器人",
+  sms: "短信"
 };
+
+/** 事件/渠道/类别目录。登录即可。 */
+export const getNotifyPrefsCatalog = () => request("/api/me/notify-prefs/catalog", "GET");
 
 /** 通知偏好。data: { list, quiet_hours_start?, quiet_hours_end? } */
 export const getNotifyPrefs = () => request("/api/me/notify-prefs", "GET");
 
-export const putNotifyPrefs = (payload: { items?: { event: string; channel: string; enabled: boolean }[]; quiet_hours_start?: string; quiet_hours_end?: string }) =>
-  request("/api/me/notify-prefs", "PUT", payload);
+export const putNotifyPrefs = (payload: {
+  items?: { event: string; channel: string; enabled: boolean }[];
+  categories?: { category: string; channel: string; enabled: boolean }[];
+  quiet_hours_start?: string;
+  quiet_hours_end?: string;
+}) => request("/api/me/notify-prefs", "PUT", payload);

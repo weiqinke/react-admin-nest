@@ -1,11 +1,18 @@
 import { MoreOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Space, Table, Tag } from "antd";
+import dayjs from "dayjs";
+
+function formatTime(value?: string | null) {
+  if (!value) return "—";
+  return dayjs(value).format("YYYY-MM-DD HH:mm");
+}
 
 const UserTable = ({
   dataSource,
   loading,
   selfId,
   canUnlock,
+  canForcePassword,
   canSelect,
   selectedKeys = [],
   onSelectChange,
@@ -13,6 +20,7 @@ const UserTable = ({
   showDeleteConfirm,
   onReset,
   onUnlock,
+  onForcePassword,
   pagination
 }) => {
   const columns: any = [
@@ -49,13 +57,27 @@ const UserTable = ({
       render: (text: string) => text || "未任职"
     },
     {
+      title: "最近登录",
+      dataIndex: "last_login_at",
+      width: 150,
+      render: (value: string, row: any) => (
+        <span title={row.last_login_ip || ""}>
+          {formatTime(value)}
+          {row.last_login_ip ? <div className="text-xs text-black/45">{row.last_login_ip}</div> : null}
+        </span>
+      )
+    },
+    {
       title: "状态",
       dataIndex: "banned",
-      width: 80,
-      render: (item: any) => (
-        <Tag color={item ? "#f50" : "#2db7f5"}>
-          <span>{item ? "禁用" : "启用"}</span>
-        </Tag>
+      width: 110,
+      render: (item: any, row: any) => (
+        <Space direction="vertical" size={0}>
+          <Tag color={item ? "#f50" : "#2db7f5"}>
+            <span>{item ? "禁用" : "启用"}</span>
+          </Tag>
+          {row.locked_until ? <Tag color="orange">锁定至 {formatTime(row.locked_until)}</Tag> : null}
+        </Space>
       )
     },
     {
@@ -66,6 +88,7 @@ const UserTable = ({
         const isSelf = String(item.uid || item.id || "") === String(selfId || "");
         const moreItems = [
           { key: "reset", label: "重置密码", onClick: () => onReset(item) },
+          canForcePassword && !isSelf ? { key: "force", label: "强制下次改密", onClick: () => onForcePassword?.(item) } : null,
           canUnlock ? { key: "unlock", label: "解除锁定", onClick: () => onUnlock(item) } : null,
           isSelf && !item.banned
             ? null
@@ -99,6 +122,7 @@ const UserTable = ({
       columns={columns}
       rowKey={row => String(row.uid || row.id)}
       pagination={pagination}
+      scroll={{ x: 1100 }}
       locale={{ emptyText: loading ? "加载中…" : "暂无用户" }}
       rowSelection={
         canSelect

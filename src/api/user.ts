@@ -1,6 +1,7 @@
 import { getCaptcha, getPublicKey, login as goLogin, register as goRegister } from "@/api/auth";
 import {
   createManagedUser,
+  forcePasswordChange,
   getMe,
   getMyProfile,
   getUsers,
@@ -15,7 +16,12 @@ import { setUserDepartment, setUserPosition } from "@/api/platform";
 import { getRefreshToken } from "@/api/session";
 
 export { getCaptcha, getPublicKey, goLogin as login, goRegister as register, goRegister as userRegister };
-export { resetManagedUserPassword as resetUserPassword, setManagedUserStatus as setUserStatus, unlockManagedUser as unlockUser };
+export {
+  forcePasswordChange,
+  resetManagedUserPassword as resetUserPassword,
+  setManagedUserStatus as setUserStatus,
+  unlockManagedUser as unlockUser
+};
 
 function normalizeUser(user) {
   const profile = user?.profile || {};
@@ -79,7 +85,9 @@ export async function findUsers(query: any = {}) {
     keyword: query.keyword || query.username,
     status: query.status,
     department_id: query.department_id,
-    role: query.role
+    role: query.role,
+    sort: query.sort,
+    never_login: query.never_login
   });
   const payload = res.data?.data || {};
   const list = payload.list || [];
