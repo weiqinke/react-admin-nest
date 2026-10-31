@@ -70,10 +70,14 @@ const LoginLog = () => {
   const to = dayjs().add(1, "days").format("YYYY-MM-DD");
 
   const getLog = () => {
-    loginlog({ from, to, page_size: 100 })
+    loginlog({ from, to, page: 1, page_size: 100 })
       .then(r => {
         if (r.data.code === 0) {
-          setDataSource([...(r?.data?.data || [])].reverse());
+          // 接口按 created_at 倒序，最新在前；勿再 reverse
+          const list = [...(r?.data?.data || [])].sort(
+            (a, b) => new Date(b.created).valueOf() - new Date(a.created).valueOf()
+          );
+          setDataSource(list);
           setDataScope(r.data.data_scope || "");
         }
       })
