@@ -7,14 +7,16 @@ import TagsView from "@/components/TagsView";
 import MenuTagContext from "@/contexts/MenuTagContext";
 import ProjectContext from "@/contexts/ProjectContext";
 import FailContainer from "@/pages/FailPage/FailContainer";
-import { Layout } from "antd";
+import { Layout, Modal } from "antd";
 import { Suspense, useContext, useEffect, useState } from "react";
 import { adaptApiMenus, saveMenus } from "@/utils/menuUtils";
 import { throttle } from "@/utils/throttle";
-import { Outlet, useLocation } from "react-router";
+import { Outlet, useLocation, useNavigate } from "react-router";
 import styles from "./index.module.scss";
 import SuspendFallback from "@/components/SuspendFallback";
 import AnnouncementGate from "@/components/AnnouncementGate";
+import MaintenanceBanner from "@/components/MaintenanceBanner";
+import StepUpHost from "@/components/StepUpHost";
 
 const { Content, Sider } = Layout;
 
@@ -23,6 +25,7 @@ const DefaultLayout = () => {
   const { theme } = useContext<any>(ProjectContext);
   const [collapsed, setCollapsed] = useState(false);
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   // 入场动画只在路由切换时播；真刷新用 loading，避免像重新进路由。
   const [enterMotion, setEnterMotion] = useState(true);
   const [accessRevision, setAccessRevision] = useState(0);
@@ -43,6 +46,17 @@ const DefaultLayout = () => {
           localStorage.setItem("permissions", JSON.stringify(user.permissions || []));
           localStorage.setItem("roles", JSON.stringify(user.roles || []));
           localStorage.setItem("active_roles", JSON.stringify(user.active_roles || []));
+          if (user.must_change_password) {
+            localStorage.setItem("must_change_password", "1");
+            Modal.warning({
+              title: "须先修改密码",
+              content: "管理员要求你立即改密，改密前无法进行其它写操作。",
+              okText: "去改密",
+              onOk: () => navigate("/account")
+            });
+          } else {
+            localStorage.removeItem("must_change_password");
+          }
         }
         if (menus.data?.code === 0) {
           saveMenus(JSON.stringify(adaptApiMenus(menus.data.data?.list || [])));
@@ -54,7 +68,15 @@ const DefaultLayout = () => {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [navigate]);
+
+  useEffect(() => {
+    const onMustChange = () => {
+      if (!pathname.startsWith("/account")) navigate("/account");
+    };
+    window.addEventListener("auth:must-change-password", onMustChange);
+    return () => window.removeEventListener("auth:must-change-password", onMustChange);
+  }, [navigate, pathname]);
 
   useEffect(() => {
     const resize = throttle(
@@ -76,7 +98,9 @@ const DefaultLayout = () => {
     <Layout className={styles.layout}>
       <ErrorBoundary FallbackComponent={FailContainer}>
         <DefaultLayoutHeader />
+        <MaintenanceBanner />
         <AnnouncementGate />
+        <StepUpHost />
       </ErrorBoundary>
       <Layout className={styles.content}>
         <Sider className={styles.sider} theme={theme === "dark" ? "dark" : "light"} trigger={null} collapsible collapsed={collapsed} breakpoint="md">

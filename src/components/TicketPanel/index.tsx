@@ -10,6 +10,10 @@ import {
   getTicket,
   listDepts,
   processTicket,
+  rateMyTicket,
+  reopenMyTicket,
+  reopenTicket,
+  setTicketPriority,
   ticketOverdue,
   TICKET_PRIORITY,
   TICKET_STATUS,
@@ -18,7 +22,7 @@ import {
 import { getUserState } from "@/api/session";
 import LabelBind from "@/components/LabelBind";
 import { findUserOptions } from "@/api/user";
-import { Button, Descriptions, Drawer, Form, Input, Select, Space, Tag, Timeline, TreeSelect, message } from "antd";
+import { Button, Descriptions, Drawer, Form, Input, Rate, Select, Space, Tag, Timeline, TreeSelect, message } from "antd";
 import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
 
@@ -34,7 +38,10 @@ const actionLabel: Record<string, string> = {
   assign: "分派",
   process: "开始处理",
   close: "关闭",
-  comment: "留言"
+  comment: "留言",
+  reopen: "重开",
+  priority: "改优先级",
+  rate: "评分"
 };
 
 type Props = {
@@ -111,6 +118,13 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
       } else if (action === "close") {
         const close = mine ? closeMyTicket : closeTicket;
         await close(ticketId, values.close_reason);
+      } else if (action === "reopen") {
+        const reopen = mine ? reopenMyTicket : reopenTicket;
+        await reopen(ticketId, values.reason || "");
+      } else if (action === "priority") {
+        await setTicketPriority(ticketId, values.priority);
+      } else if (action === "rate") {
+        await rateMyTicket(ticketId, Number(values.rating), values.comment || "");
       }
       message.success("已更新");
       setAction("");
@@ -168,6 +182,7 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
             </Descriptions.Item>
             <Descriptions.Item label="内容">{ticket.content}</Descriptions.Item>
             {ticket.close_reason ? <Descriptions.Item label="关闭原因">{ticket.close_reason}</Descriptions.Item> : null}
+            {ticket.rating ? <Descriptions.Item label="评分">{ticket.rating} 星</Descriptions.Item> : null}
           </Descriptions>
           {hasPermission("label:read") ? (
             <div className="mt-3">
@@ -194,12 +209,19 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
             <Space className="mb-3" wrap>
               <Button onClick={() => setAction("assign")}>分派</Button>
               <Button onClick={() => setAction("process")}>开始处理</Button>
+              <Button onClick={() => setAction("priority")}>改优先级</Button>
             </Space>
           ) : null}
           {open && ((mine && isCreator) || (!mine && canWrite)) ? (
             <Button className="mb-3" onClick={() => setAction("close")}>
               关闭工单
             </Button>
+          ) : null}
+          {ticket.status === "closed" && ((mine && isCreator) || (!mine && canWrite)) ? (
+            <Space className="mb-3" wrap>
+              <Button onClick={() => setAction("reopen")}>重开</Button>
+              {mine && isCreator && !ticket.rating ? <Button onClick={() => setAction("rate")}>评分</Button> : null}
+            </Space>
           ) : null}
           {action ? (
             <Form form={form} layout="vertical" onFinish={submit}>
@@ -236,6 +258,28 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
                 <Form.Item name="close_reason" label="关闭原因" rules={[{ required: true, message: "请填写关闭原因" }]}>
                   <Input.TextArea rows={3} maxLength={512} />
                 </Form.Item>
+              ) : null}
+              {action === "reopen" ? (
+                <Form.Item name="reason" label="重开说明">
+                  <Input.TextArea rows={3} maxLength={512} placeholder="可选" />
+                </Form.Item>
+              ) : null}
+              {action === "priority" ? (
+                <Form.Item name="priority" label="优先级" rules={[{ required: true, message: "请选择优先级" }]} initialValue={ticket.priority}>
+                  <Select
+                    options={Object.entries(TICKET_PRIORITY).map(([value, label]) => ({ value, label }))}
+                  />
+                </Form.Item>
+              ) : null}
+              {action === "rate" ? (
+                <>
+                  <Form.Item name="rating" label="评分" rules={[{ required: true, message: "请评分" }]} initialValue={5}>
+                    <Rate />
+                  </Form.Item>
+                  <Form.Item name="comment" label="评价">
+                    <Input.TextArea rows={3} maxLength={512} placeholder="可选" />
+                  </Form.Item>
+                </>
               ) : null}
               <Space>
                 <Button type="primary" htmlType="submit" loading={saving}>

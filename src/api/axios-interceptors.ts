@@ -1,6 +1,7 @@
 import axios from "axios";
 import { reportApiError } from "./feedback";
 import { expireSession, getAccessToken, getRefreshToken, refreshAccessToken } from "./session";
+import { promptStepUp } from "@/utils/stepUp";
 
 const PUBLIC_PATHS = [
   "/health",
@@ -10,6 +11,8 @@ const PUBLIC_PATHS = [
   "/api/login",
   "/api/token/refresh",
   "/api/site",
+  "/api/password/forgot",
+  "/api/password/reset",
   "/version",
   "/api/oauth/github/authorize",
   "/api/oauth/github/callback",
@@ -36,13 +39,21 @@ function errorText(body: any) {
   const code = body?.code;
   const serverMessage = body?.message || "请求失败";
   if (code === 40301 && body?.data?.permission) return `无权限：${body.data.permission}`;
-  if (code === 40302) return "账号已禁用";
+  if (code === 40302) {
+    const reason = body?.data?.disable_reason;
+    return reason ? `账号已禁用：${reason}` : "账号已禁用";
+  }
   if (code === 40303) return "注册已关闭";
   if (code === 40304) {
     const wait = body?.data?.retry_after;
     return wait ? `用户名已锁定，请 ${wait} 秒后再试` : "用户名已锁定";
   }
   if (code === 40305) return "密码已过期，请联系管理员重置或登录后立即改密";
+  if (code === 40306) return "需要双因素验证码";
+  if (code === 40307) return "须先修改密码后才能继续操作";
+  if (code === 40308) return "请先阅读并确认必读公告";
+  if (code === 40309) return "邮件功能未启用";
+  if (code === 40310) return "敏感操作需要二次确认";
   if (code === 40904) return "受保护，不能修改（不能停用自己或改受保护资源）";
   if (code === 40905) return serverMessage && serverMessage !== "in use" ? serverMessage : "仍被引用，无法删除";
   if (code === 42901) {
@@ -62,6 +73,9 @@ function errorText(body: any) {
   if (code === 40106) return "OAuth 换票失败，请重试";
   if (code === 40402) return "该第三方登录未启用";
   if (code === 40907) return "该第三方账号已绑定其他用户";
+  if (code === 50301 || body?.httpStatus === 503) {
+    return body?.data?.maintenance_message || serverMessage || "系统维护中";
+  }
   return serverMessage;
 }
 
@@ -102,8 +116,12 @@ function createResponseHandler(service) {
       const body = response?.data;
       if (!body || typeof body.code !== "number") {
         if (response?.status >= 400) {
-          notifyError(response?.config, "请求错误");
-          return Promise.reject(toApiError({ code: response.status, message: "请求错误" }, response.status));
+          const text =
+            response?.status === 503
+              ? "系统维护中，请稍后再试"
+              : "请求错误";
+          notifyError(response?.config, text);
+          return Promise.reject(toApiError({ code: response.status, message: text }, response.status));
         }
         return response;
       }
@@ -129,11 +147,34 @@ function createResponseHandler(service) {
         }
       }
 
+      // Step-up：弹窗确认后带令牌重试一次
+      if (body.code === 40310 && !config._stepUpRetry && !isPublic(config.url)) {
+        const confirmation = await promptStepUp("敏感操作需要二次确认");
+        if (confirmation) {
+          config._stepUpRetry = true;
+          config.headers = config.headers || {};
+          config.headers["X-Confirmation-Token"] = confirmation;
+          return service(config);
+        }
+      }
+
+      if (body.code === 40307) {
+        localStorage.setItem("must_change_password", "1");
+        window.dispatchEvent(new CustomEvent("auth:must-change-password"));
+      }
+
+      if (body.code === 40308) {
+        window.dispatchEvent(new CustomEvent("announcements:refresh"));
+      }
+
       if (body.code === 40103 || ((body.code === 40101 || body.code === 40102) && !isPublic(config.url) && !getRefreshToken())) {
         expireSession();
       }
 
-      notifyError(config, errorText(body));
+      // 登录页自己处理 40306，避免重复 toast
+      if (!(body.code === 40306 && requestPath(config.url) === "/api/login")) {
+        notifyError(config, errorText(body));
+      }
       return Promise.reject(toApiError(body, response.status));
     },
     onRejected(error) {

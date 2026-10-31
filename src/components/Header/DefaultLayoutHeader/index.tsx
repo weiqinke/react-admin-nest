@@ -5,6 +5,7 @@ import { Avatar, Dropdown, MenuProps, Modal, notification } from "antd";
 import { useContext, useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router";
 import HeaderNotice from "../HeaderNotice";
+import GlobalSearch from "../GlobalSearch";
 
 import { uploadWsScreenshot } from "@/api/goadmin";
 import { logout as apiLogout } from "@/api/user";
@@ -195,6 +196,7 @@ const DefaultLayoutHeader = () => {
         <span className={styles.title}>nest-admin</span>
       </div>
       <div className={styles.actions}>
+        <GlobalSearch />
         <ThemeColor />
         <HeaderNotice />
         <div className={`${styles.user} text-header-icon hover:bg-header-icon-hover-bg hover:text-header-icon-hover`}>

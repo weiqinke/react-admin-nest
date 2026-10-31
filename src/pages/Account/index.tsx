@@ -1,5 +1,6 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { Layout, Tabs } from "antd";
+import { useSearchParams } from "react-router";
 import AccountBind from "./AccountBind/AccountBind";
 import AccountSetting from "./AccountSetting/AccountSetting";
 import BaseSetting from "./Base/BaseSetting";
@@ -10,11 +11,20 @@ import SecuritySetting from "./SecuritySetting/SecuritySetting";
 import styles from "./index.module.scss";
 
 const Account: FC = () => {
+  const [params, setParams] = useSearchParams();
+  const activeKey = params.get("tab") || (localStorage.getItem("must_change_password") === "1" ? "SecuritySetting" : "BaseSetting");
+
   return (
     <Layout className={styles.container}>
       <Tabs
-        tabPlacement="left"
+        tabPlacement="start"
         className={styles.tabplane}
+        activeKey={activeKey}
+        onChange={key => {
+          const next = new URLSearchParams(params);
+          next.set("tab", key);
+          setParams(next, { replace: true });
+        }}
         items={[
           {
             key: "BaseSetting",

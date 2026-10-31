@@ -41,8 +41,15 @@ const AnnouncementGate: FC = () => {
     const onFocus = () => {
       refresh().catch(() => undefined);
     };
+    const onRefresh = () => {
+      refresh().catch(() => undefined);
+    };
     window.addEventListener("focus", onFocus);
-    return () => window.removeEventListener("focus", onFocus);
+    window.addEventListener("announcements:refresh", onRefresh);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener("announcements:refresh", onRefresh);
+    };
   }, [refresh]);
 
   const adminBypass = location.pathname.startsWith("/management/placardadmin") && hasPermission("announcement:write");

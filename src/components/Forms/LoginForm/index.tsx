@@ -24,7 +24,9 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
 
   const [loading, setLoading] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [needTotp, setNeedTotp] = useState(false);
   const [captcha, setCaptcha] = useState({ id: "", image: "" });
+  const [form] = Form.useForm();
 
   const loadCaptcha = useCallback(() => {
     getCaptcha()
@@ -46,26 +48,36 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
     }
     setLoading(true);
     try {
-      const result = await login({
+      const payload: Record<string, any> = {
         username: values.username,
         password: values.password,
         captcha_id: captcha.id,
         captcha_code: values.captcha_code
-      });
+      };
+      if (needTotp && values.totp_code) payload.totp_code = String(values.totp_code).trim();
+      const result = await login(payload);
       saveLoginSession(result.data.data);
+      if (result.data.data?.must_change_password) {
+        localStorage.setItem("must_change_password", "1");
+      } else {
+        localStorage.removeItem("must_change_password");
+      }
       setValue(getUserState());
       try {
         const menus = await getMyMenus();
         const list = adaptApiMenus(menus.data?.data?.list || []);
         saveMenus(JSON.stringify(list));
-        console.log("当前用户菜单", list);
       } catch (error) {
         console.log("当前用户菜单获取失败", error);
       }
       webSocketManager.create();
       setTags([]);
-      navigate("/workplace");
-    } catch {
+      navigate(result.data.data?.must_change_password ? "/account" : "/workplace");
+    } catch (error: any) {
+      if (error?.code === 40306) {
+        setNeedTotp(true);
+        message.warning("请输入双因素验证码");
+      }
       loadCaptcha();
     } finally {
       setLoading(false);
@@ -96,7 +108,7 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
         <div className={styles.flipInner}>
           <div className={styles.front}>
             <Spin spinning={loading} delay={500}>
-              <Form name="basic" initialValues={initialValues} onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete="off">
+              <Form form={form} name="basic" initialValues={initialValues} onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete="off">
                 <Form.Item name="username" rules={[{ required: true, message: "请输入用户名!" }]}>
                   <Input placeholder="admin" prefix={<UserOutlined />} onBlur={onBlur} onFocus={onFocus} />
                 </Form.Item>
@@ -120,6 +132,12 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
                   />
                 </Form.Item>
 
+                {needTotp ? (
+                  <Form.Item name="totp_code" rules={[{ required: true, message: "请输入双因素验证码" }]}>
+                    <Input placeholder="6 位 TOTP 验证码" maxLength={8} onBlur={onBlur} onFocus={onFocus} />
+                  </Form.Item>
+                ) : null}
+
                 <div className={styles.other}>
                   {allowRegister ? (
                     <Form.Item noStyle>
@@ -129,7 +147,9 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
                     </Form.Item>
                   ) : null}
                   <Form.Item noStyle>
-                    <span className={styles.forgetPassword}>忘记密码</span>
+                    <span className={styles.forgetPassword} onClick={() => navigate("/password/forgot")}>
+                      忘记密码
+                    </span>
                   </Form.Item>
                 </div>
                 <div className={styles.submit}>

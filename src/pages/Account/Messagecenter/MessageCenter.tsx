@@ -1,5 +1,5 @@
 import { listMyAnnouncements, markAllAnnouncementsRead, markAnnouncementsRead } from "@/api/announcement";
-import { listMyNotices, markAllNoticesRead, markNoticeRead, setNoticeTodo } from "@/api/notice";
+import { archiveNotices, listMyNotices, markAllNoticesRead, markNoticeRead, setNoticeTodo } from "@/api/notice";
 import { Button, Col, Divider, Space, Table, Tabs, Tag, message } from "antd";
 import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
@@ -34,7 +34,12 @@ const MessageCenter: FC = () => {
         .catch(() => setDataSource([]));
       return;
     }
-    const query = tab === "inbox" ? { kind: "inbox", page: 1, page_size: 50 } : { kind: "todo", page: 1, page_size: 50 };
+    const query =
+      tab === "archived"
+        ? { kind: "inbox", archived: 1, page: 1, page_size: 50 }
+        : tab === "inbox"
+          ? { kind: "inbox", page: 1, page_size: 50 }
+          : { kind: "todo", page: 1, page_size: 50 };
     listMyNotices(query)
       .then(result => {
         if (result.data.code !== 0) return;
@@ -48,6 +53,14 @@ const MessageCenter: FC = () => {
         );
       })
       .catch(() => setDataSource([]));
+  };
+
+  const archiveSelected = async () => {
+    if (selectedRowKeys.length === 0) return;
+    await archiveNotices(selectedRowKeys.map(String));
+    message.success("已归档");
+    setSelectedRowKeys([]);
+    load();
   };
 
   useEffect(() => {
@@ -159,7 +172,8 @@ const MessageCenter: FC = () => {
         items={[
           { key: "announcement", label: "公告" },
           { key: "inbox", label: "消息" },
-          { key: "todo", label: "待办" }
+          { key: "todo", label: "待办" },
+          { key: "archived", label: "已归档" }
         ]}
       />
       <Table
@@ -172,10 +186,19 @@ const MessageCenter: FC = () => {
         rowKey="id"
       />
       <div className="action-group">
-        <Button onClick={markSelected} disabled={selectedRowKeys.length <= 0}>
-          标记已读
-        </Button>
-        <Button onClick={markAll}>全部已读</Button>
+        {tab !== "archived" ? (
+          <>
+            <Button onClick={markSelected} disabled={selectedRowKeys.length <= 0}>
+              标记已读
+            </Button>
+            <Button onClick={markAll}>全部已读</Button>
+          </>
+        ) : null}
+        {tab === "inbox" ? (
+          <Button onClick={archiveSelected} disabled={selectedRowKeys.length <= 0}>
+            归档
+          </Button>
+        ) : null}
       </div>
     </div>
   );

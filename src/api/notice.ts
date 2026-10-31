@@ -16,6 +16,9 @@ export const markAllNoticesRead = (kind?: string) => request("/api/me/notices/re
 
 export const setNoticeTodo = (id: string, status: "done" | "dismissed") => request(`/api/me/notices/${enc(id)}/todo`, "PUT", { status });
 
+/** 归档站内信。body: { ids: string[] } */
+export const archiveNotices = (ids: string[]) => request("/api/me/notices/archive", "PUT", { ids });
+
 export const listNotices = (query: Record<string, any> = {}) => request("/api/notices", "GET", compact(query));
 
 export const getNotice = (id: string) => request(`/api/notices/${enc(id)}`, "GET");

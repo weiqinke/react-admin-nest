@@ -151,6 +151,22 @@ export const commentMyTicket = (id: string, content: string) => request(`/api/me
 /** 管理端留言。需要 ticket:write，并先过数据范围。 */
 export const commentTicket = (id: string, content: string) => request(`/api/tickets/${segment(id)}/comments`, "POST", { content });
 
+/** 管理端重开已关闭工单。 */
+export const reopenTicket = (id: string, reason = "") => request(`/api/tickets/${segment(id)}/reopen`, "PUT", { reason });
+
+/** 创建人重开自己的工单。 */
+export const reopenMyTicket = (id: string, reason = "") => request(`/api/me/tickets/${segment(id)}/reopen`, "PUT", { reason });
+
+/** 管理端改优先级。 */
+export const setTicketPriority = (id: string, priority: string) => request(`/api/tickets/${segment(id)}/priority`, "PUT", { priority });
+
+/** 创建人对已关闭工单评分 1–5。 */
+export const rateMyTicket = (id: string, rating: number, comment = "") =>
+  request(`/api/me/tickets/${segment(id)}/rate`, "POST", { rating, comment });
+
+/** 全局搜索。登录即可。data: { query, list:[{type,id,title,extra?}] } */
+export const globalSearch = (q: string) => request("/api/search", "GET", { q });
+
 export const listJobs = () => request("/api/jobs", "GET");
 
 export const setJobEnabled = (code: string, enabled: boolean) => request(`${jobPath(code)}/status`, "PUT", { enabled });
