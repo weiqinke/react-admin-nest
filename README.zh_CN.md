@@ -2,7 +2,7 @@
 
 # Nest Admin（react-admin-nest）
 
-React 管理端，对接后端 [go_ai / goadmin](https://github.com/weiqinke/go_ai)。当前版本 `2.0.0`。
+React 管理端，对接后端 [go_ai / goadmin](https://github.com/weiqinke/go_ai)。当前版本 `3.0.0`。
 
 - 预览: https://nest-admin.com
 - Github: https://github.com/weiqinke/react-admin-nest

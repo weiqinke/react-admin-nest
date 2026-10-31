@@ -2,7 +2,7 @@ English | [简体中文](./README.zh_CN.md)
 
 # Nest Admin（react-admin-nest）
 
-React 管理端，对接后端 [go_ai / goadmin](https://github.com/weiqinke/go_ai)。版本 `2.0.0`。
+React 管理端，对接后端 [go_ai / goadmin](https://github.com/weiqinke/go_ai)。版本 `3.0.0`。
 
 - Preview: https://nest-admin.com
 - Repo: https://github.com/weiqinke/react-admin-nest
