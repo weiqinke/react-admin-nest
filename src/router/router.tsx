@@ -42,6 +42,7 @@ const AiChat = lazy(() => import("@/pages/AiChat"));
 const MyTickets = lazy(() => import("@/pages/MyTickets"));
 const PasswordForgot = lazy(() => import("@/pages/Password/Forgot"));
 const PasswordReset = lazy(() => import("@/pages/Password/Reset"));
+const InviteAccept = lazy(() => import("@/pages/InviteAccept"));
 
 const AreaChart = lazy(() => import("@/pages/Chart/AreaChart"));
 const NotFoundPage = lazy(() => import("@/pages/FailPage/NotFoundPage"));
@@ -94,6 +95,7 @@ const routes: RouteObject[] = [
           route(Login, { path: "login", auth: false, title: "Login" }),
           route(PasswordForgot, { path: "password/forgot", auth: false, title: "找回密码" }),
           route(PasswordReset, { path: "password/reset", auth: false, title: "重置密码" }),
+          route(InviteAccept, { path: "invite", auth: false, title: "接受邀请" }),
           route(OAuthCallback, { path: "oauth/callback", auth: false, title: "OAuth Callback" }),
           route(OAuthError, { path: "oauth/error", auth: false, title: "OAuth Error" }),
           route(DefaultLayout, {

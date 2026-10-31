@@ -26,3 +26,22 @@ export async function resetPassword(token: string, password: string) {
   const password_encrypted = await encryptPassword(keyRes.data.data.public_key, password);
   return request("/api/password/reset", "POST", { token, password_encrypted });
 }
+
+const TRUST_TOKEN_KEY = "trust_token";
+
+export function getStoredTrustToken() {
+  return localStorage.getItem(TRUST_TOKEN_KEY) || "";
+}
+
+export function storeTrustToken(token?: string) {
+  if (token) localStorage.setItem(TRUST_TOKEN_KEY, token);
+}
+
+export function clearTrustToken() {
+  localStorage.removeItem(TRUST_TOKEN_KEY);
+}
+
+/** 可信设备列表。 */
+export const listTrustedDevices = () => request("/api/me/trusted-devices", "GET");
+
+export const revokeTrustedDevice = (id: string) => request(`/api/me/trusted-devices/${encodeURIComponent(id)}`, "DELETE");

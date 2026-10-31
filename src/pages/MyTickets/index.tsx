@@ -1,4 +1,4 @@
-import { createTicket, listMyTickets, ticketOverdue, TICKET_PRIORITY, TICKET_STATUS } from "@/api/platform";
+import { createTicket, listMyTickets, listTicketTemplates, ticketOverdue, TICKET_PRIORITY, TICKET_STATUS } from "@/api/platform";
 import { getUserState } from "@/api/session";
 import PageIntroduction from "@/components/PageIntroduction";
 import TicketPanel from "@/components/TicketPanel";
@@ -26,6 +26,7 @@ const MyTickets: FC = () => {
   const [creating, setCreating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [side, setSide] = useState("all");
+  const [templates, setTemplates] = useState<any[]>([]);
   const [form] = Form.useForm();
   const viewerId = String(getUserState().uid || "");
 
@@ -49,7 +50,21 @@ const MyTickets: FC = () => {
 
   useEffect(() => {
     load();
+    listTicketTemplates(true)
+      .then(res => setTemplates(res.data?.data?.list || []))
+      .catch(() => setTemplates([]));
   }, []);
+
+  const applyTemplate = (id: string) => {
+    const tpl = templates.find(item => String(item.id) === String(id));
+    if (!tpl) return;
+    form.setFieldsValue({
+      template_id: id,
+      title: tpl.title || form.getFieldValue("title"),
+      content: tpl.content || form.getFieldValue("content"),
+      priority: tpl.priority || form.getFieldValue("priority") || "normal"
+    });
+  };
 
   const submit = async (values: any) => {
     setSaving(true);
@@ -59,6 +74,7 @@ const MyTickets: FC = () => {
         content: values.content,
         priority: values.priority || "normal"
       };
+      if (values.template_id) payload.template_id = values.template_id;
       if (values.due_at) payload.due_at = dayjs(values.due_at).format("YYYY-MM-DDTHH:mm:ssZ");
       await createTicket(payload);
       message.success("已提交");
@@ -187,6 +203,16 @@ const MyTickets: FC = () => {
       </div>
       <Modal open={creating} title="提交工单" confirmLoading={saving} onOk={() => form.submit()} onCancel={() => setCreating(false)} destroyOnHidden>
         <Form form={form} layout="vertical" initialValues={{ priority: "normal" }} onFinish={submit}>
+          {templates.length ? (
+            <Form.Item name="template_id" label="使用模板" extra="选择后会预填标题、内容和优先级，仍可修改。">
+              <Select
+                allowClear
+                placeholder="可选模板"
+                options={templates.map(item => ({ value: String(item.id), label: item.name }))}
+                onChange={value => value && applyTemplate(String(value))}
+              />
+            </Form.Item>
+          ) : null}
           <Form.Item name="title" label="标题" rules={[{ required: true, message: "请填写标题" }]}>
             <Input maxLength={128} />
           </Form.Item>

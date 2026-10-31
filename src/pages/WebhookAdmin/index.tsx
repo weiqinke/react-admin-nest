@@ -1,8 +1,18 @@
 import { hasPermission } from "@/api/announcement";
-import { WEBHOOK_EVENT_OPTIONS, createWebhook, deleteWebhook, listWebhookDeliveries, listWebhooks, replayWebhookDelivery, testWebhook } from "@/api/ops";
+import {
+  WEBHOOK_EVENT_OPTIONS,
+  createWebhook,
+  deleteWebhook,
+  listWebhookDeliveries,
+  listWebhookStats,
+  listWebhooks,
+  replayWebhookDelivery,
+  testWebhook,
+  updateWebhook
+} from "@/api/ops";
 import PageIntroduction from "@/components/PageIntroduction";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Modal, Select, Space, Table, Tag, message } from "antd";
+import { Button, Form, Input, Modal, Select, Space, Switch, Table, Tag, message } from "antd";
 import { FC, useEffect, useState } from "react";
 
 const infos = [{ title: "系统管理" }, { title: "Webhook" }];
@@ -10,6 +20,8 @@ const infos = [{ title: "系统管理" }, { title: "Webhook" }];
 const WebhookAdmin: FC = () => {
   const [list, setList] = useState<any[]>([]);
   const [deliveries, setDeliveries] = useState<any[]>([]);
+  const [stats, setStats] = useState<any[]>([]);
+  const [statsDays, setStatsDays] = useState(7);
   const [creating, setCreating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState<string | undefined>();
@@ -28,9 +40,16 @@ const WebhookAdmin: FC = () => {
       .catch(() => setDeliveries([]));
   };
 
+  const loadStats = (days = statsDays) => {
+    listWebhookStats(days)
+      .then(res => setStats(res.data?.data?.list || []))
+      .catch(() => setStats([]));
+  };
+
   useEffect(() => {
     load();
     loadDeliveries();
+    loadStats();
   }, []);
 
   const submit = async (values: any) => {
@@ -46,6 +65,7 @@ const WebhookAdmin: FC = () => {
       setCreating(false);
       form.resetFields();
       load();
+      loadStats();
     } finally {
       setSaving(false);
     }
@@ -62,6 +82,7 @@ const WebhookAdmin: FC = () => {
         await deleteWebhook(String(row.id));
         message.success("已删除");
         load();
+        loadStats();
       }
     });
   };
@@ -83,12 +104,40 @@ const WebhookAdmin: FC = () => {
     {
       title: "启用",
       dataIndex: "enabled",
-      width: 80,
-      render: (value: boolean) => (value ? <Tag color="blue">是</Tag> : <Tag>否</Tag>)
+      width: 90,
+      render: (value: boolean, row: any) => (
+        <Switch
+          size="small"
+          checked={Boolean(value)}
+          disabled={!canWrite}
+          onChange={async checked => {
+            await updateWebhook(String(row.id), { enabled: checked });
+            message.success(checked ? "已启用" : "已停用");
+            load();
+          }}
+        />
+      )
+    },
+    {
+      title: "失败重试",
+      dataIndex: "retry_enabled",
+      width: 100,
+      render: (value: boolean, row: any) => (
+        <Switch
+          size="small"
+          checked={value !== false}
+          disabled={!canWrite}
+          onChange={async checked => {
+            await updateWebhook(String(row.id), { retry_enabled: checked });
+            message.success(checked ? "已开启重试" : "失败将直接死信");
+            load();
+          }}
+        />
+      )
     },
     {
       title: "操作",
-      width: 180,
+      width: 160,
       render: (row: any) =>
         canWrite ? (
           <Space>
@@ -98,6 +147,7 @@ const WebhookAdmin: FC = () => {
                 await testWebhook(String(row.id));
                 message.success("已投递 ping");
                 loadDeliveries();
+                loadStats();
               }}>
               测试
             </Button>
@@ -126,6 +176,7 @@ const WebhookAdmin: FC = () => {
               await replayWebhookDelivery(String(row.id));
               message.success("已重放");
               loadDeliveries();
+              loadStats();
             }}>
             重放
           </Button>
@@ -135,7 +186,7 @@ const WebhookAdmin: FC = () => {
 
   return (
     <div className="admin-page">
-      <PageIntroduction infos={infos} introduction="出站 Webhook 按事件投递；失败由 webhook.retry 退避重试，死信可手动重放。测试会投递 webhook.ping。" />
+      <PageIntroduction infos={infos} introduction="出站 Webhook 按事件投递；失败由 webhook.retry 退避重试，关闭重试则失败直接死信。测试会投递 webhook.ping。" />
       <div className="admin-card">
         <div className="admin-toolbar">
           <Button onClick={load}>刷新订阅</Button>
@@ -145,7 +196,43 @@ const WebhookAdmin: FC = () => {
             </Button>
           ) : null}
         </div>
-        <Table rowKey="id" columns={columns} dataSource={list} pagination={false} scroll={{ x: 900 }} />
+        <Table rowKey="id" columns={columns} dataSource={list} pagination={false} scroll={{ x: 1000 }} />
+      </div>
+      <div className="admin-card mt-3">
+        <div className="admin-toolbar">
+          <Select
+            value={statsDays}
+            style={{ width: 120 }}
+            options={[
+              { value: 7, label: "近 7 天" },
+              { value: 14, label: "近 14 天" },
+              { value: 30, label: "近 30 天" }
+            ]}
+            onChange={value => {
+              setStatsDays(value);
+              loadStats(value);
+            }}
+          />
+          <Button onClick={() => loadStats()}>刷新统计</Button>
+        </div>
+        <Table
+          rowKey="subscription_id"
+          dataSource={stats}
+          pagination={false}
+          columns={[
+            { title: "订阅", dataIndex: "name" },
+            { title: "成功", dataIndex: "success", width: 90 },
+            { title: "失败", dataIndex: "fail", width: 90 },
+            { title: "死信", dataIndex: "dead", width: 90 },
+            { title: "合计", dataIndex: "total", width: 90 },
+            {
+              title: "成功率",
+              dataIndex: "success_rate",
+              width: 100,
+              render: (value: number) => `${Math.round((Number(value) || 0) * 100)}%`
+            }
+          ]}
+        />
       </div>
       <div className="admin-card mt-3">
         <div className="admin-toolbar">
@@ -162,12 +249,7 @@ const WebhookAdmin: FC = () => {
             ]}
             onChange={value => setStatus(value)}
           />
-          <Button
-            onClick={() => {
-              loadDeliveries();
-            }}>
-            刷新投递
-          </Button>
+          <Button onClick={() => loadDeliveries()}>刷新投递</Button>
         </div>
         <Table rowKey="id" columns={deliveryColumns} dataSource={deliveries} pagination={false} scroll={{ x: 860 }} />
       </div>

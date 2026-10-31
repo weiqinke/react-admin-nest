@@ -1,7 +1,7 @@
 import { MoreOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Space, Table, Tag } from "antd";
 
-const UserTable = ({ dataSource, selfId, canUnlock, setUser, showDeleteConfirm, onReset, onUnlock, pagination }) => {
+const UserTable = ({ dataSource, selfId, canUnlock, canSelect, selectedKeys = [], onSelectChange, setUser, showDeleteConfirm, onReset, onUnlock, pagination }) => {
   const columns: any = [
     {
       title: "账号",
@@ -79,7 +79,22 @@ const UserTable = ({ dataSource, selfId, canUnlock, setUser, showDeleteConfirm, 
       }
     }
   ];
-  return <Table dataSource={dataSource} columns={columns} rowKey="uid" pagination={pagination} />;
+  return (
+    <Table
+      dataSource={dataSource}
+      columns={columns}
+      rowKey={row => String(row.uid || row.id)}
+      pagination={pagination}
+      rowSelection={
+        canSelect
+          ? {
+              selectedRowKeys: selectedKeys,
+              onChange: keys => onSelectChange?.(keys.map(String))
+            }
+          : undefined
+      }
+    />
+  );
 };
 
 export default UserTable;

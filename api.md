@@ -1549,3 +1549,79 @@ body `{content}`，1 到 1024 个字符。状态不变，详情 `events` 增加 
 - 权限 `description`；`/api/site` 含 `maintenance` / `maintenance_at` / `maintenance_message`
 - `GET /api/announcements/{id}/stats` → audience / read / rate
 - 慢请求审计 `module=http` `action=slow`（同 path 每分钟最多 1 条）
+
+## 29. API surface��S1�CS20��
+
+### ��� / �ֵ� / Webhook
+
+- `GET /api/audit/by-actor/{user_id}?days=&limit=`�����ݷ�Χͬ����б���
+- `PUT /api/dicts/{type}/items/status` `{ids, status}`��������ͣ��һ�����ժҪ��
+- `GET /api/webhooks/stats?days=` ������ success/fail/dead/rate
+
+### ��¼ / �Ự / ����
+
+- ��¼�ɹ���IP+UA ָ�� 30 ����δ�� �� վ���ţ�`login_log.new_device` / `login_fingerprint`
+- `GET /api/me/sessions` � `device_label`������ UA ������
+- ��֤��Ӧͷ��`X-Token-Expires-At`��ʣ�� &lt;5 ����ʱ `X-Token-Expiring: 1`
+
+### ���� / �û� / Ȩ��
+
+- `POST /api/tickets/batch` `{ids, action: assign|close|priority, ...}` �� `results[]`
+- `GET|PUT /api/tickets/{id}/watchers`��PUT �� `ticket:write`��
+- `PUT /api/users/batch-status` `{ids, status, reason?}`������ʱ step-up�������Լ���
+- `GET /api/permissions/{code}/menus`
+- `GET /api/stats/tickets/sla-breach?days=`�������ݷ�Χ��
+
+### ֪ͨ / ���� / Flag / ���� / ̽��
+
+- `PUT /api/me/notices/read-all` ֧�� `category=`��Summary �� `inbox_by_category`
+- ���ø�����ƺ� `old_value`/`new_value`��secret �� `******`��
+- �� `config:write` ʱ `sensitivity=ops` �� `mail.*` / `site.maintenance*` �б�ֵ���루`sys_config.sensitivity` �� remark `sensitivity:ops`��
+- Flag ��ѡ `role_codes`��`/api/me/flags` ����ǰ��ɫ����
+- �����б� `failure_streak`��`GET /status?longest_streak=1` ��ѡ�����ʧ��
+- `GET /api/stats/rate-limits` ������ `rate_limit_hits`��Prometheus `goadmin_rate_limit_hits_total`
+- `GET /readyz?detail=1` �ʼ���麬 `mail_pending`������ `mail_pending` ��ʱ��
+- ���� `read_deadline`��ͳ�ƿɺ� `overdue_unread`���Ž��԰� `required`��
+
+### ��ɫ����
+
+- `POST /api/roles/{code}/copy` ��ѡ `copy_constraints` / `copy_scope_depts`��Ĭ�� false��������Ȩ�ޣ�
+
+---
+
+## 30. API tighten��T1�CT20��
+
+### ���� / ���� / Ȩ��
+
+- `GET /api/search?q=` ��Ӧ���� `counts`��users/tickets/announcements/depts�����б��߼�����
+- `GET /api/depts/search?keyword=` �� `{list:[{id,title,path_titles[]}]}`
+- `GET /api/me/effective-permissions` �� `{permissions[], wildcard?}`
+
+### ��¼ / �Ự / ��Կ
+
+- `GET /api/stats/login/failures?days=` ʧ�ܰ� `fail_reason` �ۺϣ����ƶ� code�����������ݷ�Χ
+- `POST /api/users/{id}/sessions/revoke-all`��`user:write` + step-up���������û�ȫ���Ự�����
+- API Key �ɹ���֤���� `last_used_ip`���б��� `last_used_ip`
+- `POST /api/me/password` ��ѡ `revoke_others`��Ĭ�� true����������ǰ�Ự
+
+### ɸѡ / ���� / Webhook / �ݵ�
+
+- `PUT /api/me/saved-filters/{id}/default`���б�� `is_default`��ÿ resource ����һ����
+- `POST /api/jobs/{code}/run` ��ѡ `{params:{retention_days}}`��д�� run message��֧�� params ������� context ��ȡ
+- Webhook `retry_enabled` Ĭ�� true��`PUT /api/webhooks/{id}` �ɸ��£�false ʱʧ��ֱ�� dead
+- �ݵ��ط���Ӧͷ `X-Idempotent-First-Request-Id`���״� request_id�������� `Idempotent-Replay`
+
+### ��� / ͳ�� / ����
+
+- `GET /api/audit/catalog?days=` ���� module/actions + �� 30 �� distinct ��
+- `GET /api/stats/tickets/dwell?days=` �� status ƽ��ͣ��Сʱ��ticket_event��
+- `GET /api/stats/http/slow-top?days=&limit=`��audit module=http action=slow��
+- `POST /api/config-pack/preview` �� `changes[]` `{key,from,to,action}`��secret ����
+
+### ���� / ֪ͨ / ά�� / ��ɫ / ����
+
+- `POST /api/announcements/{id}/preview-token`������ `GET /api/announcements/preview?token=` ֻ������
+- ֪ͨƫ�� `quiet_hours_start/end`��HH:MM������Ĭʱ������ hub Push����д inbox��
+- `site.maintenance_allow_paths` JSON ���������û���·���ϲ�
+- ��ɫ�б� `user_count`��`last_assigned_at`��`GET /api/roles/{code}/users` ��ҳ
+- �������� `rel_type`��`relates|blocks|duplicates`��Ĭ�� relates������д API ������

@@ -138,7 +138,45 @@ export const processTicket = (id: string, note?: string) => request(`/api/ticket
 
 export const closeTicket = (id: string, close_reason: string) => request(`/api/tickets/${segment(id)}/close`, "PUT", { close_reason });
 
-export const createTicket = (payload: { title: string; content: string; priority: string; due_at?: string }) => request("/api/tickets", "POST", compact(payload));
+export const createTicket = (payload: { title: string; content: string; priority: string; due_at?: string; template_id?: string }) =>
+  request("/api/tickets", "POST", compact(payload));
+
+/** 批量分派。最多 100。data: { ok, failed } */
+export const batchAssignTickets = (payload: { ids: string[]; assignee_id?: string; department_id?: string }) => request("/api/tickets/batch-assign", "POST", payload);
+
+/** 批量操作：assign | close | priority。data: { results } */
+export const batchTickets = (payload: {
+  ids: string[];
+  action: "assign" | "close" | "priority";
+  assignee_id?: string;
+  department_id?: string;
+  priority?: string;
+  close_reason?: string;
+}) => request("/api/tickets/batch", "POST", payload);
+
+/** 批量启停用户。禁用需 step-up。data: { ok, failed } */
+export const batchUserStatus = (payload: { ids: string[]; status: number; reason?: string }) => request("/api/users/batch-status", "PUT", payload);
+
+export const listTicketTemplates = (enabledOnly = false) => request("/api/ticket-templates", "GET", enabledOnly ? { enabled: "1" } : {});
+
+export const upsertTicketTemplate = (payload: { id?: string; name: string; title?: string; content?: string; priority?: string; enabled?: boolean }) =>
+  request("/api/ticket-templates", "PUT", payload);
+
+export const deleteTicketTemplate = (id: string) => request(`/api/ticket-templates/${segment(id)}`, "DELETE");
+
+export const listTicketAssignRules = () => request("/api/ticket-assign-rules", "GET");
+
+export const upsertTicketAssignRule = (payload: {
+  id?: string;
+  name: string;
+  priority?: string;
+  label_id?: string;
+  department_id?: string;
+  assignee_pool: string[];
+  enabled?: boolean;
+}) => request("/api/ticket-assign-rules", "PUT", payload);
+
+export const deleteTicketAssignRule = (id: string) => request(`/api/ticket-assign-rules/${segment(id)}`, "DELETE");
 
 export const listMyTickets = (query: Record<string, any> = {}) => request("/api/me/tickets", "GET", compact(query));
 

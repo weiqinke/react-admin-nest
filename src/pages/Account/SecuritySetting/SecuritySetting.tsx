@@ -1,4 +1,4 @@
-import { beginTotpSetup, confirmTotpSetup, disableTotp, getTotpStatus } from "@/api/security";
+import { beginTotpSetup, confirmTotpSetup, disableTotp, getTotpStatus, listTrustedDevices, revokeTrustedDevice } from "@/api/security";
 import { changePassword, listSessions, revokeSession } from "@/api/platform";
 import { expireSession } from "@/api/session";
 import { Alert, Button, Col, Divider, Form, Input, Modal, Row, Space, Table, Tag, Typography, message } from "antd";
@@ -9,6 +9,7 @@ const SecuritySetting: FC = function () {
   const [totpForm] = Form.useForm();
   const [saving, setSaving] = useState(false);
   const [sessions, setSessions] = useState<any[]>([]);
+  const [devices, setDevices] = useState<any[]>([]);
   const [totpEnabled, setTotpEnabled] = useState(false);
   const [setup, setSetup] = useState<{ secret?: string; otpauth_uri?: string } | null>(null);
   const [totpBusy, setTotpBusy] = useState(false);
@@ -18,6 +19,9 @@ const SecuritySetting: FC = function () {
     listSessions()
       .then(res => setSessions(res.data?.data?.list || []))
       .catch(() => setSessions([]));
+    listTrustedDevices()
+      .then(res => setDevices(res.data?.data?.list || []))
+      .catch(() => setDevices([]));
     getTotpStatus()
       .then(res => setTotpEnabled(Boolean(res.data?.data?.enabled)))
       .catch(() => setTotpEnabled(false));
@@ -205,6 +209,49 @@ const SecuritySetting: FC = function () {
               render: (row: any) => (
                 <Button size="small" danger onClick={() => revoke(row)}>
                   下线
+                </Button>
+              )
+            }
+          ]}
+        />
+      </Col>
+      <Col span={24}>
+        <Divider titlePlacement="left" plain>
+          可信设备
+        </Divider>
+        <Typography.Paragraph type="secondary">登录时勾选「记住此设备」后会出现在这里。撤销后下次登录可能需再次验证。</Typography.Paragraph>
+      </Col>
+      <Col span={24}>
+        <Table
+          rowKey="id"
+          dataSource={Array.isArray(devices) ? devices : []}
+          pagination={false}
+          locale={{ emptyText: "暂无可信设备" }}
+          columns={[
+            { title: "标签", dataIndex: "label", ellipsis: true, render: (v: string) => v || "—" },
+            { title: "创建时间", dataIndex: "created_at", width: 180 },
+            { title: "过期", dataIndex: "expires_at", width: 180, render: (v: string) => v || "—" },
+            {
+              title: "操作",
+              width: 90,
+              render: (row: any) => (
+                <Button
+                  size="small"
+                  danger
+                  onClick={() => {
+                    Modal.confirm({
+                      title: "撤销可信设备",
+                      content: "撤销后该设备不再被信任。",
+                      okText: "撤销",
+                      okType: "danger",
+                      onOk: async () => {
+                        await revokeTrustedDevice(String(row.id));
+                        message.success("已撤销");
+                        load();
+                      }
+                    });
+                  }}>
+                  撤销
                 </Button>
               )
             }

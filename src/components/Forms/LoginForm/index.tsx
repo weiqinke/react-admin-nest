@@ -3,11 +3,12 @@ import ProjectContext from "@/contexts/ProjectContext";
 import { getUserState } from "@/utils/core";
 import { webSocketManager } from "@/utils/ws";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Divider, Form, Image, Input, Spin, Tooltip, message } from "antd";
+import { Button, Checkbox, Divider, Form, Image, Input, Spin, Tooltip, message } from "antd";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 import { getMyMenus } from "@/api/goadmin";
+import { getStoredTrustToken, storeTrustToken } from "@/api/security";
 import { getCaptcha, login } from "@/api/user";
 import { saveLoginSession } from "@/api/session";
 import { adaptApiMenus, saveMenus } from "@/utils/menuUtils";
@@ -55,8 +56,12 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
         captcha_code: values.captcha_code
       };
       if (needTotp && values.totp_code) payload.totp_code = String(values.totp_code).trim();
+      if (values.remember_device) payload.remember_device = true;
+      const trust = getStoredTrustToken();
+      if (trust) payload.trust_token = trust;
       const result = await login(payload);
       saveLoginSession(result.data.data);
+      if (result.data.data?.trust_token) storeTrustToken(result.data.data.trust_token);
       if (result.data.data?.must_change_password) {
         localStorage.setItem("must_change_password", "1");
       } else {
@@ -137,6 +142,10 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
                     <Input placeholder="6 位 TOTP 验证码" maxLength={8} onBlur={onBlur} onFocus={onFocus} />
                   </Form.Item>
                 ) : null}
+
+                <Form.Item name="remember_device" valuePropName="checked" style={{ marginBottom: 8 }}>
+                  <Checkbox>记住此设备</Checkbox>
+                </Form.Item>
 
                 <div className={styles.other}>
                   {allowRegister ? (

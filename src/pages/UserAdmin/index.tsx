@@ -1,6 +1,7 @@
 import { hasPermission } from "@/api/announcement";
 import { commitUserImport, downloadUserImportTemplate, exportUsersCsv, previewUserImport } from "@/api/impexp";
-import { dataScopeLabel, listDepts, toDeptTree } from "@/api/platform";
+import { createInvite } from "@/api/ops";
+import { batchUserStatus, dataScopeLabel, listDepts, toDeptTree } from "@/api/platform";
 import { findRoles } from "@/api/role";
 import { getUserState } from "@/api/session";
 import { findUsers, resetUserPassword, setUserStatus, unlockUser } from "@/api/user";
@@ -8,7 +9,7 @@ import CsvImportModal from "@/components/CsvImportModal";
 import PageIntroduction from "@/components/PageIntroduction";
 import { UserEditModal } from "@/components/Modals";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { Alert, Button, Form, Input, Modal, Select, TreeSelect, message } from "antd";
+import { Alert, Button, Form, Input, InputNumber, Modal, Select, Space, TreeSelect, Typography, message } from "antd";
 import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
 import UserTable from "./components/Table";
@@ -37,11 +38,70 @@ const UserAdmin: FC = () => {
   const [roles, setRoles] = useState<any[]>([]);
   const [importOpen, setImportOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [inviteSaving, setInviteSaving] = useState(false);
+  const [inviteLink, setInviteLink] = useState("");
+  const [inviteForm] = Form.useForm();
+  const [batchReason, setBatchReason] = useState("");
   const selfId = String(getUserState().uid || "");
   const canFilterDept = hasPermission("dept:read");
   const canFilterRole = hasPermission("role:read");
   const canWrite = hasPermission("user:write");
   const canRead = hasPermission("user:read");
+
+  const runBatchStatus = (status: number) => {
+    if (!selectedKeys.length) {
+      message.warning("请先勾选用户");
+      return;
+    }
+    const ids = status === 0 ? selectedKeys.filter(id => id !== selfId) : selectedKeys;
+    if (!ids.length) {
+      message.warning("不能停用当前登录账号");
+      return;
+    }
+    Modal.confirm({
+      title: status === 0 ? "批量停用" : "批量启用",
+      icon: <ExclamationCircleOutlined />,
+      content: (
+        <div>
+          <p>
+            将对 {ids.length} 个用户执行{status === 0 ? "停用" : "启用"}。{status === 0 ? "停用会踢掉对方会话，且需要二次确认。" : ""}
+          </p>
+          {status === 0 ? <Input.TextArea rows={2} placeholder="停用原因（可选）" defaultValue={batchReason} onChange={e => setBatchReason(e.target.value)} /> : null}
+        </div>
+      ),
+      okText: "确定",
+      okType: status === 0 ? "danger" : "primary",
+      onOk: async () => {
+        const res = await batchUserStatus({ ids, status, reason: status === 0 ? batchReason : undefined });
+        const failed = res.data?.data?.failed || [];
+        if (failed.length) message.warning(`完成，失败 ${failed.length} 个`);
+        else message.success("已更新");
+        setSelectedKeys([]);
+        setBatchReason("");
+        findAll(page);
+      }
+    });
+  };
+
+  const submitInvite = async (values: any) => {
+    setInviteSaving(true);
+    try {
+      const res = await createInvite({
+        email: values.email.trim(),
+        role_codes: values.role_codes?.length ? values.role_codes : undefined,
+        department_id: values.department_id || undefined,
+        hours: values.hours || 72
+      });
+      const link = res.data?.data?.link || "";
+      setInviteLink(link);
+      message.success("邀请已创建");
+      inviteForm.resetFields();
+    } finally {
+      setInviteSaving(false);
+    }
+  };
 
   const showDeleteConfirm = (item: any) => {
     const id = String(item.id || item.uid || "");
@@ -182,6 +242,23 @@ const UserAdmin: FC = () => {
             查询
           </Button>
           {canWrite ? <Button onClick={() => setUser({})}>添加</Button> : null}
+          {canWrite ? (
+            <Button
+              onClick={() => {
+                setInviteLink("");
+                setInviteOpen(true);
+              }}>
+              邀请用户
+            </Button>
+          ) : null}
+          {canWrite && selectedKeys.length ? (
+            <Space>
+              <Button onClick={() => runBatchStatus(1)}>批量启用</Button>
+              <Button danger onClick={() => runBatchStatus(0)}>
+                批量停用
+              </Button>
+            </Space>
+          ) : null}
           {canRead ? (
             <Button
               loading={exporting}
@@ -216,6 +293,9 @@ const UserAdmin: FC = () => {
           dataSource={dataSource}
           selfId={selfId}
           canUnlock={canWrite}
+          canSelect={canWrite}
+          selectedKeys={selectedKeys}
+          onSelectChange={setSelectedKeys}
           setUser={setUser}
           showDeleteConfirm={showDeleteConfirm}
           onReset={setResetFor}
@@ -225,6 +305,54 @@ const UserAdmin: FC = () => {
       </div>
 
       {user && <UserEditModal initUser={user} onOk={() => findAll()} onCancel={() => setUser(null)} />}
+      <Modal
+        open={inviteOpen}
+        title="邀请用户"
+        confirmLoading={inviteSaving}
+        okText={inviteLink ? "关闭" : "发送邀请"}
+        cancelText="取消"
+        destroyOnHidden
+        onOk={() => {
+          if (inviteLink) {
+            setInviteOpen(false);
+            return;
+          }
+          inviteForm.submit();
+        }}
+        onCancel={() => setInviteOpen(false)}>
+        {inviteLink ? (
+          <div>
+            <p>邀请已创建（需 mail.enabled）。可将链接发给被邀请人：</p>
+            <Typography.Paragraph copyable>{inviteLink}</Typography.Paragraph>
+          </div>
+        ) : (
+          <Form form={inviteForm} layout="vertical" onFinish={submitInvite} initialValues={{ hours: 72 }}>
+            <Form.Item name="email" label="邮箱" rules={[{ required: true, type: "email", message: "请填写有效邮箱" }]}>
+              <Input placeholder="user@example.com" />
+            </Form.Item>
+            {canFilterRole ? (
+              <Form.Item name="role_codes" label="角色" extra="默认 user">
+                <Select
+                  mode="multiple"
+                  allowClear
+                  options={roles.map(item => ({
+                    value: item.code,
+                    label: item.name ? `${item.name}（${item.code}）` : item.code
+                  }))}
+                />
+              </Form.Item>
+            ) : null}
+            {canFilterDept ? (
+              <Form.Item name="department_id" label="部门">
+                <TreeSelect allowClear treeDefaultExpandAll placeholder="可选" treeData={toDeptTree(deptTree, { disableOff: true })} />
+              </Form.Item>
+            ) : null}
+            <Form.Item name="hours" label="有效小时" extra="1–168，默认 72">
+              <InputNumber min={1} max={168} className="w-full" />
+            </Form.Item>
+          </Form>
+        )}
+      </Modal>
       <CsvImportModal
         open={importOpen}
         title="导入用户"
