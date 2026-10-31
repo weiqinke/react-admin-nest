@@ -1,13 +1,13 @@
-﻿import NeedLogin from "@/pages/FailPage/NeedLogin";
-import ProjectLayout from "@/layout/ProjectLayout";
-import Login from "@/pages/Login";
-import OAuthCallback from "@/pages/OAuth/Callback";
-import OAuthError from "@/pages/OAuth/Error";
+﻿import ProjectLayout from "@/layout/ProjectLayout";
 import AppShell from "@/router/shell";
 import { isSessionValid, useRouteSession, type RouteHandle } from "@/router/session";
 import { lazy, type ComponentType } from "react";
 import { Outlet, type RouteObject } from "react-router";
 
+const NeedLogin = lazy(() => import("@/pages/FailPage/NeedLogin"));
+const Login = lazy(() => import("@/pages/Login"));
+const OAuthCallback = lazy(() => import("@/pages/OAuth/Callback"));
+const OAuthError = lazy(() => import("@/pages/OAuth/Error"));
 const DefaultLayout = lazy(() => import("@/layout/DefaultLayout"));
 
 const Account = lazy(() => import("@/pages/Account"));

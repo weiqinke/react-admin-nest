@@ -1,6 +1,8 @@
+import { getPublicKey } from "@/api/auth";
 import { encryptPassword } from "@/api/crypto";
-import { getPublicKey } from "@/api/goadmin";
 import { request } from "@/api/request";
+
+export { getSite } from "@/api/site";
 
 const enc = encodeURIComponent;
 
@@ -52,8 +54,6 @@ export const API_KEY_SCOPES = [
   { value: "dept:read", label: "部门" },
   { value: "stats:read", label: "统计" }
 ];
-
-export const getSite = () => request("/api/site", "GET");
 
 /** 工作台摘要：未读站内信、待办、未关闭工单、未读公告。 */
 export const getHomeSummary = () => request("/api/me/home", "GET");

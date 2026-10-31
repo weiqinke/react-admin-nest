@@ -1,6 +1,8 @@
+import { getPublicKey } from "./auth";
 import { encryptPassword } from "./crypto";
-import { getPublicKey } from "./goadmin";
 import { request } from "./request";
+
+export { clearTrustToken, getStoredTrustToken, storeTrustToken } from "./trust";
 
 /** TOTP 状态。data: { enabled, issuer? } */
 export const getTotpStatus = () => request("/api/me/totp", "GET");
@@ -25,20 +27,6 @@ export async function resetPassword(token: string, password: string) {
   const keyRes = await getPublicKey();
   const password_encrypted = await encryptPassword(keyRes.data.data.public_key, password);
   return request("/api/password/reset", "POST", { token, password_encrypted });
-}
-
-const TRUST_TOKEN_KEY = "trust_token";
-
-export function getStoredTrustToken() {
-  return localStorage.getItem(TRUST_TOKEN_KEY) || "";
-}
-
-export function storeTrustToken(token?: string) {
-  if (token) localStorage.setItem(TRUST_TOKEN_KEY, token);
-}
-
-export function clearTrustToken() {
-  localStorage.removeItem(TRUST_TOKEN_KEY);
 }
 
 /** 可信设备列表。 */

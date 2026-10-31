@@ -1,5 +1,4 @@
 import { subscribeSession, getUserState } from "@/api/session";
-import { userinfo } from "@/api/user";
 import React, { useEffect, useState } from "react";
 
 const ProjectContext: any = React.createContext({
@@ -23,7 +22,8 @@ export const ProjectContextProvider = ({ theme, setTheme, children }) => {
       return;
     }
     const controller = new AbortController();
-    userinfo({ signal: controller.signal })
+    void import("@/api/user")
+      .then(({ userinfo }) => userinfo({ signal: controller.signal }))
       .then(res => {
         if (!controller.signal.aborted) setProfile(res.data?.data?.profile || {});
       })

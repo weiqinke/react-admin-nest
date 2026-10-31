@@ -1,4 +1,4 @@
-﻿import { userRegister } from "@/api/user";
+﻿import { register as userRegister } from "@/api/auth";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input, message } from "antd";
 import { useState } from "react";

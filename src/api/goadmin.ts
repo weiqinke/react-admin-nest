@@ -1,5 +1,8 @@
+import { getPublicKey } from "./auth";
 import { encryptPassword } from "./crypto";
 import { request } from "./request";
+
+export { getCaptcha, getPublicKey, login, register } from "./auth";
 
 const enc = encodeURIComponent;
 
@@ -7,30 +10,7 @@ function compact(query: Record<string, any>) {
   return Object.fromEntries(Object.entries(query).filter(([, value]) => value !== undefined && value !== ""));
 }
 
-async function withEncryptedPassword(payload: any) {
-  if (!payload?.password || payload.password_encrypted) return payload;
-  const keyRes = await getPublicKey();
-  const password_encrypted = await encryptPassword(keyRes.data.data.public_key, payload.password);
-  const body = { ...payload, password_encrypted };
-  delete body.password;
-  return body;
-}
-
 export const getHealth = () => request("/health", "GET");
-
-export const getCaptcha = () => request("/api/captcha", "GET");
-
-export const getPublicKey = () => request("/api/crypto/public-key", "GET");
-
-export async function register(payload) {
-  return request("/api/register", "POST", await withEncryptedPassword(payload));
-}
-
-export async function login(payload) {
-  const body = await withEncryptedPassword(payload);
-  if (Array.isArray(body.active_roles) && body.active_roles.length === 0) delete body.active_roles;
-  return request("/api/login", "POST", body);
-}
 
 export const refreshToken = (refresh_token: string) => request("/api/token/refresh", "POST", { refresh_token });
 

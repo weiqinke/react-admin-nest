@@ -1,5 +1,5 @@
 import { encryptPassword } from "@/api/crypto";
-import { getPublicKey } from "@/api/goadmin";
+import { getPublicKey } from "@/api/auth";
 import { request } from "@/api/request";
 
 const enc = encodeURIComponent;

@@ -1,13 +1,10 @@
+import { getCaptcha, getPublicKey, login as goLogin, register as goRegister } from "@/api/auth";
 import {
   createManagedUser,
-  getCaptcha,
   getMe,
   getMyProfile,
-  getPublicKey,
   getUsers,
-  login as goLogin,
   logout as goLogout,
-  register as goRegister,
   resetManagedUserPassword,
   setManagedUserStatus,
   unlockManagedUser,
@@ -17,8 +14,7 @@ import {
 import { setUserDepartment, setUserPosition } from "@/api/platform";
 import { getRefreshToken } from "@/api/session";
 
-export { getCaptcha, getPublicKey };
-export { goRegister as userRegister };
+export { getCaptcha, getPublicKey, goLogin as login, goRegister as register, goRegister as userRegister };
 export { resetManagedUserPassword as resetUserPassword, setManagedUserStatus as setUserStatus, unlockManagedUser as unlockUser };
 
 function normalizeUser(user) {
@@ -51,12 +47,6 @@ function profilePayload(payload: any = {}) {
   if (profile.sex != null && profile.sex !== "") body.gender = Number(profile.sex);
   return Object.fromEntries(Object.entries(body).filter(([, value]) => value !== undefined && value !== ""));
 }
-
-/** 登录。可传明文 password，由这里做 RSA-OAEP 加密。 */
-export const login = payload => goLogin(payload);
-
-/** 注册。成功后不会返回 token，需要再登录。 */
-export const register = payload => goRegister(payload);
 
 /** 当前用户。兼容旧页面读取 data.profile。 */
 export async function userinfo(options?: { signal?: AbortSignal }) {

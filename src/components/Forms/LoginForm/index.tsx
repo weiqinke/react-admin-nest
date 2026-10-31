@@ -1,17 +1,14 @@
 ﻿import MenuTagContext from "@/contexts/MenuTagContext";
 import ProjectContext from "@/contexts/ProjectContext";
 import { getUserState } from "@/utils/core";
-import { webSocketManager } from "@/utils/ws";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Divider, Form, Image, Input, Spin, Tooltip, message } from "antd";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
-import { getMyMenus } from "@/api/goadmin";
-import { getStoredTrustToken, storeTrustToken } from "@/api/security";
-import { getCaptcha, login } from "@/api/user";
+import { getCaptcha, login } from "@/api/auth";
+import { getStoredTrustToken, storeTrustToken } from "@/api/trust";
 import { saveLoginSession } from "@/api/session";
-import { adaptApiMenus, saveMenus } from "@/utils/menuUtils";
 import qrimg from "@/assets/qrcode.png";
 import IconFont from "@/components/IconFont";
 import styles from "./index.module.scss";
@@ -69,12 +66,14 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
       }
       setValue(getUserState());
       try {
+        const [{ getMyMenus }, { adaptApiMenus, saveMenus }] = await Promise.all([import("@/api/goadmin"), import("@/utils/menuUtils")]);
         const menus = await getMyMenus();
         const list = adaptApiMenus(menus.data?.data?.list || []);
         saveMenus(JSON.stringify(list));
       } catch (error) {
         console.log("当前用户菜单获取失败", error);
       }
+      const { webSocketManager } = await import("@/utils/ws");
       webSocketManager.create();
       setTags([]);
       navigate(result.data.data?.must_change_password ? "/account" : "/workplace");
