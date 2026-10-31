@@ -96,18 +96,16 @@ export async function findUsers(query: any = {}) {
   };
 }
 
-/** 下拉选项。按页拉满当前数据范围内的用户，最多 10 页。 */
-export async function findUserOptions() {
-  const pageSize = 100;
-  const first = await findUsers({ page: 1, page_size: pageSize });
-  const data = [...(first.data.data || [])];
-  const total = Number(first.data.total || data.length);
-  const pages = Math.min(Math.ceil(total / pageSize) || 1, 10);
-  for (let page = 2; page <= pages; page += 1) {
-    const next = await findUsers({ page, page_size: pageSize });
-    data.push(...(next.data.data || []));
-  }
-  return { ...first, data: { ...first.data, data } };
+/**
+ * 下拉选项。默认只拉第一页；有 keyword 时按关键字搜一页，避免打开页面就串行拉上千用户。
+ */
+export async function findUserOptions(query: { keyword?: string; page_size?: number } = {}) {
+  const keyword = String(query.keyword || "").trim();
+  return findUsers({
+    page: 1,
+    page_size: query.page_size || (keyword ? 20 : 100),
+    keyword: keyword || undefined
+  });
 }
 
 export function updateUser(payload: any = {}) {

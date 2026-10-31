@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef } from "react";
-import echarts from "./setup";
+import echarts from "./setup-pie";
 
 const PieBorderRadius: FC = () => {
   const ref = useRef();

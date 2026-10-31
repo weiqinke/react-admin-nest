@@ -4,7 +4,7 @@ import { totalPercentage } from "@/utils/core";
 import { webSocketManager } from "@/utils/ws";
 import { Col, Progress, Row } from "antd";
 import dayjs from "dayjs";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import styles from "./index.module.scss";
 
@@ -51,6 +51,20 @@ const fetchinfo = {
   ]
 };
 
+/** 时钟单独挂载，避免每秒重绘整块系统信息卡片。 */
+const LiveClock = () => {
+  const [curSystemTime, setCurSystemTime] = useState(() => dayjs().format("YYYY-MM-DD HH:mm:ss"));
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setCurSystemTime(dayjs().format("YYYY-MM-DD HH:mm:ss"));
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  return <em>{curSystemTime}</em>;
+};
+
 const SystemInfo: React.FC = () => {
   const OsInfo = {
     freemem: 20755597056,
@@ -62,38 +76,13 @@ const SystemInfo: React.FC = () => {
     uptime: 11939391
   };
 
-  const timer: any = useRef();
-  const [curSystemTime, setCurSystemTime] = useState("加载中。。。");
-  const [, setMessageList] = useState<any>();
-  const [, setLoading] = useState(true);
   const [apiCounts, setApiCounts] = useState({ total: 0, today: 0, data_scope: "" });
   const memPercentage = useMemo(() => {
     return totalPercentage(OsInfo.totalmem, OsInfo.freemem);
   }, []);
 
-  // 倒计时
   useEffect(() => {
-    clearInterval(timer?.current);
-    timer.current = null;
-    timer.current = setInterval(() => {
-      setCurSystemTime(dayjs().format("YYYY-MM-DD HH:mm:ss"));
-    }, 1000);
-    return () => {
-      clearInterval(timer.current);
-    };
-  }, []);
-
-  useEffect(() => {
-    setLoading(false);
-    const message: any = [
-      { id: "1", content: "CPU Intel(R) Xeon(R) Platinum 8280L 正常" },
-      { id: "2", content: "最近5、10、15分钟平均负载 正常" },
-      { id: "3", content: "内存 正常" },
-      { id: "4", content: "欢迎登陆" }
-    ];
-    console.log("我发送一次");
     webSocketManager.postMessage({ type: "memStatus" });
-    setMessageList(message);
   }, []);
 
   useEffect(() => {
@@ -132,7 +121,7 @@ const SystemInfo: React.FC = () => {
             </div>
             <div className={styles.itemText}>
               <em>系统时间：</em>
-              <em>{curSystemTime}</em>
+              <LiveClock />
             </div>
           </div>
         </div>

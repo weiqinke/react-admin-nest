@@ -1,6 +1,6 @@
 import { hasPermission } from "@/api/announcement";
 import { TICKET_STATUS, dataScopeLabel, getDashboard } from "@/api/platform";
-import echarts from "@/components/Echarts/setup";
+import echarts from "@/components/Echarts/setup-cartesian";
 import { Alert, Col, DatePicker, Empty, Row, Statistic } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import { FC, useEffect, useRef, useState } from "react";

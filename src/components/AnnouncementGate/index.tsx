@@ -1,8 +1,9 @@
 import { hasPermission, listMyAnnouncements, markAnnouncementRead } from "@/api/announcement";
 import { logout as apiLogout } from "@/api/user";
 import { clearSession } from "@/api/session";
+import { createStaleRefresh } from "@/utils/staleRefresh";
 import { Checkbox, Modal } from "antd";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 
 type Item = {
@@ -24,25 +25,29 @@ const AnnouncementGate: FC = () => {
   const [normal, setNormal] = useState<Item | null>(null);
   const [agreed, setAgreed] = useState(false);
 
-  const refresh = useCallback(async () => {
-    const blocking = await loadUnread({ level: "required" });
-    setRequired(blocking);
-    setAgreed(false);
-    if (blocking.length > 0) {
-      setNormal(null);
-      return;
-    }
-    const notices = await loadUnread({ type: "system", level: "normal" });
-    setNormal(notices[0] || null);
-  }, []);
+  const refresh = useMemo(
+    () =>
+      createStaleRefresh(async () => {
+        const blocking = await loadUnread({ level: "required" });
+        setRequired(blocking);
+        setAgreed(false);
+        if (blocking.length > 0) {
+          setNormal(null);
+          return;
+        }
+        const notices = await loadUnread({ type: "system", level: "normal" });
+        setNormal(notices[0] || null);
+      }),
+    []
+  );
 
   useEffect(() => {
-    refresh().catch(() => undefined);
+    void refresh(true).catch(() => undefined);
     const onFocus = () => {
-      refresh().catch(() => undefined);
+      void refresh().catch(() => undefined);
     };
     const onRefresh = () => {
-      refresh().catch(() => undefined);
+      void refresh(true).catch(() => undefined);
     };
     window.addEventListener("focus", onFocus);
     window.addEventListener("announcements:refresh", onRefresh);
@@ -59,13 +64,13 @@ const AnnouncementGate: FC = () => {
   const confirmRequired = async () => {
     if (!current) return;
     await markAnnouncementRead(current.id);
-    await refresh();
+    await refresh(true);
   };
 
   const confirmNormal = async () => {
     if (!normal) return;
     await markAnnouncementRead(normal.id);
-    await refresh();
+    await refresh(true);
   };
 
   const leave = () => {

@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import echarts from "./setup";
+import echarts from "./setup-cartesian";
 import React, { useEffect, useRef } from "react";
 
 const LoginFrequencyChart = ({ dataSource = [] }) => {
@@ -61,10 +61,10 @@ const LoginFrequencyChart = ({ dataSource = [] }) => {
 
     const myChart = echarts.init(ref.current);
     myChart.setOption(option);
-    window.addEventListener("resize", function () {
-      myChart.resize();
-    });
+    const onResize = () => myChart.resize();
+    window.addEventListener("resize", onResize);
     return () => {
+      window.removeEventListener("resize", onResize);
       myChart.dispose && myChart.dispose();
     };
   }, [dataSource]);

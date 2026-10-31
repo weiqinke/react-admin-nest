@@ -110,7 +110,7 @@ export default defineConfig({
         assetFileNames: "[ext]/[name]-[hash].[ext]",
         manualChunks(id) {
           if (!id.includes("node_modules")) return;
-          if (id.includes("echarts") || id.includes("echarts-wordcloud")) return "vendor-echarts";
+          // 不强制合并 echarts：工作台/看板只带用到的图种，演示页与 wordcloud 留在各自异步包。
           if (id.includes("antd") || id.includes("@ant-design")) return "vendor-antd";
           if (id.includes("react-router") || id.includes("/react/") || id.includes("\\react\\") || id.includes("react-dom")) {
             return "vendor-react";

@@ -1,8 +1,9 @@
 import { listMyAnnouncements, markAllAnnouncementsRead, markAnnouncementRead } from "@/api/announcement";
 import { listMyNotices, markAllNoticesRead, markNoticeRead, noticeSummary, setNoticeTodo } from "@/api/notice";
+import { createStaleRefresh } from "@/utils/staleRefresh";
 import { BellOutlined } from "@ant-design/icons";
 import { Avatar, Badge, Dropdown, DropdownProps, Flex, Listy, MenuProps, Tabs, message } from "antd";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 
 const HeaderNotice: FC = () => {
@@ -16,35 +17,43 @@ const HeaderNotice: FC = () => {
   const [inboxUnread, setInboxUnread] = useState(0);
   const [todoPending, setTodoPending] = useState(0);
 
-  const refresh = useCallback(async () => {
-    try {
-      const [ann, inbox, todo, sum] = await Promise.all([
-        listMyAnnouncements({ type: "notification", level: "normal", unread: 1, page: 1, page_size: 6 }),
-        listMyNotices({ kind: "inbox", unread: 1, page: 1, page_size: 6 }),
-        listMyNotices({ kind: "todo", todo_status: "pending", page: 1, page_size: 6 }),
-        noticeSummary()
-      ]);
-      if (ann.data.code === 0) {
-        setNoticeList(ann.data.data?.list || []);
-        setAnnouncementUnread(ann.data.data?.unread_count || 0);
-      }
-      if (inbox.data.code === 0) setInboxList(inbox.data.data?.list || []);
-      if (todo.data.code === 0) setTodoList(todo.data.data?.list || []);
-      if (sum.data.code === 0) {
-        setInboxUnread(sum.data.data?.inbox_unread || 0);
-        setTodoPending(sum.data.data?.todo_pending || 0);
-      }
-    } catch {
-      setNoticeList([]);
-      setInboxList([]);
-      setTodoList([]);
-    }
-  }, []);
+  const refresh = useMemo(
+    () =>
+      createStaleRefresh(async () => {
+        try {
+          const [ann, inbox, todo, sum] = await Promise.all([
+            listMyAnnouncements({ type: "notification", level: "normal", unread: 1, page: 1, page_size: 6 }),
+            listMyNotices({ kind: "inbox", unread: 1, page: 1, page_size: 6 }),
+            listMyNotices({ kind: "todo", todo_status: "pending", page: 1, page_size: 6 }),
+            noticeSummary()
+          ]);
+          if (ann.data.code === 0) {
+            setNoticeList(ann.data.data?.list || []);
+            setAnnouncementUnread(ann.data.data?.unread_count || 0);
+          }
+          if (inbox.data.code === 0) setInboxList(inbox.data.data?.list || []);
+          if (todo.data.code === 0) setTodoList(todo.data.data?.list || []);
+          if (sum.data.code === 0) {
+            setInboxUnread(sum.data.data?.inbox_unread || 0);
+            setTodoPending(sum.data.data?.todo_pending || 0);
+          }
+        } catch {
+          setNoticeList([]);
+          setInboxList([]);
+          setTodoList([]);
+        }
+      }),
+    []
+  );
 
   useEffect(() => {
-    refresh();
-    const onFocus = () => refresh();
-    const onNotice = () => refresh();
+    void refresh(true);
+    const onFocus = () => {
+      void refresh();
+    };
+    const onNotice = () => {
+      void refresh(true);
+    };
     window.addEventListener("focus", onFocus);
     window.addEventListener("notice:refresh", onNotice);
     return () => {
@@ -55,7 +64,7 @@ const HeaderNotice: FC = () => {
 
   const openAnnouncement = async (item: any) => {
     await markAnnouncementRead(item.id);
-    refresh();
+    void refresh(true);
   };
 
   const openInbox = async (item: any) => {
@@ -66,13 +75,13 @@ const HeaderNotice: FC = () => {
     } else if (item.link_path) {
       navigate(item.link_path);
     }
-    refresh();
+    void refresh(true);
   };
 
   const finishTodo = async (item: any, status: "done" | "dismissed") => {
     await setNoticeTodo(item.id, status);
     message.success(status === "done" ? "已完成" : "已忽略");
-    refresh();
+    void refresh(true);
   };
 
   const clearCurrent = async () => {
@@ -84,7 +93,7 @@ const HeaderNotice: FC = () => {
       // pending todos: mark read only, keep pending
       await markAllNoticesRead("todo");
     }
-    refresh();
+    void refresh(true);
   };
 
   const badgeCount = announcementUnread + inboxUnread + todoPending;
@@ -184,7 +193,7 @@ const HeaderNotice: FC = () => {
   const handleOpenChange: DropdownProps["onOpenChange"] = (nextOpen, info) => {
     if (info.source === "trigger" || nextOpen) {
       setOpen(nextOpen);
-      if (nextOpen) refresh();
+      if (nextOpen) void refresh(true);
     }
   };
 

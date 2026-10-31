@@ -4,7 +4,7 @@ import ProjectContext from "@/contexts/ProjectContext";
 import { formatURL, getLocalStorageMenus, getMenus, getOpenKeysByUrls, setLocalStorage } from "@/utils/menuUtils";
 import { AppstoreOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
-import { useContext, useEffect, useLayoutEffect, useState } from "react";
+import { useContext, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 
 const createMenuIcon = item => {
@@ -20,20 +20,21 @@ const WebMenu = () => {
   const { theme } = useContext<any>(ProjectContext);
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const menusList = JSON.parse(getLocalStorageMenus() || "");
-  const [menuItems, setMenuItems] = useState([]);
+  const [menuTick, setMenuTick] = useState(0);
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [openKeys, setOpenkeys] = useState([]);
-  const [menuTick, setMenuTick] = useState(0);
 
-  // 点击 menuItem 触发的事件
+  // 菜单树只在 menus:refresh 时重建，路由切换只更新选中态。
+  const { menuItems, rawMenus } = useMemo(() => {
+    const menusList = JSON.parse(getLocalStorageMenus());
+    const result = getMenus(menusList);
+    return { menuItems: createMenuIcon(result), rawMenus: menusList };
+  }, [menuTick]);
+
   const onClick = props => {
     const { keyPath, key } = props;
-    // key 是指 嵌套到最底层的那一层菜单 key
-    // keyPath 是指 由深到浅组成的数组
-    // keyPath 是当前所有的菜单，我们需要把菜单拼接起来，记住，从后往前
     const menuPath: string[] = [...keyPath].reverse();
-    let changeMenus = menusList.concat();
+    let changeMenus = rawMenus.concat();
     const urls = [];
     for (let index = 0; index < menuPath.length; index++) {
       const item = menuPath[index];
@@ -43,7 +44,7 @@ const WebMenu = () => {
     }
     const url = formatURL("/" + urls.join("/"));
     navigate(url);
-    setOpenkeys(() => keyPath); // 修改当前组件的state
+    setOpenkeys(() => keyPath);
     setSelectedKeys(() => [key]);
     addTag(urls, key);
   };
@@ -55,25 +56,15 @@ const WebMenu = () => {
   }, []);
 
   useLayoutEffect(() => {
-    // 说明：
-    // (1)
-    // 这里要考虑 ( 登陆第一次跳转的加载 ) 和 ( 刷新浏览器的加载 )
-    // 不管哪种情况，都获取当前的 pathname，当前pathname是 ( path和menu的keys要一致的原因  )
-    // 如果第一次刷新，是不是可以直接从地址栏解析出 id ？
-    const menusList = JSON.parse(getLocalStorageMenus() || "");
-    const result = getMenus(menusList);
-    const items = createMenuIcon(result);
     const data = pathname.split("/").filter(v => v);
-    const [openKeys, currentKey] = getOpenKeysByUrls(data, items);
-    setMenuItems(items);
-    setOpenkeys(openKeys);
+    const [nextOpenKeys, currentKey] = getOpenKeysByUrls(data, menuItems);
+    setOpenkeys(nextOpenKeys);
     setSelectedKeys(currentKey);
-  }, [pathname, menuTick]);
+  }, [pathname, menuItems]);
 
-  // 展开/关闭的回调
   const onOpenChange = (openKeys: any) => {
     setOpenkeys(() => openKeys);
-    setLocalStorage("cacheOpenKeys", openKeys); // 记住展开关闭的组，刷新持久化
+    setLocalStorage("cacheOpenKeys", openKeys);
   };
 
   return (

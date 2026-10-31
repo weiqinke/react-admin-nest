@@ -1,3 +1,4 @@
+/** 图表演示页全量注册。工作台/看板请用 setup-pie / setup-cartesian，避免拖入地图、词云等模块。 */
 import * as echarts from "echarts/core";
 import {
   BarChart,

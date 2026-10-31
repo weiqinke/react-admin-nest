@@ -1,5 +1,5 @@
 import { subscribeSession, getUserState } from "@/api/session";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 const ProjectContext: any = React.createContext({
   profile: {},
@@ -31,7 +31,12 @@ export const ProjectContextProvider = ({ theme, setTheme, children }) => {
     return () => controller.abort();
   }, [value.uid]);
 
-  return <ProjectContext.Provider value={{ value, setValue, profile, setProfile, theme, setTheme }}>{children}</ProjectContext.Provider>;
+  const contextValue = useMemo(
+    () => ({ value, setValue, profile, setProfile, theme, setTheme }),
+    [value, profile, theme, setTheme]
+  );
+
+  return <ProjectContext.Provider value={contextValue}>{children}</ProjectContext.Provider>;
 };
 
 export default ProjectContext;
