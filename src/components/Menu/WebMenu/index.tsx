@@ -1,11 +1,10 @@
-﻿import { getMenuPins, putMenuPins, recordMenuRecent } from "@/api/ops";
-import IconFont from "@/components/IconFont";
+﻿import IconFont from "@/components/IconFont";
 import MenuTagContext from "@/contexts/MenuTagContext";
 import ProjectContext from "@/contexts/ProjectContext";
 import { formatURL, getLocalStorageMenus, getMenus, getOpenKeysByUrls, setLocalStorage } from "@/utils/menuUtils";
-import { AppstoreOutlined, PushpinFilled, PushpinOutlined } from "@ant-design/icons";
-import { Button, Menu, Space, Tooltip, Typography } from "antd";
-import { useContext, useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { AppstoreOutlined } from "@ant-design/icons";
+import { Menu } from "antd";
+import { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 
 const createMenuIcon = item => {
@@ -15,16 +14,6 @@ const createMenuIcon = item => {
     return v;
   });
 };
-
-function flattenMenuPaths(items: any[] = [], bucket: { path: string; label: string; key: any }[] = []) {
-  items.forEach(item => {
-    if (item.path && (!item.children || !item.children.length)) {
-      bucket.push({ path: item.path, label: String(item.label || item.name || item.path), key: item.key });
-    }
-    if (item.children?.length) flattenMenuPaths(item.children, bucket);
-  });
-  return bucket;
-}
 
 const WebMenu = () => {
   const { addTag } = useContext(MenuTagContext);
@@ -36,14 +25,13 @@ const WebMenu = () => {
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [openKeys, setOpenkeys] = useState([]);
   const [menuTick, setMenuTick] = useState(0);
-  const [pins, setPins] = useState<string[]>([]);
-  const [recent, setRecent] = useState<string[]>([]);
 
-  const flat = useMemo(() => flattenMenuPaths(menuItems), [menuItems]);
-  const pathLabel = (path: string) => flat.find(item => item.path === path)?.label || path;
-
+  // 点击 menuItem 触发的事件
   const onClick = props => {
     const { keyPath, key } = props;
+    // key 是指 嵌套到最底层的那一层菜单 key
+    // keyPath 是指 由深到浅组成的数组
+    // keyPath 是当前所有的菜单，我们需要把菜单拼接起来，记住，从后往前
     const menuPath: string[] = [...keyPath].reverse();
     let changeMenus = menusList.concat();
     const urls = [];
@@ -55,7 +43,7 @@ const WebMenu = () => {
     }
     const url = formatURL("/" + urls.join("/"));
     navigate(url);
-    setOpenkeys(() => keyPath);
+    setOpenkeys(() => keyPath); // 修改当前组件的state
     setSelectedKeys(() => [key]);
     addTag(urls, key);
   };
@@ -66,31 +54,12 @@ const WebMenu = () => {
     return () => window.removeEventListener("menus:refresh", refresh);
   }, []);
 
-  useEffect(() => {
-    getMenuPins()
-      .then(res => {
-        const data = res.data?.data || {};
-        setPins(data.pins || []);
-        setRecent(data.recent || []);
-      })
-      .catch(() => {
-        setPins([]);
-        setRecent([]);
-      });
-  }, []);
-
-  useEffect(() => {
-    if (!pathname || pathname === "/") return;
-    recordMenuRecent(pathname)
-      .then(res => {
-        const data = res.data?.data || {};
-        if (data.pins) setPins(data.pins);
-        if (data.recent) setRecent(data.recent);
-      })
-      .catch(() => undefined);
-  }, [pathname]);
-
   useLayoutEffect(() => {
+    // 说明：
+    // (1)
+    // 这里要考虑 ( 登陆第一次跳转的加载 ) 和 ( 刷新浏览器的加载 )
+    // 不管哪种情况，都获取当前的 pathname，当前pathname是 ( path和menu的keys要一致的原因  )
+    // 如果第一次刷新，是不是可以直接从地址栏解析出 id ？
     const menusList = JSON.parse(getLocalStorageMenus() || "");
     const result = getMenus(menusList);
     const items = createMenuIcon(result);
@@ -101,72 +70,14 @@ const WebMenu = () => {
     setSelectedKeys(currentKey);
   }, [pathname, menuTick]);
 
+  // 展开/关闭的回调
   const onOpenChange = (openKeys: any) => {
     setOpenkeys(() => openKeys);
-    setLocalStorage("cacheOpenKeys", openKeys);
+    setLocalStorage("cacheOpenKeys", openKeys); // 记住展开关闭的组，刷新持久化
   };
-
-  const togglePin = async () => {
-    const next = pins.includes(pathname) ? pins.filter(item => item !== pathname) : [pathname, ...pins.filter(item => item !== pathname)].slice(0, 50);
-    try {
-      const res = await putMenuPins({ pins: next });
-      const data = res.data?.data || {};
-      setPins(data.pins || next);
-      if (data.recent) setRecent(data.recent);
-    } catch {
-      setPins(next);
-    }
-  };
-
-  const goPath = (path: string) => {
-    navigate(path);
-  };
-
-  const pinned = pins.includes(pathname);
 
   return (
     <div style={{ width: "100%" }}>
-      <div style={{ padding: "8px 12px 4px" }}>
-        <Space size={4} style={{ width: "100%", justifyContent: "space-between" }}>
-          <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-            导航
-          </Typography.Text>
-          <Tooltip title={pinned ? "取消固定当前页" : "固定当前页"}>
-            <Button size="small" type="text" icon={pinned ? <PushpinFilled /> : <PushpinOutlined />} onClick={togglePin} />
-          </Tooltip>
-        </Space>
-        {pins.length ? (
-          <div style={{ marginTop: 6 }}>
-            <Typography.Text type="secondary" style={{ fontSize: 11 }}>
-              固定
-            </Typography.Text>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 4 }}>
-              {pins.slice(0, 8).map(path => (
-                <Button key={path} size="small" type={pathname === path ? "primary" : "default"} onClick={() => goPath(path)}>
-                  {pathLabel(path)}
-                </Button>
-              ))}
-            </div>
-          </div>
-        ) : null}
-        {recent.length ? (
-          <div style={{ marginTop: 8 }}>
-            <Typography.Text type="secondary" style={{ fontSize: 11 }}>
-              最近
-            </Typography.Text>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 4 }}>
-              {recent
-                .filter(path => !pins.includes(path))
-                .slice(0, 6)
-                .map(path => (
-                  <Button key={path} size="small" type="link" style={{ paddingInline: 4 }} onClick={() => goPath(path)}>
-                    {pathLabel(path)}
-                  </Button>
-                ))}
-            </div>
-          </div>
-        ) : null}
-      </div>
       <Menu
         mode="inline"
         theme={theme === "dark" ? "dark" : "light"}
