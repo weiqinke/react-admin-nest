@@ -105,15 +105,15 @@ const SystemInfo: React.FC = () => {
   }, []);
 
   return (
-    <Row gutter={[16, 12]}>
-      <Col xs={24} sm={24} md={8} lg={8} xl={8} xxl={8}>
+    <Row gutter={[12, 12]} align="stretch">
+      <Col xs={24} md={8} className={styles.col}>
         <div className={styles.cardContainer}>
           <div className={styles.Gcontainer}>
             <div className={styles.Ginner}></div>
             <div className={styles.Gafter}></div>
+            <div className={styles.GinnerText}>系统参数</div>
           </div>
           <div className={styles.body}>
-            <div className={styles.title}>系统参数</div>
             <div className={styles.itemText}>
               <em>系统类型：</em>
               {OsInfo.platform}_{OsInfo.arch}
@@ -138,15 +138,15 @@ const SystemInfo: React.FC = () => {
         </div>
       </Col>
 
-      <Col xs={24} sm={24} md={8} lg={8} xl={8} xxl={8}>
+      <Col xs={24} md={8} className={styles.col}>
         <div className={`${styles.cardContainer} ${styles.fense}`}>
           <div className={styles.Gcontainer}>
             <div className={styles.Ginner}></div>
             <div className={styles.Gafter}></div>
+            <div className={styles.GinnerText}>我的消息</div>
           </div>
 
           <div className={styles.body}>
-            <div className={styles.title}>我的消息</div>
             <div className={styles.itemText}>
               <em>CPU Intel(R) Xeon(R) Platinum 8280L 正常</em>
             </div>
@@ -171,14 +171,14 @@ const SystemInfo: React.FC = () => {
           </div>
         </div>
       </Col>
-      <Col xs={24} sm={24} md={8} lg={8} xl={8} xxl={8}>
+      <Col xs={24} md={8} className={styles.col}>
         <div className={`${styles.cardContainer} ${styles.zise}`}>
           <div className={styles.Gcontainer}>
             <div className={styles.Ginner}></div>
             <div className={styles.Gafter}></div>
+            <div className={styles.GinnerText}>内存使用率</div>
           </div>
           <div className={styles.body}>
-            <div className={styles.title}>{`内存使用率(${memPercentage}%)`}</div>
             <div className={styles.mem}>
               <Progress type="circle" percent={memPercentage} strokeColor={statusColor(memPercentage)} format={percent => percent + "%"} />
               <div className={styles.surplus}>剩余{formatBytes(OsInfo.freemem)}</div>

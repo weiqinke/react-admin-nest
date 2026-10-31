@@ -70,18 +70,21 @@ const DashboardPanel: FC = () => {
 
     const funnelChart = echarts.init(funnelRef.current);
     funnelChart.setOption({
-      title: { text: "工单漏斗", left: 0, textStyle: { fontSize: 14 } },
-      tooltip: { trigger: "item" },
+      title: { text: "工单状态", left: 0, textStyle: { fontSize: 14 } },
+      tooltip: { trigger: "axis", axisPointer: { type: "shadow" } },
+      grid: { left: 72, right: 24, top: 40, bottom: 28 },
+      xAxis: { type: "value", minInterval: 1 },
+      yAxis: {
+        type: "category",
+        data: funnelOrder.map(status => TICKET_STATUS[status] || status)
+      },
       series: [
         {
-          type: "funnel",
-          left: "10%",
-          width: "80%",
-          label: { formatter: "{b}: {c}" },
-          data: funnelOrder.map(status => ({
-            name: TICKET_STATUS[status] || status,
-            value: Number(funnel[status] || 0)
-          }))
+          type: "bar",
+          barWidth: 18,
+          data: funnelOrder.map(status => Number(funnel[status] || 0)),
+          itemStyle: { color: "#1677ff" },
+          label: { show: true, position: "right" }
         }
       ]
     });
@@ -148,8 +151,8 @@ const DashboardPanel: FC = () => {
             <Col xs={24} lg={12}>
               <div ref={accessRef} style={{ height: 280, width: "100%" }} />
             </Col>
-            <Col xs={24} lg={12}>
-              <div ref={funnelRef} style={{ height: 280, width: "100%" }} />
+            <Col xs={24}>
+              <div ref={funnelRef} style={{ height: 260, width: "100%" }} />
             </Col>
           </Row>
         </>

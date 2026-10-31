@@ -157,27 +157,27 @@ const Workplace = () => {
           </div>
         </Col>
       </Row>
-      <Row gutter={[12, 12]}>
-        <Col xs={24} sm={24} md={24} lg={16} xl={16} xxl={16}>
+      <Row gutter={[12, 12]} className={styles.chartRow}>
+        <Col xs={24} lg={16}>
           <div className={styles.baseChart}>
-            <div className={styles.imgbg} style={{ backgroundImage: `url(${src})` }}></div>
+            <div className={styles.imgbg} style={{ backgroundImage: `url(${src})` }} />
           </div>
         </Col>
-        <Col xs={24} sm={24} md={24} lg={8} xl={8} xxl={8}>
+        <Col xs={24} lg={8}>
           <div className={styles.baseChart}>
             <PieBorderRadius />
           </div>
         </Col>
       </Row>
-      <Row gutter={[12, 12]}>
-        <Col xs={24} sm={24} md={24} lg={8} xl={8} xxl={8}>
+      <Row gutter={[12, 12]} className={styles.chartRow}>
+        <Col xs={24} lg={8}>
           <div className={styles.baseChart}>
             <Round />
           </div>
         </Col>
-        <Col xs={24} sm={24} md={24} lg={16} xl={16} xxl={16}>
+        <Col xs={24} lg={16}>
           <div className={styles.baseChart}>
-            <div className={styles.imgbg} style={{ backgroundImage: `url(https://dr.cdnux.com/18510675/i/2024/12/31/14tve.webp)` }}></div>
+            <div className={styles.imgbg} style={{ backgroundImage: `url(https://dr.cdnux.com/18510675/i/2024/12/31/14tve.webp)` }} />
           </div>
         </Col>
       </Row>

@@ -11,6 +11,13 @@
   border-radius: 6px;
 }
 
+.admin-card-table {
+  margin-top: 12px;
+  padding: 12px;
+  background: #fff;
+  border-radius: 6px;
+}
+
 .admin-card + .admin-card {
   margin-top: 12px;
 }
@@ -18,23 +25,54 @@
 .admin-toolbar {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-end;
   gap: 8px 12px;
   margin-bottom: 12px;
 }
 
+.admin-card > .admin-toolbar:last-child {
+  margin-bottom: 0;
+}
+
 .admin-filter-form.ant-form-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
   row-gap: 12px;
-  width: 100%;
+  column-gap: 8px;
+  flex: 1 1 auto;
+  min-width: 0;
+  width: auto;
+  max-width: 100%;
 }
 
 .admin-filter-form.ant-form-inline .ant-form-item {
-  margin-inline-end: 16px;
+  margin-inline-end: 0;
   margin-bottom: 0;
+}
+
+.admin-filter-form.ant-form-inline .ant-form-item-row {
+  align-items: center !important;
 }
 
 .admin-filter-form.ant-form-inline .ant-form-item-label {
   padding: 0;
+  height: auto;
+}
+
+.admin-filter-form.ant-form-inline .ant-form-item-control-input {
+  min-height: 32px;
+}
+
+.admin-filter-form .admin-filter-actions.ant-form-item {
+  align-self: flex-end;
+}
+
+.admin-filter-form .admin-filter-actions .ant-form-item-control-input-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
 }
 
 .admin-table-actions {

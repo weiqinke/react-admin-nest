@@ -135,85 +135,83 @@ const UserAdmin: FC = () => {
       />
       {dataScope ? <Alert className="mt-3" type="info" showIcon title={`当前数据范围：${dataScopeLabel(dataScope)}`} /> : null}
       <div className="admin-card">
-        <Form form={form} name="user_admin_filter" layout="inline" className="admin-filter-form" autoComplete="off" onFinish={() => findAll(1)}>
-          <Form.Item name="keyword" label="用户名">
-            <Input placeholder="用户名包含" autoComplete="off" allowClear style={{ width: 160 }} />
-          </Form.Item>
-          <Form.Item name="status" label="状态">
-            <Select
-              allowClear
-              placeholder="全部"
-              style={{ width: 120 }}
-              options={[
-                { value: 1, label: "启用" },
-                { value: 0, label: "停用" }
-              ]}
-            />
-          </Form.Item>
-          {canFilterDept ? (
-            <Form.Item name="department_id" label="部门">
-              <TreeSelect
-                allowClear
-                showSearch={{ treeNodeFilterProp: "title" }}
-                treeDefaultExpandAll
-                placeholder="精确匹配，不含下级"
-                style={{ width: 220 }}
-                treeData={toDeptTree(deptTree)}
-              />
+        <div className="admin-toolbar">
+          <Form form={form} name="user_admin_filter" layout="inline" className="admin-filter-form" autoComplete="off" onFinish={() => findAll(1)}>
+            <Form.Item name="keyword" label="用户名">
+              <Input placeholder="用户名包含" autoComplete="off" allowClear style={{ width: 140 }} />
             </Form.Item>
-          ) : null}
-          {canFilterRole ? (
-            <Form.Item name="role" label="角色">
+            <Form.Item name="status" label="状态">
               <Select
                 allowClear
-                showSearch={{ optionFilterProp: "label" }}
-                placeholder="直接分配的角色"
-                style={{ width: 200 }}
-                options={roles.map(item => ({
-                  value: item.code,
-                  label: item.name ? `${item.name}（${item.code}）` : item.code
-                }))}
+                placeholder="全部"
+                style={{ width: 100 }}
+                options={[
+                  { value: 1, label: "启用" },
+                  { value: 0, label: "停用" }
+                ]}
               />
             </Form.Item>
+            {canFilterDept ? (
+              <Form.Item name="department_id" label="部门">
+                <TreeSelect
+                  allowClear
+                  showSearch={{ treeNodeFilterProp: "title" }}
+                  treeDefaultExpandAll
+                  placeholder="精确匹配"
+                  style={{ width: 180 }}
+                  treeData={toDeptTree(deptTree)}
+                />
+              </Form.Item>
+            ) : null}
+            {canFilterRole ? (
+              <Form.Item name="role" label="角色">
+                <Select
+                  allowClear
+                  showSearch={{ optionFilterProp: "label" }}
+                  placeholder="直接角色"
+                  style={{ width: 160 }}
+                  options={roles.map(item => ({
+                    value: item.code,
+                    label: item.name ? `${item.name}（${item.code}）` : item.code
+                  }))}
+                />
+              </Form.Item>
+            ) : null}
+          </Form>
+          <Button type="primary" onClick={() => form.submit()}>
+            查询
+          </Button>
+          {canWrite ? <Button onClick={() => setUser({})}>添加</Button> : null}
+          {canRead ? (
+            <Button
+              loading={exporting}
+              onClick={async () => {
+                const values = form.getFieldsValue();
+                setExporting(true);
+                try {
+                  await exportUsersCsv(
+                    {
+                      keyword: values.keyword,
+                      status: values.status,
+                      department_id: values.department_id,
+                      role: values.role
+                    },
+                    `users-${dayjs().format("YYYYMMDD")}.csv`
+                  );
+                } catch {
+                  message.error("导出失败");
+                } finally {
+                  setExporting(false);
+                }
+              }}>
+              导出 CSV
+            </Button>
           ) : null}
-          <Form.Item>
-            <div className="admin-toolbar" style={{ marginBottom: 0 }}>
-              <Button type="primary" htmlType="submit">
-                查询
-              </Button>
-              {canWrite ? <Button onClick={() => setUser({})}>添加</Button> : null}
-              {canRead ? (
-                <Button
-                  loading={exporting}
-                  onClick={async () => {
-                    const values = form.getFieldsValue();
-                    setExporting(true);
-                    try {
-                      await exportUsersCsv(
-                        {
-                          keyword: values.keyword,
-                          status: values.status,
-                          department_id: values.department_id,
-                          role: values.role
-                        },
-                        `users-${dayjs().format("YYYYMMDD")}.csv`
-                      );
-                    } catch {
-                      message.error("导出失败");
-                    } finally {
-                      setExporting(false);
-                    }
-                  }}>
-                  导出 CSV
-                </Button>
-              ) : null}
-              {canWrite ? <Button onClick={() => setImportOpen(true)}>导入 CSV</Button> : null}
-            </div>
-          </Form.Item>
-        </Form>
+          {canWrite ? <Button onClick={() => setImportOpen(true)}>导入 CSV</Button> : null}
+        </div>
       </div>
 
-      <div className="admin-card" style={{ padding: 0 }}>
+      <div className="admin-card-table">
         <UserTable
           dataSource={dataSource}
           selfId={selfId}

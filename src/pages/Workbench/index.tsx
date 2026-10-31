@@ -55,7 +55,7 @@ const Workbench: FC = () => {
         </Col>
       </Row>
       <DashboardPanel />
-      <div className="admin-card" style={{ marginTop: 12 }}>
+      <div style={{ marginTop: 12 }}>
         <SystemInfo />
       </div>
       <div className="admin-card">

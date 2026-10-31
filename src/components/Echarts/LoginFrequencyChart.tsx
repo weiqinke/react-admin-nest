@@ -69,7 +69,7 @@ const LoginFrequencyChart = ({ dataSource = [] }) => {
     };
   }, [dataSource]);
 
-  return <div ref={ref} style={{ height: 400, margin: 12 }}></div>;
+  return <div ref={ref} style={{ height: 360, width: "100%", margin: 0 }}></div>;
 };
 
 export default LoginFrequencyChart;

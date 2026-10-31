@@ -43,15 +43,16 @@ const PieBorderRadius: FC = () => {
         }
       ]
     });
-    window.addEventListener("resize", function () {
-      myChart.resize();
-    });
+    const onResize = () => myChart.resize();
+    window.addEventListener("resize", onResize);
+    requestAnimationFrame(onResize);
     return () => {
+      window.removeEventListener("resize", onResize);
       myChart.dispose && myChart.dispose();
     };
   }, []);
 
-  return <div ref={ref} style={{ height: 400, margin: 0 }}></div>;
+  return <div ref={ref} style={{ width: "100%", height: "100%", minHeight: 320, margin: 0 }}></div>;
 };
 
 export default PieBorderRadius;

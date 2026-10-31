@@ -3,10 +3,11 @@ $fork-me: "@/assets/github/fork.png";
 .baseStyle {
   display: flex;
   align-items: center;
-  min-height: 112px;
+  min-height: 104px;
+  height: 100%;
   padding: 1rem 1.25rem;
   border-radius: 6px;
-  font-size: clamp(1.25rem, 2.2vw, 2rem);
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
   overflow: hidden;
 }
 
@@ -34,14 +35,14 @@ $fork-me: "@/assets/github/fork.png";
 .iconStyle {
   flex-shrink: 0;
   color: #fbfbf4b3;
-  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-size: clamp(2.25rem, 4vw, 3.5rem);
   padding-right: 0.75rem;
   line-height: 1;
 }
 
 .baseTitle {
   margin-top: 0.25rem;
-  font-size: 0.85em;
+  font-size: 0.75em;
   line-height: 1.2;
   opacity: 0.95;
 }
@@ -52,8 +53,8 @@ $fork-me: "@/assets/github/fork.png";
   right: 0;
   background-image: url($fork-me);
   background-size: 100% 100%;
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   z-index: 2;
   cursor: pointer;
 }
@@ -61,23 +62,50 @@ $fork-me: "@/assets/github/fork.png";
 .header {
   color: #fff;
   margin-bottom: 4px;
+
+  :global(.ant-col) {
+    display: flex;
+  }
+
+  :global(.ant-col > div) {
+    flex: 1;
+    width: 100%;
+  }
 }
 
 .container {
   padding: 12px;
 }
 
+.chartRow {
+  :global(.ant-col) {
+    display: flex;
+  }
+}
+
 .baseChart {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 360px;
   margin-top: 12px;
   border-radius: 6px;
   overflow: hidden;
   background-color: #fff;
 
   .imgbg {
+    flex: 1;
+    width: 100%;
+    height: 100%;
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-    height: min(400px, 50vw);
-    min-height: 220px;
+  }
+
+  .chartHost {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
   }
 }
