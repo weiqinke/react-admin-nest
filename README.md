@@ -11,22 +11,22 @@ React 管理端，对接后端 [go_ai / goadmin](https://github.com/weiqinke/go_
 
 ## Features
 
-| Area | Notes |
-| --- | --- |
-| Auth | Captcha, RSA-OAEP password, JWT access/refresh, register switch, forgot/reset password, email invite |
-| Account security | Change password, TOTP, session list, trusted devices, step-up on sensitive writes |
-| OAuth | GitHub, Gitee, and enterprise OIDC login and account binding |
-| RBAC | Users, roles, permission codes, menus; role constraints (SSD/DSD); department data scope |
-| Org | Department tree and posts |
-| Announcements | Publish, required-read gate, read receipts, remind unread users |
-| Labels / dicts | Global labels; dict types and items, with CSV import/export |
-| Inbox | Bell (notices, messages, todos), message center, per-event notification prefs |
-| Audit | Operation logs filtered by data scope, detail, CSV export |
-| Realtime | Online users, force offline, screenshot, presence subscribe |
-| Ops | System config, outbound webhooks, feature flags, cron jobs, API keys, changelog |
-| Tickets | My tickets; admin list, templates, and auto-assign rules |
-| AI | Model config and in-app chat (`ai:use`) |
-| Workplace | Home summary, access charts, map and chart demos |
+| Area             | Notes                                                                                                |
+| ---------------- | ---------------------------------------------------------------------------------------------------- |
+| Auth             | Captcha, RSA-OAEP password, JWT access/refresh, register switch, forgot/reset password, email invite |
+| Account security | Change password, TOTP, session list, trusted devices, step-up on sensitive writes                    |
+| OAuth            | GitHub, Gitee, and enterprise OIDC login and account binding                                         |
+| RBAC             | Users, roles, permission codes, menus; role constraints (SSD/DSD); department data scope             |
+| Org              | Department tree and posts                                                                            |
+| Announcements    | Publish, required-read gate, read receipts, remind unread users                                      |
+| Labels / dicts   | Global labels; dict types and items, with CSV import/export                                          |
+| Inbox            | Bell (notices, messages, todos), message center, per-event notification prefs                        |
+| Audit            | Operation logs filtered by data scope, detail, CSV export                                            |
+| Realtime         | Online users, force offline, screenshot, presence subscribe                                          |
+| Ops              | System config, outbound webhooks, feature flags, cron jobs, API keys, changelog                      |
+| Tickets          | My tickets; admin list, templates, and auto-assign rules                                             |
+| AI               | Model config and in-app chat (`ai:use`)                                                              |
+| Workplace        | Home summary, access charts, map and chart demos                                                     |
 
 Menus come from `GET /api/me/menus`. A route exists in this repo only if the signed-in user is granted the matching menu.
 
@@ -57,24 +57,24 @@ Production builds use the same origin by default: the browser calls `/api` and `
 
 Seeded by the backend:
 
-| User | Password | Notes |
-| --- | --- | --- |
-| `admin` | `admin123` | Full admin |
-| `user` | `user123` | Regular user |
-| `cashier1` | `cashier123` | Cashier |
-| `accountant1` | `account123` | Accountant; SSD-exclusive with cashier |
-| `dual1` | `dual123` | Manager + cashier; login must send `active_roles` (DSD) |
+| User          | Password     | Notes                                                   |
+| ------------- | ------------ | ------------------------------------------------------- |
+| `admin`       | `admin123`   | Full admin                                              |
+| `user`        | `user123`    | Regular user                                            |
+| `cashier1`    | `cashier123` | Cashier                                                 |
+| `accountant1` | `account123` | Accountant; SSD-exclusive with cashier                  |
+| `dual1`       | `dual123`    | Manager + cashier; login must send `active_roles` (DSD) |
 
 ## Scripts
 
-| Command | Description |
-| --- | --- |
-| `pnpm dev` | Dev server (`vite --host`) |
-| `pnpm build` | Production build |
-| `pnpm preview` | Preview the build (same `/api` proxy) |
-| `pnpm lint` | ESLint |
-| `pnpm lint:fix` | ESLint with `--fix` |
-| `pnpm prettier` | Format with Prettier |
+| Command         | Description                           |
+| --------------- | ------------------------------------- |
+| `pnpm dev`      | Dev server (`vite --host`)            |
+| `pnpm build`    | Production build                      |
+| `pnpm preview`  | Preview the build (same `/api` proxy) |
+| `pnpm lint`     | ESLint                                |
+| `pnpm lint:fix` | ESLint with `--fix`                   |
+| `pnpm prettier` | Format with Prettier                  |
 
 `ANALYZE=1 pnpm build` writes a bundle report to `analysis-chart.html`.
 
@@ -87,33 +87,33 @@ Public:
 
 Signed in:
 
-| Path | Page |
-| --- | --- |
-| `/workplace` `/workbench` | Home summary and dashboard |
-| `/account` | Profile, message center, notification prefs, security, OAuth bindings |
-| `/aichat` | AI chat |
-| `/mytickets` | Tickets I opened or was assigned |
-| `/about` | About and published changelog |
-| `/management/useradmin` | Users |
-| `/management/roleadmin` | Roles |
-| `/management/permissionadmin` | Permission codes |
-| `/management/menuadmin` | Menus |
-| `/management/deptadmin` | Departments |
-| `/management/postadmin` | Posts |
-| `/management/labelsadmin` | Labels |
-| `/management/dictadmin` | Dictionaries |
-| `/management/placardadmin` | Announcements |
-| `/management/noticeadmin` | Inbox / notices |
-| `/management/auditadmin` | Audit log |
-| `/management/websocketadmin` | Online users |
-| `/management/configadmin` | System config |
-| `/management/webhookadmin` | Webhooks |
-| `/management/flagadmin` | Feature flags |
-| `/management/ticketadmin` | Ticket handling |
-| `/management/jobadmin` | Scheduled jobs |
-| `/management/apikeyadmin` | API keys |
-| `/management/aiadmin` | AI models |
-| `/management/changelogadmin` | Changelog |
+| Path                          | Page                                                                  |
+| ----------------------------- | --------------------------------------------------------------------- |
+| `/workplace` `/workbench`     | Home summary and dashboard                                            |
+| `/account`                    | Profile, message center, notification prefs, security, OAuth bindings |
+| `/aichat`                     | AI chat                                                               |
+| `/mytickets`                  | Tickets I opened or was assigned                                      |
+| `/about`                      | About and published changelog                                         |
+| `/management/useradmin`       | Users                                                                 |
+| `/management/roleadmin`       | Roles                                                                 |
+| `/management/permissionadmin` | Permission codes                                                      |
+| `/management/menuadmin`       | Menus                                                                 |
+| `/management/deptadmin`       | Departments                                                           |
+| `/management/postadmin`       | Posts                                                                 |
+| `/management/labelsadmin`     | Labels                                                                |
+| `/management/dictadmin`       | Dictionaries                                                          |
+| `/management/placardadmin`    | Announcements                                                         |
+| `/management/noticeadmin`     | Inbox / notices                                                       |
+| `/management/auditadmin`      | Audit log                                                             |
+| `/management/websocketadmin`  | Online users                                                          |
+| `/management/configadmin`     | System config                                                         |
+| `/management/webhookadmin`    | Webhooks                                                              |
+| `/management/flagadmin`       | Feature flags                                                         |
+| `/management/ticketadmin`     | Ticket handling                                                       |
+| `/management/jobadmin`        | Scheduled jobs                                                        |
+| `/management/apikeyadmin`     | API keys                                                              |
+| `/management/aiadmin`         | AI models                                                             |
+| `/management/changelogadmin`  | Changelog                                                             |
 
 Chart and map demos live under `/charts`, `/music`, and `/bmap`.
 
