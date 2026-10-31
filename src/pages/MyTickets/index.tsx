@@ -2,22 +2,17 @@ import { createTicket, listMyTickets, listTicketTemplates, ticketOverdue, TICKET
 import { getUserState } from "@/api/session";
 import PageIntroduction from "@/components/PageIntroduction";
 import TicketPanel from "@/components/TicketPanel";
-import { Button, DatePicker, Form, Input, Modal, Segmented, Select, Space, Table, Tag, message } from "antd";
+import TicketStatusTag from "@/components/TicketStatusTag";
+import { Button, DatePicker, Form, Input, Modal, Segmented, Select, Table, Tag, message } from "antd";
 import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
 
 const infos = [{ title: "工单" }, { title: "我的工单" }];
 
-const statusColor: Record<string, string> = {
-  open: "gold",
-  assigned: "blue",
-  processing: "cyan",
-  closed: "default"
-};
-
 const MyTickets: FC = () => {
   const [list, setList] = useState<any[]>([]);
   const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [keyword, setKeyword] = useState("");
   const [status, setStatus] = useState<string | undefined>();
   const [priority, setPriority] = useState<string | undefined>();
@@ -40,12 +35,14 @@ const MyTickets: FC = () => {
   });
 
   const load = () => {
+    setLoading(true);
     listMyTickets(query())
       .then(res => {
         setList(res.data?.data?.list || []);
         setTotal(res.data?.data?.total || 0);
       })
-      .catch(() => setList([]));
+      .catch(() => setList([]))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -118,7 +115,7 @@ const MyTickets: FC = () => {
       title: "状态",
       dataIndex: "status",
       width: 100,
-      render: (value: string) => <Tag color={statusColor[value] || "default"}>{TICKET_STATUS[value] || value}</Tag>
+      render: (value: string) => <TicketStatusTag status={value} />
     },
     {
       title: "截止",
@@ -152,13 +149,13 @@ const MyTickets: FC = () => {
   ];
 
   return (
-    <div className="p-3">
+    <div className="admin-page">
       <PageIntroduction
         infos={infos}
         introduction="这里同时列出你提交的工单和分派给你的工单。可按标题、优先级和是否过期筛选。截止到点不会自动关单。有处理人时留言会通知对方。"
       />
-      <div className="mt-3 bg-white p-3">
-        <Space className="mb-3" wrap>
+      <div className="admin-card">
+        <div className="admin-toolbar">
           <Button type="primary" onClick={() => setCreating(true)}>
             提交工单
           </Button>
@@ -197,9 +194,17 @@ const MyTickets: FC = () => {
             onChange={value => setOverdue(value)}
           />
           <Button onClick={() => load()}>查询</Button>
-        </Space>
+        </div>
         {total > list.length ? <div className="mb-2 text-neutral-500">还有更早的工单未加载，可用筛选缩小范围。</div> : null}
-        <Table rowKey="id" columns={columns} dataSource={visible} pagination={{ pageSize: 20 }} />
+        {side !== "all" ? <div className="mb-2 text-neutral-500">「我提交的 / 分派给我」仅筛选已加载列表中的结果。</div> : null}
+        <Table
+          rowKey="id"
+          loading={loading}
+          columns={columns}
+          dataSource={visible}
+          locale={{ emptyText: loading ? "加载中…" : "暂无工单" }}
+          pagination={{ pageSize: 20, total: visible.length }}
+        />
       </div>
       <Modal open={creating} title="提交工单" confirmLoading={saving} onOk={() => form.submit()} onCancel={() => setCreating(false)} destroyOnHidden>
         <Form form={form} layout="vertical" initialValues={{ priority: "normal" }} onFinish={submit}>

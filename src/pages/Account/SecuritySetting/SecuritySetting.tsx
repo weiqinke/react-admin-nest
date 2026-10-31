@@ -7,24 +7,30 @@ import { FC, useEffect, useState } from "react";
 const SecuritySetting: FC = function () {
   const [form] = Form.useForm();
   const [totpForm] = Form.useForm();
+  const [disableForm] = Form.useForm();
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [sessions, setSessions] = useState<any[]>([]);
   const [devices, setDevices] = useState<any[]>([]);
   const [totpEnabled, setTotpEnabled] = useState(false);
   const [setup, setSetup] = useState<{ secret?: string; otpauth_uri?: string } | null>(null);
   const [totpBusy, setTotpBusy] = useState(false);
+  const [disableOpen, setDisableOpen] = useState(false);
   const mustChange = localStorage.getItem("must_change_password") === "1";
 
   const load = () => {
-    listSessions()
-      .then(res => setSessions(res.data?.data?.list || []))
-      .catch(() => setSessions([]));
-    listTrustedDevices()
-      .then(res => setDevices(res.data?.data?.list || []))
-      .catch(() => setDevices([]));
-    getTotpStatus()
-      .then(res => setTotpEnabled(Boolean(res.data?.data?.enabled)))
-      .catch(() => setTotpEnabled(false));
+    setLoading(true);
+    Promise.all([
+      listSessions()
+        .then(res => setSessions(res.data?.data?.list || []))
+        .catch(() => setSessions([])),
+      listTrustedDevices()
+        .then(res => setDevices(res.data?.data?.list || []))
+        .catch(() => setDevices([])),
+      getTotpStatus()
+        .then(res => setTotpEnabled(Boolean(res.data?.data?.enabled)))
+        .catch(() => setTotpEnabled(false))
+    ]).finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -68,24 +74,20 @@ const SecuritySetting: FC = function () {
   };
 
   const turnOffTotp = () => {
-    Modal.confirm({
-      title: "关闭双因素认证",
-      content: (
-        <Form form={totpForm} layout="vertical" style={{ marginTop: 12 }}>
-          <Form.Item name="code" label="当前 TOTP" rules={[{ required: true, message: "请输入验证码" }]}>
-            <Input placeholder="6 位验证码" maxLength={8} />
-          </Form.Item>
-        </Form>
-      ),
-      okText: "关闭",
-      okType: "danger",
-      onOk: async () => {
-        const values = await totpForm.validateFields();
-        await disableTotp(values.code.trim());
-        message.success("已关闭双因素认证");
-        load();
-      }
-    });
+    disableForm.resetFields();
+    setDisableOpen(true);
+  };
+
+  const submitDisableTotp = async (values: { code: string }) => {
+    setTotpBusy(true);
+    try {
+      await disableTotp(values.code.trim());
+      message.success("已关闭双因素认证");
+      setDisableOpen(false);
+      load();
+    } finally {
+      setTotpBusy(false);
+    }
   };
 
   const revoke = (row: any) => {
@@ -190,8 +192,10 @@ const SecuritySetting: FC = function () {
       <Col span={24}>
         <Table
           rowKey="id"
+          loading={loading}
           dataSource={sessions}
           pagination={false}
+          locale={{ emptyText: loading ? "加载中…" : "暂无会话" }}
           columns={[
             { title: "IP", dataIndex: "ip", width: 140 },
             { title: "设备", dataIndex: "user_agent", ellipsis: true },
@@ -224,9 +228,10 @@ const SecuritySetting: FC = function () {
       <Col span={24}>
         <Table
           rowKey="id"
+          loading={loading}
           dataSource={Array.isArray(devices) ? devices : []}
           pagination={false}
-          locale={{ emptyText: "暂无可信设备" }}
+          locale={{ emptyText: loading ? "加载中…" : "暂无可信设备" }}
           columns={[
             { title: "标签", dataIndex: "label", ellipsis: true, render: (v: string) => v || "—" },
             { title: "创建时间", dataIndex: "created_at", width: 180 },
@@ -258,6 +263,21 @@ const SecuritySetting: FC = function () {
           ]}
         />
       </Col>
+      <Modal
+        open={disableOpen}
+        title="关闭双因素认证"
+        okText="关闭"
+        okType="danger"
+        confirmLoading={totpBusy}
+        destroyOnHidden
+        onOk={() => disableForm.submit()}
+        onCancel={() => setDisableOpen(false)}>
+        <Form form={disableForm} layout="vertical" onFinish={submitDisableTotp}>
+          <Form.Item name="code" label="当前 TOTP" rules={[{ required: true, message: "请输入验证码" }]}>
+            <Input placeholder="6 位验证码" maxLength={8} />
+          </Form.Item>
+        </Form>
+      </Modal>
     </Row>
   );
 };

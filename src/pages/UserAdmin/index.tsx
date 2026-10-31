@@ -43,14 +43,18 @@ const UserAdmin: FC = () => {
   const [inviteSaving, setInviteSaving] = useState(false);
   const [inviteLink, setInviteLink] = useState("");
   const [inviteForm] = Form.useForm();
-  const [batchReason, setBatchReason] = useState("");
+  const [batchOpen, setBatchOpen] = useState(false);
+  const [batchStatus, setBatchStatus] = useState<0 | 1>(1);
+  const [batchSaving, setBatchSaving] = useState(false);
+  const [batchForm] = Form.useForm();
+  const [tableLoading, setTableLoading] = useState(false);
   const selfId = String(getUserState().uid || "");
   const canFilterDept = hasPermission("dept:read");
   const canFilterRole = hasPermission("role:read");
   const canWrite = hasPermission("user:write");
   const canRead = hasPermission("user:read");
 
-  const runBatchStatus = (status: number) => {
+  const openBatchStatus = (status: 0 | 1) => {
     if (!selectedKeys.length) {
       message.warning("请先勾选用户");
       return;
@@ -60,29 +64,25 @@ const UserAdmin: FC = () => {
       message.warning("不能停用当前登录账号");
       return;
     }
-    Modal.confirm({
-      title: status === 0 ? "批量停用" : "批量启用",
-      icon: <ExclamationCircleOutlined />,
-      content: (
-        <div>
-          <p>
-            将对 {ids.length} 个用户执行{status === 0 ? "停用" : "启用"}。{status === 0 ? "停用会踢掉对方会话，且需要二次确认。" : ""}
-          </p>
-          {status === 0 ? <Input.TextArea rows={2} placeholder="停用原因（可选）" defaultValue={batchReason} onChange={e => setBatchReason(e.target.value)} /> : null}
-        </div>
-      ),
-      okText: "确定",
-      okType: status === 0 ? "danger" : "primary",
-      onOk: async () => {
-        const res = await batchUserStatus({ ids, status, reason: status === 0 ? batchReason : undefined });
-        const failed = res.data?.data?.failed || [];
-        if (failed.length) message.warning(`完成，失败 ${failed.length} 个`);
-        else message.success("已更新");
-        setSelectedKeys([]);
-        setBatchReason("");
-        findAll(page);
-      }
-    });
+    setBatchStatus(status);
+    batchForm.resetFields();
+    setBatchOpen(true);
+  };
+
+  const submitBatchStatus = async (values: { reason?: string }) => {
+    const ids = batchStatus === 0 ? selectedKeys.filter(id => id !== selfId) : selectedKeys;
+    setBatchSaving(true);
+    try {
+      const res = await batchUserStatus({ ids, status: batchStatus, reason: batchStatus === 0 ? values.reason : undefined });
+      const failed = res.data?.data?.failed || [];
+      if (failed.length) message.warning(`完成，失败 ${failed.length} 个`);
+      else message.success("已更新");
+      setSelectedKeys([]);
+      setBatchOpen(false);
+      findAll(page);
+    } finally {
+      setBatchSaving(false);
+    }
   };
 
   const submitInvite = async (values: any) => {
@@ -156,6 +156,7 @@ const UserAdmin: FC = () => {
 
   const findAll = (next = 1) => {
     setUser(null);
+    setTableLoading(true);
     const { keyword, status, department_id, role } = form.getFieldsValue();
     findUsers({ page: next, page_size: pageSize, keyword, status, department_id, role })
       .then(result => {
@@ -172,7 +173,8 @@ const UserAdmin: FC = () => {
       .catch(() => {
         setDataSource([]);
         setTotal(0);
-      });
+      })
+      .finally(() => setTableLoading(false));
   };
   useEffect(() => {
     findAll(1);
@@ -253,8 +255,8 @@ const UserAdmin: FC = () => {
           ) : null}
           {canWrite && selectedKeys.length ? (
             <Space>
-              <Button onClick={() => runBatchStatus(1)}>批量启用</Button>
-              <Button danger onClick={() => runBatchStatus(0)}>
+              <Button onClick={() => openBatchStatus(1)}>批量启用</Button>
+              <Button danger onClick={() => openBatchStatus(0)}>
                 批量停用
               </Button>
             </Space>
@@ -291,6 +293,7 @@ const UserAdmin: FC = () => {
       <div className="admin-card-table">
         <UserTable
           dataSource={dataSource}
+          loading={tableLoading}
           selfId={selfId}
           canUnlock={canWrite}
           canSelect={canWrite}
@@ -303,6 +306,27 @@ const UserAdmin: FC = () => {
           pagination={{ current: page, pageSize, total, showSizeChanger: false, onChange: next => findAll(next) }}
         />
       </div>
+      <Modal
+        open={batchOpen}
+        title={batchStatus === 0 ? "批量停用" : "批量启用"}
+        okText="确定"
+        okType={batchStatus === 0 ? "danger" : "primary"}
+        confirmLoading={batchSaving}
+        destroyOnHidden
+        onOk={() => batchForm.submit()}
+        onCancel={() => setBatchOpen(false)}>
+        <Form form={batchForm} layout="vertical" onFinish={submitBatchStatus}>
+          <p>
+            将对 {(batchStatus === 0 ? selectedKeys.filter(id => id !== selfId) : selectedKeys).length} 个用户执行
+            {batchStatus === 0 ? "停用" : "启用"}。{batchStatus === 0 ? "停用会踢掉对方会话，且需要二次确认。" : ""}
+          </p>
+          {batchStatus === 0 ? (
+            <Form.Item name="reason" label="停用原因">
+              <Input.TextArea rows={2} placeholder="可选" maxLength={256} />
+            </Form.Item>
+          ) : null}
+        </Form>
+      </Modal>
 
       {user && <UserEditModal initUser={user} onOk={() => findAll()} onCancel={() => setUser(null)} />}
       <Modal

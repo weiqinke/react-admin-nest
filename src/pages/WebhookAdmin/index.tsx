@@ -22,6 +22,9 @@ const WebhookAdmin: FC = () => {
   const [deliveries, setDeliveries] = useState<any[]>([]);
   const [stats, setStats] = useState<any[]>([]);
   const [statsDays, setStatsDays] = useState(7);
+  const [listLoading, setListLoading] = useState(false);
+  const [deliveryLoading, setDeliveryLoading] = useState(false);
+  const [statsLoading, setStatsLoading] = useState(false);
   const [creating, setCreating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState<string | undefined>();
@@ -29,21 +32,27 @@ const WebhookAdmin: FC = () => {
   const canWrite = hasPermission("config:write");
 
   const load = () => {
+    setListLoading(true);
     listWebhooks()
       .then(res => setList(res.data?.data?.list || []))
-      .catch(() => setList([]));
+      .catch(() => setList([]))
+      .finally(() => setListLoading(false));
   };
 
   const loadDeliveries = () => {
+    setDeliveryLoading(true);
     listWebhookDeliveries({ status, limit: 50 })
       .then(res => setDeliveries(res.data?.data?.list || []))
-      .catch(() => setDeliveries([]));
+      .catch(() => setDeliveries([]))
+      .finally(() => setDeliveryLoading(false));
   };
 
   const loadStats = (days = statsDays) => {
+    setStatsLoading(true);
     listWebhookStats(days)
       .then(res => setStats(res.data?.data?.list || []))
-      .catch(() => setStats([]));
+      .catch(() => setStats([]))
+      .finally(() => setStatsLoading(false));
   };
 
   useEffect(() => {
@@ -196,7 +205,15 @@ const WebhookAdmin: FC = () => {
             </Button>
           ) : null}
         </div>
-        <Table rowKey="id" columns={columns} dataSource={list} pagination={false} scroll={{ x: 1000 }} />
+        <Table
+          rowKey="id"
+          loading={listLoading}
+          columns={columns}
+          dataSource={list}
+          pagination={false}
+          scroll={{ x: 1000 }}
+          locale={{ emptyText: listLoading ? "加载中…" : "暂无订阅" }}
+        />
       </div>
       <div className="admin-card mt-3">
         <div className="admin-toolbar">
@@ -217,8 +234,10 @@ const WebhookAdmin: FC = () => {
         </div>
         <Table
           rowKey="subscription_id"
+          loading={statsLoading}
           dataSource={stats}
           pagination={false}
+          locale={{ emptyText: statsLoading ? "加载中…" : "暂无统计" }}
           columns={[
             { title: "订阅", dataIndex: "name" },
             { title: "成功", dataIndex: "success", width: 90 },
@@ -251,7 +270,15 @@ const WebhookAdmin: FC = () => {
           />
           <Button onClick={() => loadDeliveries()}>刷新投递</Button>
         </div>
-        <Table rowKey="id" columns={deliveryColumns} dataSource={deliveries} pagination={false} scroll={{ x: 860 }} />
+        <Table
+          rowKey="id"
+          loading={deliveryLoading}
+          columns={deliveryColumns}
+          dataSource={deliveries}
+          pagination={false}
+          scroll={{ x: 860 }}
+          locale={{ emptyText: deliveryLoading ? "加载中…" : "暂无投递记录" }}
+        />
       </div>
       <Modal open={creating} title="新建 Webhook" confirmLoading={saving} onOk={() => form.submit()} onCancel={() => setCreating(false)} destroyOnHidden>
         <Form form={form} layout="vertical" onFinish={submit}>

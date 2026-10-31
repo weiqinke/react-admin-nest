@@ -7,31 +7,35 @@ const NotificationPage: React.FC = function () {
   const [quietStart, setQuietStart] = useState("");
   const [quietEnd, setQuietEnd] = useState("");
   const [prefs, setPrefs] = useState<Record<string, any>>({});
+  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [prefForm] = Form.useForm();
 
   const load = () => {
-    getNotifyPrefs()
-      .then(res => {
-        const data = res.data?.data || {};
-        setItems(data.list || []);
-        setQuietStart(data.quiet_hours_start || "");
-        setQuietEnd(data.quiet_hours_end || "");
-      })
-      .catch(() => setItems([]));
-    getPreferences()
-      .then(res => {
-        const data = res.data?.data || {};
-        setPrefs(data);
-        prefForm.setFieldsValue({
-          theme: data.theme || undefined,
-          locale: data.locale || undefined,
-          timezone: data.timezone || undefined,
-          home_layout: data.home_layout || undefined,
-          sidebar_collapsed: data.sidebar_collapsed === true || data.sidebar_collapsed === "true"
-        });
-      })
-      .catch(() => setPrefs({}));
+    setLoading(true);
+    Promise.all([
+      getNotifyPrefs()
+        .then(res => {
+          const data = res.data?.data || {};
+          setItems(data.list || []);
+          setQuietStart(data.quiet_hours_start || "");
+          setQuietEnd(data.quiet_hours_end || "");
+        })
+        .catch(() => setItems([])),
+      getPreferences()
+        .then(res => {
+          const data = res.data?.data || {};
+          setPrefs(data);
+          prefForm.setFieldsValue({
+            theme: data.theme || undefined,
+            locale: data.locale || undefined,
+            timezone: data.timezone || undefined,
+            home_layout: data.home_layout || undefined,
+            sidebar_collapsed: data.sidebar_collapsed === true || data.sidebar_collapsed === "true"
+          });
+        })
+        .catch(() => setPrefs({}))
+    ]).finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -52,7 +56,9 @@ const NotificationPage: React.FC = function () {
     setSaving(true);
     try {
       await putNotifyPrefs({ items: [{ event, channel, enabled }] });
+      setItems(prev => prev.map(item => (item.event === event && item.channel === channel ? { ...item, enabled } : item)));
       message.success("已更新");
+    } catch {
       load();
     } finally {
       setSaving(false);
@@ -64,7 +70,6 @@ const NotificationPage: React.FC = function () {
     try {
       await putNotifyPrefs({ quiet_hours_start: quietStart, quiet_hours_end: quietEnd });
       message.success("静默时段已保存");
-      load();
     } finally {
       setSaving(false);
     }
@@ -98,8 +103,9 @@ const NotificationPage: React.FC = function () {
         rowKey="event"
         size="small"
         pagination={false}
-        loading={saving}
+        loading={loading}
         dataSource={byEvent}
+        locale={{ emptyText: loading ? "加载中…" : "暂无通知项" }}
         columns={[
           {
             title: "事件",
@@ -110,7 +116,9 @@ const NotificationPage: React.FC = function () {
             title: NOTIFY_CHANNEL_LABELS[channel] || channel,
             dataIndex: channel,
             width: 100,
-            render: (enabled: boolean, row: any) => <Switch size="small" checked={Boolean(enabled)} onChange={checked => toggle(row.event, channel, checked)} />
+            render: (enabled: boolean, row: any) => (
+              <Switch size="small" disabled={saving} checked={Boolean(enabled)} onChange={checked => toggle(row.event, channel, checked)} />
+            )
           }))
         ]}
       />

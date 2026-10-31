@@ -31,6 +31,13 @@ export const TICKET_STATUS: Record<string, string> = {
   closed: "已关闭"
 };
 
+export const TICKET_STATUS_COLOR: Record<string, string> = {
+  open: "gold",
+  assigned: "blue",
+  processing: "cyan",
+  closed: "default"
+};
+
 export const TICKET_PRIORITY: Record<string, string> = {
   low: "低",
   normal: "普通",

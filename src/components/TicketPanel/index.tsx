@@ -22,22 +22,15 @@ import {
   setTicketPriority,
   ticketOverdue,
   TICKET_PRIORITY,
-  TICKET_STATUS,
   toDeptTree
 } from "@/api/platform";
 import { getUserState } from "@/api/session";
 import LabelBind from "@/components/LabelBind";
+import TicketStatusTag from "@/components/TicketStatusTag";
 import { findUserOptions } from "@/api/user";
-import { Button, Descriptions, Drawer, Form, Input, Rate, Select, Space, Tag, Timeline, TreeSelect, message } from "antd";
+import { Button, Descriptions, Drawer, Form, Input, Rate, Select, Space, Spin, Tag, Timeline, TreeSelect, message } from "antd";
 import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
-
-const statusColor: Record<string, string> = {
-  open: "gold",
-  assigned: "blue",
-  processing: "cyan",
-  closed: "default"
-};
 
 const actionLabel: Record<string, string> = {
   create: "提交",
@@ -59,6 +52,7 @@ type Props = {
 
 const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
   const [ticket, setTicket] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
   const [action, setAction] = useState("");
   const [users, setUsers] = useState<any[]>([]);
   const [depts, setDepts] = useState<any[]>([]);
@@ -74,8 +68,12 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
   };
 
   const load = () => {
+    setLoading(true);
     const request = mine ? getMyTicket(ticketId) : getTicket(ticketId);
-    request.then(res => setTicket(res.data?.data || null)).catch(() => setTicket(null));
+    request
+      .then(res => setTicket(res.data?.data || null))
+      .catch(() => setTicket(null))
+      .finally(() => setLoading(false));
     loadWatchers();
   };
 
@@ -85,10 +83,15 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
 
   useEffect(() => {
     setAction("");
+    setTicket(null);
     form.resetFields();
     commentForm.resetFields();
+    setLoading(true);
     const request = mine ? getMyTicket(ticketId) : getTicket(ticketId);
-    request.then(res => setTicket(res.data?.data || null)).catch(() => setTicket(null));
+    request
+      .then(res => setTicket(res.data?.data || null))
+      .catch(() => setTicket(null))
+      .finally(() => setLoading(false));
     loadWatchers();
   }, [ticketId, mine, form, commentForm]);
 
@@ -170,12 +173,16 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
 
   return (
     <Drawer open title={ticket?.title || "工单"} size={560} onClose={onClose} destroyOnHidden>
-      {ticket ? (
+      {loading ? (
+        <div className="flex justify-center py-16">
+          <Spin />
+        </div>
+      ) : ticket ? (
         <>
           {mine && !isCreator ? <div className="mb-3 text-neutral-500">这张工单分派给你。关闭只能由提单人，或有工单处理权限的管理员操作。</div> : null}
           <Descriptions column={1} size="small">
             <Descriptions.Item label="状态">
-              <Tag color={statusColor[ticket.status] || "default"}>{TICKET_STATUS[ticket.status] || ticket.status}</Tag>
+              <TicketStatusTag status={ticket.status} />
             </Descriptions.Item>
             <Descriptions.Item label="优先级">{TICKET_PRIORITY[ticket.priority] || ticket.priority}</Descriptions.Item>
             <Descriptions.Item label="处理人">{userName(ticket.assignee_id)}</Descriptions.Item>
