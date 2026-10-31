@@ -1,0 +1,45 @@
+/* 管理页筛选条 / 表格操作区：避免 inline Form 与多按钮挤爆后错位 */
+
+.admin-page {
+  padding: 12px;
+}
+
+.admin-card {
+  margin-top: 12px;
+  padding: 12px;
+  background: #fff;
+  border-radius: 6px;
+}
+
+.admin-card + .admin-card {
+  margin-top: 12px;
+}
+
+.admin-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: 12px;
+}
+
+.admin-filter-form.ant-form-inline {
+  row-gap: 12px;
+  width: 100%;
+}
+
+.admin-filter-form.ant-form-inline .ant-form-item {
+  margin-inline-end: 16px;
+  margin-bottom: 0;
+}
+
+.admin-filter-form.ant-form-inline .ant-form-item-label {
+  padding: 0;
+}
+
+.admin-table-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 320px;
+}

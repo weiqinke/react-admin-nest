@@ -8,7 +8,7 @@ import CsvImportModal from "@/components/CsvImportModal";
 import PageIntroduction from "@/components/PageIntroduction";
 import { UserEditModal } from "@/components/Modals";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { Alert, Button, Form, Input, Modal, Select, Space, TreeSelect, message } from "antd";
+import { Alert, Button, Form, Input, Modal, Select, TreeSelect, message } from "antd";
 import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
 import UserTable from "./components/Table";
@@ -128,16 +128,16 @@ const UserAdmin: FC = () => {
     }
   }, []);
   return (
-    <div className="p-3">
+    <div className="admin-page">
       <PageIntroduction
         infos={infos}
         introduction="用户列表按页返回，并已按当前角色的数据范围过滤。支持 CSV 导出与导入（模板列：username,password,department_code,roles）。解除锁定会清掉连续密码错误的计数。停用会踢掉对方全部会话。"
       />
       {dataScope ? <Alert className="mt-3" type="info" showIcon title={`当前数据范围：${dataScopeLabel(dataScope)}`} /> : null}
-      <div className="my-3 rounded-md bg-white p-3">
-        <Form form={form} name="horizontal_login" layout="inline" autoComplete="off" onFinish={() => findAll(1)}>
+      <div className="admin-card">
+        <Form form={form} name="user_admin_filter" layout="inline" className="admin-filter-form" autoComplete="off" onFinish={() => findAll(1)}>
           <Form.Item name="keyword" label="用户名">
-            <Input placeholder="用户名包含" autoComplete="off" allowClear />
+            <Input placeholder="用户名包含" autoComplete="off" allowClear style={{ width: 160 }} />
           </Form.Item>
           <Form.Item name="status" label="状态">
             <Select
@@ -177,8 +177,10 @@ const UserAdmin: FC = () => {
             </Form.Item>
           ) : null}
           <Form.Item>
-            <Space size={[8, 16]} wrap>
-              <Button htmlType="submit">查询</Button>
+            <div className="admin-toolbar" style={{ marginBottom: 0 }}>
+              <Button type="primary" htmlType="submit">
+                查询
+              </Button>
               {canWrite ? <Button onClick={() => setUser({})}>添加</Button> : null}
               {canRead ? (
                 <Button
@@ -206,12 +208,12 @@ const UserAdmin: FC = () => {
                 </Button>
               ) : null}
               {canWrite ? <Button onClick={() => setImportOpen(true)}>导入 CSV</Button> : null}
-            </Space>
+            </div>
           </Form.Item>
         </Form>
       </div>
 
-      <div className="mt-3 rounded-md bg-white">
+      <div className="admin-card" style={{ padding: 0 }}>
         <UserTable
           dataSource={dataSource}
           selfId={selfId}

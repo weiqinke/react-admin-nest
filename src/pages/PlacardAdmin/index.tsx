@@ -158,25 +158,26 @@ const PlacardAdmin: FC = () => {
   ];
 
   return (
-    <div className="p-3">
+    <div className="admin-page">
       <PageIntroduction
         infos={infos}
         introduction="本页面是操作系统中的公告，可以用来添加、发布和查看已读情况。到期任务会把已过窗口的公告标成已过期，已过期的可以再次发布。"
       />
-      <div className="mt-3 bg-white px-3">
-        <Space size={[8, 16]} className="my-3">
+      <div className="admin-card">
+        <div className="admin-toolbar">
           <Button type="primary" onClick={() => findAllPlacards()}>
             查询公告
           </Button>
           <Button type="primary" onClick={() => setPlacard({})}>
             添加公告
           </Button>
-        </Space>
+        </div>
         <Table
           columns={columns}
           dataSource={dataSource}
           rowKey="id"
           bordered
+          scroll={{ x: 1000 }}
           pagination={{
             current: page,
             pageSize: 20,

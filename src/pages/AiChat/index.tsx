@@ -70,7 +70,7 @@ const AiChat: FC = () => {
 
   return (
     <div className="flex h-[calc(100vh-160px)] min-h-[480px] gap-3 p-3">
-      <aside className="flex w-64 shrink-0 flex-col bg-white">
+      <aside className="flex w-56 shrink-0 flex-col overflow-hidden rounded-md bg-white sm:w-64">
         <div className="border-b border-neutral-200 p-3">
           <Button
             block
@@ -91,7 +91,7 @@ const AiChat: FC = () => {
                 className="cursor-pointer px-3"
                 style={{ background: String(item.id) === currentId ? "rgba(22,119,255,0.08)" : undefined }}
                 onClick={() => openConversation(String(item.id))}>
-                <div className="min-w-0">
+                <div className="min-w-0 w-full">
                   <div className="truncate">{item.title || "未命名对话"}</div>
                   <div className="truncate text-xs text-neutral-500">{item.updated_at}</div>
                 </div>
@@ -100,11 +100,12 @@ const AiChat: FC = () => {
           />
         </div>
       </aside>
-      <section className="flex min-w-0 flex-1 flex-col bg-white">
-        <div className="flex items-center gap-3 border-b border-neutral-200 p-3">
+      <section className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-md bg-white">
+        <div className="flex flex-wrap items-center gap-3 border-b border-neutral-200 p-3">
           <span className="shrink-0">模型</span>
           <Select
             className="min-w-0 flex-1"
+            style={{ minWidth: 160 }}
             placeholder={models.length ? "选择模型" : "没有可用模型"}
             value={modelId}
             disabled={Boolean(currentId) || !models.length}

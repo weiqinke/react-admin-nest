@@ -12,41 +12,50 @@ const LoginLog = () => {
   const columns: any = [
     {
       title: "昵称",
-      dataIndex: "name"
+      dataIndex: "name",
+      width: 120,
+      ellipsis: true
     },
     {
       title: "浏览器版本",
       dataIndex: "bowser",
+      ellipsis: true,
       responsive: ["lg", "xl", "xxl"]
     },
     {
       title: "来源",
       dataIndex: "host",
+      width: 140,
       responsive: ["lg", "xl", "xxl"]
     },
     {
       title: "登录设备",
       dataIndex: "os",
+      width: 120,
       responsive: ["lg", "xl", "xxl"]
     },
     {
       title: "国家",
       dataIndex: "country",
+      width: 90,
       responsive: ["md", "lg", "xl", "xxl"]
     },
     {
       title: "省份",
       dataIndex: "province",
+      width: 90,
       responsive: ["lg", "xl", "xxl"]
     },
     {
       title: "市区",
       dataIndex: "city",
+      width: 90,
       responsive: ["lg", "xl", "xxl"]
     },
     {
       title: "登录时间",
       dataIndex: "created",
+      width: 180,
       render: item => {
         return <span>{getDateTimeFormat(new Date(item).valueOf())}</span>;
       }
@@ -91,7 +100,7 @@ const LoginLog = () => {
           }`}
         />
       ) : null}
-      <div className="mb-2 flex justify-end">
+      <div className="admin-toolbar" style={{ justifyContent: "flex-end" }}>
         <Button
           loading={exporting}
           onClick={async () => {
@@ -107,19 +116,8 @@ const LoginLog = () => {
           导出 CSV
         </Button>
       </div>
-      <div
-        style={{
-          padding: "10px 10px 0 10px",
-          background: "#fff"
-        }}>
-        <Table rowKey="id" columns={columns} dataSource={dataSource} />
-      </div>
-      <div
-        style={{
-          padding: 10,
-          background: "#fff",
-          marginTop: 12
-        }}>
+      <Table rowKey="id" columns={columns} dataSource={dataSource} scroll={{ x: 900 }} />
+      <div style={{ marginTop: 12 }}>
         <LoginFrequencyChart dataSource={dataSource} />
       </div>
     </div>

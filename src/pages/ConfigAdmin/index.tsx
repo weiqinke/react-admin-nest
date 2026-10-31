@@ -1,7 +1,7 @@
 import { hasPermission } from "@/api/announcement";
 import { listConfigGroups, listConfigs, listMailTemplates, testMail, updateConfig, upsertMailTemplate } from "@/api/platform";
 import PageIntroduction from "@/components/PageIntroduction";
-import { Button, Form, Input, Modal, Select, Space, Switch, Table, Tabs, message } from "antd";
+import { Button, Form, Input, Modal, Select, Switch, Table, Tabs, message } from "antd";
 import { FC, useEffect, useMemo, useState } from "react";
 
 const infos = [{ title: "系统管理" }, { title: "系统参数" }];
@@ -155,12 +155,12 @@ const ConfigAdmin: FC = () => {
   ];
 
   return (
-    <div className="p-3">
+    <div className="admin-page">
       <PageIntroduction
         infos={infos}
         introduction="站点、安全、日志、邮件参数在这里改。密码最短长度与有效期天数、SMTP 都在系统参数里。密码超期登录会返回 40305。mail.enabled=false 时只记日志不发信。"
       />
-      <div className="mt-3 bg-white p-3">
+      <div className="admin-card">
         <Tabs
           items={[
             {
@@ -168,11 +168,11 @@ const ConfigAdmin: FC = () => {
               label: "系统参数",
               children: (
                 <>
-                  <Space className="mb-3" wrap>
+                  <div className="admin-toolbar">
                     <Select allowClear placeholder="分组" style={{ width: 220 }} value={group} options={groupOptions} onChange={value => setGroup(value)} />
                     <Button onClick={() => load()}>刷新</Button>
-                  </Space>
-                  <Table rowKey="key" columns={columns} dataSource={rows} pagination={false} />
+                  </div>
+                  <Table rowKey="key" columns={columns} dataSource={rows} pagination={false} scroll={{ x: 960 }} />
                 </>
               )
             },
@@ -181,7 +181,7 @@ const ConfigAdmin: FC = () => {
               label: "邮件模板",
               children: (
                 <>
-                  <Space className="mb-3" wrap>
+                  <div className="admin-toolbar">
                     <Button onClick={() => loadMail()}>刷新</Button>
                     {canWrite ? (
                       <Button type="primary" onClick={() => setMailDraft({ channel: "mail", enabled: true })}>
@@ -189,8 +189,8 @@ const ConfigAdmin: FC = () => {
                       </Button>
                     ) : null}
                     {canWrite ? <Button onClick={() => setTestOpen(true)}>发送测试</Button> : null}
-                  </Space>
-                  <Table rowKey="id" columns={mailColumns} dataSource={templates} pagination={false} />
+                  </div>
+                  <Table rowKey="id" columns={mailColumns} dataSource={templates} pagination={false} scroll={{ x: 800 }} />
                 </>
               )
             }

@@ -147,13 +147,13 @@ const DeptAdmin: FC = () => {
   ];
 
   return (
-    <div className="p-3">
+    <div className="admin-page">
       <PageIntroduction
         infos={infos}
         introduction="部门是一棵树。人数只统计本部门启用用户，不含下级。可以指定负责人，同一个人可以负责多个部门。清空负责人后保存即取消。"
       />
-      <div className="mt-3 bg-white p-3">
-        <Space className="mb-3" wrap>
+      <div className="admin-card">
+        <div className="admin-toolbar">
           {canWrite ? (
             <Button type="primary" onClick={() => setDraft({ status: 1, sort: 0 })}>
               添加部门
@@ -176,8 +176,8 @@ const DeptAdmin: FC = () => {
             </Button>
           ) : null}
           {canWrite ? <Button onClick={() => setImportOpen(true)}>导入 CSV</Button> : null}
-        </Space>
-        <Table rowKey="id" columns={columns} dataSource={asTableTree(tree)} pagination={false} />
+        </div>
+        <Table rowKey="id" columns={columns} dataSource={asTableTree(tree)} pagination={false} scroll={{ x: 900 }} />
       </div>
       <CsvImportModal
         open={importOpen}

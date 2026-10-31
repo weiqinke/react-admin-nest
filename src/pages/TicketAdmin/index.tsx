@@ -1,7 +1,7 @@
 import { dataScopeLabel, listTickets, ticketOverdue, TICKET_PRIORITY, TICKET_STATUS } from "@/api/platform";
 import PageIntroduction from "@/components/PageIntroduction";
 import TicketPanel from "@/components/TicketPanel";
-import { Alert, Button, Input, Select, Space, Table, Tag } from "antd";
+import { Alert, Button, Input, Select, Table, Tag } from "antd";
 import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
 
@@ -95,14 +95,14 @@ const TicketAdmin: FC = () => {
   ];
 
   return (
-    <div className="p-3">
+    <div className="admin-page">
       <PageIntroduction
         infos={infos}
         introduction="列表已按当前角色的数据范围过滤。可按标题、优先级和是否过期筛选。过期不会自动关单。指定处理人会给他发待办；留言成功后对方会收到站内信。"
       />
       {dataScope ? <Alert className="mt-3" type="info" showIcon title={`当前数据范围：${dataScopeLabel(dataScope)}`} /> : null}
-      <div className="mt-3 bg-white p-3">
-        <Space className="mb-3" wrap>
+      <div className="admin-card">
+        <div className="admin-toolbar">
           <Input allowClear placeholder="标题包含" style={{ width: 180 }} value={keyword} onChange={e => setKeyword(e.target.value)} onPressEnter={() => load(1)} />
           <Select
             allowClear
@@ -131,8 +131,8 @@ const TicketAdmin: FC = () => {
           <Button type="primary" onClick={() => load(1)}>
             查询
           </Button>
-        </Space>
-        <Table rowKey="id" columns={columns} dataSource={list} pagination={{ current: page, total, pageSize: 20, onChange: next => load(next) }} />
+        </div>
+        <Table rowKey="id" columns={columns} dataSource={list} scroll={{ x: 900 }} pagination={{ current: page, total, pageSize: 20, onChange: next => load(next) }} />
       </div>
       {current ? <TicketPanel ticketId={current} onClose={() => setCurrent("")} onChanged={() => load()} /> : null}
     </div>

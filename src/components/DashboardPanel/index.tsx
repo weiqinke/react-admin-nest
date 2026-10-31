@@ -1,7 +1,7 @@
 import { hasPermission } from "@/api/announcement";
 import { TICKET_STATUS, dataScopeLabel, getDashboard } from "@/api/platform";
 import echarts from "@/components/Echarts/setup";
-import { Alert, Col, DatePicker, Empty, Row, Space, Statistic } from "antd";
+import { Alert, Col, DatePicker, Empty, Row, Statistic } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import { FC, useEffect, useRef, useState } from "react";
 
@@ -105,8 +105,8 @@ const DashboardPanel: FC = () => {
   const reach = snap?.announcement_reach || {};
 
   return (
-    <div className="mb-3 rounded-md bg-white p-3">
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+    <div className="admin-card">
+      <div className="admin-toolbar" style={{ justifyContent: "space-between" }}>
         <div>
           <div className="font-medium">数据看板</div>
           <div className="text-xs text-neutral-500">
@@ -115,15 +115,13 @@ const DashboardPanel: FC = () => {
             {snap?.from && snap?.to ? ` · ${snap.from} ~ ${snap.to}` : ""}
           </div>
         </div>
-        <Space wrap>
-          <RangePicker
-            allowClear={false}
-            value={range}
-            onChange={value => {
-              if (value?.[0] && value?.[1]) setRange([value[0].startOf("day"), value[1].endOf("day")]);
-            }}
-          />
-        </Space>
+        <RangePicker
+          allowClear={false}
+          value={range}
+          onChange={value => {
+            if (value?.[0] && value?.[1]) setRange([value[0].startOf("day"), value[1].endOf("day")]);
+          }}
+        />
       </div>
       {failed ? <Alert type="warning" showIcon message="看板加载失败，请确认已授权 stats:read" /> : null}
       {!failed && !snap ? <Empty description="加载中…" /> : null}
@@ -145,13 +143,13 @@ const DashboardPanel: FC = () => {
           </Row>
           <Row gutter={[12, 12]}>
             <Col xs={24} lg={12}>
-              <div ref={loginRef} style={{ height: 280 }} />
+              <div ref={loginRef} style={{ height: 280, width: "100%" }} />
             </Col>
             <Col xs={24} lg={12}>
-              <div ref={accessRef} style={{ height: 280 }} />
+              <div ref={accessRef} style={{ height: 280, width: "100%" }} />
             </Col>
             <Col xs={24} lg={12}>
-              <div ref={funnelRef} style={{ height: 280 }} />
+              <div ref={funnelRef} style={{ height: 280, width: "100%" }} />
             </Col>
           </Row>
         </>

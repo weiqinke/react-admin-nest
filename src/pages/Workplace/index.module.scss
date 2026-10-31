@@ -1,9 +1,13 @@
 $fork-me: "@/assets/github/fork.png";
+
 .baseStyle {
   display: flex;
-  padding: 1rem;
-  border-radius: 5px;
-  font-size: 2em;
+  align-items: center;
+  min-height: 112px;
+  padding: 1rem 1.25rem;
+  border-radius: 6px;
+  font-size: clamp(1.25rem, 2.2vw, 2rem);
+  overflow: hidden;
 }
 
 .wechat {
@@ -18,6 +22,7 @@ $fork-me: "@/assets/github/fork.png";
 
 .dingding {
   @extend .baseStyle;
+  position: relative;
   background-color: #0089ff;
 }
 
@@ -27,44 +32,52 @@ $fork-me: "@/assets/github/fork.png";
 }
 
 .iconStyle {
+  flex-shrink: 0;
   color: #fbfbf4b3;
-  font-size: 5rem;
-  padding-right: 1rem;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  padding-right: 0.75rem;
+  line-height: 1;
 }
 
 .baseTitle {
-  font-size: 2rem;
+  margin-top: 0.25rem;
+  font-size: 0.85em;
+  line-height: 1.2;
+  opacity: 0.95;
 }
 
 .githubCorner {
   position: absolute;
   top: 0;
-  right: 6px;
+  right: 0;
   background-image: url($fork-me);
   background-size: 100% 100%;
-  width: 120px;
-  height: 120px;
+  width: 64px;
+  height: 64px;
   z-index: 2;
   cursor: pointer;
 }
 
 .header {
   color: #fff;
+  margin-bottom: 4px;
 }
 
 .container {
-  padding: 1rem;
+  padding: 12px;
 }
 
 .baseChart {
   margin-top: 12px;
-  border-radius: 5px;
+  border-radius: 6px;
   overflow: hidden;
   background-color: #fff;
+
   .imgbg {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-    height: 400px;
+    height: min(400px, 50vw);
+    min-height: 220px;
   }
 }

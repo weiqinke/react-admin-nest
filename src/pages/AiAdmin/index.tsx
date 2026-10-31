@@ -109,15 +109,17 @@ const AiAdmin: FC = () => {
   ];
 
   return (
-    <div className="p-3">
+    <div className="admin-page">
       <PageIntroduction infos={infos} introduction="未填写接口地址，或提供方选「未接入」时，对话会回复固定说明并记一笔调用。密钥不会回显。" />
-      <div className="mt-3 bg-white p-3">
+      <div className="admin-card">
         {canWrite ? (
-          <Button type="primary" className="mb-3" onClick={() => setDraft(emptyModel)}>
-            添加模型
-          </Button>
+          <div className="admin-toolbar">
+            <Button type="primary" onClick={() => setDraft(emptyModel)}>
+              添加模型
+            </Button>
+          </div>
         ) : null}
-        <Table rowKey="id" columns={columns} dataSource={list} pagination={false} />
+        <Table rowKey="id" columns={columns} dataSource={list} pagination={false} scroll={{ x: 900 }} />
       </div>
       <Modal
         open={Boolean(draft)}

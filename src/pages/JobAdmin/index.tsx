@@ -107,13 +107,13 @@ const JobAdmin: FC = () => {
   ];
 
   return (
-    <div className="p-3">
+    <div className="admin-page">
       <PageIntroduction
         infos={infos}
         introduction="有 cron_expr（五段）时按表达式触发，否则用固定间隔。ticket.due_remind 会给到期未关闭工单发一次提醒。announcement.start 在预约公告到点后补发「新公告」。log.purge 按保留天数清理日志。"
       />
-      <div className="mt-3 bg-white p-3">
-        <Table rowKey="code" columns={columns} dataSource={list} pagination={false} />
+      <div className="admin-card">
+        <Table rowKey="code" columns={columns} dataSource={list} pagination={false} scroll={{ x: 1100 }} />
       </div>
       <Drawer open={Boolean(code)} title={code ? `${code} 的执行记录` : "执行记录"} size={640} onClose={() => setCode("")}>
         <Table

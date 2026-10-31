@@ -30,7 +30,7 @@ const Workbench: FC = () => {
   }, []);
 
   return (
-    <div className="p-3">
+    <div className="admin-page">
       <Alert className="mb-3" type="info" showIcon title="工作台摘要来自 GET /api/me/home；有 stats:read 时下方展示数据看板。" />
       <Row gutter={[12, 12]} className="mb-3">
         <Col xs={12} md={6}>
@@ -55,10 +55,12 @@ const Workbench: FC = () => {
         </Col>
       </Row>
       <DashboardPanel />
-      <div className="mb-3">
+      <div className="admin-card" style={{ marginTop: 12 }}>
         <SystemInfo />
       </div>
-      <LoginLog />
+      <div className="admin-card">
+        <LoginLog />
+      </div>
     </div>
   );
 };

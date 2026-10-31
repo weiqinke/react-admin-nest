@@ -9,6 +9,7 @@ import ProjectRouter from "./router/index.tsx";
 import { applyHeaderTheme, readStoredTheme } from "./theme/palette";
 import "./styles/reset.css";
 import "./styles/tailwind.css";
+import "./styles/admin.css";
 
 applyHeaderTheme(readStoredTheme());
 

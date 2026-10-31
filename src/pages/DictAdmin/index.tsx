@@ -201,48 +201,68 @@ const DictAdmin: FC = () => {
   ];
 
   return (
-    <div className="p-3">
+    <div className="admin-page">
       <PageIntroduction infos={infos} introduction="字典类型与条目可 CSV 导出导入。模板列：type_code,type_name,item_value,item_label,sort,status。" />
-      <Space size={[8, 16]} className="mb-3" wrap>
-        {canWrite ? (
-          <Button type="primary" onClick={() => setDictType({})}>
-            添加类型
+      <div className="admin-card">
+        <div className="admin-toolbar">
+          {canWrite ? (
+            <Button type="primary" onClick={() => setDictType({})}>
+              添加类型
+            </Button>
+          ) : null}
+          <Input allowClear placeholder="按编码搜索" value={code} onChange={e => setCode(e.target.value)} style={{ width: 160 }} />
+          <Input allowClear placeholder="按名称搜索" value={name} onChange={e => setName(e.target.value)} style={{ width: 160 }} />
+          <Select
+            allowClear
+            placeholder="状态"
+            value={status}
+            onChange={value => setStatus(value)}
+            style={{ width: 120 }}
+            options={[
+              { value: "enabled", label: "启用" },
+              { value: "disabled", label: "停用" }
+            ]}
+          />
+          <Button type="primary" onClick={() => findTypes(1)}>
+            查询
           </Button>
-        ) : null}
-        <Input allowClear placeholder="按编码搜索" value={code} onChange={e => setCode(e.target.value)} style={{ width: 160 }} />
-        <Input allowClear placeholder="按名称搜索" value={name} onChange={e => setName(e.target.value)} style={{ width: 160 }} />
-        <Select
-          allowClear
-          placeholder="状态"
-          value={status}
-          onChange={value => setStatus(value)}
-          style={{ width: 120 }}
-          options={[
-            { value: "enabled", label: "启用" },
-            { value: "disabled", label: "停用" }
-          ]}
+          {canRead ? (
+            <Button
+              loading={exporting}
+              onClick={async () => {
+                setExporting(true);
+                try {
+                  await exportDictsCsv(`dicts-${dayjs().format("YYYYMMDD")}.csv`);
+                } catch {
+                  message.error("导出失败");
+                } finally {
+                  setExporting(false);
+                }
+              }}>
+              导出 CSV
+            </Button>
+          ) : null}
+          {canWrite ? <Button onClick={() => setImportOpen(true)}>导入 CSV</Button> : null}
+        </div>
+        <Table
+          columns={typeColumns}
+          dataSource={types}
+          rowKey="id"
+          size="middle"
+          scroll={{ x: 900 }}
+          rowClassName={row => (row.id === selected?.id ? "ant-table-row-selected" : "")}
+          onRow={row => ({
+            onClick: () => setSelected(row),
+            style: { cursor: "pointer" }
+          })}
+          pagination={{
+            current: typePage,
+            total: typeTotal,
+            pageSize: 20,
+            onChange: next => findTypes(next)
+          }}
         />
-        <Button type="primary" onClick={() => findTypes(1)}>
-          查询
-        </Button>
-        {canRead ? (
-          <Button
-            loading={exporting}
-            onClick={async () => {
-              setExporting(true);
-              try {
-                await exportDictsCsv(`dicts-${dayjs().format("YYYYMMDD")}.csv`);
-              } catch {
-                message.error("导出失败");
-              } finally {
-                setExporting(false);
-              }
-            }}>
-            导出 CSV
-          </Button>
-        ) : null}
-        {canWrite ? <Button onClick={() => setImportOpen(true)}>导入 CSV</Button> : null}
-      </Space>
+      </div>
       <CsvImportModal
         open={importOpen}
         title="导入字典"
@@ -253,27 +273,10 @@ const DictAdmin: FC = () => {
         onCommit={commitDictImport}
         onDone={() => findTypes(1)}
       />
-      <Table
-        columns={typeColumns}
-        dataSource={types}
-        rowKey="id"
-        size="middle"
-        rowClassName={row => (row.id === selected?.id ? "ant-table-row-selected" : "")}
-        onRow={row => ({
-          onClick: () => setSelected(row),
-          style: { cursor: "pointer" }
-        })}
-        pagination={{
-          current: typePage,
-          total: typeTotal,
-          pageSize: 20,
-          onChange: next => findTypes(next)
-        }}
-      />
 
       {selected && (
-        <div className="mt-4">
-          <Space size={[8, 16]} className="mb-3" wrap>
+        <div className="admin-card">
+          <div className="admin-toolbar">
             <span>
               字典项：<Tag>{selected.code}</Tag>
               {selected.name}
@@ -296,12 +299,13 @@ const DictAdmin: FC = () => {
             <Button type="primary" onClick={() => findItems(selected.id, 1)}>
               查询条目
             </Button>
-          </Space>
+          </div>
           <Table
             columns={itemColumns}
             dataSource={items}
             rowKey="id"
             size="middle"
+            scroll={{ x: 800 }}
             pagination={{
               current: itemPage,
               total: itemTotal,

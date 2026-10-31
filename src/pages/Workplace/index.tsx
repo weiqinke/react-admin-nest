@@ -77,7 +77,7 @@ const Workplace = () => {
 
   return (
     <div className={styles.container}>
-      <div className="mb-3 rounded-md bg-white p-3">
+      <div className="admin-card" style={{ marginTop: 0 }}>
         <div className="mb-2 font-medium">当前公告</div>
         <List
           rowKey="id"
@@ -141,7 +141,7 @@ const Workplace = () => {
           </div>
         </Col>
         <Col xs={24} sm={12} md={12} lg={6} xl={6} xxl={6}>
-          <div className={styles.dingding} style={{ position: "relative", cursor: "pointer" }} onClick={loadAnnouncements}>
+          <div className={styles.dingding} style={{ cursor: "pointer" }} onClick={loadAnnouncements}>
             <NotificationOutlined className={styles.iconStyle} />
             <div>
               <CountUp end={home.unread_announcements} start={0} duration={1.25} />
@@ -157,7 +157,7 @@ const Workplace = () => {
           </div>
         </Col>
       </Row>
-      <Row gutter={8}>
+      <Row gutter={[12, 12]}>
         <Col xs={24} sm={24} md={24} lg={16} xl={16} xxl={16}>
           <div className={styles.baseChart}>
             <div className={styles.imgbg} style={{ backgroundImage: `url(${src})` }}></div>
@@ -169,7 +169,7 @@ const Workplace = () => {
           </div>
         </Col>
       </Row>
-      <Row gutter={8}>
+      <Row gutter={[12, 12]}>
         <Col xs={24} sm={24} md={24} lg={8} xl={8} xxl={8}>
           <div className={styles.baseChart}>
             <Round />
