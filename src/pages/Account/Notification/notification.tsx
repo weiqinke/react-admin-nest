@@ -1,12 +1,4 @@
-import {
-  NOTIFY_CHANNEL_LABELS,
-  NOTIFY_EVENT_LABELS,
-  getNotifyPrefs,
-  getNotifyPrefsCatalog,
-  getPreferences,
-  putNotifyPrefs,
-  putPreferences
-} from "@/api/ops";
+import { NOTIFY_CHANNEL_LABELS, NOTIFY_EVENT_LABELS, getNotifyPrefs, getNotifyPrefsCatalog, getPreferences, putNotifyPrefs, putPreferences } from "@/api/ops";
 import { Button, Divider, Form, Input, Select, Space, Switch, Table, message } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 
@@ -185,18 +177,10 @@ const NotificationPage: React.FC = function () {
       </Divider>
       <Form form={batchForm} layout="inline" className="mb-4" onFinish={saveBatchCategory} initialValues={{ enabled: true }}>
         <Form.Item name="category" rules={[{ required: true, message: "选择类别" }]}>
-          <Select
-            placeholder="类别"
-            style={{ width: 140 }}
-            options={categories.map(item => ({ value: item.code, label: item.name || item.code }))}
-          />
+          <Select placeholder="类别" style={{ width: 140 }} options={categories.map(item => ({ value: item.code, label: item.name || item.code }))} />
         </Form.Item>
         <Form.Item name="channel" rules={[{ required: true, message: "选择渠道" }]}>
-          <Select
-            placeholder="渠道"
-            style={{ width: 140 }}
-            options={channels.map(code => ({ value: code, label: channelLabels[code] || code }))}
-          />
+          <Select placeholder="渠道" style={{ width: 140 }} options={channels.map(code => ({ value: code, label: channelLabels[code] || code }))} />
         </Form.Item>
         <Form.Item name="enabled" label="启用" valuePropName="checked">
           <Switch />

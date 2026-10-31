@@ -31,10 +31,7 @@ export const ProjectContextProvider = ({ theme, setTheme, children }) => {
     return () => controller.abort();
   }, [value.uid]);
 
-  const contextValue = useMemo(
-    () => ({ value, setValue, profile, setProfile, theme, setTheme }),
-    [value, profile, theme, setTheme]
-  );
+  const contextValue = useMemo(() => ({ value, setValue, profile, setProfile, theme, setTheme }), [value, profile, theme, setTheme]);
 
   return <ProjectContext.Provider value={contextValue}>{children}</ProjectContext.Provider>;
 };

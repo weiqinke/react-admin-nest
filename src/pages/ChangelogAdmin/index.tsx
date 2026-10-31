@@ -1,10 +1,4 @@
-import {
-  createChangelog,
-  deleteChangelog,
-  listAdminChangelogs,
-  publishChangelog,
-  updateChangelog
-} from "@/api/changelog";
+import { createChangelog, deleteChangelog, listAdminChangelogs, publishChangelog, updateChangelog } from "@/api/changelog";
 import { hasPermission } from "@/api/announcement";
 import PageIntroduction from "@/components/PageIntroduction";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
@@ -145,7 +139,10 @@ const ChangelogAdmin: FC = () => {
             </Button>
           ) : null}
           {canWrite && row.status === "draft" ? (
-            <Button type="link" size="small" onClick={() => confirmAction("发布后将对登录用户可见。若勾选了邮件通知，会向有邮箱的用户抽样发送。", () => publishChangelog(row.id))}>
+            <Button
+              type="link"
+              size="small"
+              onClick={() => confirmAction("发布后将对登录用户可见。若勾选了邮件通知，会向有邮箱的用户抽样发送。", () => publishChangelog(row.id))}>
               发布
             </Button>
           ) : null}

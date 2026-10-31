@@ -3,8 +3,7 @@ import { request } from "@/api/request";
 const enc = encodeURIComponent;
 
 /** 已发布变更日志（登录即可）。 */
-export const listPublishedChangelogs = (query: { keyword?: string; page?: number; page_size?: number } = {}) =>
-  request("/api/changelogs", "GET", query);
+export const listPublishedChangelogs = (query: { keyword?: string; page?: number; page_size?: number } = {}) => request("/api/changelogs", "GET", query);
 
 export const getChangelog = (id: string) => request(`/api/changelogs/${enc(id)}`, "GET");
 
@@ -12,8 +11,7 @@ export const getChangelog = (id: string) => request(`/api/changelogs/${enc(id)}`
 export const listAdminChangelogs = (query: { status?: string; keyword?: string; page?: number; page_size?: number } = {}) =>
   request("/api/admin/changelogs", "GET", query);
 
-export const createChangelog = (payload: { version: string; title: string; body: string; notify_mail?: boolean }) =>
-  request("/api/admin/changelogs", "POST", payload);
+export const createChangelog = (payload: { version: string; title: string; body: string; notify_mail?: boolean }) => request("/api/admin/changelogs", "POST", payload);
 
 export const updateChangelog = (id: string, payload: { version: string; title: string; body: string; notify_mail?: boolean }) =>
   request(`/api/admin/changelogs/${enc(id)}`, "PUT", payload);

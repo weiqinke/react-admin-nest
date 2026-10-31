@@ -250,12 +250,7 @@ const UserAdmin: FC = () => {
               />
             </Form.Item>
             <Form.Item name="sort" label="排序">
-              <Select
-                allowClear
-                placeholder="默认"
-                style={{ width: 130 }}
-                options={[{ value: "last_login", label: "最近登录" }]}
-              />
+              <Select allowClear placeholder="默认" style={{ width: 130 }} options={[{ value: "last_login", label: "最近登录" }]} />
             </Form.Item>
             <Form.Item name="never_login" label="从未登录" valuePropName="checked">
               <Checkbox />

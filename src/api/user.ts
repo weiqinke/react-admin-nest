@@ -16,12 +16,7 @@ import { setUserDepartment, setUserPosition } from "@/api/platform";
 import { getRefreshToken } from "@/api/session";
 
 export { getCaptcha, getPublicKey, goLogin as login, goRegister as register, goRegister as userRegister };
-export {
-  forcePasswordChange,
-  resetManagedUserPassword as resetUserPassword,
-  setManagedUserStatus as setUserStatus,
-  unlockManagedUser as unlockUser
-};
+export { forcePasswordChange, resetManagedUserPassword as resetUserPassword, setManagedUserStatus as setUserStatus, unlockManagedUser as unlockUser };
 
 function normalizeUser(user) {
   const profile = user?.profile || {};
