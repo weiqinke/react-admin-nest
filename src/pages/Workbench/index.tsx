@@ -31,7 +31,7 @@ const Workbench: FC = () => {
 
   return (
     <div className="admin-page">
-      <Alert className="mb-3" type="info" showIcon title="工作台摘要来自 GET /api/me/home；有 stats:read 时下方展示数据看板。" />
+      <Alert className="mb-3" type="info" showIcon title="这里只看汇总数字、访问趋势和登录记录。" />
       <Row gutter={[12, 12]} className="mb-3">
         <Col xs={12} md={6}>
           <div className="cursor-pointer rounded-md bg-white p-4" onClick={() => navigate("/account")}>

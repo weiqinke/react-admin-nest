@@ -1,111 +1,189 @@
-$fork-me: "@/assets/github/fork.png";
-
-.baseStyle {
-  display: flex;
-  align-items: center;
-  min-height: 104px;
-  height: 100%;
-  padding: 1rem 1.25rem;
-  border-radius: 6px;
-  font-size: clamp(1.25rem, 2vw, 1.75rem);
-  overflow: hidden;
-}
-
-.wechat {
-  @extend .baseStyle;
-  background-color: #70ca63;
-}
-
-.qq {
-  @extend .baseStyle;
-  background-color: #12b7f5;
-}
-
-.dingding {
-  @extend .baseStyle;
-  position: relative;
-  background-color: #0089ff;
-}
-
-.weibo {
-  @extend .baseStyle;
-  background-color: #fb452d;
-}
-
-.iconStyle {
-  flex-shrink: 0;
-  color: #fbfbf4b3;
-  font-size: clamp(2.25rem, 4vw, 3.5rem);
-  padding-right: 0.75rem;
-  line-height: 1;
-}
-
-.baseTitle {
-  margin-top: 0.25rem;
-  font-size: 0.75em;
-  line-height: 1.2;
-  opacity: 0.95;
-}
-
-.githubCorner {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background-image: url($fork-me);
-  background-size: 100% 100%;
-  width: 56px;
-  height: 56px;
-  z-index: 2;
-  cursor: pointer;
-}
-
-.header {
-  color: #fff;
-  margin-bottom: 4px;
-
-  :global(.ant-col) {
-    display: flex;
-  }
-
-  :global(.ant-col > div) {
-    flex: 1;
-    width: 100%;
-  }
-}
-
 .container {
   padding: 12px;
 }
 
-.chartRow {
+.container > .welcomeCard {
+  margin-top: 0;
+}
+
+.welcome {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.welcomeMain {
+  flex: 1;
+  min-width: 0;
+}
+
+.hello {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.identity {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.linkish {
+  height: auto;
+  padding-inline: 0;
+}
+
+.dateLabel {
+  flex-shrink: 0;
+  color: rgba(0, 0, 0, 0.45);
+  white-space: nowrap;
+}
+
+.entries {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.entry {
+  appearance: none;
+  padding: 10px 12px;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  background: #f4f6f8;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.entry:hover {
+  border-color: #d9d9d9;
+}
+
+.entry:focus-visible {
+  outline: 2px solid #1677ff;
+  outline-offset: 2px;
+}
+
+.entryTitle {
+  display: block;
+  font-weight: 600;
+}
+
+.entryDesc {
+  display: block;
+  margin-top: 2px;
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.block {
+  margin-top: 12px;
+
+  :global(.admin-card) {
+    margin-top: 0;
+  }
+
   :global(.ant-col) {
     display: flex;
   }
+
+  :global(.ant-col > section) {
+    flex: 1;
+    width: 100%;
+  }
 }
 
-.baseChart {
+.sectionHead {
   display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 360px;
-  margin-top: 12px;
-  border-radius: 6px;
-  overflow: hidden;
-  background-color: #fff;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
 
-  .imgbg {
-    flex: 1;
-    width: 100%;
-    height: 100%;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
+.sectionTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.feed {
+  max-height: 320px;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  list-style: none;
+}
+
+.feedItem {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.feedItem:last-child {
+  border-bottom: 0;
+}
+
+.feedMain {
+  flex: 1;
+  min-width: 0;
+}
+
+.feedTitle {
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.feedActions {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.bits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+
+.changeTitle {
+  font-weight: 600;
+}
+
+.meta {
+  margin-top: 2px;
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 12px;
+}
+
+.clamp {
+  display: -webkit-box;
+  margin-top: 4px;
+  overflow: hidden;
+  color: rgba(0, 0, 0, 0.65);
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+@media (max-width: 720px) {
+  .welcome {
+    flex-wrap: wrap;
   }
 
-  .chartHost {
-    flex: 1;
+  .dateLabel {
     width: 100%;
-    height: 100%;
-    min-height: 0;
   }
 }
