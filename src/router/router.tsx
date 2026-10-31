@@ -32,6 +32,8 @@ const AuditAdmin = lazy(() => import("@/pages/AuditAdmin"));
 const DeptAdmin = lazy(() => import("@/pages/DeptAdmin"));
 const PostAdmin = lazy(() => import("@/pages/PostAdmin"));
 const ConfigAdmin = lazy(() => import("@/pages/ConfigAdmin"));
+const WebhookAdmin = lazy(() => import("@/pages/WebhookAdmin"));
+const FlagAdmin = lazy(() => import("@/pages/FlagAdmin"));
 const TicketAdmin = lazy(() => import("@/pages/TicketAdmin"));
 const JobAdmin = lazy(() => import("@/pages/JobAdmin"));
 const ApiKeyAdmin = lazy(() => import("@/pages/ApiKeyAdmin"));
@@ -138,6 +140,8 @@ const routes: RouteObject[] = [
                   route(DeptAdmin, { path: "deptadmin", title: "部门管理" }),
                   route(PostAdmin, { path: "postadmin", title: "岗位管理" }),
                   route(ConfigAdmin, { path: "configadmin", title: "系统参数" }),
+                  route(WebhookAdmin, { path: "webhookadmin", title: "Webhook" }),
+                  route(FlagAdmin, { path: "flagadmin", title: "Feature Flag" }),
                   route(TicketAdmin, { path: "ticketadmin", title: "工单处理" }),
                   route(JobAdmin, { path: "jobadmin", title: "定时任务" }),
                   route(ApiKeyAdmin, { path: "apikeyadmin", title: "API 密钥" }),

@@ -1,13 +1,16 @@
 import {
   assignRole,
+  copyRole as goCopyRole,
   createRole as goCreateRole,
   deleteRole as goDeleteRole,
   getPermissions,
   getRolePermissions,
+  getRoleScopeDepts as goGetRoleScopeDepts,
   getRoles,
   getUsers,
   revokeRole,
   setRolePermissions,
+  setRoleScopeDepts as goSetRoleScopeDepts,
   updateRole as goUpdateRole
 } from "@/api/goadmin";
 
@@ -153,3 +156,9 @@ export async function findPermissionOptions() {
   }));
   return { ...res, data: { ...res.data, data: list } };
 }
+
+export const copyRole = (sourceCode: string, payload: { code: string; name: string }) => goCopyRole(sourceCode, payload);
+
+export const getRoleScopeDepts = (code: string) => goGetRoleScopeDepts(code);
+
+export const setRoleScopeDepts = (code: string, department_ids: string[]) => goSetRoleScopeDepts(code, department_ids);

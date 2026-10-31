@@ -77,7 +77,23 @@ const ApiKeyAdmin: FC = () => {
       width: 90,
       render: (status: number) => (Number(status) === 0 ? <Tag>已吊销</Tag> : <Tag color="blue">有效</Tag>)
     },
-    { title: "过期", dataIndex: "expires_at", responsive: ["lg"], render: (value: string) => value || "不过期" },
+    {
+      title: "过期",
+      dataIndex: "expires_at",
+      responsive: ["lg"],
+      render: (value: string, row: any) => {
+        if (!value) return "不过期";
+        const days = row.days_left;
+        if (days == null) return value;
+        const color = Number(days) <= 7 ? "red" : Number(days) <= 30 ? "orange" : "default";
+        return (
+          <span>
+            {value}{" "}
+            <Tag color={color}>{Number(days) < 0 ? "已过期" : `剩余 ${days} 天`}</Tag>
+          </span>
+        );
+      }
+    },
     { title: "最近使用", dataIndex: "last_used_at", responsive: ["xl"], render: (value: string) => value || "—" },
     {
       title: "操作",

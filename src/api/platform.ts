@@ -16,6 +16,7 @@ function segment(value: string) {
 export const DATA_SCOPE_OPTIONS = [
   { value: "all", label: "全部" },
   { value: "dept", label: "本部门及下级" },
+  { value: "custom", label: "指定部门" },
   { value: "self", label: "仅本人" }
 ];
 
@@ -164,6 +165,24 @@ export const setTicketPriority = (id: string, priority: string) => request(`/api
 export const rateMyTicket = (id: string, rating: number, comment = "") =>
   request(`/api/me/tickets/${segment(id)}/rate`, "POST", { rating, comment });
 
+/** 关注工单（管理端）。user_id 走 query，缺省为自己。 */
+export const addTicketWatcher = (id: string, user_id?: string) => {
+  const q = user_id ? `?user_id=${segment(user_id)}` : "";
+  return request(`/api/tickets/${segment(id)}/watchers${q}`, "POST", {});
+};
+
+export const removeTicketWatcher = (id: string, user_id: string) =>
+  request(`/api/tickets/${segment(id)}/watchers/${segment(user_id)}`, "DELETE");
+
+export const listTicketWatchers = (id: string) => request(`/api/tickets/${segment(id)}/watchers`, "GET");
+
+/** 我的工单关注（创建人/处理人）。 */
+export const addMyTicketWatcher = (id: string) => request(`/api/me/tickets/${segment(id)}/watchers`, "POST", {});
+
+export const removeMyTicketWatcher = (id: string) => request(`/api/me/tickets/${segment(id)}/watchers`, "DELETE");
+
+export const listMyTicketWatchers = (id: string) => request(`/api/me/tickets/${segment(id)}/watchers`, "GET");
+
 /** 全局搜索。登录即可。data: { query, list:[{type,id,title,extra?}] } */
 export const globalSearch = (q: string) => request("/api/search", "GET", { q });
 
@@ -174,6 +193,9 @@ export const setJobEnabled = (code: string, enabled: boolean) => request(`${jobP
 export const runJob = (code: string) => request(`${jobPath(code)}/run`, "POST", {});
 
 export const listJobRuns = (code: string, limit = 20) => request(`${jobPath(code)}/runs`, "GET", { limit });
+
+/** 取消进行中的任务执行。需要 job:write。 */
+export const cancelJobRun = (runId: string) => request(`/api/jobs/runs/${segment(runId)}/cancel`, "POST", {});
 
 function jobPath(code: string) {
   return `/api/jobs/${segment(code)}`;

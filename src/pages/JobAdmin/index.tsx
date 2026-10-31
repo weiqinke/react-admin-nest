@@ -1,5 +1,5 @@
 import { hasPermission } from "@/api/announcement";
-import { listJobRuns, listJobs, runJob, setJobEnabled } from "@/api/platform";
+import { cancelJobRun, listJobRuns, listJobs, runJob, setJobEnabled } from "@/api/platform";
 import PageIntroduction from "@/components/PageIntroduction";
 import { Button, Drawer, Space, Switch, Table, Tag, message } from "antd";
 import { FC, useEffect, useState } from "react";
@@ -28,6 +28,13 @@ const JobAdmin: FC = () => {
   const openRuns = (jobCode: string) => {
     setCode(jobCode);
     listJobRuns(jobCode, 20)
+      .then(res => setRuns(res.data?.data?.list || []))
+      .catch(() => setRuns([]));
+  };
+
+  const refreshRuns = () => {
+    if (!code) return;
+    listJobRuns(code, 20)
       .then(res => setRuns(res.data?.data?.list || []))
       .catch(() => setRuns([]));
   };
@@ -80,7 +87,8 @@ const JobAdmin: FC = () => {
       render: (value: string) => (value ? <Tag color={value === "success" ? "green" : "red"}>{value === "success" ? "成功" : "失败"}</Tag> : "—")
     },
     { title: "最近执行", dataIndex: "last_run_at", responsive: ["lg"], width: 180, render: (value: string) => value || "—" },
-    { title: "错误", dataIndex: "last_error", ellipsis: true, responsive: ["lg"], render: (value: string) => value || "—" },
+    { title: "下次执行", dataIndex: "next_run_at", responsive: ["lg"], width: 180, render: (value: string) => value || "—" },
+    { title: "错误", dataIndex: "last_error", ellipsis: true, responsive: ["xl"], render: (value: string) => value || "—" },
     {
       title: "操作",
       width: 180,
@@ -113,7 +121,7 @@ const JobAdmin: FC = () => {
         introduction="有 cron_expr（五段）时按表达式触发，否则用固定间隔。ticket.due_remind 会给到期未关闭工单发一次提醒。announcement.start 在预约公告到点后补发「新公告」。log.purge 按保留天数清理日志。"
       />
       <div className="admin-card">
-        <Table rowKey="code" columns={columns} dataSource={list} pagination={false} scroll={{ x: 1100 }} />
+        <Table rowKey="code" columns={columns} dataSource={list} pagination={false} scroll={{ x: 1280 }} />
       </div>
       <Drawer open={Boolean(code)} title={code ? `${code} 的执行记录` : "执行记录"} size={640} onClose={() => setCode("")}>
         <Table
@@ -122,14 +130,36 @@ const JobAdmin: FC = () => {
           pagination={false}
           columns={[
             { title: "开始", dataIndex: "started_at" },
-            { title: "结束", dataIndex: "finished_at" },
+            { title: "结束", dataIndex: "finished_at", render: (value: string) => value || "—" },
             {
               title: "结果",
               dataIndex: "status",
-              width: 90,
-              render: (value: string) => <Tag color={value === "success" ? "green" : "red"}>{value === "success" ? "成功" : "失败"}</Tag>
+              width: 100,
+              render: (value: string) => {
+                const color = value === "success" ? "green" : value === "running" ? "blue" : value === "cancelled" ? "default" : "red";
+                const label = value === "success" ? "成功" : value === "running" ? "运行中" : value === "cancelled" ? "已取消" : "失败";
+                return <Tag color={color}>{label}</Tag>;
+              }
             },
-            { title: "说明", dataIndex: "message", ellipsis: true }
+            { title: "说明", dataIndex: "message", ellipsis: true },
+            {
+              title: "操作",
+              width: 90,
+              render: (row: any) =>
+                canWrite && (row.status === "running" || !row.finished_at) ? (
+                  <Button
+                    size="small"
+                    danger
+                    onClick={async () => {
+                      await cancelJobRun(String(row.id));
+                      message.success("已请求取消");
+                      refreshRuns();
+                      load();
+                    }}>
+                    取消
+                  </Button>
+                ) : null
+            }
           ]}
         />
       </Drawer>

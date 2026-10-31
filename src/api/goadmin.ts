@@ -113,6 +113,16 @@ export const updateRole = (code: string, payload) => request(`/api/roles/${enc(c
 
 export const deleteRole = (code: string) => request(`/api/roles/${enc(code)}`, "DELETE");
 
+/** 复制角色（含权限）。需要 role:write。 */
+export const copyRole = (sourceCode: string, payload: { code: string; name: string }) =>
+  request(`/api/roles/${enc(sourceCode)}/copy`, "POST", payload);
+
+/** custom 数据范围部门。需要 role:read / role:write。 */
+export const getRoleScopeDepts = (code: string) => request(`/api/rbac/roles/${enc(code)}/scope-depts`, "GET");
+
+export const setRoleScopeDepts = (code: string, department_ids: string[]) =>
+  request(`/api/rbac/roles/${enc(code)}/scope-depts`, "PUT", { department_ids });
+
 export const getRolePermissions = (code: string) => request(`/api/roles/${enc(code)}/permissions`, "GET");
 
 export const grantRolePermissions = (code: string, payload) => request(`/api/roles/${enc(code)}/permissions`, "POST", payload);

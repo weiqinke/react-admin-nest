@@ -1,5 +1,7 @@
 import { hasPermission } from "@/api/announcement";
 import {
+  addMyTicketWatcher,
+  addTicketWatcher,
   assignTicket,
   closeMyTicket,
   closeTicket,
@@ -9,8 +11,12 @@ import {
   getMyTicket,
   getTicket,
   listDepts,
+  listMyTicketWatchers,
+  listTicketWatchers,
   processTicket,
   rateMyTicket,
+  removeMyTicketWatcher,
+  removeTicketWatcher,
   reopenMyTicket,
   reopenTicket,
   setTicketPriority,
@@ -56,18 +62,28 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
   const [action, setAction] = useState("");
   const [users, setUsers] = useState<any[]>([]);
   const [depts, setDepts] = useState<any[]>([]);
+  const [watchers, setWatchers] = useState<string[]>([]);
   const [form] = Form.useForm();
   const [commentForm] = Form.useForm();
   const [saving, setSaving] = useState(false);
   const canWrite = !mine && hasPermission("ticket:write");
 
+  const loadWatchers = () => {
+    const request = mine ? listMyTicketWatchers(ticketId) : listTicketWatchers(ticketId);
+    request
+      .then(res => setWatchers((res.data?.data?.list || []).map(String)))
+      .catch(() => setWatchers([]));
+  };
+
   const load = () => {
     const request = mine ? getMyTicket(ticketId) : getTicket(ticketId);
     request.then(res => setTicket(res.data?.data || null)).catch(() => setTicket(null));
+    loadWatchers();
   };
 
   const viewerId = String(getUserState().uid || "");
   const isCreator = !!ticket && String(ticket.creator_id) === viewerId;
+  const watching = watchers.includes(viewerId);
 
   useEffect(() => {
     setAction("");
@@ -75,16 +91,16 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
     commentForm.resetFields();
     const request = mine ? getMyTicket(ticketId) : getTicket(ticketId);
     request.then(res => setTicket(res.data?.data || null)).catch(() => setTicket(null));
+    loadWatchers();
   }, [ticketId, mine, form, commentForm]);
 
   useEffect(() => {
-    if (mine || !canWrite) return;
     if (hasPermission("user:read")) {
       findUserOptions()
         .then(res => setUsers(res.data?.data || []))
         .catch(() => setUsers([]));
     }
-    if (hasPermission("dept:read")) {
+    if (!mine && canWrite && hasPermission("dept:read")) {
       listDepts()
         .then(res => setDepts(res.data?.data?.list || []))
         .catch(() => setDepts([]));
@@ -183,7 +199,69 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
             <Descriptions.Item label="内容">{ticket.content}</Descriptions.Item>
             {ticket.close_reason ? <Descriptions.Item label="关闭原因">{ticket.close_reason}</Descriptions.Item> : null}
             {ticket.rating ? <Descriptions.Item label="评分">{ticket.rating} 星</Descriptions.Item> : null}
+            <Descriptions.Item label="关注人">
+              {watchers.length ? (
+                <Space size={4} wrap>
+                  {watchers.map(id => (
+                    <Tag
+                      key={id}
+                      closable={canWrite && id !== viewerId}
+                      onClose={async e => {
+                        e.preventDefault();
+                        await removeTicketWatcher(ticketId, id);
+                        message.success("已取消关注");
+                        loadWatchers();
+                      }}>
+                      {userName(id)}
+                    </Tag>
+                  ))}
+                </Space>
+              ) : (
+                "无"
+              )}
+            </Descriptions.Item>
           </Descriptions>
+          <Space className="mt-2 mb-2" wrap>
+            <Button
+              size="small"
+              loading={saving}
+              onClick={async () => {
+                setSaving(true);
+                try {
+                  if (watching) {
+                    if (mine) await removeMyTicketWatcher(ticketId);
+                    else await removeTicketWatcher(ticketId, viewerId);
+                    message.success("已取消关注");
+                  } else {
+                    if (mine) await addMyTicketWatcher(ticketId);
+                    else await addTicketWatcher(ticketId);
+                    message.success("已关注");
+                  }
+                  loadWatchers();
+                } finally {
+                  setSaving(false);
+                }
+              }}>
+              {watching ? "取消关注" : "关注工单"}
+            </Button>
+            {canWrite && users.length ? (
+              <Select
+                size="small"
+                style={{ width: 180 }}
+                placeholder="添加关注人"
+                showSearch
+                optionFilterProp="label"
+                options={users
+                  .map(item => ({ value: String(item.uid || item.id), label: item.username }))
+                  .filter(item => !watchers.includes(item.value))}
+                onSelect={async (userId: string) => {
+                  await addTicketWatcher(ticketId, userId);
+                  message.success("已添加关注");
+                  loadWatchers();
+                }}
+              />
+            ) : null}
+          </Space>
           {hasPermission("label:read") ? (
             <div className="mt-3">
               <div className="mb-2">标签</div>

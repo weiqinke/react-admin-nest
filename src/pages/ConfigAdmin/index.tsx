@@ -3,6 +3,7 @@ import { listConfigGroups, listConfigs, listMailTemplates, testMail, updateConfi
 import PageIntroduction from "@/components/PageIntroduction";
 import { Button, Form, Input, Modal, Select, Switch, Table, Tabs, message } from "antd";
 import { FC, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router";
 
 const infos = [{ title: "系统管理" }, { title: "系统参数" }];
 
@@ -20,6 +21,7 @@ const ConfigAdmin: FC = () => {
   const [saving, setSaving] = useState(false);
   const canWrite = hasPermission("config:write");
   const canRead = hasPermission("config:read");
+  const navigate = useNavigate();
 
   const load = () => {
     listConfigs()
@@ -161,6 +163,10 @@ const ConfigAdmin: FC = () => {
         introduction="站点、安全、日志、邮件参数在这里改。密码最短长度与有效期天数、SMTP 都在系统参数里。密码超期登录会返回 40305。mail.enabled=false 时只记日志不发信。"
       />
       <div className="admin-card">
+        <div className="admin-toolbar mb-3">
+          <Button onClick={() => navigate("/management/webhookadmin")}>Webhook</Button>
+          <Button onClick={() => navigate("/management/flagadmin")}>Feature Flag</Button>
+        </div>
         <Tabs
           items={[
             {

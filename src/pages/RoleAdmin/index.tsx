@@ -1,10 +1,10 @@
 import { OperationRoleModal, RoleAllocationPermModal, RoleAllocationUserModal } from "@/components/Modals";
 import PageIntroduction from "@/components/PageIntroduction";
 import { dataScopeLabel } from "@/api/platform";
-import { findRoleUsers, findRoles, removeRole } from "@/api/role";
+import { copyRole, findRoleUsers, findRoles, removeRole } from "@/api/role";
 import { findUserOptions } from "@/api/user";
 import { ExclamationCircleOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import { Alert, Button, Modal, Space, Table, Tag, message } from "antd";
+import { Alert, Button, Form, Input, Modal, Space, Table, Tag, message } from "antd";
 import { FC, useEffect, useState } from "react";
 
 const { confirm } = Modal;
@@ -20,6 +20,9 @@ const RoleList: FC = () => {
   const [initUIDs, setInitUIDs] = useState<string[]>([]);
   const [shareUsers, setShareUsers] = useState(false);
   const [sharePerms, setSharePerms] = useState(false);
+  const [copySource, setCopySource] = useState<any>(null);
+  const [copySaving, setCopySaving] = useState(false);
+  const [copyForm] = Form.useForm();
 
   const findAllRole = () => {
     setRole(null);
@@ -115,6 +118,14 @@ const RoleList: FC = () => {
           <Button size="small" type="primary" onClick={() => setRole(item)}>
             编辑
           </Button>
+          <Button
+            size="small"
+            onClick={() => {
+              setCopySource(item);
+              copyForm.setFieldsValue({ code: `${item.code}_copy`, name: `${item.name || item.code} 副本` });
+            }}>
+            复制
+          </Button>
           <Button size="small" danger onClick={() => showDeleteConfirm(item)}>
             删除
           </Button>
@@ -122,6 +133,21 @@ const RoleList: FC = () => {
       )
     }
   ];
+
+  const submitCopy = async (values: { code: string; name: string }) => {
+    if (!copySource?.code) return;
+    setCopySaving(true);
+    try {
+      await copyRole(String(copySource.code), { code: values.code, name: values.name });
+      message.success("已复制");
+      setCopySource(null);
+      findAllRole();
+    } catch (err: any) {
+      message.error(err?.message || "复制失败");
+    } finally {
+      setCopySaving(false);
+    }
+  };
 
   return (
     <div className="p-3">
@@ -170,6 +196,22 @@ const RoleList: FC = () => {
           onCancel={() => setSharePerms(false)}
         />
       )}
+      <Modal
+        open={Boolean(copySource)}
+        title={copySource ? `复制角色：${copySource.code}` : "复制角色"}
+        confirmLoading={copySaving}
+        onOk={() => copyForm.submit()}
+        onCancel={() => setCopySource(null)}
+        destroyOnHidden>
+        <Form form={copyForm} layout="vertical" onFinish={submitCopy}>
+          <Form.Item name="code" label="新角色编码" rules={[{ required: true, message: "请填写编码" }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="name" label="新角色名称" rules={[{ required: true, message: "请填写名称" }]}>
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };
