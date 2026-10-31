@@ -1,6 +1,7 @@
 ﻿import TypingCard from "@/components/TypingCard";
 import { Descriptions } from "antd";
 import { Link } from "react-router";
+import pkg from "../../../package.json";
 
 const dependencyItems = (deps: Record<string, string> = {}) =>
   Object.entries(deps).map(([key, value]) => ({
@@ -10,7 +11,9 @@ const dependencyItems = (deps: Record<string, string> = {}) =>
   }));
 
 const About = () => {
-  const { dependencies, devDependencies, version, lastBuildTime } = REACT_PACKAGE;
+  const { version, lastBuildTime } = REACT_PACKAGE;
+  const dependencies = (pkg.dependencies || {}) as Record<string, string>;
+  const devDependencies = (pkg.devDependencies || {}) as Record<string, string>;
 
   return (
     <div>

@@ -1,6 +1,6 @@
 import { listMyAnnouncements, markAnnouncementRead } from "@/api/announcement";
 import { getHomeSummary } from "@/api/platform";
-import { PieBorderRadius } from "@/components/Echarts";
+import PieBorderRadius from "@/components/Echarts/PieBorderRadius";
 import Round from "@/components/Echarts/Round";
 import { BellOutlined, CheckSquareOutlined, FileTextOutlined, NotificationOutlined } from "@ant-design/icons";
 import { Button, Col, List, Modal, Row, Tag } from "antd";

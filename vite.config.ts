@@ -12,7 +12,7 @@ import { compression } from "vite-plugin-compression2";
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 // 配置文件会被 Vite 再打包，JSON import 会丢掉未静态引用的字段，这里直接读原文。
 const packageJson = JSON.parse(readFileSync(path.join(dirname, "package.json"), "utf8"));
-const { dependencies, devDependencies, name, version } = packageJson;
+const { name, version } = packageJson;
 
 const isDev = process.env.NODE_ENV === "development";
 // 浏览器请求默认同源（开发 Vite 代理 / 生产 Nginx 反代 /api）。
@@ -77,8 +77,6 @@ export default defineConfig({
     REACT_APP_API_URL: JSON.stringify(httpUrl),
     REACT_APP_WS_ORIGIN: JSON.stringify(wsUrl),
     REACT_PACKAGE: JSON.stringify({
-      dependencies,
-      devDependencies,
       name,
       version,
       lastBuildTime: dayjs(new Date()).format("YYYY-MM-DD HH:mm:ss")
@@ -110,6 +108,14 @@ export default defineConfig({
         chunkFileNames: "js/[name]-[hash].js",
         entryFileNames: "js/[name]-[hash].js",
         assetFileNames: "[ext]/[name]-[hash].[ext]",
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return;
+          if (id.includes("echarts") || id.includes("echarts-wordcloud")) return "vendor-echarts";
+          if (id.includes("antd") || id.includes("@ant-design")) return "vendor-antd";
+          if (id.includes("react-router") || id.includes("/react/") || id.includes("\\react\\") || id.includes("react-dom")) {
+            return "vendor-react";
+          }
+        },
         // 默认压缩器是 Oxc。显式打开 mangle / codegen，避免只传 compress 时退回未压缩产物。
         minify: {
           compress: {

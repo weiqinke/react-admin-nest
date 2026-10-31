@@ -11,6 +11,8 @@ import { Layout, Modal } from "antd";
 import { Suspense, useContext, useEffect, useState } from "react";
 import { adaptApiMenus, saveMenus } from "@/utils/menuUtils";
 import { throttle } from "@/utils/throttle";
+import { webSocketManager } from "@/utils/ws";
+import { getAccessToken } from "@/api/session";
 import { Outlet, useLocation, useNavigate } from "react-router";
 import styles from "./index.module.scss";
 import SuspendFallback from "@/components/SuspendFallback";
@@ -35,6 +37,10 @@ const DefaultLayout = () => {
     const timer = window.setTimeout(() => setEnterMotion(false), 200);
     return () => window.clearTimeout(timer);
   }, [pathname]);
+
+  useEffect(() => {
+    if (getAccessToken()) webSocketManager.create();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;

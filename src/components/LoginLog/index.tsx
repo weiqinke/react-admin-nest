@@ -2,7 +2,7 @@ import { getLoginStats } from "@/api/goadmin";
 import { exportLoginLogsCsv } from "@/api/impexp";
 import { loginlog } from "@/api/log";
 import { dataScopeLabel } from "@/api/platform";
-import { LoginFrequencyChart } from "@/components/Echarts";
+import LoginFrequencyChart from "@/components/Echarts/LoginFrequencyChart";
 import { getDateTimeFormat } from "@/utils/core";
 import { Alert, Button, Table, message } from "antd";
 import dayjs from "dayjs";
