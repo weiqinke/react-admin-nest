@@ -88,8 +88,7 @@ export const setUserPosition = (id: string, position_id: string) => request(`/ap
 
 export const deleteDept = (id: string) => request(`/api/depts/${segment(id)}`, "DELETE");
 
-export const setUserDepartment = (id: string, departmentId: string) =>
-  request(`/api/users/${segment(id)}/department`, "PUT", { department_id: departmentId || "" });
+export const setUserDepartment = (id: string, departmentId: string) => request(`/api/users/${segment(id)}/department`, "PUT", { department_id: departmentId || "" });
 
 export function toDeptTree(nodes: any[] = [], options?: { disableOff?: boolean; keepId?: string }): any[] {
   return (nodes || []).map(node => {
@@ -132,15 +131,13 @@ export const listTickets = (query: Record<string, any> = {}) => request("/api/ti
 
 export const getTicket = (id: string) => request(`/api/tickets/${segment(id)}`, "GET");
 
-export const assignTicket = (id: string, payload: { assignee_id?: string; department_id?: string }) =>
-  request(`/api/tickets/${segment(id)}/assign`, "PUT", payload);
+export const assignTicket = (id: string, payload: { assignee_id?: string; department_id?: string }) => request(`/api/tickets/${segment(id)}/assign`, "PUT", payload);
 
 export const processTicket = (id: string, note?: string) => request(`/api/tickets/${segment(id)}/process`, "PUT", { note: note || "" });
 
 export const closeTicket = (id: string, close_reason: string) => request(`/api/tickets/${segment(id)}/close`, "PUT", { close_reason });
 
-export const createTicket = (payload: { title: string; content: string; priority: string; due_at?: string }) =>
-  request("/api/tickets", "POST", compact(payload));
+export const createTicket = (payload: { title: string; content: string; priority: string; due_at?: string }) => request("/api/tickets", "POST", compact(payload));
 
 export const listMyTickets = (query: Record<string, any> = {}) => request("/api/me/tickets", "GET", compact(query));
 

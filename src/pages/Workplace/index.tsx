@@ -102,7 +102,14 @@ const Workplace = () => {
           )}
         />
       </div>
-      <Modal open={Boolean(current)} title={current?.title || "公告"} okText="知道了" cancelButtonProps={{ style: { display: "none" } }} onOk={closeAnnouncement} onCancel={closeAnnouncement} destroyOnHidden>
+      <Modal
+        open={Boolean(current)}
+        title={current?.title || "公告"}
+        okText="知道了"
+        cancelButtonProps={{ style: { display: "none" } }}
+        onOk={closeAnnouncement}
+        onCancel={closeAnnouncement}
+        destroyOnHidden>
         <div className="whitespace-pre-wrap">{current?.content || ""}</div>
       </Modal>
       <Row gutter={[12, 12]} className={styles.header}>

@@ -165,11 +165,7 @@ const SystemInfo: React.FC = () => {
             </div>
             {apiCounts.data_scope ? (
               <div className={styles.itemText}>
-                <em>
-                  {apiCounts.data_scope === "all"
-                    ? "全站统计，含匿名访问"
-                    : `${dataScopeLabel(apiCounts.data_scope)}，不含匿名访问`}
-                </em>
+                <em>{apiCounts.data_scope === "all" ? "全站统计，含匿名访问" : `${dataScopeLabel(apiCounts.data_scope)}，不含匿名访问`}</em>
               </div>
             ) : null}
           </div>

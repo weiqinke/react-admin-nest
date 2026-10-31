@@ -1,10 +1,5 @@
 import { hasPermission } from "@/api/announcement";
-import {
-  commitDeptImport,
-  downloadDeptImportTemplate,
-  exportDeptsCsv,
-  previewDeptImport
-} from "@/api/impexp";
+import { commitDeptImport, downloadDeptImportTemplate, exportDeptsCsv, previewDeptImport } from "@/api/impexp";
 import { createDept, deleteDept, listDepts, toDeptTree, updateDept } from "@/api/platform";
 import { findUserOptions } from "@/api/user";
 import CsvImportModal from "@/components/CsvImportModal";
@@ -27,9 +22,7 @@ function asTableTree(nodes: any[] = []): any[] {
 }
 
 function dropNode(nodes: any[] = [], id: string): any[] {
-  return (nodes || [])
-    .filter(node => String(node.id) !== id)
-    .map(node => ({ ...node, children: dropNode(node.children || [], id) }));
+  return (nodes || []).filter(node => String(node.id) !== id).map(node => ({ ...node, children: dropNode(node.children || [], id) }));
 }
 
 const DeptAdmin: FC = () => {

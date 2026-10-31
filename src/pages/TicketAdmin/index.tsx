@@ -132,12 +132,7 @@ const TicketAdmin: FC = () => {
             查询
           </Button>
         </Space>
-        <Table
-          rowKey="id"
-          columns={columns}
-          dataSource={list}
-          pagination={{ current: page, total, pageSize: 20, onChange: next => load(next) }}
-        />
+        <Table rowKey="id" columns={columns} dataSource={list} pagination={{ current: page, total, pageSize: 20, onChange: next => load(next) }} />
       </div>
       {current ? <TicketPanel ticketId={current} onClose={() => setCurrent("")} onChanged={() => load()} /> : null}
     </div>

@@ -119,7 +119,13 @@ const AiAdmin: FC = () => {
         ) : null}
         <Table rowKey="id" columns={columns} dataSource={list} pagination={false} />
       </div>
-      <Modal open={Boolean(draft)} title={draft?.id ? "编辑模型" : "添加模型"} confirmLoading={saving} onOk={() => form.submit()} onCancel={() => setDraft(null)} destroyOnHidden>
+      <Modal
+        open={Boolean(draft)}
+        title={draft?.id ? "编辑模型" : "添加模型"}
+        confirmLoading={saving}
+        onOk={() => form.submit()}
+        onCancel={() => setDraft(null)}
+        destroyOnHidden>
         <Form form={form} layout="vertical" onFinish={save}>
           <Form.Item name="name" label="名称" rules={[{ required: true, message: "请填写名称" }]}>
             <Input maxLength={128} />

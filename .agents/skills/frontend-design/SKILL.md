@@ -23,6 +23,7 @@ Choose your typefaces deliberately, not the default families you would reach for
 Default to line lengths of less than 80 characters. Serif typefaces can have slightly longer line lengths; give serif body text slightly more line-height than a sans-serif.
 
 Avoid these default typographic treatments; they are the commonest tells of a generated page:
+
 - Accenting just a single word or phrase in a headline, like putting one word in italic/bold or a different color.
 - Using all caps for labels.
 - Adding unnecessary typographic labels above content.
@@ -36,6 +37,7 @@ Consider written content carefully. Often a design brief may not contain real co
 ## Process: plan, review against the brief, build, critique
 
 For calibration, AI-generated design right now clusters around some traits:
+
 1. a warm cream background (near #F4F1EA) with a high-contrast serif display and a terracotta or warm-clay accent (often near #D97757 — Anthropic's own Claude-interaction accent, so on a user's brief it reads as a tell);
 2. a near-black background with a single bright acid-green or vermilion accent;
 3. a broadsheet-style layout with hairline rules, zero border-radius, and dense newspaper-like columns;
@@ -45,6 +47,7 @@ For calibration, AI-generated design right now clusters around some traits:
 All traits are legitimate for some briefs, but they are defaults rather than choices, and they appear regardless of subject. Where the brief pins down a visual direction, follow it exactly — the brief's own words always win, including when it asks for one of these looks. Where it leaves an axis free, don't spend that freedom on one of these defaults. As with a hired human designer, there's often a careful balance between doing what you're good at and taking each project as a chance to experiment and learn.
 
 Work in two passes. First, brainstorm a short design plan based on the client's design brief: create a compact token system with color, type, layout, and principles.
+
 - Color: describe the core base palette as 4–6 named hex values.
 - Type: the typefaces and their roles.
 - Layout: a layout concept, using one-sentence prose descriptions and ASCII wireframes to ideate and compare. Include alignment guidance; should the content be left aligned, center aligned, justified?

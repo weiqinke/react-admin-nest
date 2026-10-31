@@ -98,8 +98,8 @@ export function saveLoginSession(data: { token?: string; refresh_token?: string;
 }
 
 export function clearSession() {
-  [ACCESS_TOKEN, REFRESH_TOKEN, "expires_at", "refresh_expires_at", "session_id", "uid", "nick", "avatar", "loginState", "permissions", "roles", "active_roles"].forEach(key =>
-    localStorage.removeItem(key)
+  [ACCESS_TOKEN, REFRESH_TOKEN, "expires_at", "refresh_expires_at", "session_id", "uid", "nick", "avatar", "loginState", "permissions", "roles", "active_roles"].forEach(
+    key => localStorage.removeItem(key)
   );
   emitSession();
 }

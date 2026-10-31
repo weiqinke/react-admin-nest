@@ -117,8 +117,7 @@ const CsvImportModal: FC<Props> = ({ open, title, hint, onClose, onDownloadTempl
       {preview ? (
         <>
           <div className="mb-2">
-            有效 {preview.valid || 0} 行，无效 {preview.invalid || 0} 行
-            {(preview.invalid || 0) > 0 ? "。请先修正错误再导入。" : "。"}
+            有效 {preview.valid || 0} 行，无效 {preview.invalid || 0} 行{(preview.invalid || 0) > 0 ? "。请先修正错误再导入。" : "。"}
           </div>
           {(preview.errors || []).length ? (
             <div className="mb-3 max-h-28 overflow-auto text-red-500">

@@ -3,6 +3,7 @@
 Use this reference when the task involves Ant Design component APIs, demos, docs, migration, project analysis, or debugging and the local `@ant-design/cli` can answer it offline.
 
 ## Rules
+
 - Check install first: `which antd || npm install -g @ant-design/cli`
 - If any command prints an update notice, run `npm install -g @ant-design/cli` before continuing.
 - Always use `--format json`.
@@ -13,6 +14,7 @@ Use this reference when the task involves Ant Design component APIs, demos, docs
 ## Core workflows
 
 ### Writing component code
+
 1. `antd info Button --format json`
 2. `antd demo Button basic --format json`
 3. Optionally inspect styling hooks:
@@ -20,21 +22,25 @@ Use this reference when the task involves Ant Design component APIs, demos, docs
    - `antd token Button --format json`
 
 ### Full docs
+
 - `antd doc Table --format json`
 - `antd doc Table --lang zh --format json`
 
 ### Debugging
+
 1. `antd doctor --format json`
 2. `antd info Select --version 5.12.0 --format json`
 3. `antd lint ./src/components/MyForm.tsx --format json`
 
 ### Migration
+
 1. `antd migrate 4 5 --format json`
 2. `antd migrate 4 5 --component Select --format json`
 3. `antd changelog 4.24.0 5.0.0 --format json`
 4. `antd changelog 4.24.0 5.0.0 Select --format json`
 
 ### Project analysis
+
 - `antd usage ./src --format json`
 - `antd usage ./src --filter Form --format json`
 - `antd lint ./src --format json`
@@ -43,16 +49,19 @@ Use this reference when the task involves Ant Design component APIs, demos, docs
 - `antd lint ./src --only performance --format json`
 
 ### Changelog and versions
+
 - `antd changelog 5.22.0 --format json`
 - `antd changelog 5.21.0..5.24.0 --format json`
 
 ### Component discovery
+
 - `antd list --format json`
 - `antd list --version 5.0.0 --format json`
 
 ## Bug reporting
 
 ### antd component bugs
+
 Preview first, then ask the user before submitting.
 
 ```bash
@@ -76,6 +85,7 @@ antd bug --title "DatePicker crashes when selecting date" \
 ```
 
 ### CLI bugs
+
 Prepare a report whenever an `antd` command crashes, returns incorrect data, ignores flags, or is inconsistent with other commands.
 
 ```bash
@@ -99,6 +109,7 @@ antd bug-cli --title "antd info Button returns wrong props for v5.12.0" \
 ```
 
 ## MCP mode
+
 If the environment supports MCP, the CLI can run as:
 
 ```json

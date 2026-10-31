@@ -1,10 +1,5 @@
 import { hasPermission } from "@/api/announcement";
-import {
-  commitUserImport,
-  downloadUserImportTemplate,
-  exportUsersCsv,
-  previewUserImport
-} from "@/api/impexp";
+import { commitUserImport, downloadUserImportTemplate, exportUsersCsv, previewUserImport } from "@/api/impexp";
 import { dataScopeLabel, listDepts, toDeptTree } from "@/api/platform";
 import { findRoles } from "@/api/role";
 import { getUserState } from "@/api/session";
@@ -138,9 +133,7 @@ const UserAdmin: FC = () => {
         infos={infos}
         introduction="用户列表按页返回，并已按当前角色的数据范围过滤。支持 CSV 导出与导入（模板列：username,password,department_code,roles）。解除锁定会清掉连续密码错误的计数。停用会踢掉对方全部会话。"
       />
-      {dataScope ? (
-        <Alert className="mt-3" type="info" showIcon title={`当前数据范围：${dataScopeLabel(dataScope)}`} />
-      ) : null}
+      {dataScope ? <Alert className="mt-3" type="info" showIcon title={`当前数据范围：${dataScopeLabel(dataScope)}`} /> : null}
       <div className="my-3 rounded-md bg-white p-3">
         <Form form={form} name="horizontal_login" layout="inline" autoComplete="off" onFinish={() => findAll(1)}>
           <Form.Item name="keyword" label="用户名">

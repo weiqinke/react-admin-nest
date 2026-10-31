@@ -1,11 +1,6 @@
 import { hasPermission } from "@/api/announcement";
 import { deleteDictItem, deleteDictType, listDictItems, listDictTypes, setDictItemStatus, setDictTypeStatus } from "@/api/dict";
-import {
-  commitDictImport,
-  downloadDictImportTemplate,
-  exportDictsCsv,
-  previewDictImport
-} from "@/api/impexp";
+import { commitDictImport, downloadDictImportTemplate, exportDictsCsv, previewDictImport } from "@/api/impexp";
 import CsvImportModal from "@/components/CsvImportModal";
 import { OperationDictItemModal, OperationDictTypeModal } from "@/components/Modals";
 import PageIntroduction from "@/components/PageIntroduction";

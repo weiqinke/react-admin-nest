@@ -1,12 +1,5 @@
 import { hasPermission } from "@/api/announcement";
-import {
-  listConfigGroups,
-  listConfigs,
-  listMailTemplates,
-  testMail,
-  updateConfig,
-  upsertMailTemplate
-} from "@/api/platform";
+import { listConfigGroups, listConfigs, listMailTemplates, testMail, updateConfig, upsertMailTemplate } from "@/api/platform";
 import PageIntroduction from "@/components/PageIntroduction";
 import { Button, Form, Input, Modal, Select, Space, Switch, Table, Tabs, message } from "antd";
 import { FC, useEffect, useMemo, useState } from "react";
@@ -176,14 +169,7 @@ const ConfigAdmin: FC = () => {
               children: (
                 <>
                   <Space className="mb-3" wrap>
-                    <Select
-                      allowClear
-                      placeholder="分组"
-                      style={{ width: 220 }}
-                      value={group}
-                      options={groupOptions}
-                      onChange={value => setGroup(value)}
-                    />
+                    <Select allowClear placeholder="分组" style={{ width: 220 }} value={group} options={groupOptions} onChange={value => setGroup(value)} />
                     <Button onClick={() => load()}>刷新</Button>
                   </Space>
                   <Table rowKey="key" columns={columns} dataSource={rows} pagination={false} />
@@ -211,7 +197,13 @@ const ConfigAdmin: FC = () => {
           ]}
         />
       </div>
-      <Modal open={Boolean(editing)} title={editing ? `修改 ${editing.name || editing.key}` : "修改参数"} confirmLoading={saving} onOk={() => form.submit()} onCancel={() => setEditing(null)} destroyOnHidden>
+      <Modal
+        open={Boolean(editing)}
+        title={editing ? `修改 ${editing.name || editing.key}` : "修改参数"}
+        confirmLoading={saving}
+        onOk={() => form.submit()}
+        onCancel={() => setEditing(null)}
+        destroyOnHidden>
         <Form form={form} layout="vertical" onFinish={save}>
           <Form.Item label="键">
             <Input value={editing?.key} disabled />
@@ -233,7 +225,13 @@ const ConfigAdmin: FC = () => {
           {editing?.remark ? <div className="text-neutral-500">{editing.remark}</div> : null}
         </Form>
       </Modal>
-      <Modal open={Boolean(mailDraft)} title={mailDraft?.id ? "编辑邮件模板" : "新建邮件模板"} confirmLoading={saving} onOk={() => mailForm.submit()} onCancel={() => setMailDraft(null)} destroyOnHidden>
+      <Modal
+        open={Boolean(mailDraft)}
+        title={mailDraft?.id ? "编辑邮件模板" : "新建邮件模板"}
+        confirmLoading={saving}
+        onOk={() => mailForm.submit()}
+        onCancel={() => setMailDraft(null)}
+        destroyOnHidden>
         <Form form={mailForm} layout="vertical" onFinish={saveMail}>
           <Form.Item name="code" label="编码" rules={[{ required: true, message: "请填写编码" }]}>
             <Input disabled={Boolean(mailDraft?.id)} placeholder="例如 ticket.due" />

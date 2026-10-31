@@ -7,14 +7,11 @@ function asForm(file: File) {
   return form;
 }
 
-export const exportUsersCsv = (query: Record<string, any> = {}, filename = "users.csv") =>
-  downloadCsv("/api/users/export", filename, query);
+export const exportUsersCsv = (query: Record<string, any> = {}, filename = "users.csv") => downloadCsv("/api/users/export", filename, query);
 
-export const exportLoginLogsCsv = (query: Record<string, any>, filename = "login-logs.csv") =>
-  downloadCsv("/api/login/logs/export", filename, query);
+export const exportLoginLogsCsv = (query: Record<string, any>, filename = "login-logs.csv") => downloadCsv("/api/login/logs/export", filename, query);
 
-export const exportAccessLogsCsv = (query: Record<string, any>, filename = "access-logs.csv") =>
-  downloadCsv("/api/stats/access/logs/export", filename, query);
+export const exportAccessLogsCsv = (query: Record<string, any>, filename = "access-logs.csv") => downloadCsv("/api/stats/access/logs/export", filename, query);
 
 export const exportDeptsCsv = (filename = "depts.csv") => downloadCsv("/api/export/depts", filename);
 

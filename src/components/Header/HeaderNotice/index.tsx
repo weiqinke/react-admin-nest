@@ -192,12 +192,7 @@ const HeaderNotice: FC = () => {
     <div className="flex h-12 cursor-pointer select-none items-center px-2">
       <Dropdown menu={{ items }} placement="bottomRight" trigger={["hover"]} onOpenChange={handleOpenChange} open={open}>
         <Badge count={badgeCount} overflowCount={999}>
-          <Avatar
-            shape="square"
-            size={32}
-            src={<BellOutlined />}
-            className="text-base text-header-icon! hover:bg-header-icon-hover-bg! hover:text-header-icon-hover!"
-          />
+          <Avatar shape="square" size={32} src={<BellOutlined />} className="text-base text-header-icon! hover:bg-header-icon-hover-bg! hover:text-header-icon-hover!" />
         </Badge>
       </Dropdown>
     </div>

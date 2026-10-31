@@ -1,5 +1,17 @@
 import * as echarts from "echarts/core";
-import { BarChart, CustomChart, EffectScatterChart, FunnelChart, GraphChart, LineChart, LinesChart, MapChart, PictorialBarChart, PieChart, ScatterChart } from "echarts/charts";
+import {
+  BarChart,
+  CustomChart,
+  EffectScatterChart,
+  FunnelChart,
+  GraphChart,
+  LineChart,
+  LinesChart,
+  MapChart,
+  PictorialBarChart,
+  PieChart,
+  ScatterChart
+} from "echarts/charts";
 import {
   AxisPointerComponent,
   DatasetComponent,
