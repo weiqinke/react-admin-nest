@@ -1,9 +1,20 @@
 import { hasPermission } from "@/api/announcement";
-import { TICKET_PRIORITY, TICKET_STATUS, batchAssignTickets, batchTickets, dataScopeLabel, listDepts, listTickets, ticketOverdue, toDeptTree } from "@/api/platform";
+import {
+  TICKET_PRIORITY,
+  TICKET_STATUS,
+  batchAssignTickets,
+  batchTickets,
+  dataScopeLabel,
+  formatDueInSeconds,
+  listDepts,
+  listTickets,
+  ticketOverdue,
+  toDeptTree
+} from "@/api/platform";
 import { findUserOptions } from "@/api/user";
 import TicketPanel from "@/components/TicketPanel";
 import TicketStatusTag from "@/components/TicketStatusTag";
-import { Alert, Button, Form, Input, Modal, Select, Space, Table, Tag, TreeSelect, message } from "antd";
+import { Alert, Button, DatePicker, Form, Input, Modal, Select, Space, Table, Tag, TreeSelect, message } from "antd";
 import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
 
@@ -22,7 +33,7 @@ const TicketListTab: FC = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [depts, setDepts] = useState<any[]>([]);
   const [batchOpen, setBatchOpen] = useState(false);
-  const [batchAction, setBatchAction] = useState<"assign" | "close" | "priority">("assign");
+  const [batchAction, setBatchAction] = useState<"assign" | "close" | "priority" | "due">("assign");
   const [batchForm] = Form.useForm();
   const canWrite = hasPermission("ticket:write");
 
@@ -62,7 +73,7 @@ const TicketListTab: FC = () => {
     }
   }, []);
 
-  const openBatch = (action: "assign" | "close" | "priority") => {
+  const openBatch = (action: "assign" | "close" | "priority" | "due") => {
     if (!selectedKeys.length) {
       message.warning("请先勾选工单");
       return;
@@ -91,7 +102,8 @@ const TicketListTab: FC = () => {
         ids: selectedKeys,
         action: batchAction,
         priority: values.priority,
-        close_reason: values.close_reason
+        close_reason: values.close_reason,
+        due_at: values.due_at ? dayjs(values.due_at).toISOString() : undefined
       });
       const results = res.data?.data?.results || [];
       const fail = results.filter((item: any) => !item.ok).length;
@@ -102,6 +114,8 @@ const TicketListTab: FC = () => {
     setSelectedKeys([]);
     load();
   };
+
+  const batchTitle = batchAction === "assign" ? "批量分派" : batchAction === "close" ? "批量关闭" : batchAction === "due" ? "批量改截止时间" : "批量改优先级";
 
   const columns: any = [
     { title: "标题", dataIndex: "title", ellipsis: true },
@@ -120,10 +134,11 @@ const TicketListTab: FC = () => {
     {
       title: "截止",
       dataIndex: "due_at",
-      width: 180,
+      width: 220,
       responsive: ["lg"],
       render: (value: string, row: any) => {
         if (!value) return "—";
+        const dueIn = formatDueInSeconds(row.due_in_seconds);
         return (
           <span>
             {dayjs(value).format("YYYY-MM-DD HH:mm")}
@@ -131,6 +146,8 @@ const TicketListTab: FC = () => {
               <Tag color="red" className="ml-1">
                 已过期
               </Tag>
+            ) : dueIn ? (
+              <Tag className="ml-1">{dueIn}</Tag>
             ) : null}
           </span>
         );
@@ -181,9 +198,10 @@ const TicketListTab: FC = () => {
           查询
         </Button>
         {canWrite && selectedKeys.length ? (
-          <Space>
+          <Space wrap>
             <Button onClick={() => openBatch("assign")}>批量分派</Button>
             <Button onClick={() => openBatch("priority")}>批量改优先级</Button>
+            <Button onClick={() => openBatch("due")}>批量改截止</Button>
             <Button danger onClick={() => openBatch("close")}>
               批量关闭
             </Button>
@@ -208,12 +226,7 @@ const TicketListTab: FC = () => {
         }
       />
       {current ? <TicketPanel ticketId={current} onClose={() => setCurrent("")} onChanged={() => load()} /> : null}
-      <Modal
-        open={batchOpen}
-        title={batchAction === "assign" ? "批量分派" : batchAction === "close" ? "批量关闭" : "批量改优先级"}
-        onOk={() => batchForm.submit()}
-        onCancel={() => setBatchOpen(false)}
-        destroyOnHidden>
+      <Modal open={batchOpen} title={batchTitle} onOk={() => batchForm.submit()} onCancel={() => setBatchOpen(false)} destroyOnHidden>
         <Form form={batchForm} layout="vertical" onFinish={submitBatch}>
           {batchAction === "assign" ? (
             <>
@@ -228,6 +241,11 @@ const TicketListTab: FC = () => {
           {batchAction === "priority" ? (
             <Form.Item name="priority" label="优先级" rules={[{ required: true, message: "请选择" }]} initialValue="normal">
               <Select options={Object.entries(TICKET_PRIORITY).map(([value, label]) => ({ value, label }))} />
+            </Form.Item>
+          ) : null}
+          {batchAction === "due" ? (
+            <Form.Item name="due_at" label="截止时间" rules={[{ required: true, message: "请选择截止时间" }]}>
+              <DatePicker showTime className="w-full" />
             </Form.Item>
           ) : null}
           {batchAction === "close" ? (

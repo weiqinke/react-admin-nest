@@ -1,5 +1,14 @@
 import { PlacardEditModal } from "@/components/Modals";
-import { deleteAnnouncement, listAnnouncementReads, listAnnouncements, publishAnnouncement, republishAnnouncement, revokeAnnouncement } from "@/api/announcement";
+import {
+  deleteAnnouncement,
+  listAnnouncementReads,
+  listAnnouncements,
+  nudgeAnnouncement,
+  publishAnnouncement,
+  republishAnnouncement,
+  revokeAnnouncement
+} from "@/api/announcement";
+import { exportAnnouncementReadsCsv } from "@/api/impexp";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import PageIntroduction from "@/components/PageIntroduction";
 import LabelBind from "@/components/LabelBind";
@@ -32,6 +41,7 @@ const PlacardAdmin: FC = () => {
   const [username, setUsername] = useState("");
   const [reads, setReads] = useState<any>({ list: [], total: 0, read_count: 0, unread_count: 0 });
   const [labelFor, setLabelFor] = useState<any>(null);
+  const [exporting, setExporting] = useState(false);
 
   const findAllPlacards = (nextPage = page) => {
     listAnnouncements({ page: nextPage, page_size: 20 })
@@ -99,7 +109,7 @@ const PlacardAdmin: FC = () => {
     },
     {
       title: "操作",
-      width: 280,
+      width: 320,
       render: (row: any) => (
         <Space wrap>
           {row.status === "draft" && (
@@ -117,6 +127,26 @@ const PlacardAdmin: FC = () => {
               撤回
             </Button>
           )}
+          {row.status === "published" && Number(row.unread_count) > 0 ? (
+            <Button
+              type="link"
+              size="small"
+              onClick={() =>
+                Modal.confirm({
+                  title: "提示",
+                  icon: <ExclamationCircleOutlined />,
+                  content: "向未读受众发送催办提醒？同一公告 24 小时内只会催办一次。",
+                  onOk: async () => {
+                    const res = await nudgeAnnouncement(row.id);
+                    const sent = res.data?.data?.sent;
+                    message.success(typeof sent === "number" ? `已催办 ${sent} 人` : "已催办");
+                    findAllPlacards();
+                  }
+                })
+              }>
+              催办
+            </Button>
+          ) : null}
           {row.status === "draft" && (
             <Button type="link" size="small" onClick={() => setPlacard(row)}>
               编辑
@@ -161,7 +191,7 @@ const PlacardAdmin: FC = () => {
     <div className="admin-page">
       <PageIntroduction
         infos={infos}
-        introduction="本页面是操作系统中的公告，可以用来添加、发布和查看已读情况。到期任务会把已过窗口的公告标成已过期，已过期的可以再次发布。"
+        introduction="本页面是操作系统中的公告，可以用来添加、发布和查看已读情况。到期任务会把已过窗口的公告标成已过期，已过期的可以再次发布。可对未读受众催办（24h 去重），并导出阅读明细。"
       />
       <div className="admin-card">
         <div className="admin-toolbar">
@@ -201,16 +231,32 @@ const PlacardAdmin: FC = () => {
       )}
       <Drawer title={readsFor ? `${readsFor.title} 的阅读情况` : "阅读情况"} open={Boolean(readsFor)} width={520} onClose={() => setReadsFor(null)}>
         <Space direction="vertical" className="w-full">
-          <Radio.Group
-            value={readFlag}
-            onChange={event => {
-              const next = event.target.value;
-              setReadFlag(next);
-              loadReads(readsFor, next, username);
-            }}>
-            <Radio.Button value="1">已读 {reads.read_count}</Radio.Button>
-            <Radio.Button value="0">未读 {reads.unread_count}</Radio.Button>
-          </Radio.Group>
+          <Space wrap>
+            <Radio.Group
+              value={readFlag}
+              onChange={event => {
+                const next = event.target.value;
+                setReadFlag(next);
+                loadReads(readsFor, next, username);
+              }}>
+              <Radio.Button value="1">已读 {reads.read_count}</Radio.Button>
+              <Radio.Button value="0">未读 {reads.unread_count}</Radio.Button>
+            </Radio.Group>
+            <Button
+              loading={exporting}
+              onClick={async () => {
+                if (!readsFor?.id) return;
+                setExporting(true);
+                try {
+                  await exportAnnouncementReadsCsv(String(readsFor.id), `announcement-${readsFor.id}-reads.csv`);
+                  message.success("已导出");
+                } finally {
+                  setExporting(false);
+                }
+              }}>
+              导出 CSV
+            </Button>
+          </Space>
           <Input.Search
             placeholder="按用户名查询"
             allowClear

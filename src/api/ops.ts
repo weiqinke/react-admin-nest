@@ -93,3 +93,9 @@ export const putNotifyPrefs = (payload: {
   quiet_hours_start?: string;
   quiet_hours_end?: string;
 }) => request("/api/me/notify-prefs", "PUT", payload);
+
+/** 通知路由最近投递日志。需要 config:read。 */
+export const listNotifyDispatches = (limit = 50) => request("/api/notify/dispatches", "GET", { limit });
+
+/** 邮件模板预览（不发送）。需要 config:read。 */
+export const previewMailTemplate = (payload: { code: string; channel?: string; vars?: Record<string, any> }) => request("/api/mail/templates/preview", "POST", payload);

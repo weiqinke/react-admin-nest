@@ -24,6 +24,13 @@ export const deleteAnnouncement = (id: string) => request(`/api/announcements/${
 
 export const listAnnouncementReads = (id: string, query: Record<string, any> = {}) => request(`/api/announcements/${enc(id)}/reads`, "GET", compact(query));
 
+/** 向未读受众催办，同公告 24h 去重。data: { sent } */
+export const nudgeAnnouncement = (id: string) => request(`/api/announcements/${enc(id)}/nudge`, "POST", {});
+
+/** 预估受众人数。data: { estimated_users } */
+export const estimateAnnouncementAudience = (payload: { target_depts?: string[]; target_roles?: string[] }) =>
+  request("/api/announcements/audience-estimate", "POST", payload);
+
 export const listMyAnnouncements = (query: Record<string, any> = {}) => request("/api/me/announcements", "GET", compact(query));
 
 export const markAnnouncementRead = (id: string) => request(`/api/me/announcements/${enc(id)}/read`, "PUT", {});

@@ -1,6 +1,8 @@
-import { createAnnouncement, updateAnnouncement, updateAnnouncementSchedule } from "@/api/announcement";
+import { createAnnouncement, estimateAnnouncementAudience, updateAnnouncement, updateAnnouncementSchedule } from "@/api/announcement";
 import { listDictOptions } from "@/api/dict";
-import { Col, DatePicker, Form, Input, Modal, Row, Select, message } from "antd";
+import { listDepts, toDeptTree } from "@/api/platform";
+import { findRoles } from "@/api/role";
+import { Button, Col, DatePicker, Form, Input, Modal, Row, Select, Space, TreeSelect, message } from "antd";
 import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
 
@@ -25,6 +27,10 @@ const PlacardEditModal: FC<any> = ({ placard, onOk, onCancel }: any) => {
     { value: "normal", label: "普通" },
     { value: "required", label: "必须确认" }
   ]);
+  const [depts, setDepts] = useState<any[]>([]);
+  const [roles, setRoles] = useState<{ value: string; label: string }[]>([]);
+  const [estimating, setEstimating] = useState(false);
+  const [estimate, setEstimate] = useState<number | null>(null);
 
   useEffect(() => {
     listDictOptions("announcement_type")
@@ -41,7 +47,36 @@ const PlacardEditModal: FC<any> = ({ placard, onOk, onCancel }: any) => {
         if (list.length) setLevelOptions(list);
       })
       .catch(() => undefined);
+    listDepts()
+      .then(res => setDepts(res.data?.data?.list || []))
+      .catch(() => setDepts([]));
+    findRoles()
+      .then(res =>
+        setRoles(
+          (res.data?.data || []).map((item: any) => ({
+            value: String(item.code),
+            label: item.name ? `${item.name}（${item.code}）` : String(item.code)
+          }))
+        )
+      )
+      .catch(() => setRoles([]));
   }, []);
+
+  const runEstimate = async () => {
+    const values = form.getFieldsValue();
+    setEstimating(true);
+    try {
+      const res = await estimateAnnouncementAudience({
+        target_depts: values.target_dept_ids || [],
+        target_roles: values.target_role_codes || []
+      });
+      const count = Number(res.data?.data?.estimated_users ?? 0);
+      setEstimate(count);
+      message.info(`预估受众约 ${count} 人（空部门/角色表示全员启用账号）`);
+    } finally {
+      setEstimating(false);
+    }
+  };
 
   const onFinish = async payload => {
     const body = {
@@ -50,7 +85,9 @@ const PlacardEditModal: FC<any> = ({ placard, onOk, onCancel }: any) => {
       type: payload.level === "required" ? "system" : payload.type,
       level: payload.level,
       starts_at: toIso(payload.starts_at),
-      expires_at: toIso(payload.expires_at)
+      expires_at: toIso(payload.expires_at),
+      target_dept_ids: payload.target_dept_ids || [],
+      target_role_codes: payload.target_role_codes || []
     };
     const result = !placard?.id
       ? await createAnnouncement(body)
@@ -67,12 +104,15 @@ const PlacardEditModal: FC<any> = ({ placard, onOk, onCancel }: any) => {
 
   useEffect(() => {
     form.resetFields();
+    setEstimate(null);
     if (placard?.id) {
       form.setFieldsValue({
         ...placard,
         content: placard.content,
         starts_at: placard.starts_at ? dayjs(placard.starts_at) : null,
-        expires_at: placard.expires_at ? dayjs(placard.expires_at) : null
+        expires_at: placard.expires_at ? dayjs(placard.expires_at) : null,
+        target_dept_ids: placard.target_dept_ids || [],
+        target_role_codes: placard.target_role_codes || []
       });
     }
   }, [placard, form]);
@@ -127,6 +167,37 @@ const PlacardEditModal: FC<any> = ({ placard, onOk, onCancel }: any) => {
               <Input.TextArea rows={4} disabled={locked} maxLength={2000} />
             </Form.Item>
           </Col>
+          {!locked ? (
+            <>
+              <Col span={20}>
+                <Form.Item name="target_dept_ids" label="目标部门" extra="留空表示不限部门">
+                  <TreeSelect
+                    allowClear
+                    treeCheckable
+                    treeDefaultExpandAll
+                    placeholder="可选"
+                    treeData={toDeptTree(depts, { disableOff: true })}
+                    onChange={() => setEstimate(null)}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={20}>
+                <Form.Item name="target_role_codes" label="目标角色" extra="留空表示不限角色">
+                  <Select mode="multiple" allowClear optionFilterProp="label" placeholder="可选" options={roles} onChange={() => setEstimate(null)} />
+                </Form.Item>
+              </Col>
+              <Col span={20}>
+                <Form.Item label="受众预估">
+                  <Space>
+                    <Button loading={estimating} onClick={runEstimate}>
+                      预估人数
+                    </Button>
+                    {estimate != null ? <span>约 {estimate} 人</span> : null}
+                  </Space>
+                </Form.Item>
+              </Col>
+            </>
+          ) : null}
           <Col span={20}>
             <Form.Item name="starts_at" label="生效时间">
               <DatePicker showTime className="w-full" disabled={placard?.status === "revoked"} />

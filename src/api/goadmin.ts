@@ -120,9 +120,21 @@ export const updateConstraint = (code: string, payload) => request(`/api/roles/c
 
 export const deleteConstraint = (code: string) => request(`/api/roles/constraints/${enc(code)}`, "DELETE");
 
-export const assignRole = (payload: { user_id: string; role_code: string }, options?: any) => request("/api/rbac/assign", "POST", payload, options);
+export const assignRole = (payload: { user_id: string; role_code: string; hours?: number }, options?: any) => request("/api/rbac/assign", "POST", payload, options);
 
 export const revokeRole = (payload: { user_id: string; role_code: string }, options?: any) => request("/api/rbac/revoke", "POST", payload, options);
+
+/** 批量授予角色。data: { assigned, skipped } */
+export const assignRoleBatch = (payload: { role_code?: string; code?: string; user_ids: string[]; hours?: number }) => request("/api/rbac/assign-batch", "POST", payload);
+
+/** 批量撤销角色。data: { revoked, skipped } */
+export const revokeRoleBatch = (payload: { role_code?: string; code?: string; user_ids: string[] }) => request("/api/rbac/revoke-batch", "POST", payload);
+
+/** 试算角色组合是否触发 SSD/DSD。data: { ok, violations[] } */
+export const checkRoleConstraints = (payload: { user_id?: string; role_codes: string[] }) => request("/api/rbac/constraints/check", "POST", payload);
+
+/** 两角色权限差集。data: { only_left, only_right, both } */
+export const diffRolePermissions = (left: string, right: string) => request("/api/roles/diff", "GET", { left, right });
 
 export const getAccessStats = (query: any = {}) => request("/api/stats/access", "GET", compact(query));
 

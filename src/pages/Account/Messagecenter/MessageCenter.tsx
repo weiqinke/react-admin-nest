@@ -1,5 +1,5 @@
 import { listMyAnnouncements, markAllAnnouncementsRead, markAnnouncementsRead } from "@/api/announcement";
-import { archiveNotices, listMyNotices, markAllNoticesRead, markNoticeRead, setNoticeTodo } from "@/api/notice";
+import { archiveNotices, listMyNotices, markAllNoticesRead, markNoticeRead, setNoticePin, setNoticeTodo, unpinAllNotices } from "@/api/notice";
 import { Button, Col, Divider, Space, Table, Tabs, Tag, message } from "antd";
 import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
@@ -63,6 +63,19 @@ const MessageCenter: FC = () => {
     load();
   };
 
+  const togglePin = async (row: any) => {
+    const next = !Boolean(row.pinned);
+    await setNoticePin(String(row.id), next);
+    message.success(next ? "已置顶" : "已取消置顶");
+    load();
+  };
+
+  const clearPins = async () => {
+    await unpinAllNotices();
+    message.success("已清除全部置顶");
+    load();
+  };
+
   useEffect(() => {
     load();
   }, [tab]);
@@ -121,7 +134,16 @@ const MessageCenter: FC = () => {
             className: "unread-row",
             render: (hasRead: boolean) => !hasRead && <i className="unread-dot">●</i>
           },
-          { title: "标题", dataIndex: "title" },
+          {
+            title: "标题",
+            dataIndex: "title",
+            render: (text: string, row: any) => (
+              <Space size={6}>
+                {row.pinned ? <Tag color="blue">置顶</Tag> : null}
+                <span>{text}</span>
+              </Space>
+            )
+          },
           { title: "内容", dataIndex: "content", ellipsis: true },
           { title: "时间", dataIndex: "createdAt", width: 150 },
           {
@@ -156,7 +178,13 @@ const MessageCenter: FC = () => {
                     </Space>
                   ) : null
               }
-            : { title: "", width: 1, render: () => null }
+            : tab === "inbox"
+              ? {
+                  title: "操作",
+                  width: 100,
+                  render: (row: any) => <a onClick={() => togglePin(row)}>{row.pinned ? "取消置顶" : "置顶"}</a>
+                }
+              : { title: "", width: 1, render: () => null }
         ];
 
   return (
@@ -195,9 +223,12 @@ const MessageCenter: FC = () => {
           </>
         ) : null}
         {tab === "inbox" ? (
-          <Button onClick={archiveSelected} disabled={selectedRowKeys.length <= 0}>
-            归档
-          </Button>
+          <>
+            <Button onClick={archiveSelected} disabled={selectedRowKeys.length <= 0}>
+              归档
+            </Button>
+            <Button onClick={clearPins}>清除全部置顶</Button>
+          </>
         ) : null}
       </div>
     </div>

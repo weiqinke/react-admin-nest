@@ -65,6 +65,18 @@ export function ticketOverdue(ticket?: { due_at?: string; status?: string } | nu
   return Number.isFinite(due) && due < Date.now();
 }
 
+/** 格式化 due_in_seconds（可负）。 */
+export function formatDueInSeconds(seconds?: number | null) {
+  if (seconds == null || !Number.isFinite(Number(seconds))) return "";
+  const sec = Math.trunc(Number(seconds));
+  const abs = Math.abs(sec);
+  const h = Math.floor(abs / 3600);
+  const m = Math.floor((abs % 3600) / 60);
+  const s = abs % 60;
+  const body = h > 0 ? `${h}小时${m}分` : m > 0 ? `${m}分${s}秒` : `${s}秒`;
+  return sec < 0 ? `已过期 ${body}` : `剩余 ${body}`;
+}
+
 export async function changePassword(oldPassword: string, newPassword: string) {
   const keyRes = await getPublicKey();
   const pem = keyRes.data?.data?.public_key;
@@ -121,11 +133,20 @@ export function flattenDepts(nodes: any[] = [], bucket: any[] = []) {
   return bucket;
 }
 
-export const listConfigs = (group?: string) => request("/api/configs", "GET", compact({ group }));
+export const listConfigs = (query: { group?: string; keyword?: string } | string = {}) => {
+  const params = typeof query === "string" ? { group: query } : query;
+  return request("/api/configs", "GET", compact(params));
+};
 
 export const listConfigGroups = () => request("/api/configs/groups", "GET");
 
 export const updateConfig = (key: string, value: string) => request(`/api/configs/${segment(key)}`, "PUT", { value });
+
+/** 配置变更审计历史。data: { list:[{id,action,old_value,new_value,actor_id,occurred_at}] } */
+export const getConfigHistory = (key: string, limit = 50) => request(`/api/configs/${segment(key)}/history`, "GET", { limit });
+
+/** 按审计记录回滚。需要 config:write + step-up。 */
+export const rollbackConfig = (key: string, audit_id: string) => request(`/api/configs/${segment(key)}/rollback`, "POST", { audit_id });
 
 export const listMailTemplates = () => request("/api/mail/templates", "GET");
 
@@ -151,15 +172,22 @@ export const createTicket = (payload: { title: string; content: string; priority
 /** 批量分派。最多 100。data: { ok, failed } */
 export const batchAssignTickets = (payload: { ids: string[]; assignee_id?: string; department_id?: string }) => request("/api/tickets/batch-assign", "POST", payload);
 
-/** 批量操作：assign | close | priority。data: { results } */
+/** 批量操作：assign | close | priority | due。data: { results } */
 export const batchTickets = (payload: {
   ids: string[];
-  action: "assign" | "close" | "priority";
+  action: "assign" | "close" | "priority" | "due";
   assignee_id?: string;
   department_id?: string;
   priority?: string;
   close_reason?: string;
+  due_at?: string;
 }) => request("/api/tickets/batch", "POST", payload);
+
+/** 当前状态下允许的流转。data: { status, allowed[] } */
+export const getTicketTransitions = (id: string) => request(`/api/tickets/${segment(id)}/transitions`, "GET");
+
+/** 工单参与者。data: { creator_id, assignee_id, watchers[] } */
+export const getTicketParticipants = (id: string) => request(`/api/tickets/${segment(id)}/participants`, "GET");
 
 /** 批量启停用户。禁用需 step-up。data: { ok, failed } */
 export const batchUserStatus = (payload: { ids: string[]; status: number; reason?: string }) => request("/api/users/batch-status", "PUT", payload);

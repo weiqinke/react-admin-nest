@@ -1,14 +1,16 @@
 import {
-  assignRole,
+  assignRoleBatch,
+  checkRoleConstraints,
   copyRole as goCopyRole,
   createRole as goCreateRole,
   deleteRole as goDeleteRole,
+  diffRolePermissions,
   getPermissions,
   getRolePermissions,
   getRoleScopeDepts as goGetRoleScopeDepts,
   getRoles,
   getUsers,
-  revokeRole,
+  revokeRoleBatch,
   setRolePermissions,
   setRoleScopeDepts as goSetRoleScopeDepts,
   updateRole as goUpdateRole
@@ -16,10 +18,6 @@ import {
 
 function roleCodeOf(payload: any = {}) {
   return payload.code || payload.roleCode || payload.role_code || payload.id;
-}
-
-function bizCode(err: any) {
-  return Number(err?.code ?? err?.data?.code ?? 0);
 }
 
 export async function findRoles() {
@@ -67,8 +65,8 @@ export async function findRoleUsers(payload: any = {}) {
 }
 
 /**
- * 按勾选结果批量 assign/revoke。
- * 40902（角色互斥）不中断整批，汇总到 failures。
+ * 按勾选结果批量 assign/revoke（走 assign-batch / revoke-batch）。
+ * 失败用户落在 skipped，不中断整批。
  */
 export async function updateRoleUsers(payload: any = {}) {
   const code = String(roleCodeOf(payload) || "");
@@ -77,42 +75,32 @@ export async function updateRoleUsers(payload: any = {}) {
   const users = (await listUsersInScope()).list;
   const current = users.filter(user => (user.roles || []).map(String).includes(code)).map(user => String(user.id));
 
-  const failures: { user_id: string; action: "assign" | "revoke"; code: number; message: string }[] = [];
+  const toAssign = nextIds.filter(userId => !current.includes(userId));
+  const toRevoke = current.filter(userId => !next.has(userId));
+  const hours = Number(payload.hours || 0) || undefined;
+
   let assigned = 0;
   let revoked = 0;
-  const opts = { skipErrorMessage: true };
+  const failures: { user_id: string; action: "assign" | "revoke"; code: number; message: string }[] = [];
 
-  for (const userId of nextIds) {
-    if (current.includes(userId)) continue;
-    try {
-      await assignRole({ user_id: userId, role_code: code }, opts);
-      assigned += 1;
-    } catch (err: any) {
-      failures.push({
-        user_id: userId,
-        action: "assign",
-        code: bizCode(err),
-        message: err?.message || "授予失败"
-      });
+  if (toAssign.length) {
+    const res = await assignRoleBatch({ role_code: code, user_ids: toAssign, hours });
+    const data = res.data?.data || {};
+    assigned = (data.assigned || []).length;
+    for (const userId of data.skipped || []) {
+      failures.push({ user_id: String(userId), action: "assign", code: 0, message: "授予跳过（可能已拥有或互斥）" });
     }
   }
 
-  for (const userId of current) {
-    if (next.has(userId)) continue;
-    try {
-      await revokeRole({ user_id: userId, role_code: code }, opts);
-      revoked += 1;
-    } catch (err: any) {
-      failures.push({
-        user_id: userId,
-        action: "revoke",
-        code: bizCode(err),
-        message: err?.message || "撤销失败"
-      });
+  if (toRevoke.length) {
+    const res = await revokeRoleBatch({ role_code: code, user_ids: toRevoke });
+    const data = res.data?.data || {};
+    revoked = (data.revoked || []).length;
+    for (const userId of data.skipped || []) {
+      failures.push({ user_id: String(userId), action: "revoke", code: 0, message: "撤销跳过" });
     }
   }
 
-  const conflictCount = failures.filter(item => item.code === 40902).length;
   return {
     data: {
       code: 0,
@@ -121,13 +109,17 @@ export async function updateRoleUsers(payload: any = {}) {
         assigned,
         revoked,
         failures,
-        conflictCount,
+        conflictCount: failures.filter(item => /互斥|40902/.test(item.message)).length,
         roles: nextIds
       }
     },
     status: 200
   };
 }
+
+export const previewRoleDiff = (left: string, right: string) => diffRolePermissions(left, right);
+
+export const previewRoleConstraints = (payload: { user_id?: string; role_codes: string[] }) => checkRoleConstraints(payload);
 
 /** 角色直接绑定的权限码。 */
 export async function findRolePermissions(payload: any = {}) {

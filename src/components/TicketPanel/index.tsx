@@ -8,8 +8,11 @@ import {
   commentMyTicket,
   commentTicket,
   flattenDepts,
+  formatDueInSeconds,
   getMyTicket,
   getTicket,
+  getTicketParticipants,
+  getTicketTransitions,
   listDepts,
   listMyTicketWatchers,
   listTicketWatchers,
@@ -22,6 +25,7 @@ import {
   setTicketPriority,
   ticketOverdue,
   TICKET_PRIORITY,
+  TICKET_STATUS,
   toDeptTree
 } from "@/api/platform";
 import { getUserState } from "@/api/session";
@@ -57,6 +61,8 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
   const [users, setUsers] = useState<any[]>([]);
   const [depts, setDepts] = useState<any[]>([]);
   const [watchers, setWatchers] = useState<string[]>([]);
+  const [allowed, setAllowed] = useState<string[]>([]);
+  const [participants, setParticipants] = useState<{ creator_id?: string; assignee_id?: string; watchers?: string[] } | null>(null);
   const [form] = Form.useForm();
   const [commentForm] = Form.useForm();
   const [saving, setSaving] = useState(false);
@@ -67,6 +73,20 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
     request.then(res => setWatchers((res.data?.data?.list || []).map(String))).catch(() => setWatchers([]));
   };
 
+  const loadMeta = () => {
+    if (mine) {
+      setAllowed([]);
+      setParticipants(null);
+      return;
+    }
+    getTicketTransitions(ticketId)
+      .then(res => setAllowed((res.data?.data?.allowed || []).map(String)))
+      .catch(() => setAllowed([]));
+    getTicketParticipants(ticketId)
+      .then(res => setParticipants(res.data?.data || null))
+      .catch(() => setParticipants(null));
+  };
+
   const load = () => {
     setLoading(true);
     const request = mine ? getMyTicket(ticketId) : getTicket(ticketId);
@@ -75,6 +95,7 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
       .catch(() => setTicket(null))
       .finally(() => setLoading(false));
     loadWatchers();
+    loadMeta();
   };
 
   const viewerId = String(getUserState().uid || "");
@@ -84,6 +105,8 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
   useEffect(() => {
     setAction("");
     setTicket(null);
+    setAllowed([]);
+    setParticipants(null);
     form.resetFields();
     commentForm.resetFields();
     setLoading(true);
@@ -93,6 +116,7 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
       .catch(() => setTicket(null))
       .finally(() => setLoading(false));
     loadWatchers();
+    loadMeta();
   }, [ticketId, mine, form, commentForm]);
 
   useEffect(() => {
@@ -195,12 +219,33 @@ const TicketPanel: FC<Props> = ({ ticketId, mine, onClose, onChanged }) => {
                     <Tag color="red" className="ml-1">
                       已过期
                     </Tag>
+                  ) : formatDueInSeconds(ticket.due_in_seconds) ? (
+                    <Tag className="ml-1">{formatDueInSeconds(ticket.due_in_seconds)}</Tag>
                   ) : null}
                 </span>
               ) : (
                 "未设置"
               )}
             </Descriptions.Item>
+            {!mine && allowed.length ? (
+              <Descriptions.Item label="可流转">
+                <Space size={4} wrap>
+                  {allowed.map(code => (
+                    <Tag key={code}>{TICKET_STATUS[code] || code}</Tag>
+                  ))}
+                </Space>
+              </Descriptions.Item>
+            ) : null}
+            {!mine && participants ? (
+              <Descriptions.Item label="参与者">
+                <div>提单人：{userName(participants.creator_id)}</div>
+                <div>处理人：{userName(participants.assignee_id)}</div>
+                <div>
+                  关注人：
+                  {(participants.watchers || []).length ? (participants.watchers || []).map(id => userName(id)).join("、") : "无"}
+                </div>
+              </Descriptions.Item>
+            ) : null}
             <Descriptions.Item label="内容">{ticket.content}</Descriptions.Item>
             {ticket.close_reason ? <Descriptions.Item label="关闭原因">{ticket.close_reason}</Descriptions.Item> : null}
             {ticket.rating ? <Descriptions.Item label="评分">{ticket.rating} 星</Descriptions.Item> : null}

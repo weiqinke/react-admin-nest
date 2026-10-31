@@ -16,6 +16,12 @@ export const markAllNoticesRead = (kind?: string) => request("/api/me/notices/re
 
 export const setNoticeTodo = (id: string, status: "done" | "dismissed") => request(`/api/me/notices/${enc(id)}/todo`, "PUT", { status });
 
+/** 置顶/取消置顶。每用户最多 5 条。 */
+export const setNoticePin = (id: string, pinned: boolean) => request(`/api/me/notices/${enc(id)}/pin`, "PUT", { pinned });
+
+/** 清除当前用户全部置顶。 */
+export const unpinAllNotices = () => request("/api/me/notices/unpin-all", "PUT", {});
+
 /** 归档站内信。body: { ids: string[] } */
 export const archiveNotices = (ids: string[]) => request("/api/me/notices/archive", "PUT", { ids });
 

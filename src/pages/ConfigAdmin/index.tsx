@@ -1,7 +1,8 @@
 import { hasPermission } from "@/api/announcement";
-import { listConfigGroups, listConfigs, listMailTemplates, testMail, updateConfig, upsertMailTemplate } from "@/api/platform";
+import { listNotifyDispatches } from "@/api/ops";
+import { getConfigHistory, listConfigGroups, listConfigs, listMailTemplates, rollbackConfig, testMail, updateConfig, upsertMailTemplate } from "@/api/platform";
 import PageIntroduction from "@/components/PageIntroduction";
-import { Button, Form, Input, Modal, Select, Switch, Table, Tabs, message } from "antd";
+import { Button, Drawer, Form, Input, Modal, Select, Space, Switch, Table, Tabs, Tag, message } from "antd";
 import { FC, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -11,10 +12,15 @@ const ConfigAdmin: FC = () => {
   const [list, setList] = useState<any[]>([]);
   const [groups, setGroups] = useState<any[]>([]);
   const [group, setGroup] = useState<string | undefined>();
+  const [keyword, setKeyword] = useState("");
   const [editing, setEditing] = useState<any>(null);
   const [templates, setTemplates] = useState<any[]>([]);
   const [mailDraft, setMailDraft] = useState<any>(null);
   const [testOpen, setTestOpen] = useState(false);
+  const [historyFor, setHistoryFor] = useState<any>(null);
+  const [history, setHistory] = useState<any[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [dispatches, setDispatches] = useState<any[]>([]);
   const [form] = Form.useForm();
   const [mailForm] = Form.useForm();
   const [testForm] = Form.useForm();
@@ -23,8 +29,10 @@ const ConfigAdmin: FC = () => {
   const canRead = hasPermission("config:read");
   const navigate = useNavigate();
 
-  const load = () => {
-    listConfigs()
+  const load = (opts?: { keyword?: string; group?: string | undefined }) => {
+    const nextKeyword = opts?.keyword ?? keyword;
+    const nextGroup = opts && "group" in opts ? opts.group : group;
+    listConfigs({ group: nextGroup || undefined, keyword: nextKeyword.trim() || undefined })
       .then(res => setList(res.data?.data?.list || []))
       .catch(() => setList([]));
     listConfigGroups()
@@ -39,9 +47,42 @@ const ConfigAdmin: FC = () => {
       .catch(() => setTemplates([]));
   };
 
+  const loadDispatches = () => {
+    if (!canRead) return;
+    listNotifyDispatches(50)
+      .then(res => setDispatches(res.data?.data?.list || []))
+      .catch(() => setDispatches([]));
+  };
+
+  const openHistory = (row: any) => {
+    setHistoryFor(row);
+    setHistoryLoading(true);
+    getConfigHistory(row.key, 50)
+      .then(res => setHistory(res.data?.data?.list || []))
+      .catch(() => setHistory([]))
+      .finally(() => setHistoryLoading(false));
+  };
+
+  const doRollback = (auditId: string) => {
+    if (!historyFor?.key) return;
+    Modal.confirm({
+      title: "回滚配置",
+      content: `将把「${historyFor.name || historyFor.key}」恢复为该条审计记录中的旧值。敏感项可能被拒绝；操作需二次验证。`,
+      okText: "回滚",
+      okType: "danger",
+      onOk: async () => {
+        await rollbackConfig(historyFor.key, auditId);
+        message.success("已回滚");
+        openHistory(historyFor);
+        load();
+      }
+    });
+  };
+
   useEffect(() => {
     load();
     loadMail();
+    loadDispatches();
   }, []);
 
   useEffect(() => {
@@ -62,8 +103,6 @@ const ConfigAdmin: FC = () => {
     }
     return Array.from(new Set(list.map(item => item.group).filter(Boolean))).map(code => ({ value: code, label: code }));
   }, [groups, list]);
-
-  const rows = group ? list.filter(item => item.group === group) : list;
 
   const save = async (values: any) => {
     setSaving(true);
@@ -117,19 +156,27 @@ const ConfigAdmin: FC = () => {
     { title: "类型", dataIndex: "value_type", width: 90 },
     {
       title: "操作",
-      width: 90,
-      render: (row: any) =>
-        canWrite ? (
-          <Button
-            size="small"
-            type="primary"
-            onClick={() => {
-              setEditing(row);
-              form.setFieldsValue({ value: row.value });
-            }}>
-            修改
-          </Button>
-        ) : null
+      width: 160,
+      render: (row: any) => (
+        <Space size={4} wrap>
+          {canWrite ? (
+            <Button
+              size="small"
+              type="primary"
+              onClick={() => {
+                setEditing(row);
+                form.setFieldsValue({ value: row.value });
+              }}>
+              修改
+            </Button>
+          ) : null}
+          {canRead ? (
+            <Button size="small" onClick={() => openHistory(row)}>
+              历史
+            </Button>
+          ) : null}
+        </Space>
+      )
     }
   ];
 
@@ -156,11 +203,43 @@ const ConfigAdmin: FC = () => {
     }
   ];
 
+  const historyColumns: any = [
+    { title: "时间", dataIndex: "occurred_at", width: 170 },
+    { title: "动作", dataIndex: "action", width: 90 },
+    { title: "操作人", dataIndex: "actor_id", width: 120, ellipsis: true },
+    { title: "旧值", dataIndex: "old_value", ellipsis: true },
+    { title: "新值", dataIndex: "new_value", ellipsis: true },
+    {
+      title: "操作",
+      width: 90,
+      render: (row: any) =>
+        canWrite && row.action !== "rollback" ? (
+          <Button size="small" danger onClick={() => doRollback(row.id)}>
+            回滚
+          </Button>
+        ) : null
+    }
+  ];
+
+  const dispatchColumns: any = [
+    { title: "时间", dataIndex: "created_at", width: 170 },
+    { title: "事件", dataIndex: "event", ellipsis: true },
+    { title: "站内信", dataIndex: "inbox_sent", width: 80 },
+    { title: "邮件", dataIndex: "mail_sent", width: 80 },
+    {
+      title: "Bot",
+      dataIndex: "bot_sent",
+      width: 70,
+      render: (v: boolean) => (v ? <Tag color="green">是</Tag> : "否")
+    },
+    { title: "短信日志", dataIndex: "sms_logged", width: 90 }
+  ];
+
   return (
     <div className="admin-page">
       <PageIntroduction
         infos={infos}
-        introduction="站点、安全、日志、邮件参数在这里改。密码最短长度与有效期天数、SMTP 都在系统参数里。密码超期登录会返回 40305。mail.enabled=false 时只记日志不发信。"
+        introduction="站点、安全、日志、邮件参数在这里改。密码最短长度与有效期天数、SMTP 都在系统参数里。密码超期登录会返回 40305。mail.enabled=false 时只记日志不发信。配置回滚会走二次验证。"
       />
       <div className="admin-card">
         <div className="admin-toolbar mb-3">
@@ -175,10 +254,31 @@ const ConfigAdmin: FC = () => {
               children: (
                 <>
                   <div className="admin-toolbar">
-                    <Select allowClear placeholder="分组" style={{ width: 220 }} value={group} options={groupOptions} onChange={value => setGroup(value)} />
+                    <Select
+                      allowClear
+                      placeholder="分组"
+                      style={{ width: 220 }}
+                      value={group}
+                      options={groupOptions}
+                      onChange={value => {
+                        setGroup(value);
+                        load({ group: value });
+                      }}
+                    />
+                    <Input.Search
+                      allowClear
+                      placeholder="按键/名称搜索"
+                      style={{ width: 220 }}
+                      value={keyword}
+                      onChange={e => setKeyword(e.target.value)}
+                      onSearch={value => {
+                        setKeyword(value);
+                        load({ keyword: value });
+                      }}
+                    />
                     <Button onClick={() => load()}>刷新</Button>
                   </div>
-                  <Table rowKey="key" columns={columns} dataSource={rows} pagination={false} scroll={{ x: 960 }} />
+                  <Table rowKey="key" columns={columns} dataSource={list} pagination={false} scroll={{ x: 960 }} />
                 </>
               )
             },
@@ -199,10 +299,33 @@ const ConfigAdmin: FC = () => {
                   <Table rowKey="id" columns={mailColumns} dataSource={templates} pagination={false} scroll={{ x: 800 }} />
                 </>
               )
-            }
+            },
+            ...(canRead
+              ? [
+                  {
+                    key: "dispatches",
+                    label: "投递日志",
+                    children: (
+                      <>
+                        <div className="admin-toolbar">
+                          <Button onClick={() => loadDispatches()}>刷新</Button>
+                        </div>
+                        <Table rowKey="id" columns={dispatchColumns} dataSource={dispatches} pagination={false} scroll={{ x: 720 }} />
+                      </>
+                    )
+                  }
+                ]
+              : [])
           ]}
         />
       </div>
+      <Drawer
+        title={historyFor ? `变更历史：${historyFor.name || historyFor.key}` : "变更历史"}
+        open={Boolean(historyFor)}
+        width={720}
+        onClose={() => setHistoryFor(null)}>
+        <Table rowKey="id" loading={historyLoading} columns={historyColumns} dataSource={history} pagination={false} size="small" />
+      </Drawer>
       <Modal
         open={Boolean(editing)}
         title={editing ? `修改 ${editing.name || editing.key}` : "修改参数"}

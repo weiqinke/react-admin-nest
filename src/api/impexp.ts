@@ -17,6 +17,9 @@ export const exportDeptsCsv = (filename = "depts.csv") => downloadCsv("/api/expo
 
 export const exportDictsCsv = (filename = "dicts.csv") => downloadCsv("/api/export/dicts", filename);
 
+export const exportAnnouncementReadsCsv = (id: string, filename = "announcement-reads.csv") =>
+  downloadCsv(`/api/announcements/${encodeURIComponent(id)}/reads/export`, filename);
+
 export const downloadUserImportTemplate = () => downloadCsv("/api/import/users/template", "users-template.csv");
 
 export const downloadDeptImportTemplate = () => downloadCsv("/api/import/depts/template", "depts-template.csv");
