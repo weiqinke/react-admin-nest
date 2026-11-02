@@ -45,6 +45,8 @@ const MyTickets = lazy(() => import("@/pages/MyTickets"));
 const PasswordForgot = lazy(() => import("@/pages/Password/Forgot"));
 const PasswordReset = lazy(() => import("@/pages/Password/Reset"));
 const InviteAccept = lazy(() => import("@/pages/InviteAccept"));
+const Archive = lazy(() => import("@/pages/Archive"));
+const QqZone = lazy(() => import("@/pages/QqZone"));
 
 const AreaChart = lazy(() => import("@/pages/Chart/AreaChart"));
 const NotFoundPage = lazy(() => import("@/pages/FailPage/NotFoundPage"));
@@ -78,13 +80,14 @@ function route(Page: ComponentType, options: RouteOptions = {}): RouteObject {
     return { index: true, handle, Component };
   }
 
-  return {
-    path: options.path,
+  const node: RouteObject = {
     handle,
     Component,
     loader: options.loader,
     children: options.children
   };
+  if (options.path !== undefined) node.path = options.path;
+  return node;
 }
 
 const routes: RouteObject[] = [
@@ -100,8 +103,9 @@ const routes: RouteObject[] = [
           route(InviteAccept, { path: "invite", auth: false, title: "接受邀请" }),
           route(OAuthCallback, { path: "oauth/callback", auth: false, title: "OAuth Callback" }),
           route(OAuthError, { path: "oauth/error", auth: false, title: "OAuth Error" }),
+          route(Archive, { path: "archive", auth: false, title: "Nest Admin" }),
+          route(QqZone, { index: true, auth: false, title: "在人群中等待的QQ空间" }),
           route(DefaultLayout, {
-            path: "/",
             auth: true,
             children: [
               route(Workplace, { path: "workplace", auth: true, title: "工作台" }),
@@ -160,7 +164,6 @@ const routes: RouteObject[] = [
               route(Subscribe, { path: "subscribe", auth: true, title: "订阅" }),
               route(AiChat, { path: "aichat", auth: true, title: "AI 对话" }),
               route(MyTickets, { path: "mytickets", auth: true, title: "我的工单" }),
-              route(About, { index: true, auth: true, title: "关于" }),
               route(NotFoundPage, { path: "*", auth: true, title: "NotFound" })
             ]
           }),

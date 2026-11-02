@@ -17,7 +17,7 @@ const router = ProjectRouter();
 
 setAuthExpiredHandler(() => {
   const path = window.location.pathname;
-  if (path.startsWith("/login") || path.startsWith("/oauth/")) return;
+  if (path.startsWith("/login") || path.startsWith("/oauth/") || path.startsWith("/archive")) return;
   void router.navigate("/login");
 });
 

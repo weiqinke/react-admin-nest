@@ -1,0 +1,782 @@
+/* 默认：2008男生酷蓝黑 */
+    .qqzone-page {
+      --bg1: #0d1b2a;
+      --bg2: #1b3a5a;
+      --accent: #00e5ff;
+      --lime: #7fff00;
+      --panel: rgba(12, 24, 40, 0.9);
+      --panel-border: #2a6a9a;
+      --title: #00d4ff;
+      --text: #d0e8f8;
+      --link: #66c2ff;
+      --banner: linear-gradient(90deg, #0a1628, #1a4a7a, #0a1628);
+      --mod-head: linear-gradient(180deg, #1a3a5a, #0d2038);
+      --avatar-ring: #00bfff;
+      --music-bg: #102030;
+    }
+
+    .qqzone-page.skin-hei {
+      --bg1: #1a1a1a;
+      --bg2: #3d2a10;
+      --accent: #ffd700;
+      --lime: #ffcc00;
+      --panel: rgba(20, 20, 20, 0.88);
+      --panel-border: #8a7010;
+      --title: #ffd700;
+      --text: #f0e6c8;
+      --link: #ffcc66;
+      --banner: linear-gradient(90deg, #2a2a2a, #5a4510, #2a2a2a);
+      --mod-head: linear-gradient(180deg, #3a3010, #1a1a1a);
+      --avatar-ring: #ffd700;
+      --music-bg: #2a2410;
+    }
+
+    .qqzone-page.skin-jun {
+      --bg1: #1a2a14;
+      --bg2: #2d4018;
+      --accent: #b8ff4a;
+      --lime: #9acd32;
+      --panel: rgba(18, 28, 14, 0.9);
+      --panel-border: #5a7a30;
+      --title: #b8ff4a;
+      --text: #e0f0c8;
+      --link: #a8d860;
+      --banner: linear-gradient(90deg, #1a2810, #3a5020, #1a2810);
+      --mod-head: linear-gradient(180deg, #2a3a18, #152010);
+      --avatar-ring: #8fbc3a;
+      --music-bg: #1a2814;
+    }
+
+    
+    
+
+    .qqzone-page {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Microsoft YaHei", "SimSun", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 30%, rgba(0, 229, 255, 0.25) 0 1.5px, transparent 2.5px),
+        radial-gradient(circle at 70% 60%, rgba(127, 255, 0, 0.2) 0 1px, transparent 2px),
+        radial-gradient(circle at 40% 80%, rgba(100, 180, 255, 0.2) 0 2px, transparent 3px),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      background-attachment: fixed;
+      overflow-x: hidden;
+    }
+
+    .qqzone-page.skin-hei {
+      background:
+        radial-gradient(circle at 15% 20%, rgba(255, 215, 0, 0.25) 0 1.5px, transparent 2.5px),
+        radial-gradient(circle at 80% 40%, rgba(255, 215, 0, 0.2) 0 1px, transparent 2px),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      background-attachment: fixed;
+    }
+
+    .qqzone-page.skin-jun {
+      background:
+        radial-gradient(circle at 25% 25%, rgba(184, 255, 74, 0.2) 0 1.5px, transparent 2.5px),
+        radial-gradient(circle at 75% 55%, rgba(154, 205, 50, 0.18) 0 1px, transparent 2px),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      background-attachment: fixed;
+    }
+
+.qqzone-page .petals {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      overflow: hidden;
+    }
+
+.qqzone-page .petal {
+      position: absolute;
+      top: -20px;
+      font-size: 14px;
+      animation: fall linear infinite;
+      opacity: 0.85;
+      text-shadow: 0 0 4px rgba(0, 229, 255, 0.7);
+    }
+
+    .qqzone-page.skin-hei .petal { text-shadow: 0 0 6px rgba(255, 215, 0, 0.7); }
+    .qqzone-page.skin-jun .petal { text-shadow: 0 0 4px rgba(184, 255, 74, 0.7); }
+
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0.9; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0.2; }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; color: var(--title); }
+      50% { opacity: 0.55; color: var(--lime); }
+    }
+
+    @keyframes rainbow {
+      0% { color: #00e5ff; }
+      20% { color: #7fff00; }
+      40% { color: #66c2ff; }
+      60% { color: #ffd700; }
+      80% { color: #00bfff; }
+      100% { color: #00e5ff; }
+    }
+
+    @keyframes glow {
+      0%, 100% { text-shadow: 0 0 4px #fff, 0 0 8px var(--accent); }
+      50% { text-shadow: 0 0 8px #fff, 0 0 16px var(--lime), 0 0 24px var(--accent); }
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    @keyframes progress {
+      from { width: 8%; }
+      to { width: 92%; }
+    }
+
+.qqzone-page a { color: var(--link); text-decoration: none; }
+.qqzone-page a:hover { text-decoration: underline; color: var(--accent); }
+
+.qqzone-page .wrap {
+      width: 1000px;
+      max-width: 96vw;
+      margin: 0 auto;
+      padding: 10px 0 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* top nav */
+.qqzone-page .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 12px;
+      background: var(--panel);
+      border: 2px solid var(--panel-border);
+      border-radius: 4px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      flex-wrap: wrap;
+    }
+
+.qqzone-page .topbar .brand {
+      font-family: "STCaiyun", "LiSu", "Comic Sans MS", cursive;
+      font-size: 18px;
+      font-weight: bold;
+      animation: rainbow 3s linear infinite;
+      letter-spacing: 1px;
+    }
+
+.qqzone-page .topnav a {
+      margin: 0 6px;
+      white-space:nowrap;
+    }
+
+.qqzone-page .skins {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+.qqzone-page .skins button {
+      border: 1px solid var(--panel-border);
+      background: var(--mod-head);
+      color: var(--text);
+      font-size: 11px;
+      padding: 2px 8px;
+      cursor: pointer;
+      border-radius: 2px;
+      font-family: inherit;
+    }
+
+.qqzone-page .skins button.active {
+      outline: 2px solid var(--accent);
+      font-weight: bold;
+    }
+
+    /* banner */
+.qqzone-page .banner {
+      background: var(--banner);
+      border: 2px solid var(--panel-border);
+      border-radius: 4px;
+      padding: 16px 20px 12px;
+      margin-bottom: 10px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 40px rgba(255, 255, 255, 0.25);
+    }
+
+.qqzone-page .banner::before {
+      content: "★ · ♥ · ★ · ♥ · ★ · ♥ · ★ · ♥ · ★ · ♥ · ★ · ♥ · ★ · ♥ · ★";
+      position: absolute;
+      top: 4px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 10px;
+      opacity: 0.45;
+      letter-spacing: 2px;
+      color: #fff;
+    }
+
+.qqzone-page .nick {
+      font-family: "STCaiyun", "LiSu", "Comic Sans MS", cursive;
+      font-size: 36px;
+      margin: 8px 0 4px;
+      animation: blink 1.2s ease-in-out infinite, glow 2s ease-in-out infinite;
+      -webkit-text-stroke: 0.4px #fff;
+    }
+
+.qqzone-page .vip-row {
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+.qqzone-page .vip {
+      display: inline-block;
+      background: linear-gradient(180deg, #ffe566, #ffaa00);
+      color: #5a3000;
+      font-weight: bold;
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: 2px;
+      border: 1px solid #cc8800;
+      margin-right: 6px;
+      text-shadow: none;
+      animation: none;
+    }
+
+    .qqzone-page.skin-hei .vip {
+      background: linear-gradient(180deg, #fff2a0, #d4af37);
+    }
+
+.qqzone-page .sign-box {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px dashed var(--panel-border);
+      height: 28px;
+      overflow: hidden;
+      position: relative;
+      border-radius: 2px;
+    }
+
+.qqzone-page .sign-box .sign {
+      display: inline-block;
+      white-space: nowrap;
+      padding: 5px 0;
+      font-size: 13px;
+      animation: marquee 14s linear infinite;
+      color: var(--title);
+      font-weight: bold;
+    }
+
+    /* grid */
+.qqzone-page .layout {
+      display: grid;
+      grid-template-columns: 200px 1fr 200px;
+      gap: 10px;
+      align-items: start;
+    }
+
+.qqzone-page .mod {
+      background: var(--panel);
+      border: 2px solid var(--panel-border);
+      border-radius: 4px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+.qqzone-page .mod-h {
+      background: var(--mod-head);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 5px 10px;
+      font-size: 13px;
+      font-weight: bold;
+      color: var(--title);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+.qqzone-page .mod-h .more { font-size: 11px; font-weight: normal; }
+
+.qqzone-page .mod-b { padding: 10px; font-size: 12px; line-height: 1.6; }
+
+    /* left */
+.qqzone-page .avatar-wrap {
+      text-align: center;
+      padding: 12px 10px 8px;
+    }
+
+.qqzone-page .avatar {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto;
+      border: 3px solid var(--avatar-ring);
+      border-radius: 4px;
+      background:
+        radial-gradient(circle at 40% 35%, #fff 0 8%, transparent 9%),
+        linear-gradient(135deg, #1a3a5a, #0a2038 45%, #2a5080);
+      position: relative;
+      box-shadow: 0 0 12px var(--accent);
+      overflow: hidden;
+    }
+
+.qqzone-page .avatar .face {
+      position: absolute;
+      inset: 18px 20px 28px;
+      border-radius: 50% 50% 45% 45%;
+      background: #3a5068;
+      border: 2px solid #6af;
+    }
+
+    .qqzone-page.skin-hei .avatar .face { background: #3a3a3a; border-color: #aa8; }
+    .qqzone-page.skin-jun .avatar .face { background: #3a4a28; border-color: #8fbc3a; }
+
+.qqzone-page .avatar .eyes {
+      position: absolute;
+      top: 42px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 14px;
+      letter-spacing: 14px;
+      padding-left: 14px;
+    }
+
+.qqzone-page .avatar .mouth {
+      position: absolute;
+      bottom: 36px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 12px;
+      color: #8cf;
+    }
+
+.qqzone-page .online {
+      display: inline-block;
+      margin-top: 8px;
+      color: #7fff00;
+      font-weight: bold;
+      font-size: 12px;
+    }
+
+    .qqzone-page.skin-hei .online { color: var(--lime); }
+    .qqzone-page.skin-jun .online { color: var(--accent); }
+
+.qqzone-page .info-list { list-style: none; padding: 0; margin: 0; }
+.qqzone-page .info-list li {
+      padding: 3px 0;
+      border-bottom: 1px dotted var(--panel-border);
+      font-size: 12px;
+    }
+.qqzone-page .info-list li:last-child { border-bottom: none; }
+.qqzone-page .info-list b { color: var(--title); }
+
+.qqzone-page .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.qqzone-page .tag {
+      background: var(--mod-head);
+      border: 1px solid var(--panel-border);
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-size: 11px;
+      color: var(--link);
+    }
+
+    /* center */
+.qqzone-page .mood {
+      border-bottom: 1px dashed var(--panel-border);
+      padding: 10px 0;
+    }
+.qqzone-page .mood:last-child { border-bottom: none; }
+
+.qqzone-page .mood .who {
+      font-weight: bold;
+      color: var(--link);
+      margin-bottom: 4px;
+    }
+
+.qqzone-page .mood .body {
+      font-size: 13px;
+      margin: 4px 0 8px;
+      word-break: break-all;
+    }
+
+.qqzone-page .mood .meta {
+      color: #888;
+      font-size: 11px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .qqzone-page.skin-hei .mood .meta { color: #aaa88a; }
+
+.qqzone-page .mood .acts button {
+      background: none;
+      border: none;
+      color: var(--link);
+      cursor: pointer;
+      font-size: 11px;
+      font-family: inherit;
+      padding: 0;
+    }
+.qqzone-page .mood .acts button:hover { color: var(--accent); text-decoration: underline; }
+
+.qqzone-page .album-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+.qqzone-page .album-item {
+      aspect-ratio: 1;
+      border: 2px solid var(--panel-border);
+      border-radius: 2px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 4px;
+      font-size: 11px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 1px 1px 2px #000;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+.qqzone-page .album-item span {
+      position: relative;
+      z-index: 1;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 1px 4px;
+      border-radius: 2px;
+    }
+
+.qqzone-page .album-item.album-cf {
+  background:
+    linear-gradient(180deg, transparent 55%, rgba(0, 0, 0, 0.45)),
+    repeating-linear-gradient(90deg, rgba(255, 80, 40, 0.15) 0 2px, transparent 2px 12px),
+    linear-gradient(135deg, #3a1010, #8b1a1a 40%, #c44 70%, #1a1a1a);
+}
+.qqzone-page .album-item.album-cf::before {
+  content: "CF";
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 18px;
+  font-weight: 900;
+  color: rgba(255, 220, 180, 0.55);
+  letter-spacing: 2px;
+}
+.qqzone-page .album-item.album-cf2 {
+  background:
+    linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.5)),
+    radial-gradient(circle at 70% 30%, rgba(255, 200, 80, 0.45), transparent 35%),
+    linear-gradient(160deg, #2a1810, #6a2a10, #111);
+}
+.qqzone-page .album-item.album-cf2::before {
+  content: "爆破";
+  position: absolute;
+  top: 10px;
+  right: 8px;
+  font-size: 12px;
+  color: rgba(255, 180, 80, 0.7);
+}
+.qqzone-page .album-item.album-dnf {
+  background:
+    linear-gradient(180deg, transparent 55%, rgba(0, 0, 0, 0.5)),
+    radial-gradient(ellipse at 50% 20%, rgba(180, 120, 255, 0.45), transparent 50%),
+    linear-gradient(135deg, #1a1030, #4a2080 45%, #0a2038);
+}
+.qqzone-page .album-item.album-dnf::before {
+  content: "DNF";
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 16px;
+  font-weight: 900;
+  color: rgba(220, 180, 255, 0.55);
+}
+.qqzone-page .album-item.album-dnf2 {
+  background:
+    linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.45)),
+    linear-gradient(120deg, #102040, #3060a0 40%, #80c0ff 70%, #203060);
+}
+.qqzone-page .album-item.album-dnf2::before {
+  content: "天空";
+  position: absolute;
+  top: 10px;
+  left: 8px;
+  font-size: 12px;
+  color: rgba(180, 220, 255, 0.7);
+}
+.qqzone-page .album-item.album-kart {
+  background:
+    linear-gradient(180deg, transparent 55%, rgba(0, 0, 0, 0.4)),
+    repeating-linear-gradient(-35deg, rgba(255, 255, 255, 0.12) 0 8px, transparent 8px 18px),
+    linear-gradient(135deg, #1060c0, #40a0ff 50%, #f0c040);
+}
+.qqzone-page .album-item.album-kart::before {
+  content: "跑跑";
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.65);
+}
+.qqzone-page .album-item.album-kart2 {
+  background:
+    linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.45)),
+    radial-gradient(circle at 30% 40%, rgba(255, 80, 80, 0.5), transparent 40%),
+    linear-gradient(150deg, #083060, #2090e0, #ff6060);
+}
+.qqzone-page .album-item.album-kart2::before {
+  content: "Kart";
+  position: absolute;
+  top: 10px;
+  right: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.qqzone-page .gb-item {
+      display: flex;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px dotted var(--panel-border);
+      font-size: 12px;
+    }
+.qqzone-page .gb-item:last-of-type { border-bottom: none; }
+
+.qqzone-page .gb-av {
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      border: 1px solid var(--panel-border);
+      background: linear-gradient(135deg, #1a3a5a, #2a5080);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .qqzone-page.skin-hei .gb-av { background: linear-gradient(135deg, #333, #555); }
+    .qqzone-page.skin-jun .gb-av { background: linear-gradient(135deg, #2a3a18, #4a6030); }
+
+.qqzone-page .gb-name { color: var(--link); font-weight: bold; }
+.qqzone-page .gb-time { color: #999; font-size: 11px; float: right; }
+    .qqzone-page.skin-hei .gb-time { color: #88866a; }
+
+.qqzone-page .gb-form {
+      margin-top: 8px;
+      border-top: 1px solid var(--panel-border);
+      padding-top: 8px;
+    }
+
+.qqzone-page .gb-form textarea {
+      width: 100%;
+      height: 56px;
+      resize: vertical;
+      border: 1px solid var(--panel-border);
+      background: rgba(0, 0, 0, 0.35);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 12px;
+      padding: 6px;
+    }
+
+.qqzone-page .gb-form .row {
+      margin-top: 6px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+.qqzone-page .gb-form input[type="text"] {
+      border: 1px solid var(--panel-border);
+      padding: 3px 6px;
+      font-size: 12px;
+      font-family: inherit;
+      background: rgba(0, 0, 0, 0.35);
+      color: var(--text);
+      width: 140px;
+    }
+
+.qqzone-page .btn {
+      background: linear-gradient(180deg, #2a5a8a, #1a3a5a);
+      border: 1px solid var(--panel-border);
+      color: var(--title);
+      font-weight: bold;
+      font-size: 12px;
+      padding: 4px 14px;
+      cursor: pointer;
+      font-family: inherit;
+      border-radius: 2px;
+    }
+
+    .qqzone-page.skin-hei .btn {
+      background: linear-gradient(180deg, #5a4a10, #3a3010);
+      color: var(--accent);
+    }
+
+    .qqzone-page.skin-jun .btn {
+      background: linear-gradient(180deg, #3a5a20, #243818);
+      color: var(--title);
+    }
+
+.qqzone-page .btn:hover { filter: brightness(1.05); }
+
+    /* right */
+.qqzone-page .stat-num {
+      font-size: 22px;
+      font-weight: bold;
+      color: var(--accent);
+      font-family: "Comic Sans MS", "Microsoft YaHei", sans-serif;
+      text-align: center;
+      text-shadow: 1px 1px 0 #fff;
+    }
+
+    .qqzone-page.skin-hei .stat-num { text-shadow: 1px 1px 0 #000; }
+
+.qqzone-page .stat-label { text-align: center; font-size: 11px; color: #888; margin-bottom: 8px; }
+    .qqzone-page.skin-hei .stat-label { color: #aaa88a; }
+
+.qqzone-page .apps {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      text-align: center;
+    }
+
+.qqzone-page .app {
+      border: 1px solid var(--panel-border);
+      background: var(--mod-head);
+      padding: 8px 4px;
+      font-size: 11px;
+      cursor: pointer;
+      border-radius: 2px;
+    }
+.qqzone-page .app:hover { outline: 1px solid var(--accent); }
+.qqzone-page .app .ico { font-size: 18px; display: block; margin-bottom: 2px; }
+
+    /* floating music */
+.qqzone-page .music-box {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      width: 220px;
+      background: var(--music-bg);
+      border: 2px solid var(--panel-border);
+      border-radius: 4px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      z-index: 100;
+      font-size: 12px;
+      overflow: hidden;
+    }
+
+.qqzone-page .music-box .mh {
+      background: var(--mod-head);
+      padding: 4px 8px;
+      font-weight: bold;
+      color: var(--title);
+      border-bottom: 1px solid var(--panel-border);
+      display: flex;
+      justify-content: space-between;
+    }
+
+.qqzone-page .music-box .mb { padding: 8px; }
+
+.qqzone-page .music-title {
+      font-weight: bold;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--link);
+    }
+
+.qqzone-page .music-artist { color: #888; font-size: 11px; margin-bottom: 8px; }
+    .qqzone-page.skin-hei .music-artist { color: #aaa88a; }
+
+.qqzone-page .bar {
+      height: 6px;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .qqzone-page.skin-hei .bar { background: rgba(255, 255, 255, 0.15); }
+
+.qqzone-page .bar .fill {
+      height: 100%;
+      width: 8%;
+      background: linear-gradient(90deg, var(--accent), var(--lime));
+      border-radius: 3px;
+    }
+
+.qqzone-page .bar .fill.playing {
+      animation: progress 48s linear infinite;
+    }
+
+.qqzone-page .music-ctrls {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+    }
+
+.qqzone-page .music-ctrls button {
+      border: 1px solid var(--panel-border);
+      background: var(--mod-head);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 2px;
+      font-family: inherit;
+    }
+
+.qqzone-page .footer {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 11px;
+      color: #8ab;
+      padding: 10px;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 4px;
+    }
+
+    .qqzone-page.skin-hei .footer { color: #aaa88a; }
+    .qqzone-page.skin-jun .footer { color: #9aa88a; }
+
+.qqzone-page .footer a { margin: 0 6px; }
+
+.qqzone-page .flash-title {
+      font-family: "STCaiyun", "LiSu", "Comic Sans MS", cursive;
+      animation: rainbow 2.5s linear infinite;
+    }
+
+@media (max-width: 860px) {
+  .qqzone-page .layout { grid-template-columns: 1fr; }
+  .qqzone-page .music-box { width: calc(100vw - 24px); right: 12px; }
+  .qqzone-page .nick { font-size: 26px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qqzone-page .petal,
+  .qqzone-page .nick,
+  .qqzone-page .sign,
+  .qqzone-page .brand,
+  .qqzone-page .flash-title,
+  .qqzone-page .bar .fill.playing {
+    animation: none !important;
+  }
+}
