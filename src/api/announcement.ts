@@ -1,3 +1,4 @@
+import { queryKey, shareInflight } from "@/api/inflight";
 import { request } from "@/api/request";
 
 const enc = encodeURIComponent;
@@ -31,7 +32,10 @@ export const nudgeAnnouncement = (id: string) => request(`/api/announcements/${e
 export const estimateAnnouncementAudience = (payload: { target_depts?: string[]; target_roles?: string[] }) =>
   request("/api/announcements/audience-estimate", "POST", payload);
 
-export const listMyAnnouncements = (query: Record<string, any> = {}) => request("/api/me/announcements", "GET", compact(query));
+export const listMyAnnouncements = (query: Record<string, any> = {}) => {
+  const params = compact(query);
+  return shareInflight(queryKey("/api/me/announcements", params), () => request("/api/me/announcements", "GET", params));
+};
 
 export const markAnnouncementRead = (id: string) => request(`/api/me/announcements/${enc(id)}/read`, "PUT", {});
 

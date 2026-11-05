@@ -3,4 +3,5 @@ body {
   min-height: 100vh;
   min-width: 100vw;
   overflow: hidden;
+  background: #f4f5f7;
 }

@@ -109,12 +109,15 @@ export default defineConfig({
         entryFileNames: "js/[name]-[hash].js",
         assetFileNames: "[ext]/[name]-[hash].[ext]",
         manualChunks(id) {
-          if (!id.includes("node_modules")) return;
-          // 不强制合并 echarts：工作台/看板只带用到的图种，演示页与 wordcloud 留在各自异步包。
-          if (id.includes("antd") || id.includes("@ant-design")) return "vendor-antd";
-          if (id.includes("react-router") || id.includes("/react/") || id.includes("\\react\\") || id.includes("react-dom")) {
-            return "vendor-react";
-          }
+          const normalized = id.replace(/\\/g, "/");
+          const marker = "/node_modules/";
+          const at = normalized.lastIndexOf(marker);
+          if (at < 0) return;
+          const rest = normalized.slice(at + marker.length);
+          const pkg = rest.startsWith("@") ? rest.split("/").slice(0, 2).join("/") : rest.split("/")[0];
+          // 只固定 React 运行时。antd 按路由拆开，登录页不再预加载表格、日期、树。
+          // pnpm 的目录名带 _react-dom@，不能用 includes("react-dom")，否则 antd 会整库进这个包。
+          if (pkg === "react" || pkg === "react-dom" || pkg === "react-router" || pkg === "scheduler") return "vendor-react";
         },
         // 默认压缩器是 Oxc。显式打开 mangle / codegen，避免只传 compress 时退回未压缩产物。
         minify: {

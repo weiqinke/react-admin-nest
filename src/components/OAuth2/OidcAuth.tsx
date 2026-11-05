@@ -1,11 +1,11 @@
 import { oauthAuthorizeUrl } from "@/api/oauth";
-import { SafetyCertificateOutlined } from "@ant-design/icons";
+import { SsoIcon } from "@/components/OAuth2/brand-icons";
 import { Button } from "antd";
 
 const OidcAuth = () => {
   return (
     <Button type="link" href={oauthAuthorizeUrl("oidc")}>
-      <SafetyCertificateOutlined />
+      <SsoIcon />
       企业 SSO
     </Button>
   );

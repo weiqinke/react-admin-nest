@@ -1,16 +1,17 @@
-﻿import IconFont from "@/components/IconFont";
-import MenuTagContext from "@/contexts/MenuTagContext";
+﻿import MenuTagContext from "@/contexts/MenuTagContext";
 import ProjectContext from "@/contexts/ProjectContext";
 import { formatURL, getLocalStorageMenus, getMenus, getOpenKeysByUrls, setLocalStorage } from "@/utils/menuUtils";
 import { AppstoreOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
-import { useContext, useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useLayoutEffect, useMemo, useState, type ComponentType } from "react";
 import { useLocation, useNavigate } from "react-router";
 
-const createMenuIcon = item => {
+type IconFontProps = { type: string };
+
+const createMenuIcon = (item, Icon: ComponentType<IconFontProps> | null) => {
   return item.map(v => {
-    v.icon = v.icon ? <IconFont type={v.icon} /> : <AppstoreOutlined />;
-    if (v.children) createMenuIcon(v.children);
+    v.icon = Icon && v.icon ? <Icon type={v.icon} /> : <AppstoreOutlined />;
+    if (v.children) createMenuIcon(v.children, Icon);
     return v;
   });
 };
@@ -23,13 +24,35 @@ const WebMenu = () => {
   const [menuTick, setMenuTick] = useState(0);
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [openKeys, setOpenkeys] = useState([]);
+  const [IconFont, setIconFont] = useState<ComponentType<IconFontProps> | null>(null);
 
-  // 菜单树只在 menus:refresh 时重建，路由切换只更新选中态。
+  useEffect(() => {
+    let cancelled = false;
+    const load = () => {
+      void import("@/components/IconFont").then(mod => {
+        if (!cancelled) setIconFont(() => mod.default);
+      });
+    };
+    if (typeof window.requestIdleCallback === "function") {
+      const id = window.requestIdleCallback(load, { timeout: 1200 });
+      return () => {
+        cancelled = true;
+        window.cancelIdleCallback(id);
+      };
+    }
+    const id = window.setTimeout(load, 300);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(id);
+    };
+  }, []);
+
+  // 菜单树只在 menus:refresh 时重建，路由切换只更新选中态。自定义图标等空闲后再换上。
   const { menuItems, rawMenus } = useMemo(() => {
     const menusList = JSON.parse(getLocalStorageMenus());
     const result = getMenus(menusList);
-    return { menuItems: createMenuIcon(result), rawMenus: menusList };
-  }, [menuTick]);
+    return { menuItems: createMenuIcon(result, IconFont), rawMenus: menusList };
+  }, [menuTick, IconFont]);
 
   const onClick = props => {
     const { keyPath, key } = props;

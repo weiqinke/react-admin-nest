@@ -1,11 +1,11 @@
 import { oauthAuthorizeUrl } from "@/api/oauth";
-import { GithubOutlined } from "@ant-design/icons";
+import { GithubIcon } from "@/components/OAuth2/brand-icons";
 import { Button } from "antd";
 
 const GithubAuth = () => {
   return (
     <Button type="link" href={oauthAuthorizeUrl("github")}>
-      <GithubOutlined />
+      <GithubIcon />
       Github
     </Button>
   );

@@ -2,8 +2,8 @@ import { listMyAnnouncements, markAllAnnouncementsRead, markAnnouncementRead } f
 import { listMyNotices, markAllNoticesRead, markNoticeRead, noticeSummary, setNoticeTodo } from "@/api/notice";
 import { createStaleRefresh } from "@/utils/staleRefresh";
 import { BellOutlined } from "@ant-design/icons";
-import { Avatar, Badge, Dropdown, DropdownProps, Flex, Listy, MenuProps, Tabs, message } from "antd";
-import { FC, useEffect, useMemo, useState } from "react";
+import { Avatar, Badge, Dropdown, DropdownProps, MenuProps, message } from "antd";
+import { FC, useEffect, useMemo, useState, type ComponentType } from "react";
 import { useNavigate } from "react-router";
 
 const HeaderNotice: FC = () => {
@@ -16,6 +16,7 @@ const HeaderNotice: FC = () => {
   const [announcementUnread, setAnnouncementUnread] = useState(0);
   const [inboxUnread, setInboxUnread] = useState(0);
   const [todoPending, setTodoPending] = useState(0);
+  const [Panel, setPanel] = useState<ComponentType<any> | null>(null);
 
   const refresh = useMemo(
     () =>
@@ -23,16 +24,16 @@ const HeaderNotice: FC = () => {
         try {
           const [ann, inbox, todo, sum] = await Promise.all([
             listMyAnnouncements({ type: "notification", level: "normal", unread: 1, page: 1, page_size: 6 }),
-            listMyNotices({ kind: "inbox", unread: 1, page: 1, page_size: 6 }),
-            listMyNotices({ kind: "todo", todo_status: "pending", page: 1, page_size: 6 }),
+            listMyNotices({ kind: "inbox", unread: 1, page: 1, page_size: 8 }),
+            listMyNotices({ kind: "todo", todo_status: "pending", page: 1, page_size: 8 }),
             noticeSummary()
           ]);
           if (ann.data.code === 0) {
-            setNoticeList(ann.data.data?.list || []);
+            setNoticeList((ann.data.data?.list || []).slice(0, 6));
             setAnnouncementUnread(ann.data.data?.unread_count || 0);
           }
-          if (inbox.data.code === 0) setInboxList(inbox.data.data?.list || []);
-          if (todo.data.code === 0) setTodoList(todo.data.data?.list || []);
+          if (inbox.data.code === 0) setInboxList((inbox.data.data?.list || []).slice(0, 6));
+          if (todo.data.code === 0) setTodoList((todo.data.data?.list || []).slice(0, 6));
           if (sum.data.code === 0) {
             setInboxUnread(sum.data.data?.inbox_unread || 0);
             setTodoPending(sum.data.data?.todo_pending || 0);
@@ -98,99 +99,42 @@ const HeaderNotice: FC = () => {
 
   const badgeCount = announcementUnread + inboxUnread + todoPending;
 
-  const listBody =
-    activeKey === "notification" ? (
-      <Listy
-        items={noticeList}
-        rowKey="id"
-        itemRender={item => (
-          <Flex align="center" gap={12} onClick={() => openAnnouncement(item)}>
-            <Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${item.id}`} />
-            <Flex vertical>
-              <span>{item.title}</span>
-              <span>{item.content}</span>
-            </Flex>
-          </Flex>
-        )}
-      />
-    ) : activeKey === "message" ? (
-      inboxList.length ? (
-        <Listy
-          items={inboxList}
-          rowKey="id"
-          itemRender={item => (
-            <Flex align="center" gap={12} onClick={() => openInbox(item)}>
-              <Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${item.id}`} />
-              <Flex vertical>
-                <span>{item.title}</span>
-                <span>{item.content}</span>
-              </Flex>
-            </Flex>
-          )}
-        />
-      ) : (
-        <div className="py-6 text-center text-[#999]">暂无消息</div>
-      )
-    ) : todoList.length ? (
-      <Listy
-        items={todoList}
-        rowKey="id"
-        itemRender={item => (
-          <Flex align="center" gap={12} justify="space-between">
-            <Flex vertical style={{ flex: 1 }} onClick={() => item.link_path && navigate(item.link_path)}>
-              <span>{item.title}</span>
-              <span>{item.content}</span>
-            </Flex>
-            <Flex gap={4}>
-              <a onClick={() => finishTodo(item, "done")}>完成</a>
-              <a onClick={() => finishTodo(item, "dismissed")}>忽略</a>
-            </Flex>
-          </Flex>
-        )}
-      />
-    ) : (
-      <div className="py-6 text-center text-[#999]">暂无待办</div>
-    );
+  const ensurePanel = () => {
+    if (Panel) return;
+    void import("./NoticePanel").then(mod => setPanel(() => mod.default));
+  };
 
   const items: MenuProps["items"] = [
     {
       key: "1",
-      label: (
-        <div className="[&_.ant-tabs-tab]:w-[130px] [&_.ant-tabs-tab-btn]:mx-auto" onClick={event => event.stopPropagation()}>
-          <Tabs
-            destroyOnHidden
-            activeKey={activeKey}
-            centered
-            type="card"
-            onChange={(key: string) => setActiveKey(key)}
-            items={[
-              { label: `通知${announcementUnread ? `(${announcementUnread})` : ""}`, key: "notification" },
-              { label: `消息${inboxUnread ? `(${inboxUnread})` : ""}`, key: "message" },
-              { label: `待办${todoPending ? `(${todoPending})` : ""}`, key: "event" }
-            ]}
-          />
-          <div>
-            {listBody}
-            <div className="w-full rounded-b transition-all duration-300 border-t border-[#f0f0f0]">
-              <div className="float-left w-[49%] cursor-pointer border-r border-[#f0f0f0] py-3 text-center" onClick={clearCurrent}>
-                <span>清空</span>
-              </div>
-              <div
-                className="float-left w-[49%] cursor-pointer py-3 text-center"
-                onClick={() => {
-                  setOpen(false);
-                  navigate("/account");
-                }}>
-                <span>查看更多</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      label: Panel ? (
+        <Panel
+          activeKey={activeKey}
+          onChangeKey={setActiveKey}
+          announcementUnread={announcementUnread}
+          inboxUnread={inboxUnread}
+          todoPending={todoPending}
+          noticeList={noticeList}
+          inboxList={inboxList}
+          todoList={todoList}
+          onOpenAnnouncement={openAnnouncement}
+          onOpenInbox={openInbox}
+          onOpenPath={path => navigate(path)}
+          onFinishTodo={finishTodo}
+          onClear={clearCurrent}
+          onMore={() => {
+            setOpen(false);
+            navigate("/account");
+          }}
+        />
+      ) : (
+        <div className="px-6 py-4 text-center text-[#999]">加载中</div>
       )
     }
   ];
 
   const handleOpenChange: DropdownProps["onOpenChange"] = (nextOpen, info) => {
+    if (nextOpen) ensurePanel();
     if (info.source === "trigger" || nextOpen) {
       setOpen(nextOpen);
       if (nextOpen) void refresh(true);

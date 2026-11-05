@@ -1,5 +1,4 @@
-﻿import { message } from "antd";
-import React from "react";
+﻿import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router/dom";
 import { setApiErrorReporter } from "./api/feedback";
@@ -22,7 +21,7 @@ setAuthExpiredHandler(() => {
 });
 
 setApiErrorReporter(text => {
-  message.error({ content: text, duration: 2 });
+  void import("./components/api-error").then(({ showApiError }) => showApiError(text));
 });
 
 ReactDOM.createRoot(document.getElementById("caravan-root")!).render(

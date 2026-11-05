@@ -1,16 +1,15 @@
 ﻿import MenuTagContext from "@/contexts/MenuTagContext";
 import ProjectContext from "@/contexts/ProjectContext";
 import { getUserState } from "@/utils/core";
+import { NextIcon } from "@/components/OAuth2/brand-icons";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Divider, Form, Image, Input, Spin, Tooltip, message } from "antd";
+import { Button, Checkbox, Divider, Form, Input } from "antd";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 import { getCaptcha, getLdapStatus, ldapLogin, login } from "@/api/auth";
 import { getStoredTrustToken, storeTrustToken } from "@/api/trust";
 import { saveLoginSession } from "@/api/session";
-import qrimg from "@/assets/qrcode.png";
-import IconFont from "@/components/IconFont";
 import styles from "./index.module.scss";
 import GiteeAuth from "@/components/OAuth2/GiteeAuth";
 import GithubAuth from "@/components/OAuth2/GithubAuth";
@@ -27,6 +26,8 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
   const [ldapEnabled, setLdapEnabled] = useState(false);
   const [useLdap, setUseLdap] = useState(false);
   const [captcha, setCaptcha] = useState({ id: "", image: "" });
+  const [showLoading, setShowLoading] = useState(false);
+  const [qrSrc, setQrSrc] = useState("");
   const [form] = Form.useForm();
 
   const loadCaptcha = useCallback(() => {
@@ -47,6 +48,26 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
       .then(res => setLdapEnabled(Boolean(res.data?.data?.enabled)))
       .catch(() => setLdapEnabled(false));
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      setShowLoading(false);
+      return;
+    }
+    const timer = window.setTimeout(() => setShowLoading(true), 500);
+    return () => window.clearTimeout(timer);
+  }, [loading]);
+
+  useEffect(() => {
+    if (!isFlipped || qrSrc) return;
+    let cancelled = false;
+    void import("@/assets/qrcode.png").then(mod => {
+      if (!cancelled) setQrSrc(mod.default);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [isFlipped, qrSrc]);
 
   const afterLogin = async (data: any) => {
     saveLoginSession(data);
@@ -73,7 +94,7 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
 
   const onFinish = async values => {
     if (!captcha.id) {
-      message.warning("验证码未就绪，请点击图片刷新");
+      void import("@/components/api-error").then(({ showWarning }) => showWarning("验证码未就绪，请点击图片刷新"));
       return;
     }
     setLoading(true);
@@ -104,7 +125,7 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
     } catch (error: any) {
       if (!useLdap && error?.code === 40306) {
         setNeedTotp(true);
-        message.warning("请输入双因素验证码");
+        void import("@/components/api-error").then(({ showWarning }) => showWarning("请输入双因素验证码"));
       }
       loadCaptcha();
     } finally {
@@ -133,16 +154,14 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
 
   return (
     <div className={styles.container}>
-      <div className={styles.changeQR} onClick={() => setIsFlipped(v => !v)}>
-        <Tooltip placement="left" title={`${isFlipped ? "密码" : "扫码"}登录`}>
-          <div className={styles.code} />
-        </Tooltip>
+      <div className={styles.changeQR} onClick={() => setIsFlipped(v => !v)} title={`${isFlipped ? "密码" : "扫码"}登录`}>
+        <div className={styles.code} />
       </div>
       <h1 className={styles.title}>Nest-Admin</h1>
       <div className={`${styles.flip} ${isFlipped ? styles.flipped : ""}`}>
         <div className={styles.flipInner}>
           <div className={styles.front}>
-            <Spin spinning={loading} delay={500}>
+            <div>
               {ldapEnabled ? (
                 <div className="mb-3 flex gap-2">
                   <Button type={useLdap ? "default" : "primary"} size="small" onClick={() => switchMode(false)}>
@@ -213,7 +232,7 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
                 </div>
                 <div className={styles.submit}>
                   <Form.Item noStyle>
-                    <Button block type="primary" htmlType="submit">
+                    <Button block type="primary" htmlType="submit" loading={showLoading}>
                       {useLdap ? "LDAP 登录" : "登录"}
                     </Button>
                   </Form.Item>
@@ -226,7 +245,7 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
               <div className={styles.ohter}>
                 <div className={styles.type}>
                   <Button type="link" href="https://ssr.nest-admin.com">
-                    <IconFont type="icon-cib-next-js" />
+                    <NextIcon />
                     SSR
                   </Button>
                 </div>
@@ -240,10 +259,10 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
                   <OidcAuth />
                 </div>
               </div>
-            </Spin>
+            </div>
           </div>
           <div className={`${styles.card} ${styles.back}`}>
-            <Image width={200} src={qrimg} />
+            {qrSrc ? <img alt="" width={200} src={qrSrc} /> : null}
           </div>
         </div>
       </div>

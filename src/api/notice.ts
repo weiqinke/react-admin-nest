@@ -1,3 +1,4 @@
+import { queryKey, shareInflight } from "@/api/inflight";
 import { request } from "@/api/request";
 
 const enc = encodeURIComponent;
@@ -6,7 +7,10 @@ function compact(query: Record<string, any>) {
   return Object.fromEntries(Object.entries(query).filter(([, value]) => value !== undefined && value !== ""));
 }
 
-export const listMyNotices = (query: Record<string, any> = {}) => request("/api/me/notices", "GET", compact(query));
+export const listMyNotices = (query: Record<string, any> = {}) => {
+  const params = compact(query);
+  return shareInflight(queryKey("/api/me/notices", params), () => request("/api/me/notices", "GET", params));
+};
 
 export const noticeSummary = () => request("/api/me/notices/summary", "GET");
 

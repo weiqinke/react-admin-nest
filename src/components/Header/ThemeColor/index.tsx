@@ -1,6 +1,5 @@
 import { SunOutlined } from "@ant-design/icons";
 import { useContext } from "react";
-import { Tooltip } from "antd";
 import ProjectContext from "@/contexts/ProjectContext";
 import type { ThemeName } from "@/theme/palette";
 
@@ -16,13 +15,12 @@ const ThemeColor = () => {
     setTheme(nextTheme[current]);
   }
   return (
-    <Tooltip title="切换主题" placement="bottom">
-      <span
-        className="inline-flex h-12 cursor-pointer select-none items-center px-3 text-base text-header-icon hover:bg-header-icon-hover-bg hover:text-header-icon-hover"
-        onClick={handleChangeTheme}>
-        <SunOutlined />
-      </span>
-    </Tooltip>
+    <span
+      title="切换主题"
+      className="inline-flex h-12 cursor-pointer select-none items-center px-3 text-base text-header-icon hover:bg-header-icon-hover-bg hover:text-header-icon-hover"
+      onClick={handleChangeTheme}>
+      <SunOutlined />
+    </span>
   );
 };
 

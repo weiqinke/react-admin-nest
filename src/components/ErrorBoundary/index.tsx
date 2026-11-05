@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Button, Result, Typography } from "antd";
 
 type FallbackElement = React.ReactElement | null;
 
@@ -35,21 +34,14 @@ const initialState: ErrorBoundaryState = {
 
 /** 未传 fallback 时的内置兜底，避免边界自身再抛错把整页打穿 */
 const DefaultFallback = ({ error, resetErrorBoundary }: FallbackProps) => (
-  <Result
-    status="warning"
-    title="组件渲染失败"
-    subTitle={import.meta.env.DEV ? error.message : "请重试，或联系管理员排查"}
-    extra={
-      <Button type="primary" onClick={resetErrorBoundary}>
-        重新渲染
-      </Button>
-    }>
-    {import.meta.env.DEV && error.stack ? (
-      <Typography.Paragraph type="secondary" style={{ textAlign: "left", maxHeight: 160, overflow: "auto", fontSize: 12 }}>
-        <pre style={{ margin: 0, whiteSpace: "pre-wrap" }}>{error.stack}</pre>
-      </Typography.Paragraph>
-    ) : null}
-  </Result>
+  <div className="p-6">
+    <h2 className="mb-2 text-lg">组件渲染失败</h2>
+    <p className="mb-3 text-[#5c6570]">{import.meta.env.DEV ? error.message : "请重试，或联系管理员排查"}</p>
+    <button type="button" className="cursor-pointer rounded bg-[#1f6f5b] px-4 py-1 text-white" onClick={resetErrorBoundary}>
+      重新渲染
+    </button>
+    {import.meta.env.DEV && error.stack ? <pre className="mt-3 max-h-40 overflow-auto text-xs whitespace-pre-wrap text-[#5c6570]">{error.stack}</pre> : null}
+  </div>
 );
 
 class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {

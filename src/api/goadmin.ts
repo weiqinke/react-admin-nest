@@ -1,5 +1,6 @@
 import { getPublicKey } from "./auth";
 import { encryptPassword } from "./crypto";
+import { shareInflight, withCallerAbort } from "./inflight";
 import { request } from "./request";
 
 export { getCaptcha, getPublicKey, login, register } from "./auth";
@@ -16,7 +17,11 @@ export const refreshToken = (refresh_token: string) => request("/api/token/refre
 
 export const logout = (refresh_token?: string, options?: any) => request("/api/logout", "POST", refresh_token ? { refresh_token } : {}, options);
 
-export const getMe = (options?: { signal?: AbortSignal }) => request("/api/me", "GET", {}, options);
+export const getMe = (options?: { signal?: AbortSignal }) =>
+  withCallerAbort(
+    shareInflight("GET /api/me", () => request("/api/me", "GET")),
+    options?.signal
+  );
 
 /** 当前用户可渲染菜单树。登录即可，不要求 menu:read。data 为 { list }。 */
 export const getMyMenus = () => request("/api/me/menus", "GET");
