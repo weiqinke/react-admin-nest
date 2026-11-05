@@ -50,14 +50,27 @@ const goAdminProxy = {
   "/health": goAdminProxyEntry()
 };
 
+// pnpm 路径里可能嵌套多层 node_modules，取最后一层才是实际包名。
+function packageName(id: string) {
+  const normalized = id.replace(/\\/g, "/");
+  const marker = "/node_modules/";
+  const at = normalized.lastIndexOf(marker);
+  if (at < 0) return "";
+  const rest = normalized.slice(at + marker.length);
+  return rest.startsWith("@") ? rest.split("/").slice(0, 2).join("/") : rest.split("/")[0];
+}
+
 export default defineConfig({
   plugins: [
     tailwindcss(),
     react(),
-    // deploy/nginx.conf.example 对 /js、/css 开了 gzip_static，构建时预生成 .gz
+    // deploy/nginx.conf.example 只对 /js、/css 开 gzip_static，且没有动态 gzip。
+    // 门槛降到 1KB，小包也会预压缩；压完不比原文小的跳过。图片不进这里。
     compression({
       algorithms: ["gzip"],
-      threshold: 10240,
+      include: [/\.js$/i, /\.css$/i],
+      threshold: 1024,
+      skipIfLargerOrEqual: true,
       logLevel: "info"
     }),
     process.env.ANALYZE === "1" &&
@@ -104,14 +117,9 @@ export default defineConfig({
         entryFileNames: "js/[name]-[hash].js",
         assetFileNames: "[ext]/[name]-[hash].[ext]",
         manualChunks(id) {
-          const normalized = id.replace(/\\/g, "/");
-          const marker = "/node_modules/";
-          const at = normalized.lastIndexOf(marker);
-          if (at < 0) return;
-          const rest = normalized.slice(at + marker.length);
-          const pkg = rest.startsWith("@") ? rest.split("/").slice(0, 2).join("/") : rest.split("/")[0];
-          // 只固定 React 运行时。antd 按路由拆开，登录页不再预加载表格、日期、树。
-          // pnpm 的目录名带 _react-dom@，不能用 includes("react-dom")，否则 antd 会整库进这个包。
+          const pkg = packageName(id);
+          // 只固定 React 运行时。antd 继续按路由自动拆，登录页不预载表格、日期、树。
+          // pnpm 的目录名带 _react-dom@，按包名相等判断，避免 antd 整库进这个包。
           if (pkg === "react" || pkg === "react-dom" || pkg === "react-router" || pkg === "scheduler") return "vendor-react";
         },
         // 默认压缩器是 Oxc。显式打开 mangle / codegen，避免只传 compress 时退回未压缩产物。

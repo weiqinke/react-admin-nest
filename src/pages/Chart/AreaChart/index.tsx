@@ -1,10 +1,13 @@
 import BarChart from "@/components/Echarts/BarChart";
-import HomeSenseChart from "@/components/Echarts/HomeSenseChart";
 import LineChart from "@/components/Echarts/LineChart";
 import PieChart from "@/components/Echarts/PieChart";
 import ScatterChart from "@/components/Echarts/ScatterChart";
 import ServerStatusChart from "@/components/Echarts/ServerStatusChart";
 import { Col, Row } from "antd";
+import { lazy, Suspense } from "react";
+
+// 地图、时间轴只在这一张图里用，单独加载，避免挡住同页的柱状和饼图。
+const HomeSenseChart = lazy(() => import("@/components/Echarts/HomeSenseChart"));
 
 const AreaChart = () => {
   return (
@@ -26,7 +29,9 @@ const AreaChart = () => {
           <ServerStatusChart />
         </Col>
         <Col xs={24} sm={24} md={12} xl={8} lg={8}>
-          <HomeSenseChart />
+          <Suspense fallback={null}>
+            <HomeSenseChart />
+          </Suspense>
         </Col>
       </Row>
     </div>

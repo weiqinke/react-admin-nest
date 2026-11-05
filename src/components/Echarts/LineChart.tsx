@@ -1,5 +1,5 @@
 import { FC, useEffect, useRef } from "react";
-import echarts from "./setup";
+import echarts from "./setup-line";
 const LineChart: FC = () => {
   const ref = useRef();
 

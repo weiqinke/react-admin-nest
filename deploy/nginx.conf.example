@@ -96,6 +96,15 @@ server {
         try_files $uri =404;
         add_header Cache-Control "public, max-age=31536000, immutable";
     }
+    # 构建把带 hash 的文件按扩展名分目录。jpg、svg 也要 404，并长期缓存。
+    location /jpg/ {
+        try_files $uri =404;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+    location /svg/ {
+        try_files $uri =404;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
 
     # HTML 入口不长期缓存，发布后浏览器才能拿到新的 /js/* hash。
     location = /index.html {

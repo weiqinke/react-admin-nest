@@ -1,4 +1,4 @@
-/** 图表演示页注册。登录频次图用 setup-cartesian，不要从这里带进地图。 */
+/** 家庭感知图专用。饼图、直角坐标、象形柱、拓扑各自有更小的注册文件。 */
 import * as echarts from "echarts/core";
 import { BarChart, CustomChart, EffectScatterChart, GraphChart, LineChart, LinesChart, MapChart, PictorialBarChart, PieChart } from "echarts/charts";
 import {
