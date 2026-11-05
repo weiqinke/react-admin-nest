@@ -49,13 +49,12 @@ const InviteAccept = lazy(() => import("@/pages/InviteAccept"));
 const AreaChart = lazy(() => import("@/pages/Chart/AreaChart"));
 const NotFoundPage = lazy(() => import("@/pages/FailPage/NotFoundPage"));
 
-const D3Example = lazy(() => import("@/pages/D3Example"));
-
 type RouteOptions = {
   path?: string;
   index?: boolean;
   title?: string;
   auth?: boolean;
+  miss?: boolean;
   loader?: RouteObject["loader"];
   children?: RouteObject[];
 };
@@ -72,6 +71,7 @@ function route(Page: ComponentType, options: RouteOptions = {}): RouteObject {
   const handle: RouteHandle = {};
   if (options.title !== undefined) handle.title = options.title;
   if (options.auth !== undefined) handle.auth = options.auth;
+  if (options.miss) handle.miss = true;
   const Component = options.auth ? guard(Page) : Page;
 
   if (options.index) {
@@ -112,20 +112,7 @@ const routes: RouteObject[] = [
                 path: "charts",
                 title: "图表模块",
                 auth: true,
-                children: [
-                  route(AreaChart, { path: "AreaCharts", title: "AreaCharts" }),
-                  route(D3Example, {
-                    path: "d3example",
-                    auth: true,
-                    title: "D3图例",
-                    loader: async () => {
-                      // return { info: "我是打开页面的时候，传递来的数据" };
-                      return null;
-                    }
-                    // errorElement: <ErrorBoundary />, // 假如 loader 或者 action 返回了错误，就渲染这个组件
-                  }),
-                  route(AnimateCard, { path: "animate", auth: true, title: "D3图例" })
-                ]
+                children: [route(AreaChart, { path: "AreaCharts", title: "AreaCharts" }), route(AnimateCard, { path: "animate", auth: true, title: "D3图例" })]
               }),
               route(Outlet, {
                 path: "management",
@@ -151,7 +138,7 @@ const routes: RouteObject[] = [
                   route(ApiKeyAdmin, { path: "apikeyadmin", title: "API 密钥" }),
                   route(AiAdmin, { path: "aiadmin", title: "模型管理" }),
                   route(ChangelogAdmin, { path: "changelogadmin", title: "变更日志" }),
-                  route(NotFoundPage, { path: "*", title: "notFound" })
+                  route(NotFoundPage, { path: "*", miss: true, title: "页面不存在" })
                 ]
               }),
               route(About, { path: "about", auth: true, title: "关于" }),
@@ -161,10 +148,10 @@ const routes: RouteObject[] = [
               route(AiChat, { path: "aichat", auth: true, title: "AI 对话" }),
               route(MyTickets, { path: "mytickets", auth: true, title: "我的工单" }),
               route(About, { index: true, auth: true, title: "关于" }),
-              route(NotFoundPage, { path: "*", auth: true, title: "NotFound" })
+              route(NotFoundPage, { path: "*", auth: true, miss: true, title: "页面不存在" })
             ]
           }),
-          route(NotFoundPage, { path: "*" })
+          route(NotFoundPage, { path: "*", miss: true, title: "页面不存在" })
         ]
       }
     ]

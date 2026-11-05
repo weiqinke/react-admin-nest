@@ -7,12 +7,14 @@ import TagsView from "@/components/TagsView";
 import MenuTagContext from "@/contexts/MenuTagContext";
 import ProjectContext from "@/contexts/ProjectContext";
 import { Layout, Modal } from "antd";
-import { lazy, Suspense, useContext, useEffect, useState } from "react";
-import { adaptApiMenus, getLocalStorageMenus, saveMenus } from "@/utils/menuUtils";
+import { lazy, Suspense, useContext, useEffect, useMemo, useState } from "react";
+import { adaptApiMenus, canAccessMenuPath, getLocalStorageMenus, saveMenus } from "@/utils/menuUtils";
 import { throttle } from "@/utils/throttle";
 import { webSocketManager } from "@/utils/ws";
 import { getAccessToken } from "@/api/session";
-import { Outlet, useLocation, useNavigate } from "react-router";
+import type { RouteHandle } from "@/router/session";
+import NotAuthPage from "@/pages/FailPage/NotAuthPage";
+import { Outlet, useLocation, useMatches, useNavigate } from "react-router";
 import styles from "./index.module.scss";
 import SuspendFallback from "@/components/SuspendFallback";
 import AnnouncementGate from "@/components/AnnouncementGate";
@@ -45,12 +47,24 @@ const DefaultLayout = () => {
   const { theme } = useContext<any>(ProjectContext);
   const [collapsed, setCollapsed] = useState(false);
   const { pathname } = useLocation();
+  const matches = useMatches();
   const navigate = useNavigate();
+  const [menuTick, setMenuTick] = useState(0);
   // 入场动画只在路由切换时播；真刷新用 loading，避免像重新进路由。
   const [enterMotion, setEnterMotion] = useState(true);
   // 有上次的菜单和权限就先画出页面，接口回来再刷新菜单。没有缓存时仍等这两笔请求。
   const [accessReady, setAccessReady] = useState(hasCachedShell);
   const [needStepUp, setNeedStepUp] = useState(false);
+  const leaf = matches[matches.length - 1];
+  const missed = Boolean((leaf?.handle as RouteHandle | undefined)?.miss);
+  const allowed = useMemo(() => canAccessMenuPath(pathname), [pathname, menuTick]);
+  const showNotAuth = accessReady && !missed && !allowed;
+
+  useEffect(() => {
+    const refresh = () => setMenuTick(value => value + 1);
+    window.addEventListener("menus:refresh", refresh);
+    return () => window.removeEventListener("menus:refresh", refresh);
+  }, []);
 
   useEffect(() => {
     setEnterMotion(true);
@@ -155,7 +169,7 @@ const DefaultLayout = () => {
                     <SuspendFallback />
                   ) : (
                     <div key={`${pathname}-${refreshKey}`} className={enterMotion ? styles.pageEnter : undefined}>
-                      <Outlet />
+                      {showNotAuth ? <NotAuthPage /> : <Outlet />}
                     </div>
                   )}
                 </div>

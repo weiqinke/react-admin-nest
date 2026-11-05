@@ -5,6 +5,8 @@ import type { UIMatch } from "react-router";
 export type RouteHandle = {
   title?: string;
   auth?: boolean;
+  /** 没有匹配到具体页面，由 404 页承接。 */
+  miss?: boolean;
 };
 
 export const SessionContext = createContext<UserState>({});

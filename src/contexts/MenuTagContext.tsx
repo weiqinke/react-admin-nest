@@ -1,6 +1,7 @@
-﻿import { formatURL, getMenuItemByID, getMenuItemByUrl } from "@/utils/menuUtils";
+﻿import type { RouteHandle } from "@/router/session";
+import { formatURL, getMenuItemByID, pageTagName } from "@/utils/menuUtils";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation, useMatches, useNavigate } from "react-router";
 
 export type MenuTagItem = {
   url: string;
@@ -41,8 +42,10 @@ const MenuTagContext = React.createContext<MenuTagContextValue>({
 
 export const MenuTagContextProvider = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
+  const matches = useMatches();
   const navigate = useNavigate();
   const activeUrl = location.pathname;
+  const missed = Boolean((matches[matches.length - 1]?.handle as RouteHandle | undefined)?.miss);
 
   const [tags, setTags] = useState<MenuTagItem[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -59,12 +62,14 @@ export const MenuTagContextProvider = ({ children }: { children: React.ReactNode
   useEffect(() => {
     const url = location.pathname;
     if (!url) return;
+    const name = pageTagName(url, missed);
+    if (!name) return;
     setTags(prev => {
-      if (prev.length) return prev;
-      const initItem = getMenuItemByUrl(url.split("/").pop());
-      return [{ url, name: initItem?.name }];
+      if (!prev.some(tag => tag.url === url)) return [...prev, { url, name }];
+      if (prev.some(tag => tag.url === url && tag.name === name)) return prev;
+      return prev.map(tag => (tag.url === url ? { ...tag, name } : tag));
     });
-  }, [location.pathname]);
+  }, [location.pathname, missed]);
 
   const switchTo = useCallback(
     (url: string) => {

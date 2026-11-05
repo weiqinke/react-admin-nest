@@ -233,6 +233,55 @@ export const getMenus = (data, parentUrl = "/") => {
   return result;
 };
 
+/** 登录后都能打开，不要求出现在侧边栏。 */
+const OPEN_PATHS = new Set(["/", "/about", "/account", "/profile", "/workplace"]);
+
+const OPEN_NAMES: Record<string, string> = {
+  "/": "关于",
+  "/about": "关于",
+  "/account": "个人信息",
+  "/profile": "个人中心",
+  "/workplace": "工作台"
+};
+
+function collectMenuPaths(nodes: any[], parent: string, paths: Set<string>) {
+  if (!Array.isArray(nodes)) return;
+  for (const node of nodes) {
+    const segment = String(node?.url || "").replace(/^\/+|\/+$/g, "");
+    const path = segment ? formatURL(`${parent}/${segment}`) : parent || "/";
+    if (segment) paths.add(path);
+    if (Array.isArray(node?.children) && node.children.length) collectMenuPaths(node.children, path, paths);
+  }
+}
+
+function isPublicPath(path: string) {
+  return path === "/login" || path === "/invite" || path.startsWith("/password/") || path.startsWith("/oauth/");
+}
+
+/** 当前账号的菜单（含侧栏隐藏项）是否包含这条路径。 */
+export function canAccessMenuPath(pathname: string) {
+  const path = formatURL(pathname || "/");
+  if (OPEN_PATHS.has(path)) return true;
+  try {
+    const menus = JSON.parse(getLocalStorageMenus());
+    const allowed = new Set<string>();
+    collectMenuPaths(menus, "", allowed);
+    return allowed.has(path);
+  } catch {
+    return false;
+  }
+}
+
+export function pageTagName(pathname: string, miss = false) {
+  const path = formatURL(pathname || "/");
+  if (isPublicPath(path)) return "";
+  if (miss) return "页面不存在";
+  if (!canAccessMenuPath(path)) return "无权限";
+  if (OPEN_NAMES[path]) return OPEN_NAMES[path];
+  const segment = path.split("/").filter(Boolean).pop();
+  return getMenuItemByUrl(segment)?.name || "页面";
+}
+
 export const formatURL = url => {
   const list = url.split("/").filter(v => v);
   const path = "/" + list.join("/");
