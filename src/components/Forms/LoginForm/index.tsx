@@ -4,7 +4,7 @@ import { getUserState } from "@/utils/core";
 import { NextIcon } from "@/components/OAuth2/brand-icons";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Divider, Form, Input } from "antd";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 
 import { getCaptcha, getLdapStatus, ldapLogin, login } from "@/api/auth";
@@ -29,6 +29,7 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
   const [showLoading, setShowLoading] = useState(false);
   const [qrSrc, setQrSrc] = useState("");
   const [form] = Form.useForm();
+  const submitting = useRef(false);
 
   const loadCaptcha = useCallback(() => {
     getCaptcha()
@@ -36,8 +37,9 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
         const data = res.data?.data || {};
         setCaptcha({ id: data.captcha_id || "", image: data.image || "" });
       })
-      .catch(() => setCaptcha({ id: "", image: "" }));
-  }, []);
+      .catch(() => setCaptcha({ id: "", image: "" }))
+      .finally(() => form.setFieldValue("captcha_code", ""));
+  }, [form]);
 
   useEffect(() => {
     loadCaptcha();
@@ -78,25 +80,20 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
       localStorage.removeItem("must_change_password");
     }
     setValue(getUserState());
-    try {
-      const [{ getMyMenus }, { adaptApiMenus, saveMenus }] = await Promise.all([import("@/api/goadmin"), import("@/utils/menuUtils")]);
-      const menus = await getMyMenus();
-      const list = adaptApiMenus(menus.data?.data?.list || []);
-      saveMenus(JSON.stringify(list));
-    } catch (error) {
-      console.log("当前用户菜单获取失败", error);
-    }
-    const { webSocketManager } = await import("@/utils/ws");
+    const [{ saveMenus }, { webSocketManager }] = await Promise.all([import("@/utils/menuUtils"), import("@/utils/ws")]);
+    saveMenus("[]");
     webSocketManager.create();
     setTags([]);
     navigate(data?.must_change_password ? "/account" : "/workplace");
   };
 
   const onFinish = async values => {
+    if (submitting.current) return;
     if (!captcha.id) {
       void import("@/components/api-error").then(({ showWarning }) => showWarning("验证码未就绪，请点击图片刷新"));
       return;
     }
+    submitting.current = true;
     setLoading(true);
     try {
       if (useLdap) {
@@ -129,6 +126,7 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
       }
       loadCaptcha();
     } finally {
+      submitting.current = false;
       setLoading(false);
     }
   };

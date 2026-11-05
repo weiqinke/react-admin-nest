@@ -21,8 +21,8 @@ function whenIdle(run: () => void) {
 }
 
 const Login = () => {
-  const [register, setRegister] = useState(0);
-  const onClick = () => setRegister(v => v + 1);
+  const [showRegisterForm, setShowRegisterForm] = useState(false);
+  const openRegister = () => setShowRegisterForm(true);
   const [random] = useState(Math.random());
   const [closeEyes, setCloseEyes] = useState(false);
   const [registeredUser, setRegisteredUser] = useState("");
@@ -37,7 +37,7 @@ const Login = () => {
       .catch(() => {});
   }, []);
   useEffect(() => {
-    if (!allowRegister) setRegister(0);
+    if (!allowRegister) setShowRegisterForm(false);
   }, [allowRegister]);
   useEffect(
     () =>
@@ -49,9 +49,9 @@ const Login = () => {
   );
   const leaveRegister = () => {
     setCloseEyes(false);
-    setRegister(0);
+    setShowRegisterForm(false);
   };
-  const showRegister = Boolean(register % 2 && allowRegister);
+  const showRegister = showRegisterForm && allowRegister;
   return (
     <div className={styles.container} style={background ? { backgroundImage: `url(${background})` } : undefined}>
       <div className={styles.fromContainer}>
@@ -71,7 +71,7 @@ const Login = () => {
               />
             </Suspense>
           ) : (
-            <LoginForm allowRegister={allowRegister} setRegister={onClick} setCloseEyes={setCloseEyes} username={registeredUser} />
+            <LoginForm allowRegister={allowRegister} setRegister={openRegister} setCloseEyes={setCloseEyes} username={registeredUser} />
           )}
         </div>
       </div>

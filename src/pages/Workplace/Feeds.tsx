@@ -32,6 +32,19 @@ function formatTime(value?: string) {
   return parsed.isValid() ? parsed.format("YYYY-MM-DD HH:mm") : "";
 }
 
+function announcementRank(item: any) {
+  return item.level === "required" && !item.read ? 0 : item.read ? 2 : 1;
+}
+
+function sortAnnouncements(list: any[]) {
+  return list.sort((left, right) => {
+    const leftRank = announcementRank(left);
+    const rightRank = announcementRank(right);
+    if (leftRank !== rightRank) return leftRank - rightRank;
+    return (Date.parse(right.published_at || "") || 0) - (Date.parse(left.published_at || "") || 0);
+  });
+}
+
 function dueLabel(item: any) {
   if (item?.due_in_seconds != null && Number.isFinite(Number(item.due_in_seconds))) {
     return formatDueInSeconds(Number(item.due_in_seconds));
@@ -97,12 +110,7 @@ const Feeds = () => {
         const extra = required?.data?.data?.list || [];
         const merged = new Map<string, any>();
         [...extra, ...base].forEach(item => merged.set(String(item.id), item));
-        const list = Array.from(merged.values()).sort((left, right) => {
-          const leftRank = left.level === "required" && !left.read ? 0 : left.read ? 2 : 1;
-          const rightRank = right.level === "required" && !right.read ? 0 : right.read ? 2 : 1;
-          if (leftRank !== rightRank) return leftRank - rightRank;
-          return (Date.parse(right.published_at || "") || 0) - (Date.parse(left.published_at || "") || 0);
-        });
+        const list = sortAnnouncements(Array.from(merged.values()));
         setAnnouncements(list);
         setAnnouncementTotal(Math.max(Number(all.data?.data?.total || 0), list.length));
       })
@@ -149,9 +157,13 @@ const Feeds = () => {
 
   const openAnnouncement = async (item: any) => {
     setCurrent(item);
-    if (!item.read) {
+    if (item.read) return;
+    try {
       await markAnnouncementRead(String(item.id));
-      loadAnnouncements();
+      setAnnouncements(list => sortAnnouncements(list.map(row => (String(row.id) === String(item.id) ? { ...row, read: true } : row))));
+      setCurrent(current => (current && String(current.id) === String(item.id) ? { ...current, read: true } : current));
+    } catch {
+      // 拦截器已提示
     }
   };
 
@@ -173,7 +185,9 @@ const Feeds = () => {
     try {
       await setNoticeTodo(id, status);
       message.success(status === "done" ? "已办结" : "已忽略");
-      loadTodos();
+      setTodos(list => list.filter(item => String(item.id) !== id));
+    } catch {
+      // 拦截器已提示
     } finally {
       setActing("");
     }
@@ -181,8 +195,12 @@ const Feeds = () => {
 
   const openNotice = async (item: any) => {
     if (!item.read) {
-      await markNoticeRead(String(item.id));
-      loadInbox();
+      try {
+        await markNoticeRead(String(item.id));
+        setInbox(list => list.filter(row => String(row.id) !== String(item.id)));
+      } catch {
+        return;
+      }
     }
     openInternal(item.link_path);
   };

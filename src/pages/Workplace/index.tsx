@@ -1,8 +1,8 @@
-import { hasPermission } from "@/api/announcement";
-import { getMe, getMyProfile } from "@/api/goadmin";
+import { getMyProfile } from "@/api/goadmin";
+import { canAccessMenuPath } from "@/utils/menuUtils";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Space, Tag } from "antd";
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import styles from "./index.module.css";
 
@@ -42,6 +42,21 @@ function roleLabel(role: any) {
   return String(role?.name || role?.code || "");
 }
 
+function readStoredList(key: string) {
+  try {
+    const list = JSON.parse(localStorage.getItem(key) || "[]");
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+
+function readStoredRoles() {
+  const active = readStoredList("active_roles");
+  const source = active.length ? active : readStoredList("roles");
+  return source.map(roleLabel).filter(Boolean);
+}
+
 const Workplace = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<ProfileCard>({
@@ -49,30 +64,50 @@ const Workplace = () => {
     department: "",
     jobTitle: "",
     avatar: localStorage.getItem("avatar") || "",
-    roles: []
+    roles: readStoredRoles()
   });
+  const [accessTick, setAccessTick] = useState(0);
 
   const now = new Date();
   const dateLabel = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日 ${WEEKDAYS[now.getDay()]}`;
   const hello = profile.nick ? `${greet(now.getHours())}，${profile.nick}` : greet(now.getHours());
-  const entries = ENTRIES.filter(item => !item.permission || hasPermission(item.permission));
+  const entries = useMemo(() => {
+    const permissions = new Set(readStoredList("permissions"));
+    return ENTRIES.filter(item => {
+      if (item.permission && !permissions.has(item.permission)) return false;
+      return canAccessMenuPath(item.path.split("?")[0] || "/");
+    });
+  }, [accessTick]);
   const orgLine = [profile.department, profile.jobTitle].filter(Boolean).join("，");
 
   useEffect(() => {
-    Promise.all([getMe(), getMyProfile()])
-      .then(([me, profileRes]) => {
-        const user = me.data?.data || {};
-        const detail = profileRes.data?.data || {};
-        const roles = (Array.isArray(user.active_roles) && user.active_roles.length ? user.active_roles : user.roles || []).map(roleLabel).filter(Boolean);
-        setProfile({
-          nick: detail.nickname || user.profile?.nickname || user.username || localStorage.getItem("nick") || "",
+    const refresh = () => {
+      setAccessTick(value => value + 1);
+      setProfile(prev => ({ ...prev, roles: readStoredRoles() }));
+    };
+    window.addEventListener("menus:refresh", refresh);
+    return () => window.removeEventListener("menus:refresh", refresh);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    getMyProfile()
+      .then(res => {
+        if (cancelled) return;
+        const detail = res.data?.data || {};
+        setProfile(prev => ({
+          ...prev,
+          nick: detail.nickname || prev.nick || localStorage.getItem("nick") || "",
           department: detail.department || "",
           jobTitle: detail.job_title || "",
-          avatar: detail.avatar || localStorage.getItem("avatar") || "",
-          roles
-        });
+          avatar: detail.avatar || prev.avatar || localStorage.getItem("avatar") || "",
+          roles: readStoredRoles()
+        }));
       })
       .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
