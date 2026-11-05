@@ -67,14 +67,15 @@ Seeded by the backend:
 
 ## Scripts
 
-| Command         | Description                           |
-| --------------- | ------------------------------------- |
-| `pnpm dev`      | Dev server (`vite --host`)            |
-| `pnpm build`    | Production build                      |
-| `pnpm preview`  | Preview the build (same `/api` proxy) |
-| `pnpm lint`     | ESLint                                |
-| `pnpm lint:fix` | ESLint with `--fix`                   |
-| `pnpm prettier` | Format with Prettier                  |
+| Command             | Description                           |
+| ------------------- | ------------------------------------- |
+| `pnpm dev`          | Dev server (`vite --host`)            |
+| `pnpm build`        | Production build                      |
+| `pnpm preview`      | Preview the build (same `/api` proxy) |
+| `pnpm lint`         | Oxlint                                |
+| `pnpm lint:fix`     | Oxlint with `--fix`                   |
+| `pnpm format`       | Format with oxfmt                     |
+| `pnpm format:check` | Check formatting                      |
 
 `ANALYZE=1 pnpm build` writes a bundle report to `analysis-chart.html`.
 

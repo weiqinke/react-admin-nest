@@ -1,3 +1,4 @@
+@charset "UTF-8";
 .container {
   margin-top: 54px;
   position: relative;
@@ -9,18 +10,16 @@
   transition: 0.5s linear;
   user-select: none;
   cursor: pointer;
-  &:hover {
-    height: 150px;
-    .imgbox {
-      width: 100px;
-      height: 100px;
-    }
-    .content {
-      .details {
-        transform: translateY(0px);
-      }
-    }
-  }
+}
+.container:hover {
+  height: 150px;
+}
+.container:hover .imgbox {
+  width: 100px;
+  height: 100px;
+}
+.container:hover .content .details {
+  transform: translateY(0px);
 }
 
 .imgbox {
@@ -35,10 +34,10 @@
   background-color: #000;
   overflow: hidden;
   transition: 0.5s linear;
-  &:hover {
-    width: 130px;
-    height: 130px;
-  }
+}
+.imgbox:hover {
+  width: 130px;
+  height: 130px;
 }
 
 .img {
@@ -68,39 +67,34 @@
   width: 100%;
   transition: 0.5s linear;
   transform: translateY(35px);
-  & {
-    h2 {
-      font-size: 1.25em;
-      font-weight: 600;
-      color: #555;
-      line-height: 1.2em;
-      span {
-        font-size: 0.75em;
-        font-size: 500;
-        opacity: 0.5;
-      }
-    }
-  }
+}
+.details h2 {
+  font-size: 1.25em;
+  font-weight: 600;
+  color: #555;
+  line-height: 1.2em;
+}
+.details h2 span {
+  font-size: 0.75em;
+  font-size: 500;
+  opacity: 0.5;
 }
 
 .data {
   display: flex;
   justify-content: space-between;
   margin: 20px 0;
-
-  & {
-    h3 {
-      font-size: 1em;
-      font-weight: 600;
-      color: #555;
-      line-height: 1.2em;
-      span {
-        font-size: 0.85em;
-        font-size: 400;
-        opacity: 0.5;
-      }
-    }
-  }
+}
+.data h3 {
+  font-size: 1em;
+  font-weight: 600;
+  color: #555;
+  line-height: 1.2em;
+}
+.data h3 span {
+  font-size: 0.85em;
+  font-size: 400;
+  opacity: 0.5;
 }
 
 .actionBtn {

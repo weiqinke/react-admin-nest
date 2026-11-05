@@ -8,7 +8,7 @@ import { FC, Key, useCallback, useEffect, useMemo, useState } from "react";
 import MenuAuthDrawer from "./MenuAuthDrawer";
 import MenuFormDrawer from "./MenuFormDrawer";
 import MenuTreeNode from "./MenuTreeNode";
-import styles from "./index.module.scss";
+import styles from "./index.module.css";
 
 const { confirm } = Modal;
 

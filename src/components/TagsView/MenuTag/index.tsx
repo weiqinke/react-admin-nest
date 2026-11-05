@@ -1,6 +1,6 @@
 import type { MouseEvent } from "react";
 import type { MenuTagItem } from "@/contexts/MenuTagContext";
-import styles from "./index.module.scss";
+import styles from "./index.module.css";
 
 type MenuTagProps = {
   tag: MenuTagItem;

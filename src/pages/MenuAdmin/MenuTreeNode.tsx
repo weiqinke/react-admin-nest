@@ -1,7 +1,7 @@
 import { AdminMenuNode } from "@/types/menu";
 import { Button, Space, Tag } from "antd";
 import { FC, MouseEvent } from "react";
-import styles from "./index.module.scss";
+import styles from "./index.module.css";
 
 type Props = {
   node: AdminMenuNode;

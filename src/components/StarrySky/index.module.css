@@ -728,6 +728,7 @@
     218px 64px #fff,
     455px 210px #fff;
 }
+
 .starssmall::after {
   content: " ";
   position: absolute;
@@ -1645,6 +1646,7 @@
     705px 907px #fff;
   animation: twinkling 2s ease-in-out infinite;
 }
+
 .starsmedium::after {
   content: " ";
   position: absolute;
@@ -1962,6 +1964,7 @@
     124px 103px #fff;
   animation: twinkling 3s ease-in-out infinite;
 }
+
 .starslarge::after {
   content: " ";
   position: absolute;
@@ -2075,8 +2078,6 @@
 .pyramids {
   position: absolute;
   bottom: 100px;
-  //   left: 30%;
-  //   right: 120px;
   right: 500px;
   z-index: 1;
   background-color: #000;
@@ -2127,6 +2128,7 @@
   transform: translate(150px, -150px);
   animation: shooting 1s ease-out forwards;
 }
+
 .shootingstar::after {
   content: "";
   position: absolute;

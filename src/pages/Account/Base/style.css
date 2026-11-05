@@ -1,0 +1,18 @@
+.setting-base .ant-card-meta-title {
+  margin-bottom: 0 !important;
+}
+.setting-base .meta-desc {
+  line-height: 1.7;
+}
+.setting-base .meta-desc .loginname {
+  margin-bottom: 8px;
+}
+.setting-base .poster {
+  display: block;
+  background: #f7f7f7;
+  object-fit: cover;
+}
+
+.formdom .formitem {
+  margin-bottom: 15px;
+}

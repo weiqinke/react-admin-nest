@@ -8,7 +8,7 @@ import { Button, Col, Empty, Modal, Row, Space, Tag, Timeline, message } from "a
 import dayjs from "dayjs";
 import { useEffect, useState, type ReactNode } from "react";
 import { useNavigate, useSearchParams } from "react-router";
-import styles from "./index.module.scss";
+import styles from "./index.module.css";
 
 const NOTICE_CATEGORY: Record<string, string> = {
   system: "系统",

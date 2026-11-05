@@ -6,12 +6,11 @@
   color: #000;
   height: 30px;
   line-height: 30px;
-
-  em {
-    color: #000;
-    font-weight: 500;
-    font-style: normal;
-  }
+}
+.itemText em {
+  color: #000;
+  font-weight: 500;
+  font-style: normal;
 }
 
 .mem {
@@ -41,26 +40,23 @@
   background-color: #41b3a3;
   border-radius: 8px;
   border: 2px solid #41b3a3;
-
-  &.fense {
-    background-color: #f8c0cb;
-    border: 2px solid #f8c0cb;
-  }
-
-  &.zise {
-    background-color: #ccbce1;
-    border: 2px solid #ccbce1;
-  }
-
-  .body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 120px;
-    border-radius: 0 8px 8px 8px;
-    background-color: #fff;
-    padding: 16px 20px 20px;
-  }
+}
+.cardContainer.fense {
+  background-color: #f8c0cb;
+  border: 2px solid #f8c0cb;
+}
+.cardContainer.zise {
+  background-color: #ccbce1;
+  border: 2px solid #ccbce1;
+}
+.cardContainer .body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 120px;
+  border-radius: 0 8px 8px 8px;
+  background-color: #fff;
+  padding: 16px 20px 20px;
 }
 
 .Gcontainer {

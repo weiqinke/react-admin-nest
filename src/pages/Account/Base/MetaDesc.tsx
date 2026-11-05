@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import React, { FC } from "react";
-import "./style.scss";
+import "./style.css";
 
 const MetaDesc: FC<any> = (props: any) => {
   const { userInfo } = props;

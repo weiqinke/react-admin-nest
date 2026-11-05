@@ -1,6 +1,6 @@
 import { Button } from "antd";
 
-import styles from "./index.module.scss";
+import styles from "./index.module.css";
 import { webSocketManager } from "@/utils/ws";
 
 const SocketCard = ({ userInfo, loadUserInfo, getUserView, ForcedOffline }) => {

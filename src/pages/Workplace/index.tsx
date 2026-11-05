@@ -4,7 +4,7 @@ import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Space, Tag } from "antd";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import styles from "./index.module.scss";
+import styles from "./index.module.css";
 
 const Feeds = lazy(() => import("./Feeds"));
 

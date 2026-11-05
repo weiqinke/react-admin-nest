@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router";
 import IconFont from "../IconFont";
-import styles from "./index.module.scss";
+import styles from "./index.module.css";
 
 const { Text, Title } = Typography;
 

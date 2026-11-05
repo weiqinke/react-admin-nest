@@ -1,6 +1,6 @@
 import avatarImg from "@/assets/user/defaultAvatar.jpg";
 import { Avatar } from "antd";
-import styles from "./index.module.scss";
+import styles from "./index.module.css";
 
 const AvatarData = ({ info }) => {
   return (

@@ -4,7 +4,7 @@ import LoginForm from "@/components/Forms/LoginForm";
 import SuspendFallback from "@/components/SuspendFallback";
 import Owl from "@/components/Owl";
 import { lazy, Suspense, useEffect, useState } from "react";
-import styles from "./index.module.scss";
+import styles from "./index.module.css";
 
 const RegisterForm = lazy(() => import("@/components/Forms/RegisterForm"));
 const Snowflake = lazy(() => import("./snowflake"));

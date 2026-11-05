@@ -15,7 +15,7 @@ import { getAccessToken } from "@/api/session";
 import type { RouteHandle } from "@/router/session";
 import NotAuthPage from "@/pages/FailPage/NotAuthPage";
 import { Outlet, useLocation, useMatches, useNavigate } from "react-router";
-import styles from "./index.module.scss";
+import styles from "./index.module.css";
 import SuspendFallback from "@/components/SuspendFallback";
 import AnnouncementGate from "@/components/AnnouncementGate";
 import MaintenanceBanner from "@/components/MaintenanceBanner";

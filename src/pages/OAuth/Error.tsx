@@ -2,7 +2,7 @@ import { CloseCircleFilled, HomeOutlined, LoginOutlined, ReloadOutlined } from "
 import { Button, Typography } from "antd";
 import { useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router";
-import styles from "./error.module.scss";
+import styles from "./error.module.css";
 
 type ErrorMeta = {
   title: string;

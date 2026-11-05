@@ -11,7 +11,7 @@ import { uploadWsScreenshot } from "@/api/goadmin";
 import { logout as apiLogout } from "@/api/user";
 import { clearSession } from "@/api/session";
 import MenuTagContext from "@/contexts/MenuTagContext";
-import styles from "./index.module.scss";
+import styles from "./index.module.css";
 import ThemeColor from "../ThemeColor";
 
 const statusText: Record<string, string> = {

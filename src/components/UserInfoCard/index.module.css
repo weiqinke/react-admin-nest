@@ -12,11 +12,11 @@
   vertical-align: right;
   padding: 6px;
   background-color: rgba(163, 163, 163, 0.54);
-  &::after {
-    content: "";
-    display: table;
-    clear: both;
-  }
+}
+.segm::after {
+  content: "";
+  display: table;
+  clear: both;
 }
 
 .right {

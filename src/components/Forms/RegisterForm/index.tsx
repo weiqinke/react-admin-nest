@@ -2,7 +2,7 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input, message } from "antd";
 import { useState } from "react";
-import styles from "./index.module.scss";
+import styles from "./index.module.css";
 
 const USERNAME_PATTERN = /^[A-Za-z0-9_]{3,32}$/;
 

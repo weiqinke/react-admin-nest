@@ -62,7 +62,7 @@ const AutoSearch = ({ initial = "" }: { initial?: string }) => {
       if (timer.current) clearTimeout(timer.current);
     };
     // 只在从普通输入框交接过来时查一次。
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react/exhaustive-deps
   }, []);
 
   const empty = useMemo(() => (loading ? "搜索中…" : "无结果"), [loading]);

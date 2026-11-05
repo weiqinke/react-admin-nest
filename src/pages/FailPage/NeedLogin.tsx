@@ -6,7 +6,7 @@ const NeedLogin = () => {
   const navigate = useNavigate();
   useEffect(() => {
     navigate("/login");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react/exhaustive-deps
   }, []);
 
   return (

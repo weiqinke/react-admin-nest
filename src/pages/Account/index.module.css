@@ -10,9 +10,7 @@
 
 .tabplane {
   overflow: auto;
-  :global {
-    .ant-tabs-tab-active {
-      background-color: #e6f7ff;
-    }
-  }
+}
+.tabplane :global .ant-tabs-tab-active {
+  background-color: #e6f7ff;
 }

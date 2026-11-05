@@ -8,7 +8,7 @@ import MessageCenter from "./Messagecenter/MessageCenter";
 import NotificationPage from "./Notification/notification";
 import SecuritySetting from "./SecuritySetting/SecuritySetting";
 
-import styles from "./index.module.scss";
+import styles from "./index.module.css";
 
 const Account: FC = () => {
   const [params, setParams] = useSearchParams();

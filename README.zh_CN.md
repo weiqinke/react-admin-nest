@@ -67,14 +67,15 @@ pnpm dev
 
 ## 脚本
 
-| 命令            | 说明                            |
-| --------------- | ------------------------------- |
-| `pnpm dev`      | 开发服务（`vite --host`）       |
-| `pnpm build`    | 生产构建                        |
-| `pnpm preview`  | 预览构建产物（同样代理 `/api`） |
-| `pnpm lint`     | ESLint                          |
-| `pnpm lint:fix` | ESLint 自动修复                 |
-| `pnpm prettier` | Prettier 格式化                 |
+| 命令                | 说明                            |
+| ------------------- | ------------------------------- |
+| `pnpm dev`          | 开发服务（`vite --host`）       |
+| `pnpm build`        | 生产构建                        |
+| `pnpm preview`      | 预览构建产物（同样代理 `/api`） |
+| `pnpm lint`         | Oxlint                          |
+| `pnpm lint:fix`     | Oxlint 自动修复                 |
+| `pnpm format`       | oxfmt 格式化                    |
+| `pnpm format:check` | 检查格式                        |
 
 `ANALYZE=1 pnpm build` 会生成包体积报告 `analysis-chart.html`。
 

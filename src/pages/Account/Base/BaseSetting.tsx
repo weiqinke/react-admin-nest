@@ -8,7 +8,7 @@ import userPoster from "@/assets/header/user-poster.png";
 import MetaDesc from "./MetaDesc";
 import BaseFrom from "./basefrom";
 
-import "./style.scss";
+import "./style.css";
 
 const { Meta } = Card;
 

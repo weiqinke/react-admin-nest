@@ -27,51 +27,44 @@
   flex: 1;
   overflow: auto;
   padding-right: 4px;
-
-  :global {
-    .ant-tree .ant-tree-treenode {
-      align-items: center;
-      padding: 4px 0;
-    }
-
-    .ant-tree .ant-tree-switcher {
-      display: inline-flex !important;
-      align-items: center;
-      justify-content: center;
-      align-self: center;
-      width: 24px;
-      height: 24px;
-      line-height: 24px;
-      margin-inline-end: 4px;
-      flex: none;
-    }
-
-    .ant-tree .ant-tree-switcher .ant-tree-switcher-icon,
-    .ant-tree .ant-tree-switcher .ant-tree-switcher-line-icon,
-    .ant-tree .ant-tree-switcher .anticon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      line-height: 1;
-    }
-
-    .ant-tree .ant-tree-node-content-wrapper {
-      display: inline-flex !important;
-      align-items: center;
-      min-height: 24px;
-      line-height: 1;
-      padding-block: 0;
-      padding-inline: 4px 8px;
-    }
-
-    .ant-tree .ant-tree-title {
-      display: inline-flex;
-      align-items: center;
-      width: 100%;
-      line-height: 1;
-    }
-  }
+}
+.treeWrap :global .ant-tree .ant-tree-treenode {
+  align-items: center;
+  padding: 4px 0;
+}
+.treeWrap :global .ant-tree .ant-tree-switcher {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  margin-inline-end: 4px;
+  flex: none;
+}
+.treeWrap :global .ant-tree .ant-tree-switcher .ant-tree-switcher-icon,
+.treeWrap :global .ant-tree .ant-tree-switcher .ant-tree-switcher-line-icon,
+.treeWrap :global .ant-tree .ant-tree-switcher .anticon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+}
+.treeWrap :global .ant-tree .ant-tree-node-content-wrapper {
+  display: inline-flex !important;
+  align-items: center;
+  min-height: 24px;
+  line-height: 1;
+  padding-block: 0;
+  padding-inline: 4px 8px;
+}
+.treeWrap :global .ant-tree .ant-tree-title {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  line-height: 1;
 }
 
 .nodeRow {
@@ -142,7 +135,6 @@
     flex-direction: column;
     align-items: flex-start;
   }
-
   .nodeActions {
     opacity: 1;
   }

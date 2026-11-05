@@ -4,7 +4,7 @@ import { Button, Col, Divider, Space, Table, Tabs, Tag, message } from "antd";
 import dayjs from "dayjs";
 import { FC, useEffect, useState } from "react";
 
-import "./style.scss";
+import "./style.css";
 
 const typeText: Record<string, string> = {
   system: "系统公告",
@@ -64,7 +64,7 @@ const MessageCenter: FC = () => {
   };
 
   const togglePin = async (row: any) => {
-    const next = !Boolean(row.pinned);
+    const next = !row.pinned;
     await setNoticePin(String(row.id), next);
     message.success(next ? "已置顶" : "已取消置顶");
     load();

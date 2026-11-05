@@ -2,7 +2,7 @@ import { FC, MouseEvent, useContext, useEffect, useState } from "react";
 import { message, Tabs } from "antd";
 import MenuTagContext from "@/contexts/MenuTagContext";
 import type { MenuTagItem } from "@/contexts/MenuTagContext";
-import styles from "./index.module.scss";
+import styles from "./index.module.css";
 import Contextmenu from "./Contextmenu";
 import MenuTag from "./MenuTag";
 

@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 170,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "trailingComma": "none",
+  "bracketSpacing": true,
+  "bracketSameLine": true,
+  "arrowParens": "avoid",
+  "endOfLine": "lf",
+  "singleAttributePerLine": false,
+  "sortPackageJson": false,
+  "ignorePatterns": ["node_modules", "dist", "dist-ssr", "pnpm-lock.yaml", "package-lock.json", "analysis-chart.html", "src/assets/iconfont.js"]
+}

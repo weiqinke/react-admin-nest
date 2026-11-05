@@ -10,7 +10,7 @@ import { useNavigate } from "react-router";
 import { getCaptcha, getLdapStatus, ldapLogin, login } from "@/api/auth";
 import { getStoredTrustToken, storeTrustToken } from "@/api/trust";
 import { saveLoginSession } from "@/api/session";
-import styles from "./index.module.scss";
+import styles from "./index.module.css";
 import GiteeAuth from "@/components/OAuth2/GiteeAuth";
 import GithubAuth from "@/components/OAuth2/GithubAuth";
 import OidcAuth from "@/components/OAuth2/OidcAuth";

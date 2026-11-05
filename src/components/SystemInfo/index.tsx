@@ -6,7 +6,7 @@ import { Col, Progress, Row } from "antd";
 import dayjs from "dayjs";
 import React, { useEffect, useMemo, useState } from "react";
 
-import styles from "./index.module.scss";
+import styles from "./index.module.css";
 
 function formatBytes(value: number) {
   if (value == null || Number.isNaN(value)) return "";

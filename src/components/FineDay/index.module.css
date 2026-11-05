@@ -22,6 +22,7 @@
   justify-content: center;
   animation: start-glass 3s var(--cbz) 0s 1;
 }
+
 .content:before {
   content: "";
   position: absolute;
@@ -81,7 +82,7 @@
   margin: auto;
   width: 600px;
   height: 300px;
-  scale: (0.6);
+  scale: 0.6;
 }
 
 /*sun*/
@@ -101,6 +102,7 @@
 .face {
   position: absolute;
 }
+
 .face:before,
 .face:after {
   content: "";
@@ -111,10 +113,12 @@
   border-radius: 50%;
   z-index: 5;
 }
+
 .face:before {
   top: 20px;
   left: 60px;
 }
+
 .face:after {
   top: 20px;
   left: 100px;
@@ -417,7 +421,6 @@
     transform: scale(1);
   }
 }
-
 @keyframes raining {
   0% {
     top: 60%;
@@ -429,7 +432,6 @@
     opacity: 0;
   }
 }
-
 @keyframes falling {
   from {
     opacity: 1;

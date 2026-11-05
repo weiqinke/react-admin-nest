@@ -7,32 +7,28 @@
   background-size: cover;
   background-position: center;
   position: relative;
-
-  :global {
-    .loginfade-enter {
-      opacity: 0;
-    }
-    .loginfade-enter-active {
-      opacity: 1;
-      transform: translateX(0);
-      transition:
-        opacity 300ms,
-        transform 300ms;
-    }
-    .loginfade-enter-done {
-      opacity: 1;
-    }
-
-    .loginfade-exit {
-      display: none;
-    }
-    .loginfade-exit-active {
-      display: none;
-    }
-    .loginfade-exit-done {
-      display: none;
-    }
-  }
+}
+.container :global .loginfade-enter {
+  opacity: 0;
+}
+.container :global .loginfade-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    opacity 300ms,
+    transform 300ms;
+}
+.container :global .loginfade-enter-done {
+  opacity: 1;
+}
+.container :global .loginfade-exit {
+  display: none;
+}
+.container :global .loginfade-exit-active {
+  display: none;
+}
+.container :global .loginfade-exit-done {
+  display: none;
 }
 
 .cr {
@@ -60,6 +56,7 @@
   user-select: none;
   pointer-events: none;
 }
+
 .paopaocontainer {
   position: relative;
   width: 100%;
@@ -79,48 +76,41 @@
   pointer-events: none;
   box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
   animation: flying 4s linear infinite;
-  &::before {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    transform: scale(0.25) translate(-70%, -70%);
-    background: radial-gradient(#fff, transparent);
-    border-radius: 50%;
-  }
+}
+.bubble::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform: scale(0.25) translate(-70%, -70%);
+  background: radial-gradient(#fff, transparent);
+  border-radius: 50%;
 }
 
 @keyframes flying {
   0% {
     transform: translateX(0);
   }
-
   15% {
     transform: translateX(100px);
   }
-
   30% {
     transform: translateX(-50px);
   }
-
   45% {
     transform: translateX(150px);
   }
-
   60% {
     transform: translateX(-150px);
   }
-
   75% {
     transform: translateX(50px);
   }
-
   100% {
     bottom: 100vh;
     transform: translateX(0);
   }
 }
-
 .bubble:nth-child(1) {
   width: 30px;
   height: 30px;

@@ -12,10 +12,10 @@
   float: left;
   transition: 0s linear;
   transform: rotate(0deg);
-  &:hover {
-    transition: 30s linear;
-    transform: rotate(3600deg);
-  }
+}
+.userAvatar:hover {
+  transition: 30s linear;
+  transform: rotate(3600deg);
 }
 
 .info {
@@ -27,6 +27,7 @@
 .title {
   font-size: 22px;
 }
+
 .desc {
   margin-top: 6px;
 }

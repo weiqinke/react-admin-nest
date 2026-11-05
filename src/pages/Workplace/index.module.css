@@ -85,19 +85,16 @@
 
 .block {
   margin-top: 12px;
-
-  :global(.admin-card) {
-    margin-top: 0;
-  }
-
-  :global(.ant-col) {
-    display: flex;
-  }
-
-  :global(.ant-col > section) {
-    flex: 1;
-    width: 100%;
-  }
+}
+.block :global(.admin-card) {
+  margin-top: 0;
+}
+.block :global(.ant-col) {
+  display: flex;
+}
+.block :global(.ant-col > section) {
+  flex: 1;
+  width: 100%;
 }
 
 .sectionHead {
@@ -182,7 +179,6 @@
   .welcome {
     flex-wrap: wrap;
   }
-
   .dateLabel {
     width: 100%;
   }
