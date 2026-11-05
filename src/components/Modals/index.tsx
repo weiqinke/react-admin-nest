@@ -14,7 +14,5 @@ export { default as OperationDictTypeModal } from "./OperationDictTypeModal";
 export { default as OperationDictItemModal } from "./OperationDictItemModal";
 export { default as RoleAllocationUserModal } from "./RoleAllocationUserModal";
 export { default as RoleAllocationPermModal } from "./RoleAllocationPermModal";
-/** @deprecated 角色不再挂菜单，请用 RoleAllocationPermModal */
-export { default as RoleAllocationMenuModal } from "./RoleAllocationPermModal";
 export { default as PermissionEditModal } from "./PermissionEditModal";
 export { default as MetaDescModal } from "./MetaDescModal";

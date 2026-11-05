@@ -261,9 +261,7 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
               </div>
             </div>
           </div>
-          <div className={`${styles.card} ${styles.back}`}>
-            {qrSrc ? <img alt="" width={200} src={qrSrc} /> : null}
-          </div>
+          <div className={`${styles.card} ${styles.back}`}>{qrSrc ? <img alt="" width={200} src={qrSrc} /> : null}</div>
         </div>
       </div>
     </div>

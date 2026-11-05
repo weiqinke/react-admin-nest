@@ -130,7 +130,7 @@ const DefaultLayout = () => {
 
   return (
     <Layout className={styles.layout}>
-        <ErrorBoundary FallbackComponent={LazyFail}>
+      <ErrorBoundary FallbackComponent={LazyFail}>
         <DefaultLayoutHeader />
         <MaintenanceBanner />
         <AnnouncementGate />

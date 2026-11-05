@@ -1,21 +1,8 @@
-/** 图表演示页全量注册。工作台/看板请用 setup-pie / setup-cartesian，避免拖入地图、词云等模块。 */
+/** 图表演示页注册。登录频次图用 setup-cartesian，不要从这里带进地图。 */
 import * as echarts from "echarts/core";
-import {
-  BarChart,
-  CustomChart,
-  EffectScatterChart,
-  FunnelChart,
-  GraphChart,
-  LineChart,
-  LinesChart,
-  MapChart,
-  PictorialBarChart,
-  PieChart,
-  ScatterChart
-} from "echarts/charts";
+import { BarChart, CustomChart, EffectScatterChart, GraphChart, LineChart, LinesChart, MapChart, PictorialBarChart, PieChart } from "echarts/charts";
 import {
   AxisPointerComponent,
-  DatasetComponent,
   GeoComponent,
   GridComponent,
   LegendComponent,
@@ -33,16 +20,13 @@ echarts.use([
   BarChart,
   CustomChart,
   EffectScatterChart,
-  FunnelChart,
   GraphChart,
   LineChart,
   LinesChart,
   MapChart,
   PictorialBarChart,
   PieChart,
-  ScatterChart,
   AxisPointerComponent,
-  DatasetComponent,
   GeoComponent,
   GridComponent,
   LegendComponent,

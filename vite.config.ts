@@ -51,11 +51,6 @@ const goAdminProxy = {
 };
 
 export default defineConfig({
-  // Vite 8 CJS 默认导出互操作变更：react-countup 的 default import
-  // 会变成 { default: Component }，导致 JSX 报 type is invalid。
-  legacy: {
-    inconsistentCjsInterop: true
-  },
   plugins: [
     tailwindcss(),
     react(),
