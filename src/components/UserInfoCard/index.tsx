@@ -3,11 +3,10 @@ import avatarImg from "@/assets/user/defaultAvatar.jpg";
 import AvatarData from "@/components/AvatarData";
 import FineDay from "@/components/FineDay";
 import StarrySky from "@/components/StarrySky";
-import ProjectContext from "@/contexts/ProjectContext";
 import { AntDesignOutlined, GithubOutlined, InstagramOutlined, MessageOutlined, MoreOutlined, QqOutlined, ShareAltOutlined, WechatOutlined } from "@ant-design/icons";
 import { Avatar, Button, Card, Col, Divider, Flex, Image, Listy, Row, Segmented, Typography } from "antd";
 import dayjs from "dayjs";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import IconFont from "../IconFont";
 import styles from "./index.module.css";
@@ -43,11 +42,10 @@ const SocialData = [
 
 const UserInfoCard = () => {
   const random = Math.floor(Math.random() * 100);
-  const { value }: { value: any } = useContext(ProjectContext);
   const [info, setInfo] = useState({});
   const [tabActive, setTabActive] = useState("Profile");
   useEffect(() => {
-    userinfo({ uid: value?.uid }).then(result => {
+    userinfo().then(result => {
       if (result.data.code === 0) {
         const profile = result.data.data.profile;
         setInfo({

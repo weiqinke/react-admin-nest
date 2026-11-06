@@ -1,8 +1,8 @@
-﻿import ProjectContext from "@/contexts/ProjectContext";
+﻿import { useAppStore } from "@/stores/app";
 import { webSocketManager } from "@/utils/ws";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Dropdown, MenuProps, Modal, notification } from "antd";
-import { useContext, useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router";
 import HeaderNotice from "../HeaderNotice";
 import GlobalSearch from "../GlobalSearch";
@@ -10,7 +10,7 @@ import GlobalSearch from "../GlobalSearch";
 import { uploadWsScreenshot } from "@/api/goadmin";
 import { logout as apiLogout } from "@/api/user";
 import { clearSession } from "@/api/session";
-import MenuTagContext from "@/contexts/MenuTagContext";
+import { useMenuTagStore } from "@/stores/menuTag";
 import styles from "./index.module.css";
 import ThemeColor from "../ThemeColor";
 
@@ -42,8 +42,10 @@ function toJpeg(source: HTMLCanvasElement) {
 }
 
 const DefaultLayoutHeader = () => {
-  const { profile, setValue } = useContext<any>(ProjectContext);
-  const { addTag, setTags, switchTo } = useContext(MenuTagContext);
+  const profile = useAppStore(state => state.profile);
+  const addTag = useMenuTagStore(state => state.addTag);
+  const setTags = useMenuTagStore(state => state.setTags);
+  const switchTo = useMenuTagStore(state => state.switchTo);
   const navigate = useNavigate();
 
   const [wsStatus, setWsStatus] = useState(webSocketManager.status || "idle");
@@ -62,10 +64,9 @@ const DefaultLayoutHeader = () => {
       .catch(() => undefined)
       .finally(() => {
         clearSession();
-        setValue({});
         navigate("/login");
       });
-  }, [setValue, navigate]);
+  }, [navigate]);
 
   const items: MenuProps["items"] = [
     {
@@ -93,7 +94,7 @@ const DefaultLayoutHeader = () => {
     if (key === "2") return toggleLanguage();
     if (key === "3") return logout();
     if (key === "4") {
-      setTags((prev: { url: string }[]) => (prev.some(tag => tag.url === "/subscribe") ? prev : [...prev, { url: "/subscribe", name: "订阅" }]));
+      setTags(prev => (prev.some(tag => tag.url === "/subscribe") ? prev : [...prev, { url: "/subscribe", name: "订阅" }]));
       switchTo("/subscribe");
     }
   };

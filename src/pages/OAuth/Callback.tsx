@@ -1,12 +1,10 @@
 import { getMe, getMyMenus } from "@/api/goadmin";
 import { saveLoginSession } from "@/api/session";
-import MenuTagContext from "@/contexts/MenuTagContext";
-import ProjectContext from "@/contexts/ProjectContext";
-import { getUserState } from "@/utils/core";
+import { useMenuTagStore } from "@/stores/menuTag";
 import { adaptApiMenus, saveMenus } from "@/utils/menuUtils";
 import { webSocketManager } from "@/utils/ws";
 import { Alert, Spin, message } from "antd";
-import { useContext, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 
 async function hydrateSession() {
@@ -36,8 +34,7 @@ function scrubCallbackUrl() {
 const OAuthCallback = () => {
   const [params] = useSearchParams();
   const navigate = useNavigate();
-  const { setValue }: any = useContext(ProjectContext);
-  const { setTags } = useContext(MenuTagContext);
+  const setTags = useMenuTagStore(state => state.setTags);
   const ran = useRef(false);
 
   useEffect(() => {
@@ -81,13 +78,12 @@ const OAuthCallback = () => {
       scrubCallbackUrl();
 
       await hydrateSession();
-      setValue(getUserState());
-      setTags?.([]);
+      setTags([]);
       webSocketManager.create();
       message.success("登录成功");
       navigate("/workplace", { replace: true });
     })();
-  }, [navigate, params, setTags, setValue]);
+  }, [navigate, params, setTags]);
 
   return (
     <div className="flex h-screen w-screen items-center justify-center">

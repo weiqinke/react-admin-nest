@@ -1,10 +1,8 @@
-﻿import MenuTagContext from "@/contexts/MenuTagContext";
-import ProjectContext from "@/contexts/ProjectContext";
-import { getUserState } from "@/utils/core";
+﻿import { useMenuTagStore } from "@/stores/menuTag";
 import { NextIcon } from "@/components/OAuth2/brand-icons";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Divider, Form, Input } from "antd";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 
 import { getCaptcha, getLdapStatus, ldapLogin, login } from "@/api/auth";
@@ -17,8 +15,7 @@ import OidcAuth from "@/components/OAuth2/OidcAuth";
 
 const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowRegister = true }) => {
   const navigate = useNavigate();
-  const { setValue }: any = useContext(ProjectContext);
-  const { setTags } = useContext(MenuTagContext);
+  const setTags = useMenuTagStore(state => state.setTags);
 
   const [loading, setLoading] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -79,7 +76,6 @@ const LoginForm = ({ setRegister, setCloseEyes, username: registeredUser, allowR
     } else {
       localStorage.removeItem("must_change_password");
     }
-    setValue(getUserState());
     const [{ saveMenus }, { webSocketManager }] = await Promise.all([import("@/utils/menuUtils"), import("@/utils/ws")]);
     saveMenus("[]");
     webSocketManager.create();

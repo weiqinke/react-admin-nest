@@ -4,10 +4,10 @@ import Copyright from "@/components/Footer/Copyright";
 import DefaultLayoutHeader from "@/components/Header/DefaultLayoutHeader";
 import WebMenu from "@/components/Menu/WebMenu";
 import TagsView from "@/components/TagsView";
-import MenuTagContext from "@/contexts/MenuTagContext";
-import ProjectContext from "@/contexts/ProjectContext";
+import { useAppStore } from "@/stores/app";
+import { useMenuTagStore } from "@/stores/menuTag";
 import { Layout, Modal } from "antd";
-import { lazy, Suspense, useContext, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { adaptApiMenus, canAccessMenuPath, getLocalStorageMenus, saveMenus } from "@/utils/menuUtils";
 import { throttle } from "@/utils/throttle";
 import { webSocketManager } from "@/utils/ws";
@@ -43,8 +43,9 @@ function hasCachedShell() {
 }
 
 const DefaultLayout = () => {
-  const { refreshKey, refreshing } = useContext(MenuTagContext);
-  const { theme } = useContext<any>(ProjectContext);
+  const refreshKey = useMenuTagStore(state => state.refreshKey);
+  const refreshing = useMenuTagStore(state => state.refreshing);
+  const theme = useAppStore(state => state.theme);
   const [collapsed, setCollapsed] = useState(false);
   const { pathname } = useLocation();
   const matches = useMatches();

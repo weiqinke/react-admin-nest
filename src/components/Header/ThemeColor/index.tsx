@@ -1,10 +1,10 @@
-import { SunOutlined } from "@ant-design/icons";
-import { useContext } from "react";
-import ProjectContext from "@/contexts/ProjectContext";
+import { useAppStore } from "@/stores/app";
 import type { ThemeName } from "@/theme/palette";
+import { SunOutlined } from "@ant-design/icons";
 
 const ThemeColor = () => {
-  const { theme, setTheme } = useContext<any>(ProjectContext);
+  const theme = useAppStore(state => state.theme);
+  const setTheme = useAppStore(state => state.setTheme);
   const nextTheme: Record<ThemeName, ThemeName> = {
     light: "dark",
     dark: "light"

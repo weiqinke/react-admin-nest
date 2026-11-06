@@ -1,9 +1,9 @@
-﻿import MenuTagContext from "@/contexts/MenuTagContext";
-import ProjectContext from "@/contexts/ProjectContext";
+﻿import { useAppStore } from "@/stores/app";
+import { useMenuTagStore } from "@/stores/menuTag";
 import { formatURL, getLocalStorageMenus, getMenus, getOpenKeysByUrls, setLocalStorage } from "@/utils/menuUtils";
 import { AppstoreOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
-import { useContext, useEffect, useLayoutEffect, useMemo, useState, type ComponentType } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState, type ComponentType } from "react";
 import { useLocation, useNavigate } from "react-router";
 
 type IconFontProps = { type: string };
@@ -17,8 +17,8 @@ const createMenuIcon = (item, Icon: ComponentType<IconFontProps> | null) => {
 };
 
 const WebMenu = () => {
-  const { addTag } = useContext(MenuTagContext);
-  const { theme } = useContext<any>(ProjectContext);
+  const addTag = useMenuTagStore(state => state.addTag);
+  const theme = useAppStore(state => state.theme);
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [menuTick, setMenuTick] = useState(0);

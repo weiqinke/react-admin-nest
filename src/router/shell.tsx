@@ -1,9 +1,10 @@
-import { Outlet, useMatches } from "react-router";
+import { useAppStore } from "@/stores/app";
+import { resolveTitle } from "@/router/session";
 import { useLayoutEffect } from "react";
-import { resolveTitle, SessionContext, useSessionState } from "@/router/session";
+import { Outlet, useMatches } from "react-router";
 
 export default function AppShell() {
-  const session = useSessionState();
+  const session = useAppStore(state => state.session);
   const matches = useMatches();
   const title = resolveTitle(matches, session);
 
@@ -11,9 +12,5 @@ export default function AppShell() {
     document.title = title;
   }, [title]);
 
-  return (
-    <SessionContext.Provider value={session}>
-      <Outlet />
-    </SessionContext.Provider>
-  );
+  return <Outlet />;
 }

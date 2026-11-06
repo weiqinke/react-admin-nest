@@ -1,7 +1,7 @@
-import { FC, MouseEvent, useContext, useEffect, useState } from "react";
+import { useMenuTagStore, type MenuTagItem } from "@/stores/menuTag";
 import { message, Tabs } from "antd";
-import MenuTagContext from "@/contexts/MenuTagContext";
-import type { MenuTagItem } from "@/contexts/MenuTagContext";
+import { FC, MouseEvent, useEffect, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import styles from "./index.module.css";
 import Contextmenu from "./Contextmenu";
 import MenuTag from "./MenuTag";
@@ -13,7 +13,18 @@ type ContextMenuState = {
 };
 
 const TagsView: FC = () => {
-  const { tags, activeUrl, switchTo, removeTag, closeOtherTags, closeLeftTags, closeRightTags, refreshPage } = useContext(MenuTagContext);
+  const { tags, activeUrl, switchTo, removeTag, closeOtherTags, closeLeftTags, closeRightTags, refreshPage } = useMenuTagStore(
+    useShallow(state => ({
+      tags: state.tags,
+      activeUrl: state.activeUrl,
+      switchTo: state.switchTo,
+      removeTag: state.removeTag,
+      closeOtherTags: state.closeOtherTags,
+      closeLeftTags: state.closeLeftTags,
+      closeRightTags: state.closeRightTags,
+      refreshPage: state.refreshPage
+    }))
+  );
 
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
 
