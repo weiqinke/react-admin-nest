@@ -1,37 +1,77 @@
-import BarChart from "@/components/Echarts/BarChart";
-import LineChart from "@/components/Echarts/LineChart";
-import PieChart from "@/components/Echarts/PieChart";
-import ScatterChart from "@/components/Echarts/ScatterChart";
-import ServerStatusChart from "@/components/Echarts/ServerStatusChart";
 import { Col, Row } from "antd";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from "react";
 
-// 地图、时间轴只在这一张图里用，单独加载，避免挡住同页的柱状和饼图。
+const BarChart = lazy(() => import("@/components/Echarts/BarChart"));
+const LineChart = lazy(() => import("@/components/Echarts/LineChart"));
+const PieChart = lazy(() => import("@/components/Echarts/PieChart"));
+const ScatterChart = lazy(() => import("@/components/Echarts/ScatterChart"));
+const ServerStatusChart = lazy(() => import("@/components/Echarts/ServerStatusChart"));
 const HomeSenseChart = lazy(() => import("@/components/Echarts/HomeSenseChart"));
+
+function WhenVisible({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (typeof IntersectionObserver !== "function") {
+      setShow(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries.some(entry => entry.isIntersecting)) {
+          setShow(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "160px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} style={{ minHeight: 400 }}>
+      {show ? <Suspense fallback={null}>{children}</Suspense> : null}
+    </div>
+  );
+}
 
 const AreaChart = () => {
   return (
     <div style={{ padding: 6 }}>
       <Row gutter={[12, 12]}>
         <Col xs={24} sm={24} md={12} xl={8} lg={8}>
-          <BarChart />
+          <WhenVisible>
+            <BarChart />
+          </WhenVisible>
         </Col>
         <Col xs={24} sm={24} md={12} xl={8} lg={8}>
-          <LineChart />
+          <WhenVisible>
+            <LineChart />
+          </WhenVisible>
         </Col>
         <Col xs={24} sm={24} md={12} xl={8} lg={8}>
-          <PieChart />
+          <WhenVisible>
+            <PieChart />
+          </WhenVisible>
         </Col>
         <Col xs={24} sm={24} md={12} xl={8} lg={8}>
-          <ScatterChart />
+          <WhenVisible>
+            <ScatterChart />
+          </WhenVisible>
         </Col>
         <Col xs={24} sm={24} md={12} xl={8} lg={8}>
-          <ServerStatusChart />
+          <WhenVisible>
+            <ServerStatusChart />
+          </WhenVisible>
         </Col>
         <Col xs={24} sm={24} md={12} xl={8} lg={8}>
-          <Suspense fallback={null}>
+          <WhenVisible>
             <HomeSenseChart />
-          </Suspense>
+          </WhenVisible>
         </Col>
       </Row>
     </div>

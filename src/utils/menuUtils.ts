@@ -169,14 +169,12 @@ export function getTagByMenus(menulist: any[], prevActiveTagUrl: string) {
 
 // 获取唯一的菜单
 export const getMenuItemByUrl = (url: any) => {
-  const unbendMenus = getUnbendMenus(JSON.parse(getLocalStorageMenus()));
-  return unbendMenus.find((v: { url: any }) => v.url === url);
+  return readMenuIndex().flat.find((v: { url: any }) => v.url === url);
 };
 
 // 根据 ID 获取唯一的菜单
 export const getMenuItemByID = (id: any) => {
-  const unbendMenus = getUnbendMenus(JSON.parse(getLocalStorageMenus()));
-  return unbendMenus.find((v: { id: any }) => String(v.id) === String(id));
+  return readMenuIndex().flat.find((v: { id: any }) => String(v.id) === String(id));
 };
 
 /** 把 GET /api/me/menus 的 data.list 转成侧边栏使用的菜单。id 保持字符串。 */
@@ -258,18 +256,36 @@ function isPublicPath(path: string) {
   return path === "/login" || path === "/invite" || path.startsWith("/password/") || path.startsWith("/oauth/");
 }
 
+type MenuIndex = {
+  raw: string;
+  flat: any[];
+  paths: Set<string>;
+};
+
+let menuIndex: MenuIndex | null = null;
+
+/** 菜单原文没变就复用路径集合和拍平结果。saveMenus 写入新字符串后下一次读取会重建。 */
+function readMenuIndex(): MenuIndex {
+  const raw = getLocalStorageMenus();
+  if (menuIndex && menuIndex.raw === raw) return menuIndex;
+  let list: any[] = [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) list = parsed;
+  } catch {
+    list = [];
+  }
+  const paths = new Set<string>();
+  collectMenuPaths(list, "", paths);
+  menuIndex = { raw, flat: getUnbendMenus(list), paths };
+  return menuIndex;
+}
+
 /** 当前账号的菜单（含侧栏隐藏项）是否包含这条路径。 */
 export function canAccessMenuPath(pathname: string) {
   const path = formatURL(pathname || "/");
   if (OPEN_PATHS.has(path)) return true;
-  try {
-    const menus = JSON.parse(getLocalStorageMenus());
-    const allowed = new Set<string>();
-    collectMenuPaths(menus, "", allowed);
-    return allowed.has(path);
-  } catch {
-    return false;
-  }
+  return readMenuIndex().paths.has(path);
 }
 
 export function pageTagName(pathname: string, miss = false) {
@@ -279,7 +295,7 @@ export function pageTagName(pathname: string, miss = false) {
   if (!canAccessMenuPath(path)) return "无权限";
   if (OPEN_NAMES[path]) return OPEN_NAMES[path];
   const segment = path.split("/").filter(Boolean).pop();
-  return getMenuItemByUrl(segment)?.name || "页面";
+  return readMenuIndex().flat.find((item: { url?: string; name?: string }) => item.url === segment)?.name || "页面";
 }
 
 export const formatURL = url => {

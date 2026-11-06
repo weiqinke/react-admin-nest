@@ -1,10 +1,7 @@
 import echarts from "./setup";
 import { useEffect, useRef } from "react";
 
-const HomeSenseChart = () => {
-  const ref = useRef();
-
-  const geoGpsMap = {
+const geoGpsMap = {
     1: [116.415, 39.915],
     2: [116.448, 39.935],
     3: [116.455, 39.915],
@@ -392,6 +389,9 @@ const HomeSenseChart = () => {
       categoryData[i].push(mapData[i][j].name);
     }
   }
+
+const HomeSenseChart = () => {
+  const ref = useRef();
 
   useEffect(() => {
     const myChart = echarts.init(ref.current);

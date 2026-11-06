@@ -3,7 +3,7 @@ import { listMyNotices, markAllNoticesRead, markNoticeRead, noticeSummary, setNo
 import { createStaleRefresh } from "@/utils/staleRefresh";
 import { BellOutlined } from "@ant-design/icons";
 import { Avatar, Badge, Dropdown, DropdownProps, MenuProps, message } from "antd";
-import { FC, useEffect, useMemo, useState, type ComponentType } from "react";
+import { FC, useEffect, useMemo, useRef, useState, type ComponentType } from "react";
 import { useNavigate } from "react-router";
 
 const HeaderNotice: FC = () => {
@@ -17,8 +17,30 @@ const HeaderNotice: FC = () => {
   const [inboxUnread, setInboxUnread] = useState(0);
   const [todoPending, setTodoPending] = useState(0);
   const [Panel, setPanel] = useState<ComponentType<any> | null>(null);
+  const openRef = useRef(false);
+  openRef.current = open;
 
-  const refresh = useMemo(
+  const refreshCounts = useMemo(
+    () =>
+      createStaleRefresh(async () => {
+        try {
+          const [ann, sum] = await Promise.all([
+            listMyAnnouncements({ type: "notification", level: "normal", unread: 1, page: 1, page_size: 1 }),
+            noticeSummary()
+          ]);
+          if (ann.data.code === 0) setAnnouncementUnread(ann.data.data?.unread_count || 0);
+          if (sum.data.code === 0) {
+            setInboxUnread(sum.data.data?.inbox_unread || 0);
+            setTodoPending(sum.data.data?.todo_pending || 0);
+          }
+        } catch {
+          // 数字刷新失败时保留上次角标。
+        }
+      }),
+    []
+  );
+
+  const refreshLists = useMemo(
     () =>
       createStaleRefresh(async () => {
         try {
@@ -48,12 +70,14 @@ const HeaderNotice: FC = () => {
   );
 
   useEffect(() => {
-    void refresh(true);
+    void refreshCounts(true);
     const onFocus = () => {
-      void refresh();
+      if (openRef.current) void refreshLists();
+      else void refreshCounts();
     };
     const onNotice = () => {
-      void refresh(true);
+      if (openRef.current) void refreshLists(true);
+      else void refreshCounts(true);
     };
     window.addEventListener("focus", onFocus);
     window.addEventListener("notice:refresh", onNotice);
@@ -61,11 +85,11 @@ const HeaderNotice: FC = () => {
       window.removeEventListener("focus", onFocus);
       window.removeEventListener("notice:refresh", onNotice);
     };
-  }, [refresh]);
+  }, [refreshCounts, refreshLists]);
 
   const openAnnouncement = async (item: any) => {
     await markAnnouncementRead(item.id);
-    void refresh(true);
+    void refreshLists(true);
   };
 
   const openInbox = async (item: any) => {
@@ -76,13 +100,13 @@ const HeaderNotice: FC = () => {
     } else if (item.link_path) {
       navigate(item.link_path);
     }
-    void refresh(true);
+    void refreshLists(true);
   };
 
   const finishTodo = async (item: any, status: "done" | "dismissed") => {
     await setNoticeTodo(item.id, status);
     message.success(status === "done" ? "已完成" : "已忽略");
-    void refresh(true);
+    void refreshLists(true);
   };
 
   const clearCurrent = async () => {
@@ -94,7 +118,7 @@ const HeaderNotice: FC = () => {
       // pending todos: mark read only, keep pending
       await markAllNoticesRead("todo");
     }
-    void refresh(true);
+    void refreshLists(true);
   };
 
   const badgeCount = announcementUnread + inboxUnread + todoPending;
@@ -137,7 +161,7 @@ const HeaderNotice: FC = () => {
     if (nextOpen) ensurePanel();
     if (info.source === "trigger" || nextOpen) {
       setOpen(nextOpen);
-      if (nextOpen) void refresh(true);
+      if (nextOpen) void refreshLists(true);
     }
   };
 
