@@ -1,235 +1,24 @@
-export interface menuchild {
-  authority: string;
-  children: [];
-  icon: string;
-  name: string;
-  router: string;
-  meUrl?: string;
-  url?: string;
-  dontshow?: string;
-}
+/** GET /api/me/menus 的 data.list。路径用 full_path，不再把 segment 拼成旧菜单结构。 */
+export type ApiMenuNode = {
+  id: string;
+  parent_id?: string | null;
+  segment?: string;
+  full_path?: string;
+  title?: string;
+  icon?: string;
+  visible_in_menu?: number;
+  sort?: number;
+  children?: ApiMenuNode[];
+};
+
+export type SidebarItem = {
+  key: string;
+  label: string;
+  icon?: string;
+  children?: SidebarItem[];
+};
 
 const MENUS = "menus";
-/*****
- * 清除菜单中的空节点，当成一个菜单
- */
-export const ProjectParseMenuAsPre = (menuList: any[]) => {
-  const menus: any[] = [];
-  menuList.map((menuitem: { children: any }) => {
-    const { children } = menuitem;
-    let newMenuItem: any = {};
-    if (children && children.length > 0) {
-      const echild = ProjectParseMenuAsPre(children);
-      newMenuItem = { ...menuitem, children: echild };
-    } else {
-      if (children && children.length === 0) {
-        newMenuItem = { ...menuitem };
-        delete newMenuItem?.children;
-      } else {
-        newMenuItem = { ...menuitem };
-        delete newMenuItem?.children;
-      }
-    }
-    menus.push(newMenuItem);
-    return true;
-  });
-  return menus;
-};
-
-export function getNextLevelMenu(list: string | any[], url: any) {
-  for (let index = 0; index < list.length; index++) {
-    const element = list[index];
-    if (element.url === url) {
-      return element.children || [];
-    }
-  }
-  return [];
-}
-
-export function SaveMeUrl(list: string | any[], parentUrl = "") {
-  for (let index = 0; index < list.length; index++) {
-    const element = list[index];
-    element.meUrl = parentUrl + "/" + element.url;
-    if (element.children && element.children.length > 0) {
-      SaveMeUrl(element.children, element.meUrl);
-    }
-  }
-  return list;
-}
-
-//获取第一个菜单的详细信息，认为它就是首页
-export const getIndexUrlInfo: any = (list: string | any[]) => {
-  let info = null;
-  for (let index = 0; index < list.length; index++) {
-    const element = list[index];
-    if (index === 0) {
-      if (element.children && element.children.length >= 1) {
-        const childInfo = getIndexUrlInfo(element.children);
-        if (childInfo) info = childInfo;
-      } else {
-        info = element;
-      }
-    }
-  }
-  return info;
-};
-
-const getUnbendMenus: any = (menus = []) => {
-  const result = [];
-  for (let i = 0; i < menus.length; i++) {
-    const item: any = menus[i];
-    result.push(item);
-    if (item.children) {
-      const data = getUnbendMenus(item.children);
-      result.push(...data);
-    }
-  }
-  return result;
-};
-
-export const getOpenKeysByUrls = (urls = [], menus = []) => {
-  const openKeys: string[] = [];
-  let currentKey: string[] = [];
-  const unbendMenus = getUnbendMenus(menus);
-  urls.filter(v => {
-    const data = unbendMenus.find((d: { url: any }) => d.url === v);
-    if (data?.id) {
-      const id = `${data?.id}`;
-      openKeys.push(id);
-      currentKey = [id];
-    }
-  });
-  return [openKeys, currentKey];
-};
-
-export const saveMenus = (menus: string) => localStorage.setItem(MENUS, menus);
-
-export const getLocalStorageMenus = () => localStorage.getItem(MENUS) || "[]";
-
-export const getIndexUrl = () => {
-  const allMenusInfo = SaveMeUrl(ProjectParseMenuAsPre(JSON.parse(getLocalStorageMenus())), "");
-  //找到第一个url直接跳转过去吧
-  const indexTag = getIndexUrlInfo(allMenusInfo);
-  return { pathname: indexTag.meUrl };
-};
-
-/**
- * 筛选菜单，dontshow不在菜单中显示
- */
-export function getShowMenus(menulist: any[]) {
-  const menus: any[] = menulist.map((menuitem: any) => {
-    const { children, dontshow } = menuitem;
-    if (dontshow === "0") return null;
-    let newMenuItem: any = {};
-    if (children && children.length > 0) {
-      const echild: any[] = getShowMenus(children);
-      newMenuItem = { ...menuitem, children: echild };
-    } else {
-      newMenuItem = { ...menuitem, children: null, type: "page" };
-      delete newMenuItem.children;
-    }
-    // 这里是为了兼容 antd Menu 组件新版写法
-    newMenuItem.label = menuitem.name;
-    newMenuItem.key = menuitem.id;
-
-    delete newMenuItem.menuUid;
-    delete newMenuItem.parentUid;
-
-    return newMenuItem;
-  });
-  return menus.filter(v => v);
-}
-
-// localStorage 存
-export function setLocalStorage(name: string, data: any) {
-  const dataStr = JSON.stringify(data);
-  window.localStorage.setItem(name, dataStr);
-}
-
-// localStorage 取
-export function getLocalStorage(name: string) {
-  const dataStr = window.localStorage.getItem(name);
-  return dataStr && JSON.parse(dataStr);
-}
-
-/****
- * 获取菜单tag唯一的
- */
-export function getTagByMenus(menulist: any[], prevActiveTagUrl: string) {
-  let menuitem = null;
-  menulist.map(item => {
-    if (item.meUrl === prevActiveTagUrl) menuitem = item;
-    if (item.children && item.children.length > 0) {
-      const childitem = getTagByMenus(item.children, prevActiveTagUrl);
-      if (childitem) menuitem = childitem;
-    }
-  });
-  return menuitem;
-}
-
-// 获取唯一的菜单
-export const getMenuItemByUrl = (url: any) => {
-  return readMenuIndex().flat.find((v: { url: any }) => v.url === url);
-};
-
-// 根据 ID 获取唯一的菜单
-export const getMenuItemByID = (id: any) => {
-  return readMenuIndex().flat.find((v: { id: any }) => String(v.id) === String(id));
-};
-
-/** 把 GET /api/me/menus 的 data.list 转成侧边栏使用的菜单。id 保持字符串。 */
-export function adaptApiMenus(list: any[] = []) {
-  return (list || []).map(adaptApiMenu).sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0));
-}
-
-/** 1 或未下发：出现在左侧菜单；0：只从侧边栏隐藏，页面路由仍可访问。 */
-function isVisibleInMenu(node: any) {
-  const flag = node?.visible_in_menu;
-  if (flag == null || flag === "") return true;
-  return Number(flag) === 1;
-}
-
-function adaptApiMenu(node: any) {
-  const children = Array.isArray(node?.children) && node.children.length ? adaptApiMenus(node.children) : undefined;
-  const item: any = {
-    id: String(node.id),
-    name: node.title || node.segment || "",
-    url: node.segment || "",
-    icon: node.icon || "",
-    show: isVisibleInMenu(node),
-    sort: node.sort ?? 0,
-    parentUid: node.parent_id == null || node.parent_id === "" ? 0 : String(node.parent_id),
-    menuUid: String(node.id)
-  };
-  if (children) item.children = children;
-  return item;
-}
-
-export const getMenus = (data, parentUrl = "/") => {
-  const result = [];
-  for (let index = 0; index < data.length; index++) {
-    const item = data[index];
-    item.label = item.name;
-    item.path = formatURL(`${parentUrl}/${item.url}`);
-    item.key = item.id;
-    item.meta = {
-      menuUid: item.menuUid,
-      parentUid: item.parentUid
-    };
-    delete item.menuUid;
-    delete item.parentUid;
-    if (item.show) {
-      delete item.show;
-      if (item.children && item.children?.length > 0) {
-        item.children = getMenus(item.children, item.path);
-        // 子项全部隐藏时，目录本身也不再占一个空分组
-        if (!item.children.length) continue;
-      }
-      result.push(item);
-    }
-  }
-  return result;
-};
 
 /** 登录后都能打开，不要求出现在侧边栏。 */
 const OPEN_PATHS = new Set(["/", "/about", "/account", "/profile", "/workplace"]);
@@ -242,64 +31,126 @@ const OPEN_NAMES: Record<string, string> = {
   "/workplace": "工作台"
 };
 
-function collectMenuPaths(nodes: any[], parent: string, paths: Set<string>) {
-  if (!Array.isArray(nodes)) return;
-  for (const node of nodes) {
-    const segment = String(node?.url || "").replace(/^\/+|\/+$/g, "");
-    const path = segment ? formatURL(`${parent}/${segment}`) : parent || "/";
-    if (segment) paths.add(path);
-    if (Array.isArray(node?.children) && node.children.length) collectMenuPaths(node.children, path, paths);
-  }
+export const saveMenus = (menus: string) => localStorage.setItem(MENUS, menus);
+
+export const getLocalStorageMenus = () => localStorage.getItem(MENUS) || "[]";
+
+export function normalizePath(url: string) {
+  const list = String(url || "").split("/").filter(Boolean);
+  return "/" + list.join("/");
 }
 
-function isPublicPath(path: string) {
-  return path === "/login" || path === "/invite" || path.startsWith("/password/") || path.startsWith("/oauth/");
+function flatten(nodes: ApiMenuNode[], acc: ApiMenuNode[] = []) {
+  for (const node of nodes || []) {
+    acc.push(node);
+    if (node.children?.length) flatten(node.children, acc);
+  }
+  return acc;
 }
 
 type MenuIndex = {
   raw: string;
-  flat: any[];
+  list: ApiMenuNode[];
+  flat: ApiMenuNode[];
   paths: Set<string>;
 };
 
 let menuIndex: MenuIndex | null = null;
 
-/** 菜单原文没变就复用路径集合和拍平结果。saveMenus 写入新字符串后下一次读取会重建。 */
 function readMenuIndex(): MenuIndex {
   const raw = getLocalStorageMenus();
   if (menuIndex && menuIndex.raw === raw) return menuIndex;
-  let list: any[] = [];
+  let list: ApiMenuNode[] = [];
   try {
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed)) list = parsed;
   } catch {
     list = [];
   }
+  const flat = flatten(list);
   const paths = new Set<string>();
-  collectMenuPaths(list, "", paths);
-  menuIndex = { raw, flat: getUnbendMenus(list), paths };
+  for (const node of flat) {
+    if (!node.full_path) continue;
+    const path = normalizePath(node.full_path);
+    if (path !== "/") paths.add(path);
+  }
+  menuIndex = { raw, list, flat, paths };
   return menuIndex;
 }
 
-/** 当前账号的菜单（含侧栏隐藏项）是否包含这条路径。 */
+function isVisible(node: ApiMenuNode) {
+  return Number(node.visible_in_menu) === 1;
+}
+
+/** 只保留侧栏可见节点。父级可见但子项全隐藏时，不留空分组。 */
+export function toSidebarItems(nodes: ApiMenuNode[] = []): SidebarItem[] {
+  const items: SidebarItem[] = [];
+  for (const node of nodes) {
+    if (!isVisible(node)) continue;
+    const children = node.children?.length ? toSidebarItems(node.children) : undefined;
+    if (node.children?.length && !children?.length) continue;
+    const item: SidebarItem = {
+      key: String(node.id),
+      label: node.title || node.segment || ""
+    };
+    if (node.icon) item.icon = node.icon;
+    if (children?.length) item.children = children;
+    items.push(item);
+  }
+  return items;
+}
+
+export function sidebarItemsFromStorage() {
+  return toSidebarItems(readMenuIndex().list);
+}
+
+export function findMenuById(id: string | number) {
+  return readMenuIndex().flat.find(node => String(node.id) === String(id));
+}
+
+/** 用 full_path 对齐当前路由，父级 id 作为展开键。 */
+export function menuKeysForPath(pathname: string) {
+  const path = normalizePath(pathname || "/");
+  const { flat } = readMenuIndex();
+  const node = flat.find(item => item.full_path && normalizePath(item.full_path) === path);
+  if (!node) return { openKeys: [] as string[], selectedKeys: [] as string[] };
+  const byId = new Map(flat.map(item => [String(item.id), item]));
+  const openKeys: string[] = [];
+  let parent = node.parent_id ? byId.get(String(node.parent_id)) : undefined;
+  while (parent) {
+    openKeys.unshift(String(parent.id));
+    parent = parent.parent_id ? byId.get(String(parent.parent_id)) : undefined;
+  }
+  return { openKeys, selectedKeys: [String(node.id)] };
+}
+
+function firstLeaf(nodes: ApiMenuNode[]): ApiMenuNode | null {
+  const node = nodes?.[0];
+  if (!node) return null;
+  if (node.children?.length) return firstLeaf(node.children) || (node.full_path ? node : null);
+  return node.full_path ? node : null;
+}
+
+export const getIndexUrl = () => {
+  const leaf = firstLeaf(readMenuIndex().list);
+  return { pathname: leaf?.full_path || "/workplace" };
+};
+
 export function canAccessMenuPath(pathname: string) {
-  const path = formatURL(pathname || "/");
+  const path = normalizePath(pathname || "/");
   if (OPEN_PATHS.has(path)) return true;
   return readMenuIndex().paths.has(path);
 }
 
+function isPublicPath(path: string) {
+  return path === "/login" || path === "/invite" || path.startsWith("/password/") || path.startsWith("/oauth/");
+}
+
 export function pageTagName(pathname: string, miss = false) {
-  const path = formatURL(pathname || "/");
+  const path = normalizePath(pathname || "/");
   if (isPublicPath(path)) return "";
   if (miss) return "页面不存在";
   if (!canAccessMenuPath(path)) return "无权限";
   if (OPEN_NAMES[path]) return OPEN_NAMES[path];
-  const segment = path.split("/").filter(Boolean).pop();
-  return readMenuIndex().flat.find((item: { url?: string; name?: string }) => item.url === segment)?.name || "页面";
+  return readMenuIndex().flat.find(item => item.full_path && normalizePath(item.full_path) === path)?.title || "页面";
 }
-
-export const formatURL = url => {
-  const list = url.split("/").filter(v => v);
-  const path = "/" + list.join("/");
-  return path;
-};

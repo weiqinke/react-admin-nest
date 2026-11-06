@@ -1,29 +1,28 @@
 ﻿import { useAppStore } from "@/stores/app";
-import { useMenuTagStore } from "@/stores/menuTag";
-import { formatURL, getLocalStorageMenus, getMenus, getOpenKeysByUrls, setLocalStorage } from "@/utils/menuUtils";
+import { findMenuById, menuKeysForPath, normalizePath, sidebarItemsFromStorage, type SidebarItem } from "@/utils/menuUtils";
 import { AppstoreOutlined } from "@ant-design/icons";
-import { Menu } from "antd";
+import { Menu, type MenuProps } from "antd";
 import { useEffect, useLayoutEffect, useMemo, useState, type ComponentType } from "react";
 import { useLocation, useNavigate } from "react-router";
 
 type IconFontProps = { type: string };
 
-const createMenuIcon = (item, Icon: ComponentType<IconFontProps> | null) => {
-  return item.map(v => {
-    v.icon = Icon && v.icon ? <Icon type={v.icon} /> : <AppstoreOutlined />;
-    if (v.children) createMenuIcon(v.children, Icon);
-    return v;
-  });
-};
+function withIcons(items: SidebarItem[], Icon: ComponentType<IconFontProps> | null): MenuProps["items"] {
+  return items.map(item => ({
+    key: item.key,
+    label: item.label,
+    icon: Icon && item.icon ? <Icon type={item.icon} /> : <AppstoreOutlined />,
+    children: item.children ? withIcons(item.children, Icon) : undefined
+  }));
+}
 
 const WebMenu = () => {
-  const addTag = useMenuTagStore(state => state.addTag);
   const theme = useAppStore(state => state.theme);
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [menuTick, setMenuTick] = useState(0);
-  const [selectedKeys, setSelectedKeys] = useState([]);
-  const [openKeys, setOpenkeys] = useState([]);
+  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+  const [openKeys, setOpenkeys] = useState<string[]>([]);
   const [IconFont, setIconFont] = useState<ComponentType<IconFontProps> | null>(null);
 
   useEffect(() => {
@@ -47,29 +46,12 @@ const WebMenu = () => {
     };
   }, []);
 
-  // 菜单树只在 menus:refresh 时重建，路由切换只更新选中态。自定义图标等空闲后再换上。
-  const { menuItems, rawMenus } = useMemo(() => {
-    const menusList = JSON.parse(getLocalStorageMenus());
-    const result = getMenus(menusList);
-    return { menuItems: createMenuIcon(result, IconFont), rawMenus: menusList };
-  }, [menuTick, IconFont]);
+  const menuItems = useMemo(() => withIcons(sidebarItemsFromStorage(), IconFont), [menuTick, IconFont]);
 
-  const onClick = props => {
-    const { keyPath, key } = props;
-    const menuPath: string[] = [...keyPath].reverse();
-    let changeMenus = rawMenus.concat();
-    const urls = [];
-    for (let index = 0; index < menuPath.length; index++) {
-      const item = menuPath[index];
-      const result = changeMenus.find(v => String(v.id) === String(item));
-      urls.push(result?.url || "");
-      if (result.children) changeMenus = result.children;
-    }
-    const url = formatURL("/" + urls.join("/"));
-    navigate(url);
-    setOpenkeys(() => keyPath);
-    setSelectedKeys(() => [key]);
-    addTag(urls, key);
+  const onClick: MenuProps["onClick"] = ({ key }) => {
+    const node = findMenuById(key);
+    if (!node?.full_path) return;
+    navigate(normalizePath(node.full_path));
   };
 
   useEffect(() => {
@@ -79,16 +61,10 @@ const WebMenu = () => {
   }, []);
 
   useLayoutEffect(() => {
-    const data = pathname.split("/").filter(v => v);
-    const [nextOpenKeys, currentKey] = getOpenKeysByUrls(data, menuItems);
-    setOpenkeys(nextOpenKeys);
-    setSelectedKeys(currentKey);
-  }, [pathname, menuItems]);
-
-  const onOpenChange = (openKeys: any) => {
-    setOpenkeys(() => openKeys);
-    setLocalStorage("cacheOpenKeys", openKeys);
-  };
+    const next = menuKeysForPath(pathname);
+    setOpenkeys(next.openKeys);
+    setSelectedKeys(next.selectedKeys);
+  }, [pathname, menuTick]);
 
   return (
     <div style={{ width: "100%" }}>
@@ -98,7 +74,7 @@ const WebMenu = () => {
         onClick={onClick}
         selectedKeys={selectedKeys}
         openKeys={openKeys}
-        onOpenChange={onOpenChange}
+        onOpenChange={setOpenkeys}
         items={menuItems}
         inlineIndent={12}
       />

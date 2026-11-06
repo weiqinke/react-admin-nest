@@ -1,4 +1,4 @@
-import { formatURL, getMenuItemByID, pageTagName } from "@/utils/menuUtils";
+import { pageTagName } from "@/utils/menuUtils";
 import type { NavigateFunction } from "react-router";
 import { create } from "zustand";
 
@@ -16,7 +16,6 @@ type MenuTagState = {
   refreshing: boolean;
   setTags: (next: TagUpdater) => void;
   syncRoute: (url: string, missed: boolean) => void;
-  addTag: (urls: string[], id: string | number) => void;
   switchTo: (url: string) => void;
   removeTag: (url: string) => void;
   closeOtherTags: (url: string) => void;
@@ -68,15 +67,6 @@ export const useMenuTagStore = create<MenuTagState>((set, get) => ({
       }
       if (tags === state.tags && state.activeUrl === url) return state;
       return { tags, activeUrl: url };
-    });
-  },
-  addTag: (urls, id) => {
-    const path = formatURL("/" + urls.join("/"));
-    set(state => {
-      if (state.tags.some(tag => tag.url === path)) return state;
-      const item = getMenuItemByID(id);
-      if (!item) return state;
-      return { tags: [...state.tags, { url: path, name: item.name }] };
     });
   },
   switchTo: url => {

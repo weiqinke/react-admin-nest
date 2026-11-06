@@ -1,7 +1,7 @@
 import { getMe, getMyMenus } from "@/api/goadmin";
 import { saveLoginSession } from "@/api/session";
 import { useMenuTagStore } from "@/stores/menuTag";
-import { adaptApiMenus, saveMenus } from "@/utils/menuUtils";
+import { saveMenus } from "@/utils/menuUtils";
 import { webSocketManager } from "@/utils/ws";
 import { Alert, Spin, message } from "antd";
 import { useEffect, useRef } from "react";
@@ -19,8 +19,7 @@ async function hydrateSession() {
   }
   try {
     const menus = await getMyMenus();
-    const list = adaptApiMenus(menus.data?.data?.list || []);
-    saveMenus(JSON.stringify(list));
+    saveMenus(JSON.stringify(menus.data?.data?.list || []));
   } catch {
     /* 菜单拉取失败不阻断登录 */
   }

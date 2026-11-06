@@ -43,7 +43,6 @@ function toJpeg(source: HTMLCanvasElement) {
 
 const DefaultLayoutHeader = () => {
   const profile = useAppStore(state => state.profile);
-  const addTag = useMenuTagStore(state => state.addTag);
   const setTags = useMenuTagStore(state => state.setTags);
   const switchTo = useMenuTagStore(state => state.switchTo);
   const navigate = useNavigate();
@@ -87,10 +86,7 @@ const DefaultLayoutHeader = () => {
     }
   ];
   const onClick: MenuProps["onClick"] = ({ key }) => {
-    if (key === "1") {
-      addTag(["profile"], 145);
-      return navigate("/profile");
-    }
+    if (key === "1") return navigate("/profile");
     if (key === "2") return toggleLanguage();
     if (key === "3") return logout();
     if (key === "4") {

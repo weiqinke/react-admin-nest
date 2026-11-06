@@ -8,7 +8,7 @@ import { useAppStore } from "@/stores/app";
 import { useMenuTagStore } from "@/stores/menuTag";
 import { Layout, Modal } from "antd";
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
-import { adaptApiMenus, canAccessMenuPath, getLocalStorageMenus, saveMenus } from "@/utils/menuUtils";
+import { canAccessMenuPath, getLocalStorageMenus, saveMenus } from "@/utils/menuUtils";
 import { throttle } from "@/utils/throttle";
 import { webSocketManager } from "@/utils/ws";
 import { getAccessToken } from "@/api/session";
@@ -36,7 +36,8 @@ function hasCachedShell() {
   try {
     const menus = JSON.parse(getLocalStorageMenus());
     const permissions = JSON.parse(localStorage.getItem("permissions") || "null");
-    return Array.isArray(menus) && menus.length > 0 && Array.isArray(permissions);
+    const usable = Array.isArray(menus) && menus.some(node => typeof node?.full_path === "string");
+    return usable && Array.isArray(permissions);
   } catch {
     return false;
   }
@@ -98,7 +99,7 @@ const DefaultLayout = () => {
           }
         }
         if (menus.data?.code === 0) {
-          saveMenus(JSON.stringify(adaptApiMenus(menus.data.data?.list || [])));
+          saveMenus(JSON.stringify(menus.data.data?.list || []));
           window.dispatchEvent(new Event("menus:refresh"));
         }
         setAccessReady(true);
