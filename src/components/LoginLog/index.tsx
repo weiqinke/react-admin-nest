@@ -4,7 +4,7 @@ import { loginlog } from "@/api/log";
 import { dataScopeLabel } from "@/api/platform";
 import LoginFrequencyChart from "@/components/Echarts/LoginFrequencyChart";
 import { getDateTimeFormat } from "@/utils/core";
-import { Alert, Button, Table, message } from "antd";
+import { Alert, Button, Skeleton, Table, message } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
@@ -77,6 +77,8 @@ const LoginLog = () => {
           const list = [...(r?.data?.data || [])].sort((a, b) => new Date(b.created).valueOf() - new Date(a.created).valueOf());
           setDataSource(list);
           setDataScope(r.data.data_scope || "");
+        } else {
+          setDataSource([]);
         }
       })
       .catch(() => setDataSource([]));
@@ -92,15 +94,20 @@ const LoginLog = () => {
 
   return (
     <div>
-      {dataScope ? (
-        <Alert
-          className="mb-3"
-          type="info"
-          showIcon
-          title={`当前数据范围：${dataScopeLabel(dataScope)}${
-            summary ? `。近 15 天 ${summary.total || 0} 次，成功 ${summary.success || 0}，失败 ${summary.fail || 0}` : ""
-          }`}
-        />
+      {dataSource === undefined || dataScope ? (
+        <div className="mb-3" style={{ minHeight: 40 }}>
+          {dataSource === undefined ? (
+            <Skeleton active title={false} paragraph={{ rows: 1 }} />
+          ) : (
+            <Alert
+              type="info"
+              showIcon
+              title={`当前数据范围：${dataScopeLabel(dataScope)}${
+                summary ? `。近 15 天 ${summary.total || 0} 次，成功 ${summary.success || 0}，失败 ${summary.fail || 0}` : ""
+              }`}
+            />
+          )}
+        </div>
       ) : null}
       <div className="admin-toolbar" style={{ justifyContent: "flex-end" }}>
         <Button
@@ -118,7 +125,13 @@ const LoginLog = () => {
           导出 CSV
         </Button>
       </div>
-      <Table rowKey="id" columns={columns} dataSource={dataSource} scroll={{ x: 900 }} />
+      <div style={{ minHeight: 640 }}>
+        {dataSource === undefined ? (
+          <Skeleton active paragraph={{ rows: 8 }} />
+        ) : (
+          <Table rowKey="id" columns={columns} dataSource={dataSource} scroll={{ x: 900, y: 480 }} />
+        )}
+      </div>
       <div style={{ marginTop: 12 }}>
         <LoginFrequencyChart dataSource={dataSource} />
       </div>

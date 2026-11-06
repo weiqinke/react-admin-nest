@@ -4,7 +4,7 @@ import { listMyNotices, markNoticeRead, setNoticeTodo } from "@/api/notice";
 import { TICKET_PRIORITY, formatDueInSeconds, listMyTickets, ticketOverdue } from "@/api/platform";
 import { getUserState } from "@/api/session";
 import TicketStatusTag from "@/components/TicketStatusTag";
-import { Button, Col, Empty, Modal, Row, Space, Tag, Timeline, message } from "antd";
+import { Button, Col, Empty, Modal, Row, Skeleton, Space, Tag, Timeline, message } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState, type ReactNode } from "react";
 import { useNavigate, useSearchParams } from "react-router";
@@ -90,6 +90,16 @@ function Panel({ id, title, extra, children }: { id: string; title: string; extr
   );
 }
 
+function PanelBody({ ready, children }: { ready: boolean; children: ReactNode }) {
+  return (
+    <div className={styles.feedSlot}>
+      <Skeleton active loading={!ready} title={false} paragraph={{ rows: 4 }}>
+        {children}
+      </Skeleton>
+    </div>
+  );
+}
+
 const Feeds = () => {
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
@@ -104,6 +114,11 @@ const Feeds = () => {
   const [tickets, setTickets] = useState<any[]>([]);
   const [changelogs, setChangelogs] = useState<any[]>([]);
   const [acting, setActing] = useState("");
+  const [announcementsReady, setAnnouncementsReady] = useState(false);
+  const [todosReady, setTodosReady] = useState(false);
+  const [inboxReady, setInboxReady] = useState(false);
+  const [ticketsReady, setTicketsReady] = useState(false);
+  const [changelogsReady, setChangelogsReady] = useState(false);
   const viewerId = String(getUserState().uid || "");
 
   const loadAnnouncements = () => {
@@ -120,25 +135,29 @@ const Feeds = () => {
       .catch(() => {
         setAnnouncements([]);
         setAnnouncementTotal(0);
-      });
+      })
+      .finally(() => setAnnouncementsReady(true));
   };
 
   const loadTodos = () => {
     listMyNotices({ kind: "todo", todo_status: "pending", page: 1, page_size: 8 })
       .then(res => setTodos(res.data?.data?.list || []))
-      .catch(() => setTodos([]));
+      .catch(() => setTodos([]))
+      .finally(() => setTodosReady(true));
   };
 
   const loadInbox = () => {
     listMyNotices({ kind: "inbox", unread: 1, page: 1, page_size: 8 })
       .then(res => setInbox(res.data?.data?.list || []))
-      .catch(() => setInbox([]));
+      .catch(() => setInbox([]))
+      .finally(() => setInboxReady(true));
   };
 
   const loadTickets = () => {
     listMyTickets({ page: 1, page_size: 30 })
       .then(res => setTickets(res.data?.data?.list || []))
-      .catch(() => setTickets([]));
+      .catch(() => setTickets([]))
+      .finally(() => setTicketsReady(true));
   };
 
   useEffect(() => {
@@ -148,7 +167,8 @@ const Feeds = () => {
     loadTickets();
     listPublishedChangelogs({ page: 1, page_size: 5 })
       .then(res => setChangelogs(res.data?.data?.list || []))
-      .catch(() => setChangelogs([]));
+      .catch(() => setChangelogs([]))
+      .finally(() => setChangelogsReady(true));
   }, []);
 
   const openAnnouncement = async (item: any) => {
@@ -216,6 +236,7 @@ const Feeds = () => {
                 消息中心
               </Button>
             }>
+            <PanelBody ready={todosReady}>
             <Feed
               items={todos}
               empty={<Empty description="没有待办。分派给你的工单会记在这里。" />}
@@ -244,6 +265,7 @@ const Feeds = () => {
                 </>
               )}
             />
+            </PanelBody>
           </Panel>
         </Col>
         <Col xs={24} lg={10}>
@@ -255,6 +277,7 @@ const Feeds = () => {
                 全部
               </Button>
             }>
+            <PanelBody ready={inboxReady}>
             <Feed
               items={inbox}
               empty={<Empty description="没有未读消息。" />}
@@ -272,6 +295,7 @@ const Feeds = () => {
                 </>
               )}
             />
+            </PanelBody>
           </Panel>
         </Col>
       </Row>
@@ -286,6 +310,7 @@ const Feeds = () => {
                 我的工单
               </Button>
             }>
+            <PanelBody ready={ticketsReady}>
             <Feed
               items={openTicketRows}
               empty={
@@ -318,6 +343,7 @@ const Feeds = () => {
                 );
               }}
             />
+            </PanelBody>
           </Panel>
         </Col>
         <Col xs={24} lg={10}>
@@ -335,6 +361,7 @@ const Feeds = () => {
                 </Button>
               )
             }>
+            <PanelBody ready={announcementsReady}>
             <Feed
               items={visibleAnnouncements}
               empty={<Empty description="暂无公告" />}
@@ -355,6 +382,7 @@ const Feeds = () => {
                 </>
               )}
             />
+            </PanelBody>
           </Panel>
         </Col>
       </Row>
@@ -369,6 +397,7 @@ const Feeds = () => {
                 关于
               </Button>
             }>
+            <PanelBody ready={changelogsReady}>
             {changelogs.length === 0 ? (
               <Empty description="还没有已发布的变更。" />
             ) : (
@@ -388,6 +417,7 @@ const Feeds = () => {
                 }))}
               />
             )}
+            </PanelBody>
           </Panel>
         </Col>
       </Row>

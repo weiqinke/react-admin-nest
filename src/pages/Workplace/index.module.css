@@ -112,11 +112,14 @@
   line-height: 1.4;
 }
 
+.feedSlot {
+  height: 320px;
+  overflow: auto;
+}
+
 .feed {
-  max-height: 320px;
   margin: 0;
   padding: 0;
-  overflow: auto;
   list-style: none;
 }
 

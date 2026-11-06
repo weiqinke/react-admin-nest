@@ -2,11 +2,10 @@ import { getMyProfile } from "@/api/goadmin";
 import { canAccessMenuPath } from "@/utils/menuUtils";
 import { UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Space, Tag } from "antd";
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
+import Feeds from "./Feeds";
 import styles from "./index.module.css";
-
-const Feeds = lazy(() => import("./Feeds"));
 
 const WEEKDAYS = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
 
@@ -143,9 +142,7 @@ const Workplace = () => {
           ))}
         </div>
       </div>
-      <Suspense fallback={null}>
-        <Feeds />
-      </Suspense>
+      <Feeds />
     </div>
   );
 };

@@ -1,11 +1,21 @@
 import { hasPermission } from "@/api/announcement";
 import { TICKET_STATUS, dataScopeLabel, getDashboard } from "@/api/platform";
 import echarts from "@/components/Echarts/setup-cartesian";
-import { Alert, Col, DatePicker, Empty, Row, Statistic } from "antd";
+import { Alert, Col, DatePicker, Row, Skeleton, Statistic } from "antd";
 import dayjs, { Dayjs } from "dayjs";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState, type RefObject } from "react";
 
 const { RangePicker } = DatePicker;
+
+const CHART_HEIGHT = 280;
+const FUNNEL_HEIGHT = 260;
+
+function ChartFrame({ height, loading, chartRef }: { height: number; loading: boolean; chartRef: RefObject<HTMLDivElement | null> }) {
+  if (loading) {
+    return <Skeleton.Node active style={{ width: "100%", height, display: "block" }} styles={{ root: { display: "block", width: "100%" } }} />;
+  }
+  return <div ref={chartRef} style={{ height, width: "100%" }} />;
+}
 
 const DashboardPanel: FC = () => {
   const canRead = hasPermission("stats:read");
@@ -105,7 +115,14 @@ const DashboardPanel: FC = () => {
 
   if (!canRead) return null;
 
+  const loading = !failed && !snap;
   const reach = snap?.announcement_reach || {};
+  const stats = [
+    { title: "公告已发布", value: Number(reach.published || 0) },
+    { title: "公告已读次数", value: Number(reach.reads || 0) },
+    { title: "待处理工单", value: Number(snap?.ticket_funnel?.open || 0) },
+    { title: "已关闭工单", value: Number(snap?.ticket_funnel?.closed || 0) }
+  ];
 
   return (
     <div className="admin-card">
@@ -127,32 +144,26 @@ const DashboardPanel: FC = () => {
         />
       </div>
       {failed ? <Alert type="warning" showIcon message="看板加载失败，请确认已授权 stats:read" /> : null}
-      {!failed && !snap ? <Empty description="加载中…" /> : null}
-      {snap ? (
+      {!failed ? (
         <>
           <Row gutter={[12, 12]} className="mb-3">
-            <Col xs={12} md={6}>
-              <Statistic title="公告已发布" value={Number(reach.published || 0)} />
-            </Col>
-            <Col xs={12} md={6}>
-              <Statistic title="公告已读次数" value={Number(reach.reads || 0)} />
-            </Col>
-            <Col xs={12} md={6}>
-              <Statistic title="待处理工单" value={Number(snap.ticket_funnel?.open || 0)} />
-            </Col>
-            <Col xs={12} md={6}>
-              <Statistic title="已关闭工单" value={Number(snap.ticket_funnel?.closed || 0)} />
-            </Col>
+            {stats.map(item => (
+              <Col key={item.title} xs={12} md={6}>
+                <div style={{ minHeight: 62 }}>
+                  {loading ? <Skeleton active title={{ width: "70%" }} paragraph={{ rows: 1, width: "40%" }} /> : <Statistic title={item.title} value={item.value} />}
+                </div>
+              </Col>
+            ))}
           </Row>
           <Row gutter={[12, 12]}>
             <Col xs={24} lg={12}>
-              <div ref={loginRef} style={{ height: 280, width: "100%" }} />
+              <ChartFrame height={CHART_HEIGHT} loading={loading} chartRef={loginRef} />
             </Col>
             <Col xs={24} lg={12}>
-              <div ref={accessRef} style={{ height: 280, width: "100%" }} />
+              <ChartFrame height={CHART_HEIGHT} loading={loading} chartRef={accessRef} />
             </Col>
             <Col xs={24}>
-              <div ref={funnelRef} style={{ height: 260, width: "100%" }} />
+              <ChartFrame height={FUNNEL_HEIGHT} loading={loading} chartRef={funnelRef} />
             </Col>
           </Row>
         </>
