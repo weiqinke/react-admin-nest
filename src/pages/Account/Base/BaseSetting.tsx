@@ -49,9 +49,7 @@ const BaseSetting: FC = function () {
         </Divider>
       </Col>
 
-      <Col span={12}>
-        {loaded ? <BaseFrom key={formKey} initFormItem={initFormItem} pendingCallback={pendingCallback} /> : null}
-      </Col>
+      <Col span={12}>{loaded ? <BaseFrom key={formKey} initFormItem={initFormItem} pendingCallback={pendingCallback} /> : null}</Col>
       <Col span={6} offset={1}>
         <div className="setting-base">
           <Card style={{ width: 350 }} cover={<img alt="" src={userPoster} className="poster" />}>

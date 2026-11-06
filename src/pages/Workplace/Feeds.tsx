@@ -237,34 +237,34 @@ const Feeds = () => {
               </Button>
             }>
             <PanelBody ready={todosReady}>
-            <Feed
-              items={todos}
-              empty={<Empty description="没有待办。分派给你的工单会记在这里。" />}
-              render={item => (
-                <>
-                  <div className={styles.feedMain}>
-                    <div className={styles.feedTitle}>
-                      {item.pinned ? <Tag color="blue">置顶</Tag> : null}
-                      {item.title}
+              <Feed
+                items={todos}
+                empty={<Empty description="没有待办。分派给你的工单会记在这里。" />}
+                render={item => (
+                  <>
+                    <div className={styles.feedMain}>
+                      <div className={styles.feedTitle}>
+                        {item.pinned ? <Tag color="blue">置顶</Tag> : null}
+                        {item.title}
+                      </div>
+                      <Bits bits={[NOTICE_CATEGORY[item.category] || item.category, formatTime(item.created_at), snippet(item.content, 48)]} />
                     </div>
-                    <Bits bits={[NOTICE_CATEGORY[item.category] || item.category, formatTime(item.created_at), snippet(item.content, 48)]} />
-                  </div>
-                  <div className={styles.feedActions}>
-                    {item.link_path ? (
-                      <Button type="link" size="small" onClick={() => openInternal(item.link_path)}>
-                        打开
+                    <div className={styles.feedActions}>
+                      {item.link_path ? (
+                        <Button type="link" size="small" onClick={() => openInternal(item.link_path)}>
+                          打开
+                        </Button>
+                      ) : null}
+                      <Button type="link" size="small" loading={acting === `${item.id}:done`} onClick={() => finishTodo(String(item.id), "done")}>
+                        办结
                       </Button>
-                    ) : null}
-                    <Button type="link" size="small" loading={acting === `${item.id}:done`} onClick={() => finishTodo(String(item.id), "done")}>
-                      办结
-                    </Button>
-                    <Button type="link" size="small" loading={acting === `${item.id}:dismissed`} onClick={() => finishTodo(String(item.id), "dismissed")}>
-                      忽略
-                    </Button>
-                  </div>
-                </>
-              )}
-            />
+                      <Button type="link" size="small" loading={acting === `${item.id}:dismissed`} onClick={() => finishTodo(String(item.id), "dismissed")}>
+                        忽略
+                      </Button>
+                    </div>
+                  </>
+                )}
+              />
             </PanelBody>
           </Panel>
         </Col>
@@ -278,23 +278,23 @@ const Feeds = () => {
               </Button>
             }>
             <PanelBody ready={inboxReady}>
-            <Feed
-              items={inbox}
-              empty={<Empty description="没有未读消息。" />}
-              render={item => (
-                <>
-                  <div className={styles.feedMain}>
-                    <div className={styles.feedTitle}>{item.title}</div>
-                    <Bits bits={[NOTICE_CATEGORY[item.category] || item.category, formatTime(item.created_at), snippet(item.content, 42)]} />
-                  </div>
-                  <div className={styles.feedActions}>
-                    <Button type="link" size="small" onClick={() => openNotice(item)}>
-                      {item.link_path ? "查看" : "标为已读"}
-                    </Button>
-                  </div>
-                </>
-              )}
-            />
+              <Feed
+                items={inbox}
+                empty={<Empty description="没有未读消息。" />}
+                render={item => (
+                  <>
+                    <div className={styles.feedMain}>
+                      <div className={styles.feedTitle}>{item.title}</div>
+                      <Bits bits={[NOTICE_CATEGORY[item.category] || item.category, formatTime(item.created_at), snippet(item.content, 42)]} />
+                    </div>
+                    <div className={styles.feedActions}>
+                      <Button type="link" size="small" onClick={() => openNotice(item)}>
+                        {item.link_path ? "查看" : "标为已读"}
+                      </Button>
+                    </div>
+                  </>
+                )}
+              />
             </PanelBody>
           </Panel>
         </Col>
@@ -311,38 +311,38 @@ const Feeds = () => {
               </Button>
             }>
             <PanelBody ready={ticketsReady}>
-            <Feed
-              items={openTicketRows}
-              empty={
-                <Empty description="没有未关闭的工单。">
-                  <Button type="primary" onClick={() => navigate("/mytickets")}>
-                    提交工单
-                  </Button>
-                </Empty>
-              }
-              render={item => {
-                const mine = String(item.creator_id) === viewerId;
-                const due = dueLabel(item);
-                return (
-                  <>
-                    <div className={styles.feedMain}>
-                      <div className={styles.feedTitle}>{item.title}</div>
-                      <Space size={6} wrap>
-                        <TicketStatusTag status={item.status} />
-                        <Tag>{TICKET_PRIORITY[item.priority] || "普通"}</Tag>
-                        <span>{mine ? "我提交的" : "分派给我"}</span>
-                        {due ? <span>{due}</span> : null}
-                      </Space>
-                    </div>
-                    <div className={styles.feedActions}>
-                      <Button type="link" size="small" onClick={() => navigate("/mytickets")}>
-                        处理
-                      </Button>
-                    </div>
-                  </>
-                );
-              }}
-            />
+              <Feed
+                items={openTicketRows}
+                empty={
+                  <Empty description="没有未关闭的工单。">
+                    <Button type="primary" onClick={() => navigate("/mytickets")}>
+                      提交工单
+                    </Button>
+                  </Empty>
+                }
+                render={item => {
+                  const mine = String(item.creator_id) === viewerId;
+                  const due = dueLabel(item);
+                  return (
+                    <>
+                      <div className={styles.feedMain}>
+                        <div className={styles.feedTitle}>{item.title}</div>
+                        <Space size={6} wrap>
+                          <TicketStatusTag status={item.status} />
+                          <Tag>{TICKET_PRIORITY[item.priority] || "普通"}</Tag>
+                          <span>{mine ? "我提交的" : "分派给我"}</span>
+                          {due ? <span>{due}</span> : null}
+                        </Space>
+                      </div>
+                      <div className={styles.feedActions}>
+                        <Button type="link" size="small" onClick={() => navigate("/mytickets")}>
+                          处理
+                        </Button>
+                      </div>
+                    </>
+                  );
+                }}
+              />
             </PanelBody>
           </Panel>
         </Col>
@@ -362,26 +362,26 @@ const Feeds = () => {
               )
             }>
             <PanelBody ready={announcementsReady}>
-            <Feed
-              items={visibleAnnouncements}
-              empty={<Empty description="暂无公告" />}
-              render={item => (
-                <>
-                  <div className={styles.feedMain}>
-                    <div className={styles.feedTitle}>
-                      {item.level === "required" ? <Tag color="red">必须确认</Tag> : null}
-                      {item.title} {item.read ? null : <Tag color="blue">未读</Tag>}
+              <Feed
+                items={visibleAnnouncements}
+                empty={<Empty description="暂无公告" />}
+                render={item => (
+                  <>
+                    <div className={styles.feedMain}>
+                      <div className={styles.feedTitle}>
+                        {item.level === "required" ? <Tag color="red">必须确认</Tag> : null}
+                        {item.title} {item.read ? null : <Tag color="blue">未读</Tag>}
+                      </div>
+                      <Bits bits={[formatTime(item.published_at), snippet(item.content, 42)]} />
                     </div>
-                    <Bits bits={[formatTime(item.published_at), snippet(item.content, 42)]} />
-                  </div>
-                  <div className={styles.feedActions}>
-                    <Button type="link" size="small" onClick={() => openAnnouncement(item)}>
-                      查看
-                    </Button>
-                  </div>
-                </>
-              )}
-            />
+                    <div className={styles.feedActions}>
+                      <Button type="link" size="small" onClick={() => openAnnouncement(item)}>
+                        查看
+                      </Button>
+                    </div>
+                  </>
+                )}
+              />
             </PanelBody>
           </Panel>
         </Col>
@@ -398,25 +398,25 @@ const Feeds = () => {
               </Button>
             }>
             <PanelBody ready={changelogsReady}>
-            {changelogs.length === 0 ? (
-              <Empty description="还没有已发布的变更。" />
-            ) : (
-              <Timeline
-                items={changelogs.map(item => ({
-                  color: "blue",
-                  children: (
-                    <div>
-                      <div className={styles.changeTitle}>
-                        <Tag color="blue">{item.version}</Tag>
-                        {item.title}
+              {changelogs.length === 0 ? (
+                <Empty description="还没有已发布的变更。" />
+              ) : (
+                <Timeline
+                  items={changelogs.map(item => ({
+                    color: "blue",
+                    children: (
+                      <div>
+                        <div className={styles.changeTitle}>
+                          <Tag color="blue">{item.version}</Tag>
+                          {item.title}
+                        </div>
+                        <div className={styles.meta}>{formatTime(item.published_at)}</div>
+                        {item.body ? <div className={styles.clamp}>{item.body}</div> : null}
                       </div>
-                      <div className={styles.meta}>{formatTime(item.published_at)}</div>
-                      {item.body ? <div className={styles.clamp}>{item.body}</div> : null}
-                    </div>
-                  )
-                }))}
-              />
-            )}
+                    )
+                  }))}
+                />
+              )}
             </PanelBody>
           </Panel>
         </Col>

@@ -24,10 +24,7 @@ const HeaderNotice: FC = () => {
     () =>
       createStaleRefresh(async () => {
         try {
-          const [ann, sum] = await Promise.all([
-            listMyAnnouncements({ type: "notification", level: "normal", unread: 1, page: 1, page_size: 1 }),
-            noticeSummary()
-          ]);
+          const [ann, sum] = await Promise.all([listMyAnnouncements({ type: "notification", level: "normal", unread: 1, page: 1, page_size: 1 }), noticeSummary()]);
           if (ann.data.code === 0) setAnnouncementUnread(ann.data.data?.unread_count || 0);
           if (sum.data.code === 0) {
             setInboxUnread(sum.data.data?.inbox_unread || 0);

@@ -160,11 +160,7 @@ const DefaultLayout = () => {
               <div className={styles.outletContainer}>
                 <div className={styles.pageOutlet}>
                   <div key={pathname} className={styles.pageEnter}>
-                    {!accessReady || refreshing ? (
-                      <SuspendFallback />
-                    ) : (
-                      <div key={refreshKey}>{showNotAuth ? <NotAuthPage /> : <Outlet />}</div>
-                    )}
+                    {!accessReady || refreshing ? <SuspendFallback /> : <div key={refreshKey}>{showNotAuth ? <NotAuthPage /> : <Outlet />}</div>}
                   </div>
                 </div>
                 <Copyright />

@@ -36,7 +36,9 @@ export const saveMenus = (menus: string) => localStorage.setItem(MENUS, menus);
 export const getLocalStorageMenus = () => localStorage.getItem(MENUS) || "[]";
 
 export function normalizePath(url: string) {
-  const list = String(url || "").split("/").filter(Boolean);
+  const list = String(url || "")
+    .split("/")
+    .filter(Boolean);
   return "/" + list.join("/");
 }
 

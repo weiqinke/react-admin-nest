@@ -2,393 +2,393 @@ import echarts from "./setup";
 import { useEffect, useRef } from "react";
 
 const geoGpsMap = {
-    1: [116.415, 39.915],
-    2: [116.448, 39.935],
-    3: [116.455, 39.915],
-    4: [116.435, 39.925],
-    基站1: [116.415, 39.915],
-    基站2: [116.448, 39.935],
-    基站3: [116.455, 39.915],
-    控制中心: [116.435, 39.925]
-  };
-  const l1 = {
-    主卧: [116.409, 39.928]
-  };
-  const l2 = {
-    书房控制: [116.428, 39.939]
-  };
+  1: [116.415, 39.915],
+  2: [116.448, 39.935],
+  3: [116.455, 39.915],
+  4: [116.435, 39.925],
+  基站1: [116.415, 39.915],
+  基站2: [116.448, 39.935],
+  基站3: [116.455, 39.915],
+  控制中心: [116.435, 39.925]
+};
+const l1 = {
+  主卧: [116.409, 39.928]
+};
+const l2 = {
+  书房控制: [116.428, 39.939]
+};
 
-  const l3 = {
-    卫生间控制: [116.448, 39.939]
-  };
-  const l4 = {
-    客厅控制: [116.426, 39.918]
-  };
-  const l5 = {
-    次卧控制: [116.448, 39.92]
-  };
-  const l6 = {
-    楼梯控制: [116.443, 39.911]
-  };
-  const l7 = {
-    厨房控制: [116.448, 39.905]
-  };
+const l3 = {
+  卫生间控制: [116.448, 39.939]
+};
+const l4 = {
+  客厅控制: [116.426, 39.918]
+};
+const l5 = {
+  次卧控制: [116.448, 39.92]
+};
+const l6 = {
+  楼梯控制: [116.443, 39.911]
+};
+const l7 = {
+  厨房控制: [116.448, 39.905]
+};
 
-  //geoCoordMap把所有可能出现的传感器加到数组里面
-  const geoCoordMap = {
-    客厅1: [116.41, 39.9036],
-    客厅2: [116.43, 39.918],
-    主卧1: [116.409, 39.921],
-    主卧2: [116.409, 39.935],
-    书房: [116.432, 39.939],
-    卫生间: [116.4516, 39.939],
-    客厅3: [116.4516, 39.9306],
-    次卧: [116.4516, 39.92],
-    楼梯: [116.447, 39.911],
-    厨房: [116.4516, 39.905]
-  };
-  const geoCoordMap001 = {
-    客厅1: [116.41, 39.9036],
-    客厅2: [116.43, 39.918],
-    主卧1: [116.409, 39.921],
-    主卧2: [116.409, 39.935]
-  };
-  const geoCoordMap002 = {
-    书房: [116.432, 39.939],
-    卫生间: [116.4516, 39.939],
-    客厅3: [116.4516, 39.9306]
-  };
-  const geoCoordMap003 = {
-    次卧: [116.4516, 39.92],
-    楼梯: [116.447, 39.911],
-    厨房: [116.4516, 39.905]
-  };
-  const geoCoordMap004 = {
-    基站1: [116.415, 39.915],
-    基站2: [116.448, 39.935],
-    基站3: [116.455, 39.915]
-  };
-  //温度
-  const d1 = {
-    客厅1: 20,
-    客厅2: 25,
-    主卧1: 17,
-    主卧2: 19,
-    书房: 13,
-    卫生间: 22,
-    客厅3: 11,
-    次卧: 9,
-    楼梯: 29,
-    厨房: 38,
-    基站1: 40,
-    基站2: 45,
-    基站3: 37
-  };
+//geoCoordMap把所有可能出现的传感器加到数组里面
+const geoCoordMap = {
+  客厅1: [116.41, 39.9036],
+  客厅2: [116.43, 39.918],
+  主卧1: [116.409, 39.921],
+  主卧2: [116.409, 39.935],
+  书房: [116.432, 39.939],
+  卫生间: [116.4516, 39.939],
+  客厅3: [116.4516, 39.9306],
+  次卧: [116.4516, 39.92],
+  楼梯: [116.447, 39.911],
+  厨房: [116.4516, 39.905]
+};
+const geoCoordMap001 = {
+  客厅1: [116.41, 39.9036],
+  客厅2: [116.43, 39.918],
+  主卧1: [116.409, 39.921],
+  主卧2: [116.409, 39.935]
+};
+const geoCoordMap002 = {
+  书房: [116.432, 39.939],
+  卫生间: [116.4516, 39.939],
+  客厅3: [116.4516, 39.9306]
+};
+const geoCoordMap003 = {
+  次卧: [116.4516, 39.92],
+  楼梯: [116.447, 39.911],
+  厨房: [116.4516, 39.905]
+};
+const geoCoordMap004 = {
+  基站1: [116.415, 39.915],
+  基站2: [116.448, 39.935],
+  基站3: [116.455, 39.915]
+};
+//温度
+const d1 = {
+  客厅1: 20,
+  客厅2: 25,
+  主卧1: 17,
+  主卧2: 19,
+  书房: 13,
+  卫生间: 22,
+  客厅3: 11,
+  次卧: 9,
+  楼梯: 29,
+  厨房: 38,
+  基站1: 40,
+  基站2: 45,
+  基站3: 37
+};
 
-  //湿度
-  const d2 = {
-    客厅1: 40,
-    客厅2: 45,
-    主卧1: 37,
-    主卧2: 39,
-    书房: 23,
-    卫生间: 80,
-    客厅3: 56,
-    次卧: 39,
-    楼梯: 29,
-    厨房: 68
-  };
-  //振动
-  const d3 = {
-    //"客厅1": 4,
-    客厅2: 5,
-    //'主卧1': 3,
-    主卧2: 3,
-    书房: 2,
-    卫生间: 0,
-    客厅3: 0,
-    次卧: 3,
-    楼梯: 2,
-    厨房: 0
-  };
-  //烟雾
-  const d4 = {
-    客厅1: 40,
-    客厅2: 45,
-    主卧1: 37,
-    主卧2: 39,
-    书房: 53,
-    卫生间: 60,
-    客厅3: 56,
-    次卧: 39,
-    楼梯: 29,
-    厨房: 68
-  };
-  //光线
-  const d5 = {
-    客厅1: 40,
-    客厅2: 45,
-    主卧1: 37,
-    主卧2: 39,
-    书房: 23,
-    卫生间: 80,
-    客厅3: 56,
-    次卧: 39,
-    楼梯: 29,
-    厨房: 68
-  };
-  //
-  // var d6 = {
-  //   "客厅1": 40,
-  //     "客厅2": 45,
-  //     '主卧1': 37,
-  //     "主卧2": 39,
-  //     '书房': 23,
-  //     "卫生间": 80,
-  //     "客厅3": 56,
-  //     '次卧': 39,
-  //     "楼梯": 29,
-  //     "厨房": 68,
+//湿度
+const d2 = {
+  客厅1: 40,
+  客厅2: 45,
+  主卧1: 37,
+  主卧2: 39,
+  书房: 23,
+  卫生间: 80,
+  客厅3: 56,
+  次卧: 39,
+  楼梯: 29,
+  厨房: 68
+};
+//振动
+const d3 = {
+  //"客厅1": 4,
+  客厅2: 5,
+  //'主卧1': 3,
+  主卧2: 3,
+  书房: 2,
+  卫生间: 0,
+  客厅3: 0,
+  次卧: 3,
+  楼梯: 2,
+  厨房: 0
+};
+//烟雾
+const d4 = {
+  客厅1: 40,
+  客厅2: 45,
+  主卧1: 37,
+  主卧2: 39,
+  书房: 53,
+  卫生间: 60,
+  客厅3: 56,
+  次卧: 39,
+  楼梯: 29,
+  厨房: 68
+};
+//光线
+const d5 = {
+  客厅1: 40,
+  客厅2: 45,
+  主卧1: 37,
+  主卧2: 39,
+  书房: 23,
+  卫生间: 80,
+  客厅3: 56,
+  次卧: 39,
+  楼梯: 29,
+  厨房: 68
+};
+//
+// var d6 = {
+//   "客厅1": 40,
+//     "客厅2": 45,
+//     '主卧1': 37,
+//     "主卧2": 39,
+//     '书房': 23,
+//     "卫生间": 80,
+//     "客厅3": 56,
+//     '次卧': 39,
+//     "楼梯": 29,
+//     "厨房": 68,
 
-  // };
-  //
-  // var d7 = {
-  //     "客厅1": 40,
-  //     "客厅2": 45,
-  //     '主卧1': 37,
-  //     "主卧2": 39,
-  //     '书房': 23,
-  //     "卫生间": 80,
-  //     "客厅3": 56,
-  //     '次卧': 39,
-  //     "楼梯": 29,
-  //     "厨房": 68,
-  // };
+// };
+//
+// var d7 = {
+//     "客厅1": 40,
+//     "客厅2": 45,
+//     '主卧1': 37,
+//     "主卧2": 39,
+//     '书房': 23,
+//     "卫生间": 80,
+//     "客厅3": 56,
+//     '次卧': 39,
+//     "楼梯": 29,
+//     "厨房": 68,
+// };
 
-  const database = [
-    {
-      name: "基站1",
-      value: 0
-    },
-    {
-      name: "基站2",
-      value: 0
-    },
-    {
-      name: "基站3",
-      value: 0
-    },
-    {
-      name: "控制中心",
-      value: 0
-    }
-  ];
-  const da1 = [
-    {
-      name: "主卧",
-      value: 0
-    }
-  ];
-  const da2 = [
-    {
-      name: "书房控制",
-      value: 0
-    }
-  ];
-  const da3 = [
-    {
-      name: "卫生间控制",
-      value: 0
-    }
-  ];
-  const da4 = [
-    {
-      name: "客厅控制",
-      value: 0
-    }
-  ];
-  const da5 = [
-    {
-      name: "次卧控制",
-      value: 0
-    }
-  ];
-  const da6 = [
-    {
-      name: "楼梯控制",
-      value: 0
-    }
-  ];
-  const da7 = [
-    {
-      name: "厨房控制",
-      value: 0
-    }
-  ];
-
-  const colors = [
-    ["#1DE9B6", "#F46E36", "#04B9FF", "#5DBD32", "#FFC809", "#FB95D5", "#BDA29A", "#6E7074", "#546570", "#C4CCD3"],
-    ["#37A2DA", "#67E0E3", "#32C5E9", "#9FE6B8", "#FFDB5C", "#FF9F7F", "#FB7293", "#E062AE", "#E690D1", "#E7BCF3", "#9D96F5", "#8378EA", "#8378EA"],
-    ["#DD6B66", "#759AA0", "#E69D87", "#8DC1A9", "#EA7E53", "#EEDD78", "#73A373", "#73B9BC", "#7289AB", "#91CA8C", "#F49F42"]
-  ];
-  const colorIndex = 0;
-
-  const year = ["温度（℃）", "湿度（%）", "振动(g)", "烟雾（百ppm）", "光线（百lx）"];
-  const year1 = ["空调调温", "加湿器/窗户协调", "门锁锁定", "紧急消防", "照明系统"];
-
-  const mapData = [[], [], [], [], []];
-
-  /*柱子Y名称*/
-  const categoryData = [];
-  const fei = [];
-  const rong = [];
-  const barData = [];
-  const lineData1 = [
-    [10, 12, 13, 12, 14, 14, 16, 17, 18, 20, 22, 26, 27, 26, 23, 20, 18, 18, 16, 16, 14, 13, 12, 10],
-    [68, 67, 66, 63, 61, 55, 53, 48, 46, 44, 42, 42, 36, 34, 36, 37, 38, 42, 46, 44, 58, 62, 66, 68],
-    [1, 1, 1, 1, 1, 1, 1, 2, 3, 2, 1, 1, 1, 1, 1, 1, 3, 3, 1, 3, 3, 1, 1, 1],
-    [56, 59, 60, 62, 56, 50, 40, 42, 38, 38, 39, 38, 40, 42, 38, 37, 34, 35, 38, 44, 46, 50, 54, 56],
-    [1, 1, 2, 1, 5, 10, 20, 24, 30, 32, 32, 34, 38, 40, 40, 38, 32, 25, 32, 32, 5, 1, 1, 1]
-  ];
-  const lineData2 = [
-    [11, 12, 14, 12, 15, 13, 16, 16, 16, 21, 22, 24, 22, 24, 23, 21, 19, 18, 15, 14, 15, 13, 12, 11],
-    [62, 64, 66, 65, 62, 58, 54, 49, 45, 44, 41, 40, 32, 36, 36, 39, 38, 40, 46, 48, 52, 60, 63, 61],
-    [1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 3, 1, 1, 1, 3, 2, 1, 1, 3, 1, 2, 1],
-    [58, 59, 62, 62, 54, 50, 44, 42, 34, 33, 35, 38, 40, 44, 38, 35, 32, 35, 33, 40, 46, 53, 56, 54],
-    [1, 1, 1, 1, 6, 12, 20, 22, 30, 33, 32, 35, 38, 42, 40, 37, 34, 28, 32, 33, 10, 1, 1, 1]
-  ];
-
-  const tian = [[], [], [], [], []];
-
-  const line1 = [];
-  const line2 = [];
-  const line3 = [];
-  const line4 = [];
-  for (const key in geoCoordMap001) {
-    line1.push({
-      year: "温度",
-      name: key,
-      value: d1[key]
-    });
+const database = [
+  {
+    name: "基站1",
+    value: 0
+  },
+  {
+    name: "基站2",
+    value: 0
+  },
+  {
+    name: "基站3",
+    value: 0
+  },
+  {
+    name: "控制中心",
+    value: 0
   }
-  for (const key in geoCoordMap002) {
-    line2.push({
-      year: "温度",
-      name: key,
-      value: d1[key]
-    });
+];
+const da1 = [
+  {
+    name: "主卧",
+    value: 0
   }
-  for (const key in geoCoordMap003) {
-    line3.push({
-      year: "温度",
-      name: key,
-      value: d1[key]
-    });
+];
+const da2 = [
+  {
+    name: "书房控制",
+    value: 0
   }
-  for (const key in geoCoordMap004) {
-    line4.push({
-      year: "温度",
-      name: key,
-      value: d1[key]
-    });
+];
+const da3 = [
+  {
+    name: "卫生间控制",
+    value: 0
   }
+];
+const da4 = [
+  {
+    name: "客厅控制",
+    value: 0
+  }
+];
+const da5 = [
+  {
+    name: "次卧控制",
+    value: 0
+  }
+];
+const da6 = [
+  {
+    name: "楼梯控制",
+    value: 0
+  }
+];
+const da7 = [
+  {
+    name: "厨房控制",
+    value: 0
+  }
+];
 
-  for (const key in geoCoordMap) {
-    mapData[0].push({
-      year: "温度",
-      name: key,
-      value: d1[key]
-    });
-    mapData[1].push({
-      year: "湿度",
-      name: key,
-      value: d2[key]
-    });
-    mapData[2].push({
-      year: "振动",
-      name: key,
-      value: d3[key]
-    });
-    mapData[3].push({
-      year: "烟雾",
-      name: key,
-      value: d4[key]
-    });
-    mapData[4].push({
-      year: "光线",
-      name: key,
-      value: d5[key]
-    });
-  }
-  const jian = [];
-  const count = [];
-  const datamax = [];
-  const datamin = [];
-  //visualMap的max正常值设定
-  const zhu = [45, 80, 10, 80, 50];
-  //visualMap的min正常值设定
-  const li = [-5, 15, 0, 20, 0];
-  //var count2=[];
-  const count3 = [];
-  for (let i = 0; i < mapData.length; i++) {
-    mapData[i].sort(function sortNumber(a, b) {
-      return a.value - b.value;
-    });
-    barData.push([]);
-    categoryData.push([]);
-    fei.push([]);
-    rong.push([]);
-    tian.push([]);
-    jian[i] = 0;
-    count[i] = 0;
-    count3[i] = 0;
-    datamax[i] = 0;
-    datamin[i] = 1000;
-    for (let j = 0; j < mapData[i].length; j++) {
-      if (mapData[i][j].name == "主卧1") {
-        tian[i][0] = mapData[i][j].value;
-      } else if (mapData[i][j].name == "主卧2") {
-        tian[i][1] = mapData[i][j].value;
-      } else if (mapData[i][j].name == "书房") {
-        tian[i][2] = mapData[i][j].value;
-      } else if (mapData[i][j].name == "卫生间") {
-        tian[i][3] = mapData[i][j].value;
-      } else if (mapData[i][j].name == "客厅1") {
-        tian[i][4] = mapData[i][j].value;
-      } else if (mapData[i][j].name == "客厅2") {
-        tian[i][5] = mapData[i][j].value;
-      } else if (mapData[i][j].name == "客厅3") {
-        tian[i][6] = mapData[i][j].value;
-      } else if (mapData[i][j].name == "次卧") {
-        tian[i][7] = mapData[i][j].value;
-      } else if (mapData[i][j].name == "楼梯") {
-        tian[i][8] = mapData[i][j].value;
-      } else if (mapData[i][j].name == "厨房") {
-        tian[i][9] = mapData[i][j].value;
-      }
+const colors = [
+  ["#1DE9B6", "#F46E36", "#04B9FF", "#5DBD32", "#FFC809", "#FB95D5", "#BDA29A", "#6E7074", "#546570", "#C4CCD3"],
+  ["#37A2DA", "#67E0E3", "#32C5E9", "#9FE6B8", "#FFDB5C", "#FF9F7F", "#FB7293", "#E062AE", "#E690D1", "#E7BCF3", "#9D96F5", "#8378EA", "#8378EA"],
+  ["#DD6B66", "#759AA0", "#E69D87", "#8DC1A9", "#EA7E53", "#EEDD78", "#73A373", "#73B9BC", "#7289AB", "#91CA8C", "#F49F42"]
+];
+const colorIndex = 0;
 
-      if (mapData[i][j].value >= -100) {
-        jian[i] += mapData[i][j].value;
-        count[i]++; //平均计数
-      } else {
-        fei[i].push(mapData[i][j].name);
-      }
+const year = ["温度（℃）", "湿度（%）", "振动(g)", "烟雾（百ppm）", "光线（百lx）"];
+const year1 = ["空调调温", "加湿器/窗户协调", "门锁锁定", "紧急消防", "照明系统"];
 
-      if (mapData[i][j].value >= datamax[i]) {
-        datamax[i] = mapData[i][j].value;
-      }
-      if (mapData[i][j].value <= datamin[i]) {
-        datamin[i] = mapData[i][j].value;
-      }
-      //count2[i]=mapData[i].length-count[i];
-      if (mapData[i][j].value < li[i] || mapData[i][j].value > zhu[i]) {
-        count3[i]++;
-        rong[i].push(mapData[i][j].name);
-      }
-      barData[i].push(mapData[i][j].value);
-      categoryData[i].push(mapData[i][j].name);
+const mapData = [[], [], [], [], []];
+
+/*柱子Y名称*/
+const categoryData = [];
+const fei = [];
+const rong = [];
+const barData = [];
+const lineData1 = [
+  [10, 12, 13, 12, 14, 14, 16, 17, 18, 20, 22, 26, 27, 26, 23, 20, 18, 18, 16, 16, 14, 13, 12, 10],
+  [68, 67, 66, 63, 61, 55, 53, 48, 46, 44, 42, 42, 36, 34, 36, 37, 38, 42, 46, 44, 58, 62, 66, 68],
+  [1, 1, 1, 1, 1, 1, 1, 2, 3, 2, 1, 1, 1, 1, 1, 1, 3, 3, 1, 3, 3, 1, 1, 1],
+  [56, 59, 60, 62, 56, 50, 40, 42, 38, 38, 39, 38, 40, 42, 38, 37, 34, 35, 38, 44, 46, 50, 54, 56],
+  [1, 1, 2, 1, 5, 10, 20, 24, 30, 32, 32, 34, 38, 40, 40, 38, 32, 25, 32, 32, 5, 1, 1, 1]
+];
+const lineData2 = [
+  [11, 12, 14, 12, 15, 13, 16, 16, 16, 21, 22, 24, 22, 24, 23, 21, 19, 18, 15, 14, 15, 13, 12, 11],
+  [62, 64, 66, 65, 62, 58, 54, 49, 45, 44, 41, 40, 32, 36, 36, 39, 38, 40, 46, 48, 52, 60, 63, 61],
+  [1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 3, 1, 1, 1, 3, 2, 1, 1, 3, 1, 2, 1],
+  [58, 59, 62, 62, 54, 50, 44, 42, 34, 33, 35, 38, 40, 44, 38, 35, 32, 35, 33, 40, 46, 53, 56, 54],
+  [1, 1, 1, 1, 6, 12, 20, 22, 30, 33, 32, 35, 38, 42, 40, 37, 34, 28, 32, 33, 10, 1, 1, 1]
+];
+
+const tian = [[], [], [], [], []];
+
+const line1 = [];
+const line2 = [];
+const line3 = [];
+const line4 = [];
+for (const key in geoCoordMap001) {
+  line1.push({
+    year: "温度",
+    name: key,
+    value: d1[key]
+  });
+}
+for (const key in geoCoordMap002) {
+  line2.push({
+    year: "温度",
+    name: key,
+    value: d1[key]
+  });
+}
+for (const key in geoCoordMap003) {
+  line3.push({
+    year: "温度",
+    name: key,
+    value: d1[key]
+  });
+}
+for (const key in geoCoordMap004) {
+  line4.push({
+    year: "温度",
+    name: key,
+    value: d1[key]
+  });
+}
+
+for (const key in geoCoordMap) {
+  mapData[0].push({
+    year: "温度",
+    name: key,
+    value: d1[key]
+  });
+  mapData[1].push({
+    year: "湿度",
+    name: key,
+    value: d2[key]
+  });
+  mapData[2].push({
+    year: "振动",
+    name: key,
+    value: d3[key]
+  });
+  mapData[3].push({
+    year: "烟雾",
+    name: key,
+    value: d4[key]
+  });
+  mapData[4].push({
+    year: "光线",
+    name: key,
+    value: d5[key]
+  });
+}
+const jian = [];
+const count = [];
+const datamax = [];
+const datamin = [];
+//visualMap的max正常值设定
+const zhu = [45, 80, 10, 80, 50];
+//visualMap的min正常值设定
+const li = [-5, 15, 0, 20, 0];
+//var count2=[];
+const count3 = [];
+for (let i = 0; i < mapData.length; i++) {
+  mapData[i].sort(function sortNumber(a, b) {
+    return a.value - b.value;
+  });
+  barData.push([]);
+  categoryData.push([]);
+  fei.push([]);
+  rong.push([]);
+  tian.push([]);
+  jian[i] = 0;
+  count[i] = 0;
+  count3[i] = 0;
+  datamax[i] = 0;
+  datamin[i] = 1000;
+  for (let j = 0; j < mapData[i].length; j++) {
+    if (mapData[i][j].name == "主卧1") {
+      tian[i][0] = mapData[i][j].value;
+    } else if (mapData[i][j].name == "主卧2") {
+      tian[i][1] = mapData[i][j].value;
+    } else if (mapData[i][j].name == "书房") {
+      tian[i][2] = mapData[i][j].value;
+    } else if (mapData[i][j].name == "卫生间") {
+      tian[i][3] = mapData[i][j].value;
+    } else if (mapData[i][j].name == "客厅1") {
+      tian[i][4] = mapData[i][j].value;
+    } else if (mapData[i][j].name == "客厅2") {
+      tian[i][5] = mapData[i][j].value;
+    } else if (mapData[i][j].name == "客厅3") {
+      tian[i][6] = mapData[i][j].value;
+    } else if (mapData[i][j].name == "次卧") {
+      tian[i][7] = mapData[i][j].value;
+    } else if (mapData[i][j].name == "楼梯") {
+      tian[i][8] = mapData[i][j].value;
+    } else if (mapData[i][j].name == "厨房") {
+      tian[i][9] = mapData[i][j].value;
     }
+
+    if (mapData[i][j].value >= -100) {
+      jian[i] += mapData[i][j].value;
+      count[i]++; //平均计数
+    } else {
+      fei[i].push(mapData[i][j].name);
+    }
+
+    if (mapData[i][j].value >= datamax[i]) {
+      datamax[i] = mapData[i][j].value;
+    }
+    if (mapData[i][j].value <= datamin[i]) {
+      datamin[i] = mapData[i][j].value;
+    }
+    //count2[i]=mapData[i].length-count[i];
+    if (mapData[i][j].value < li[i] || mapData[i][j].value > zhu[i]) {
+      count3[i]++;
+      rong[i].push(mapData[i][j].name);
+    }
+    barData[i].push(mapData[i][j].value);
+    categoryData[i].push(mapData[i][j].name);
   }
+}
 
 const HomeSenseChart = () => {
   const ref = useRef();
