@@ -1,6 +1,7 @@
 import { listMyAnnouncements, markAllAnnouncementsRead, markAnnouncementRead } from "@/api/announcement";
 import { listMyNotices, markAllNoticesRead, markNoticeRead, noticeSummary, setNoticeTodo } from "@/api/notice";
 import { createStaleRefresh } from "@/utils/staleRefresh";
+import { LoadingMark } from "@/components/LoadingRing";
 import { BellOutlined } from "@ant-design/icons";
 import { Avatar, Badge, Dropdown, DropdownProps, MenuProps, message } from "antd";
 import { FC, useEffect, useMemo, useRef, useState, type ComponentType } from "react";
@@ -149,7 +150,9 @@ const HeaderNotice: FC = () => {
           }}
         />
       ) : (
-        <div className="px-6 py-4 text-center text-[#999]">加载中</div>
+        <div className="flex justify-center px-6 py-8">
+          <LoadingMark size={22} />
+        </div>
       )
     }
   ];

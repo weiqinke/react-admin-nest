@@ -1,3 +1,4 @@
+import { buttonLoadingIcon, spinIndicator } from "@/components/LoadingRing";
 import SuspendFallback from "@/components/SuspendFallback";
 import { useAppStore } from "@/stores/app";
 import MenuTagSync from "@/stores/MenuTagSync";
@@ -10,7 +11,7 @@ const ProjectLayout = () => {
   const theme = useAppStore(state => state.theme);
 
   return (
-    <ConfigProvider theme={buildAntdTheme(theme)}>
+    <ConfigProvider theme={buildAntdTheme(theme)} spin={{ indicator: spinIndicator }} button={{ loadingIcon: buttonLoadingIcon }}>
       <MenuTagSync />
       <div id="default-layout">
         <Suspense fallback={<SuspendFallback />}>

@@ -4,7 +4,8 @@ import { loginlog } from "@/api/log";
 import { dataScopeLabel } from "@/api/platform";
 import LoginFrequencyChart from "@/components/Echarts/LoginFrequencyChart";
 import { getDateTimeFormat } from "@/utils/core";
-import { Alert, Button, Skeleton, Table, message } from "antd";
+import { LoadingMark } from "@/components/LoadingRing";
+import { Alert, Button, Table, message } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
@@ -94,19 +95,15 @@ const LoginLog = () => {
 
   return (
     <div>
-      {dataSource === undefined || dataScope ? (
-        <div className="mb-3" style={{ minHeight: 40 }}>
-          {dataSource === undefined ? (
-            <Skeleton active title={false} paragraph={{ rows: 1 }} />
-          ) : (
-            <Alert
-              type="info"
-              showIcon
-              title={`当前数据范围：${dataScopeLabel(dataScope)}${
-                summary ? `。近 15 天 ${summary.total || 0} 次，成功 ${summary.success || 0}，失败 ${summary.fail || 0}` : ""
-              }`}
-            />
-          )}
+      {dataScope ? (
+        <div className="mb-3">
+          <Alert
+            type="info"
+            showIcon
+            title={`当前数据范围：${dataScopeLabel(dataScope)}${
+              summary ? `。近 15 天 ${summary.total || 0} 次，成功 ${summary.success || 0}，失败 ${summary.fail || 0}` : ""
+            }`}
+          />
         </div>
       ) : null}
       <div className="admin-toolbar" style={{ justifyContent: "flex-end" }}>
@@ -127,7 +124,9 @@ const LoginLog = () => {
       </div>
       <div style={{ minHeight: 640 }}>
         {dataSource === undefined ? (
-          <Skeleton active paragraph={{ rows: 8 }} />
+          <div className="flex h-[480px] items-center justify-center">
+            <LoadingMark />
+          </div>
         ) : (
           <Table rowKey="id" columns={columns} dataSource={dataSource} scroll={{ x: 900, y: 480 }} />
         )}

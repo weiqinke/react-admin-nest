@@ -4,7 +4,8 @@ import { listMyNotices, markNoticeRead, setNoticeTodo } from "@/api/notice";
 import { TICKET_PRIORITY, formatDueInSeconds, listMyTickets, ticketOverdue } from "@/api/platform";
 import { getUserState } from "@/api/session";
 import TicketStatusTag from "@/components/TicketStatusTag";
-import { Button, Col, Empty, Modal, Row, Skeleton, Space, Tag, Timeline, message } from "antd";
+import { LoadingMark } from "@/components/LoadingRing";
+import { Button, Col, Empty, Modal, Row, Space, Tag, Timeline, message } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState, type ReactNode } from "react";
 import { useNavigate, useSearchParams } from "react-router";
@@ -93,9 +94,13 @@ function Panel({ id, title, extra, children }: { id: string; title: string; extr
 function PanelBody({ ready, children }: { ready: boolean; children: ReactNode }) {
   return (
     <div className={styles.feedSlot}>
-      <Skeleton active loading={!ready} title={false} paragraph={{ rows: 4 }}>
-        {children}
-      </Skeleton>
+      {ready ? (
+        children
+      ) : (
+        <div className="flex h-full items-center justify-center">
+          <LoadingMark />
+        </div>
+      )}
     </div>
   );
 }

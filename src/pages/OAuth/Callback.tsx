@@ -3,7 +3,8 @@ import { saveLoginSession } from "@/api/session";
 import { useMenuTagStore } from "@/stores/menuTag";
 import { saveMenus } from "@/utils/menuUtils";
 import { webSocketManager } from "@/utils/ws";
-import { Alert, Spin, message } from "antd";
+import { LoadingMark } from "@/components/LoadingRing";
+import { message } from "antd";
 import { useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 
@@ -86,9 +87,7 @@ const OAuthCallback = () => {
 
   return (
     <div className="flex h-screen w-screen items-center justify-center">
-      <Spin description="正在完成第三方登录…">
-        <Alert message="OAuth 回调处理中" description="请稍候，完成后会自动跳转。" type="info" />
-      </Spin>
+      <LoadingMark label="正在完成第三方登录" />
     </div>
   );
 };

@@ -1,7 +1,8 @@
 import { hasPermission } from "@/api/announcement";
 import { TICKET_STATUS, dataScopeLabel, getDashboard } from "@/api/platform";
 import echarts from "@/components/Echarts/setup-cartesian";
-import { Alert, Col, DatePicker, Row, Skeleton, Statistic } from "antd";
+import { LoadingMark } from "@/components/LoadingRing";
+import { Alert, Col, DatePicker, Row, Statistic } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 import { FC, useEffect, useRef, useState, type RefObject } from "react";
 
@@ -10,10 +11,7 @@ const { RangePicker } = DatePicker;
 const CHART_HEIGHT = 280;
 const FUNNEL_HEIGHT = 260;
 
-function ChartFrame({ height, loading, chartRef }: { height: number; loading: boolean; chartRef: RefObject<HTMLDivElement | null> }) {
-  if (loading) {
-    return <Skeleton.Node active style={{ width: "100%", height, display: "block" }} styles={{ root: { display: "block", width: "100%" } }} />;
-  }
+function ChartFrame({ height, chartRef }: { height: number; chartRef: RefObject<HTMLDivElement | null> }) {
   return <div ref={chartRef} style={{ height, width: "100%" }} />;
 }
 
@@ -144,26 +142,29 @@ const DashboardPanel: FC = () => {
         />
       </div>
       {failed ? <Alert type="warning" showIcon message="看板加载失败，请确认已授权 stats:read" /> : null}
-      {!failed ? (
+      {!failed && loading ? (
+        <div className="flex min-h-[480px] items-center justify-center">
+          <LoadingMark />
+        </div>
+      ) : null}
+      {!failed && snap ? (
         <>
           <Row gutter={[12, 12]} className="mb-3">
             {stats.map(item => (
               <Col key={item.title} xs={12} md={6}>
-                <div style={{ minHeight: 62 }}>
-                  {loading ? <Skeleton active title={{ width: "70%" }} paragraph={{ rows: 1, width: "40%" }} /> : <Statistic title={item.title} value={item.value} />}
-                </div>
+                <Statistic title={item.title} value={item.value} />
               </Col>
             ))}
           </Row>
           <Row gutter={[12, 12]}>
             <Col xs={24} lg={12}>
-              <ChartFrame height={CHART_HEIGHT} loading={loading} chartRef={loginRef} />
+              <ChartFrame height={CHART_HEIGHT} chartRef={loginRef} />
             </Col>
             <Col xs={24} lg={12}>
-              <ChartFrame height={CHART_HEIGHT} loading={loading} chartRef={accessRef} />
+              <ChartFrame height={CHART_HEIGHT} chartRef={accessRef} />
             </Col>
             <Col xs={24}>
-              <ChartFrame height={FUNNEL_HEIGHT} loading={loading} chartRef={funnelRef} />
+              <ChartFrame height={FUNNEL_HEIGHT} chartRef={funnelRef} />
             </Col>
           </Row>
         </>
