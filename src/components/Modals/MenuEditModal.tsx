@@ -1,6 +1,6 @@
 import { createMenuItem, updateMenuItem } from "@/api/menu";
 import { Col, Form, Input, Modal, Row, Select, message } from "antd";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 
 const layout = {
   labelCol: { span: 8 },
@@ -44,11 +44,6 @@ const MenuEditModal: FC<any> = ({ onOk, initMenuItem, parentUid, onCancel }) => 
   const hiddMenuChange = (value: string) => {
     form.setFieldsValue({ show: value });
   };
-
-  useEffect(() => {
-    form.resetFields();
-    form.getFieldsValue();
-  }, [form]);
 
   return (
     <Modal open title={initMenuItem.id ? "编辑" : "添加"} onOk={creatRoleSubmit} onCancel={onCancel} width={800} getContainer={false} forceRender>

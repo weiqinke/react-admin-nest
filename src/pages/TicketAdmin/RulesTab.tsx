@@ -12,7 +12,6 @@ const RulesTab: FC = () => {
   const [saving, setSaving] = useState(false);
   const [users, setUsers] = useState<any[]>([]);
   const [depts, setDepts] = useState<any[]>([]);
-  const [form] = Form.useForm();
   const canWrite = hasPermission("ticket:write");
 
   const load = () => {
@@ -36,17 +35,6 @@ const RulesTab: FC = () => {
         .catch(() => setDepts([]));
     }
   }, []);
-
-  useEffect(() => {
-    if (!draft) return;
-    form.setFieldsValue({
-      name: draft.name || "",
-      priority: draft.priority || undefined,
-      department_id: draft.department_id || undefined,
-      assignee_pool: draft.assignee_pool || [],
-      enabled: draft.enabled !== false
-    });
-  }, [draft, form]);
 
   const save = async (values: any) => {
     setSaving(true);
@@ -136,10 +124,21 @@ const RulesTab: FC = () => {
         open={Boolean(draft)}
         title={draft?.id ? "编辑规则" : "新建规则"}
         confirmLoading={saving}
-        onOk={() => form.submit()}
+        okButtonProps={{ htmlType: "submit", form: "ticket-rule-form" }}
         onCancel={() => setDraft(null)}
         destroyOnHidden>
-        <Form form={form} layout="vertical" onFinish={save}>
+        <Form
+          key={draft?.id || "new"}
+          id="ticket-rule-form"
+          layout="vertical"
+          onFinish={save}
+          initialValues={{
+            name: draft?.name || "",
+            priority: draft?.priority || undefined,
+            department_id: draft?.department_id || undefined,
+            assignee_pool: draft?.assignee_pool || [],
+            enabled: draft?.enabled !== false
+          }}>
           <Form.Item name="name" label="名称" rules={[{ required: true, message: "请填写名称" }]}>
             <Input />
           </Form.Item>

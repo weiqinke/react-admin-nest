@@ -37,24 +37,18 @@ const RoleEditModal: FC<any> = ({ role, onCancel, onOk }: any) => {
   }, []);
 
   useEffect(() => {
-    form.resetFields();
-    if (role?.code || role?.name) {
-      form.setFieldsValue({
-        code: role.code,
-        name: role.name,
-        inherits: role.inherits || [],
-        data_scope: role.data_scope || "self",
-        department_ids: []
-      });
-      if (role.code && role.data_scope === "custom") {
-        getRoleScopeDepts(role.code)
-          .then(res => {
-            const ids = (res.data?.data?.department_ids || []).map(String);
-            form.setFieldsValue({ department_ids: ids });
-          })
-          .catch(() => undefined);
-      }
-    }
+    if (!(role?.code && role.data_scope === "custom")) return;
+    let cancelled = false;
+    getRoleScopeDepts(role.code)
+      .then(res => {
+        if (cancelled) return;
+        const ids = (res.data?.data?.department_ids || []).map(String);
+        form.setFieldsValue({ department_ids: ids });
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
   }, [role, form]);
 
   const onFinish = async (data: any) => {
@@ -87,7 +81,18 @@ const RoleEditModal: FC<any> = ({ role, onCancel, onOk }: any) => {
 
   return (
     <Modal open title={`${isEdit ? "编辑" : "新增"}角色`} onOk={() => form.submit()} onCancel={onCancel} confirmLoading={saving} width={640} destroyOnHidden>
-      <Form form={form} onFinish={onFinish} {...layout} autoComplete="off">
+      <Form
+        form={form}
+        onFinish={onFinish}
+        initialValues={{
+          code: role?.code,
+          name: role?.name,
+          inherits: role?.inherits || [],
+          data_scope: role?.data_scope || "self",
+          department_ids: []
+        }}
+        {...layout}
+        autoComplete="off">
         <Row>
           <Col span={24}>
             <Form.Item name="code" label="角色编码" rules={[{ required: true, message: "请输入角色编码" }]}>

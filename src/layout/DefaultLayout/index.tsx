@@ -51,8 +51,6 @@ const DefaultLayout = () => {
   const matches = useMatches();
   const navigate = useNavigate();
   const [menuTick, setMenuTick] = useState(0);
-  // 入场动画只在路由切换时播；真刷新用 loading，避免像重新进路由。
-  const [enterMotion, setEnterMotion] = useState(true);
   // 有上次的菜单和权限就先画出页面，接口回来再刷新菜单。没有缓存时仍等这两笔请求。
   const [accessReady, setAccessReady] = useState(hasCachedShell);
   const [needStepUp, setNeedStepUp] = useState(false);
@@ -66,12 +64,6 @@ const DefaultLayout = () => {
     window.addEventListener("menus:refresh", refresh);
     return () => window.removeEventListener("menus:refresh", refresh);
   }, []);
-
-  useEffect(() => {
-    setEnterMotion(true);
-    const timer = window.setTimeout(() => setEnterMotion(false), 200);
-    return () => window.clearTimeout(timer);
-  }, [pathname]);
 
   useEffect(() => {
     if (getAccessToken()) webSocketManager.create();
@@ -166,13 +158,13 @@ const DefaultLayout = () => {
             <Suspense fallback={<SuspendFallback />}>
               <div className={styles.outletContainer}>
                 <div className={styles.pageOutlet}>
-                  {!accessReady || refreshing ? (
-                    <SuspendFallback />
-                  ) : (
-                    <div key={`${pathname}-${refreshKey}`} className={enterMotion ? styles.pageEnter : undefined}>
-                      {showNotAuth ? <NotAuthPage /> : <Outlet />}
-                    </div>
-                  )}
+                  <div key={pathname} className={styles.pageEnter}>
+                    {!accessReady || refreshing ? (
+                      <SuspendFallback />
+                    ) : (
+                      <div key={refreshKey}>{showNotAuth ? <NotAuthPage /> : <Outlet />}</div>
+                    )}
+                  </div>
                 </div>
                 <Copyright />
               </div>

@@ -1,6 +1,6 @@
 import { createDictItem, updateDictItem } from "@/api/dict";
 import { Col, Form, Input, InputNumber, Modal, Row, Select, message } from "antd";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 
 const layout = {
   labelCol: { span: 8 },
@@ -29,22 +29,22 @@ const OperationDictItemModal: FC<any> = ({ typeId, item, onCancel, onOk }) => {
     onOk();
   };
 
-  useEffect(() => {
-    form.resetFields();
-    form.setFieldsValue({
-      id: item?.id,
-      value: item?.value,
-      label: item?.label,
-      color: item?.color,
-      sort: item?.sort ?? 0,
-      status: item?.status || "enabled",
-      remark: item?.remark
-    });
-  }, [form, item]);
-
   return (
     <Modal open forceRender title={`${editing ? "编辑" : "添加"}字典项`} onOk={() => form.submit()} onCancel={onCancel} width={720} getContainer={false}>
-      <Form form={form} onFinish={onFinish} {...layout} autoComplete="off">
+      <Form
+        form={form}
+        onFinish={onFinish}
+        initialValues={{
+          id: item?.id,
+          value: item?.value,
+          label: item?.label,
+          color: item?.color,
+          sort: item?.sort ?? 0,
+          status: item?.status || "enabled",
+          remark: item?.remark
+        }}
+        {...layout}
+        autoComplete="off">
         <Row>
           {editing && (
             <Col span={20}>

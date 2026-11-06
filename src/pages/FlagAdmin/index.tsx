@@ -10,7 +10,6 @@ const FlagAdmin: FC = () => {
   const [list, setList] = useState<any[]>([]);
   const [draft, setDraft] = useState<any>(null);
   const [saving, setSaving] = useState(false);
-  const [form] = Form.useForm();
   const canWrite = hasPermission("config:write");
 
   const load = () => {
@@ -22,16 +21,6 @@ const FlagAdmin: FC = () => {
   useEffect(() => {
     load();
   }, []);
-
-  useEffect(() => {
-    if (!draft) return;
-    form.setFieldsValue({
-      code: draft.code || "",
-      name: draft.name || "",
-      description: draft.description || "",
-      enabled: draft.enabled !== false
-    });
-  }, [draft, form]);
 
   const save = async (values: any) => {
     setSaving(true);
@@ -106,10 +95,20 @@ const FlagAdmin: FC = () => {
         open={Boolean(draft)}
         title={draft?.code ? "编辑 Flag" : "新建 Flag"}
         confirmLoading={saving}
-        onOk={() => form.submit()}
+        okButtonProps={{ htmlType: "submit", form: "flag-edit-form" }}
         onCancel={() => setDraft(null)}
         destroyOnHidden>
-        <Form form={form} layout="vertical" onFinish={save}>
+        <Form
+          key={draft?.code || "new"}
+          id="flag-edit-form"
+          layout="vertical"
+          onFinish={save}
+          initialValues={{
+            code: draft?.code || "",
+            name: draft?.name || "",
+            description: draft?.description || "",
+            enabled: draft?.enabled !== false
+          }}>
           <Form.Item name="code" label="编码" rules={[{ required: true, message: "请填写编码" }]}>
             <Input disabled={list.some(item => item.code === draft?.code)} placeholder="例如 ai.chat" />
           </Form.Item>

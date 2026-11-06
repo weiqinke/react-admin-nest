@@ -28,7 +28,6 @@ function dropNode(nodes: any[] = [], id: string): any[] {
 const DeptAdmin: FC = () => {
   const [tree, setTree] = useState<any[]>([]);
   const [draft, setDraft] = useState<any>(null);
-  const [form] = Form.useForm();
   const [saving, setSaving] = useState(false);
   const [users, setUsers] = useState<any[]>([]);
   const [importOpen, setImportOpen] = useState(false);
@@ -50,18 +49,6 @@ const DeptAdmin: FC = () => {
       .then(res => setUsers(res.data?.data || []))
       .catch(() => setUsers([]));
   }, [canPickLeader]);
-
-  useEffect(() => {
-    if (!draft) return;
-    form.setFieldsValue({
-      name: draft.name || "",
-      code: draft.code || "",
-      parent_id: draft.parent_id || undefined,
-      sort: draft.sort ?? 0,
-      status: draft.status ?? 1,
-      leader_user_id: draft.leader_user_id || undefined
-    });
-  }, [draft, form]);
 
   const parentTree = useMemo(() => toDeptTree(draft?.id ? dropNode(tree, String(draft.id)) : tree), [draft, tree]);
 
@@ -195,10 +182,22 @@ const DeptAdmin: FC = () => {
         confirmLoading={saving}
         okText="保存"
         cancelText="取消"
-        onOk={() => form.submit()}
+        okButtonProps={{ htmlType: "submit", form: "dept-edit-form" }}
         onCancel={() => setDraft(null)}
         destroyOnHidden>
-        <Form form={form} layout="vertical" onFinish={save}>
+        <Form
+          key={draft?.id || `new-${draft?.parent_id || "root"}`}
+          id="dept-edit-form"
+          layout="vertical"
+          onFinish={save}
+          initialValues={{
+            name: draft?.name || "",
+            code: draft?.code || "",
+            parent_id: draft?.parent_id || undefined,
+            sort: draft?.sort ?? 0,
+            status: draft?.status ?? 1,
+            leader_user_id: draft?.leader_user_id || undefined
+          }}>
           <Form.Item name="name" label="名称" rules={[{ required: true, message: "请填写名称" }]}>
             <Input maxLength={128} />
           </Form.Item>

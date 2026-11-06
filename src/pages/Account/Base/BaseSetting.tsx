@@ -14,6 +14,8 @@ const { Meta } = Card;
 
 const BaseSetting: FC = function () {
   const [initFormItem, setInitFormItem] = useState<any>({});
+  const [formKey, setFormKey] = useState(0);
+  const [loaded, setLoaded] = useState(false);
   const [needaxios, setNeedAxios] = useState(1);
   const pendingCallback = async (formdata: any) => {
     const result = await updateMyinfo(formdata);
@@ -22,11 +24,22 @@ const BaseSetting: FC = function () {
     }
   };
   useEffect(() => {
-    getmyuserinfo().then(result => {
-      if (result.data.code === 0) {
-        setInitFormItem(result.data.data);
-      }
-    });
+    let cancelled = false;
+    getmyuserinfo()
+      .then(result => {
+        if (cancelled) return;
+        if (result.data.code === 0) {
+          setInitFormItem(result.data.data);
+          setFormKey(value => value + 1);
+        }
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        if (!cancelled) setLoaded(true);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [needaxios]);
   return (
     <Row>
@@ -37,7 +50,7 @@ const BaseSetting: FC = function () {
       </Col>
 
       <Col span={12}>
-        <BaseFrom initFormItem={initFormItem} pendingCallback={pendingCallback} />
+        {loaded ? <BaseFrom key={formKey} initFormItem={initFormItem} pendingCallback={pendingCallback} /> : null}
       </Col>
       <Col span={6} offset={1}>
         <div className="setting-base">

@@ -221,6 +221,7 @@ const PlacardAdmin: FC = () => {
       </div>
       {placard && (
         <PlacardEditModal
+          key={placard.id || "new"}
           placard={placard}
           onCancel={() => setPlacard(null)}
           onOk={() => {

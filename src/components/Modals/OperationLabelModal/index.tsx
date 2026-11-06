@@ -1,6 +1,6 @@
 import { createLabel, updateLabel } from "@/api/label";
 import { Col, Form, Input, InputNumber, Modal, Row, Select, message } from "antd";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 
 const layout = {
   labelCol: { span: 8 },
@@ -29,22 +29,22 @@ const OperationLabelModal: FC<any> = ({ label, onCancel, onOk }) => {
     onOk();
   };
 
-  useEffect(() => {
-    form.resetFields();
-    form.setFieldsValue({
-      id: label?.id,
-      name: label?.name,
-      code: label?.code,
-      color: label?.color,
-      description: label?.description,
-      sort: label?.sort ?? 0,
-      status: label?.status || "enabled"
-    });
-  }, [form, label]);
-
   return (
     <Modal open forceRender title={`${editing ? "编辑" : "添加"}标签`} onOk={() => form.submit()} onCancel={onCancel} width={720} getContainer={false}>
-      <Form form={form} onFinish={onFinish} {...layout} autoComplete="off">
+      <Form
+        form={form}
+        onFinish={onFinish}
+        initialValues={{
+          id: label?.id,
+          name: label?.name,
+          code: label?.code,
+          color: label?.color,
+          description: label?.description,
+          sort: label?.sort ?? 0,
+          status: label?.status || "enabled"
+        }}
+        {...layout}
+        autoComplete="off">
         <Row>
           {editing && (
             <Col span={20}>

@@ -1,7 +1,7 @@
 import { createMenuItem, updateMenuItem } from "@/api/menu";
 import { AdminMenuNode } from "@/types/menu";
 import { Button, Drawer, Form, Input, InputNumber, Space, Switch, message } from "antd";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 
 type Props = {
   open: boolean;
@@ -13,36 +13,37 @@ type Props = {
 };
 
 const MenuFormDrawer: FC<Props> = ({ open, mode, parentId, node, onClose, onSuccess }) => {
-  const [form] = Form.useForm();
   const [submitting, setSubmitting] = useState(false);
   const isEdit = mode === "edit";
+  const initialValues =
+    isEdit && node
+      ? {
+          title: node.title,
+          segment: node.segment,
+          icon: node.icon || "",
+          remark: node.remark || "",
+          sort: node.sort ?? 0,
+          is_hot: Number(node.is_hot) === 1,
+          has_update: Number(node.has_update) === 1,
+          visible_in_menu: Number(node.visible_in_menu) !== 0
+        }
+      : {
+          sort: 10,
+          is_hot: false,
+          has_update: false,
+          visible_in_menu: true
+        };
 
-  useEffect(() => {
-    if (!open) return;
-    if (isEdit && node) {
-      form.setFieldsValue({
-        title: node.title,
-        segment: node.segment,
-        icon: node.icon || "",
-        remark: node.remark || "",
-        sort: node.sort ?? 0,
-        is_hot: Number(node.is_hot) === 1,
-        has_update: Number(node.has_update) === 1,
-        visible_in_menu: Number(node.visible_in_menu) !== 0
-      });
-      return;
-    }
-    form.resetFields();
-    form.setFieldsValue({
-      sort: 10,
-      is_hot: false,
-      has_update: false,
-      visible_in_menu: true
-    });
-  }, [open, isEdit, node, form]);
-
-  const onSubmit = async () => {
-    const values = await form.validateFields();
+  const onSubmit = async (values: {
+    title: string;
+    segment: string;
+    icon?: string;
+    remark?: string;
+    sort?: number;
+    is_hot?: boolean;
+    has_update?: boolean;
+    visible_in_menu?: boolean;
+  }) => {
     setSubmitting(true);
     try {
       const shared = {
@@ -78,7 +79,7 @@ const MenuFormDrawer: FC<Props> = ({ open, mode, parentId, node, onClose, onSucc
       footer={
         <Space style={{ display: "flex", justifyContent: "flex-end" }}>
           <Button onClick={onClose}>取消</Button>
-          <Button type="primary" loading={submitting} onClick={onSubmit}>
+          <Button type="primary" htmlType="submit" form="menu-form" loading={submitting}>
             保存
           </Button>
         </Space>
@@ -95,7 +96,13 @@ const MenuFormDrawer: FC<Props> = ({ open, mode, parentId, node, onClose, onSucc
           </div>
         </div>
       ) : null}
-      <Form form={form} layout="vertical" autoComplete="off">
+      <Form
+        key={isEdit ? node?.id : `create-${parentId ?? "root"}`}
+        id="menu-form"
+        layout="vertical"
+        autoComplete="off"
+        initialValues={initialValues}
+        onFinish={onSubmit}>
         <Form.Item name="title" label="菜单名称" rules={[{ required: true, message: "请输入名称" }]}>
           <Input placeholder="显示名称，允许重复" />
         </Form.Item>

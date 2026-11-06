@@ -96,6 +96,9 @@ const Feeds = () => {
   const [announcements, setAnnouncements] = useState<any[]>([]);
   const [announcementTotal, setAnnouncementTotal] = useState(0);
   const [current, setCurrent] = useState<any>(null);
+  const linkedId = params.get("announcement_id");
+  const linkedAnnouncement = linkedId ? (announcements.find(item => String(item.id) === linkedId) ?? null) : null;
+  const activeAnnouncement = current ?? linkedAnnouncement;
   const [todos, setTodos] = useState<any[]>([]);
   const [inbox, setInbox] = useState<any[]>([]);
   const [tickets, setTickets] = useState<any[]>([]);
@@ -147,13 +150,6 @@ const Feeds = () => {
       .then(res => setChangelogs(res.data?.data?.list || []))
       .catch(() => setChangelogs([]));
   }, []);
-
-  useEffect(() => {
-    const id = params.get("announcement_id");
-    if (!id || !announcements.length) return;
-    const found = announcements.find(item => String(item.id) === id);
-    if (found) setCurrent(found);
-  }, [params, announcements]);
 
   const openAnnouncement = async (item: any) => {
     setCurrent(item);
@@ -397,14 +393,14 @@ const Feeds = () => {
       </Row>
 
       <Modal
-        open={Boolean(current)}
-        title={current?.title || "公告"}
+        open={Boolean(activeAnnouncement)}
+        title={activeAnnouncement?.title || "公告"}
         okText="知道了"
         cancelButtonProps={{ style: { display: "none" } }}
         onOk={closeAnnouncement}
         onCancel={closeAnnouncement}
         destroyOnHidden>
-        <div className="whitespace-pre-wrap">{current?.content || ""}</div>
+        <div className="whitespace-pre-wrap">{activeAnnouncement?.content || ""}</div>
       </Modal>
     </>
   );

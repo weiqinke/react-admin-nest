@@ -1,6 +1,6 @@
 import { createDictType, updateDictType } from "@/api/dict";
 import { Col, Form, Input, InputNumber, Modal, Row, Select, message } from "antd";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 
 const layout = {
   labelCol: { span: 8 },
@@ -28,21 +28,21 @@ const OperationDictTypeModal: FC<any> = ({ dictType, onCancel, onOk }) => {
     onOk();
   };
 
-  useEffect(() => {
-    form.resetFields();
-    form.setFieldsValue({
-      id: dictType?.id,
-      code: dictType?.code,
-      name: dictType?.name,
-      description: dictType?.description,
-      sort: dictType?.sort ?? 0,
-      status: dictType?.status || "enabled"
-    });
-  }, [form, dictType]);
-
   return (
     <Modal open forceRender title={`${editing ? "编辑" : "添加"}字典类型`} onOk={() => form.submit()} onCancel={onCancel} width={720} getContainer={false}>
-      <Form form={form} onFinish={onFinish} {...layout} autoComplete="off">
+      <Form
+        form={form}
+        onFinish={onFinish}
+        initialValues={{
+          id: dictType?.id,
+          code: dictType?.code,
+          name: dictType?.name,
+          description: dictType?.description,
+          sort: dictType?.sort ?? 0,
+          status: dictType?.status || "enabled"
+        }}
+        {...layout}
+        autoComplete="off">
         <Row>
           {editing && (
             <Col span={20}>

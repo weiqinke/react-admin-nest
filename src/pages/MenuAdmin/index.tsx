@@ -179,11 +179,11 @@ const MenusAdmin: FC = () => {
   });
   const treeData: DataNode[] = visibleList.map(mapNode);
 
-  useEffect(() => {
-    if (keyword || filter !== "all") {
-      setExpandedKeys(collectKeys(visibleList));
+  const expandMatches = (nextKeyword: string, nextFilter: MenuTreeFilter) => {
+    if (nextKeyword.trim() || nextFilter !== "all") {
+      setExpandedKeys(collectKeys(filterTree(rawList, nextKeyword, nextFilter)));
     }
-  }, [keyword, filter, visibleList]);
+  };
 
   return (
     <div className={`p-3 ${styles.page}`}>
@@ -199,12 +199,19 @@ const MenusAdmin: FC = () => {
             placeholder="搜索标题 / segment / 路径"
             style={{ width: 260 }}
             value={keyword}
-            onChange={e => setKeyword(e.target.value)}
+            onChange={e => {
+              const next = e.target.value;
+              setKeyword(next);
+              expandMatches(next, filter);
+            }}
           />
           <Select
             style={{ width: 140 }}
             value={filter}
-            onChange={setFilter}
+            onChange={next => {
+              setFilter(next);
+              expandMatches(keyword, next);
+            }}
             options={[
               { value: "all", label: "全部" },
               { value: "disabled", label: "仅禁用" },

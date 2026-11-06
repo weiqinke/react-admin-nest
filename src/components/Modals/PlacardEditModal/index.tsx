@@ -19,6 +19,16 @@ function toIso(value) {
 const PlacardEditModal: FC<any> = ({ placard, onOk, onCancel }: any) => {
   const [form] = Form.useForm();
   const locked = placard?.status === "published" || placard?.status === "revoked";
+  const initialValues = placard?.id
+    ? {
+        ...placard,
+        content: placard.content,
+        starts_at: placard.starts_at ? dayjs(placard.starts_at) : null,
+        expires_at: placard.expires_at ? dayjs(placard.expires_at) : null,
+        target_dept_ids: placard.target_dept_ids || [],
+        target_role_codes: placard.target_role_codes || []
+      }
+    : { type: "system", level: "normal" };
   const [typeOptions, setTypeOptions] = useState<{ value: string; label: string }[]>([
     { value: "system", label: "系统公告" },
     { value: "notification", label: "普通通知" }
@@ -102,21 +112,6 @@ const PlacardEditModal: FC<any> = ({ placard, onOk, onCancel }: any) => {
     onOk();
   };
 
-  useEffect(() => {
-    form.resetFields();
-    setEstimate(null);
-    if (placard?.id) {
-      form.setFieldsValue({
-        ...placard,
-        content: placard.content,
-        starts_at: placard.starts_at ? dayjs(placard.starts_at) : null,
-        expires_at: placard.expires_at ? dayjs(placard.expires_at) : null,
-        target_dept_ids: placard.target_dept_ids || [],
-        target_role_codes: placard.target_role_codes || []
-      });
-    }
-  }, [placard, form]);
-
   return (
     <Modal
       open
@@ -126,7 +121,7 @@ const PlacardEditModal: FC<any> = ({ placard, onOk, onCancel }: any) => {
       onCancel={onCancel}
       width={800}
       getContainer={false}>
-      <Form form={form} onFinish={onFinish} initialValues={{ type: "system", level: "normal" }} {...layout} autoComplete="off">
+      <Form form={form} onFinish={onFinish} initialValues={initialValues} {...layout} autoComplete="off">
         <Row>
           <Col span={20}>
             <Form.Item name="title" label="公告名称" rules={[{ required: true, message: "请填写公告名称" }]}>

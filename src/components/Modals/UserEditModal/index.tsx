@@ -15,7 +15,7 @@ const layout = {
 
 const UserEditModal: FC<any> = (props: any) => {
   const { onCancel, onOk, initUser = {} } = props;
-  const initialValues = { ...initUser, ...initUser.profile };
+  const initialValues = { sex: "1", ...initUser, ...initUser.profile };
   const title = initUser?.uid ? "编辑" : "添加";
   const [form] = Form.useForm();
   const [avatarUrl, setAvatarUrl] = useState(initialValues.avatar || "");
@@ -138,17 +138,6 @@ const UserEditModal: FC<any> = (props: any) => {
       .then(res => setDeptTree(res.data?.data?.list || []))
       .catch(() => setDeptTree([]));
   }, [canAssignDept]);
-
-  useEffect(() => {
-    if (initUser) {
-      setAvatarUrl(initUser?.profile?.avatar || "");
-      setDepartmentId(initUser?.profile?.department_id || "");
-      setPositionId(initUser?.profile?.position_id || "");
-    }
-    if (!initUser?.id) {
-      form.setFieldsValue({ sex: "1" });
-    }
-  }, [initUser, form]);
 
   useEffect(() => {
     if (!canAssignPosition) return;

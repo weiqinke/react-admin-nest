@@ -9,7 +9,6 @@ const TemplatesTab: FC = () => {
   const [loading, setLoading] = useState(false);
   const [draft, setDraft] = useState<any>(null);
   const [saving, setSaving] = useState(false);
-  const [form] = Form.useForm();
   const canWrite = hasPermission("ticket:write");
 
   const load = () => {
@@ -23,17 +22,6 @@ const TemplatesTab: FC = () => {
   useEffect(() => {
     load();
   }, []);
-
-  useEffect(() => {
-    if (!draft) return;
-    form.setFieldsValue({
-      name: draft.name || "",
-      title: draft.title || "",
-      content: draft.content || "",
-      priority: draft.priority || "normal",
-      enabled: draft.enabled !== false
-    });
-  }, [draft, form]);
 
   const save = async (values: any) => {
     setSaving(true);
@@ -111,10 +99,21 @@ const TemplatesTab: FC = () => {
         open={Boolean(draft)}
         title={draft?.id ? "编辑模板" : "新建模板"}
         confirmLoading={saving}
-        onOk={() => form.submit()}
+        okButtonProps={{ htmlType: "submit", form: "ticket-template-form" }}
         onCancel={() => setDraft(null)}
         destroyOnHidden>
-        <Form form={form} layout="vertical" onFinish={save}>
+        <Form
+          key={draft?.id || "new"}
+          id="ticket-template-form"
+          layout="vertical"
+          onFinish={save}
+          initialValues={{
+            name: draft?.name || "",
+            title: draft?.title || "",
+            content: draft?.content || "",
+            priority: draft?.priority || "normal",
+            enabled: draft?.enabled !== false
+          }}>
           <Form.Item name="name" label="名称" rules={[{ required: true, message: "请填写名称" }]}>
             <Input />
           </Form.Item>

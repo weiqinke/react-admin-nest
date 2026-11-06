@@ -13,7 +13,6 @@ const AiAdmin: FC = () => {
   const [list, setList] = useState<any[]>([]);
   const [draft, setDraft] = useState<any>(null);
   const [saving, setSaving] = useState(false);
-  const [form] = Form.useForm();
   const canWrite = hasPermission("ai:write");
 
   const load = () => {
@@ -25,18 +24,6 @@ const AiAdmin: FC = () => {
   useEffect(() => {
     load();
   }, []);
-
-  useEffect(() => {
-    if (!draft) return;
-    form.setFieldsValue({
-      name: draft.name || "",
-      provider: draft.provider || "none",
-      base_url: draft.base_url || "",
-      model: draft.model || "",
-      api_key: "",
-      enabled: draft.enabled !== false
-    });
-  }, [draft, form]);
 
   const save = async (values: any) => {
     setSaving(true);
@@ -125,10 +112,22 @@ const AiAdmin: FC = () => {
         open={Boolean(draft)}
         title={draft?.id ? "编辑模型" : "添加模型"}
         confirmLoading={saving}
-        onOk={() => form.submit()}
+        okButtonProps={{ htmlType: "submit", form: "ai-model-form" }}
         onCancel={() => setDraft(null)}
         destroyOnHidden>
-        <Form form={form} layout="vertical" onFinish={save}>
+        <Form
+          key={draft?.id || "new"}
+          id="ai-model-form"
+          layout="vertical"
+          onFinish={save}
+          initialValues={{
+            name: draft?.name || "",
+            provider: draft?.provider || "none",
+            base_url: draft?.base_url || "",
+            model: draft?.model || "",
+            api_key: "",
+            enabled: draft?.enabled !== false
+          }}>
           <Form.Item name="name" label="名称" rules={[{ required: true, message: "请填写名称" }]}>
             <Input maxLength={128} />
           </Form.Item>

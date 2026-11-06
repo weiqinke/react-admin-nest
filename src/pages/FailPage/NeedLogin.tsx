@@ -1,21 +1,5 @@
-﻿import { Spin, Alert } from "antd";
-import { useEffect } from "react";
-import { useNavigate } from "react-router";
+﻿import { Navigate } from "react-router";
 
-const NeedLogin = () => {
-  const navigate = useNavigate();
-  useEffect(() => {
-    navigate("/login");
-    // oxlint-disable-next-line react/exhaustive-deps
-  }, []);
-
-  return (
-    <div style={{ width: "100vw", height: "100vh" }}>
-      <Spin description="加载中...">
-        <Alert message="加载中" description="正在加载页面，不会太久，请稍等。" type="info" />
-      </Spin>
-    </div>
-  );
-};
+const NeedLogin = () => <Navigate to="/login" replace />;
 
 export default NeedLogin;

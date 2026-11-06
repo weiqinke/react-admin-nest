@@ -1,6 +1,6 @@
 import { createPermissionItem, updatePermissionItem } from "@/api/permission";
 import { Col, Form, Input, Modal, Row, message } from "antd";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 
 const layout = {
   labelCol: { span: 6 },
@@ -17,16 +17,6 @@ const PermissionEditModal: FC<Props> = ({ permission, onOk, onCancel }) => {
   const [form] = Form.useForm();
   const [saving, setSaving] = useState(false);
   const isEdit = Boolean(permission?.code);
-
-  useEffect(() => {
-    form.resetFields();
-    if (permission?.code || permission?.name) {
-      form.setFieldsValue({
-        code: permission.code,
-        name: permission.name
-      });
-    }
-  }, [permission, form]);
 
   const onFinish = async (data: { code: string; name: string }) => {
     setSaving(true);
@@ -49,7 +39,7 @@ const PermissionEditModal: FC<Props> = ({ permission, onOk, onCancel }) => {
 
   return (
     <Modal open title={`${isEdit ? "编辑" : "新增"}权限`} onOk={() => form.submit()} onCancel={onCancel} confirmLoading={saving} width={640} destroyOnHidden>
-      <Form form={form} onFinish={onFinish} {...layout} autoComplete="off">
+      <Form form={form} onFinish={onFinish} initialValues={{ code: permission?.code, name: permission?.name }} {...layout} autoComplete="off">
         <Row>
           <Col span={24}>
             <Form.Item name="code" label="权限码" rules={[{ required: true, message: "请输入权限码" }]} extra="例如 menu:read、user:write；创建后不可修改。">

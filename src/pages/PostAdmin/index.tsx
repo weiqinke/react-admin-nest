@@ -12,7 +12,6 @@ const PostAdmin: FC = () => {
   const [depts, setDepts] = useState<any[]>([]);
   const [departmentId, setDepartmentId] = useState<string | undefined>();
   const [draft, setDraft] = useState<any>(null);
-  const [form] = Form.useForm();
   const [saving, setSaving] = useState(false);
   const canWrite = hasPermission("position:write");
 
@@ -28,17 +27,6 @@ const PostAdmin: FC = () => {
       .catch(() => setDepts([]));
     load();
   }, []);
-
-  useEffect(() => {
-    if (!draft) return;
-    form.setFieldsValue({
-      department_id: draft.department_id || undefined,
-      name: draft.name || "",
-      code: draft.code || "",
-      sort: draft.sort ?? 0,
-      status: draft.status ?? 1
-    });
-  }, [draft, form]);
 
   const deptTree = useMemo(() => toDeptTree(depts, { disableOff: true }), [depts]);
   const deptName = (id: string) => {
@@ -151,10 +139,21 @@ const PostAdmin: FC = () => {
         confirmLoading={saving}
         okText="保存"
         cancelText="取消"
-        onOk={() => form.submit()}
+        okButtonProps={{ htmlType: "submit", form: "post-edit-form" }}
         onCancel={() => setDraft(null)}
         destroyOnHidden>
-        <Form form={form} layout="vertical" onFinish={save}>
+        <Form
+          key={draft?.id || "new"}
+          id="post-edit-form"
+          layout="vertical"
+          onFinish={save}
+          initialValues={{
+            department_id: draft?.department_id || undefined,
+            name: draft?.name || "",
+            code: draft?.code || "",
+            sort: draft?.sort ?? 0,
+            status: draft?.status ?? 1
+          }}>
           <Form.Item name="department_id" label="部门" rules={[{ required: true, message: "请选择部门" }]}>
             <TreeSelect allowClear treeDefaultExpandAll treeNodeFilterProp="title" placeholder="选择部门" treeData={deptTree} />
           </Form.Item>

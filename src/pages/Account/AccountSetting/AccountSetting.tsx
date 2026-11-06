@@ -1,8 +1,7 @@
 import { Divider, Tag } from "antd";
-import React, { useEffect } from "react";
+import React from "react";
 
 const AccountSetting: React.FC = function () {
-  useEffect(() => {}, []);
   return (
     <div>
       <Divider titlePlacement="left" plain>

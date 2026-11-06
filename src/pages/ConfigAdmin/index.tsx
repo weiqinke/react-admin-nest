@@ -22,7 +22,6 @@ const ConfigAdmin: FC = () => {
   const [historyLoading, setHistoryLoading] = useState(false);
   const [dispatches, setDispatches] = useState<any[]>([]);
   const [form] = Form.useForm();
-  const [mailForm] = Form.useForm();
   const [testForm] = Form.useForm();
   const [saving, setSaving] = useState(false);
   const canWrite = hasPermission("config:write");
@@ -84,18 +83,6 @@ const ConfigAdmin: FC = () => {
     loadMail();
     loadDispatches();
   }, []);
-
-  useEffect(() => {
-    if (!mailDraft) return;
-    mailForm.setFieldsValue({
-      code: mailDraft.code || "",
-      channel: mailDraft.channel || "mail",
-      name: mailDraft.name || "",
-      subject: mailDraft.subject || "",
-      body: mailDraft.body || "",
-      enabled: mailDraft.enabled !== false
-    });
-  }, [mailDraft, mailForm]);
 
   const groupOptions = useMemo(() => {
     if (groups.length) {
@@ -358,10 +345,22 @@ const ConfigAdmin: FC = () => {
         open={Boolean(mailDraft)}
         title={mailDraft?.id ? "编辑邮件模板" : "新建邮件模板"}
         confirmLoading={saving}
-        onOk={() => mailForm.submit()}
+        okButtonProps={{ htmlType: "submit", form: "mail-template-form" }}
         onCancel={() => setMailDraft(null)}
         destroyOnHidden>
-        <Form form={mailForm} layout="vertical" onFinish={saveMail}>
+        <Form
+          key={mailDraft?.id || mailDraft?.code || "new"}
+          id="mail-template-form"
+          layout="vertical"
+          onFinish={saveMail}
+          initialValues={{
+            code: mailDraft?.code || "",
+            channel: mailDraft?.channel || "mail",
+            name: mailDraft?.name || "",
+            subject: mailDraft?.subject || "",
+            body: mailDraft?.body || "",
+            enabled: mailDraft?.enabled !== false
+          }}>
           <Form.Item name="code" label="编码" rules={[{ required: true, message: "请填写编码" }]}>
             <Input disabled={Boolean(mailDraft?.id)} placeholder="例如 ticket.due" />
           </Form.Item>

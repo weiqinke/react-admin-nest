@@ -1,5 +1,5 @@
 import { Button, Modal, Space, Table, Upload, message } from "antd";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 
 type Preview = {
   headers?: string[];
@@ -26,12 +26,11 @@ const CsvImportModal: FC<Props> = ({ open, title, hint, onClose, onDownloadTempl
   const [loading, setLoading] = useState(false);
   const [committing, setCommitting] = useState(false);
 
-  useEffect(() => {
-    if (!open) {
-      setFile(null);
-      setPreview(null);
-    }
-  }, [open]);
+  const close = () => {
+    setFile(null);
+    setPreview(null);
+    onClose();
+  };
 
   const runPreview = async (next: File) => {
     setLoading(true);
@@ -53,7 +52,7 @@ const CsvImportModal: FC<Props> = ({ open, title, hint, onClose, onDownloadTempl
       const data = res.data?.data || {};
       message.success(`导入完成：新建 ${data.created || 0}，更新 ${data.updated || 0}，跳过 ${data.skipped || 0}`);
       onDone();
-      onClose();
+      close();
     } finally {
       setCommitting(false);
     }
@@ -74,9 +73,9 @@ const CsvImportModal: FC<Props> = ({ open, title, hint, onClose, onDownloadTempl
       open={open}
       title={title}
       width={860}
-      onCancel={onClose}
+      onCancel={close}
       footer={[
-        <Button key="cancel" onClick={onClose}>
+        <Button key="cancel" onClick={close}>
           取消
         </Button>,
         <Button key="commit" type="primary" disabled={!file || !preview || (preview.invalid || 0) > 0} loading={committing} onClick={commit}>

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 import { Button, Col, Form, Input } from "antd";
 const { TextArea } = Input;
 const layout = {
@@ -23,9 +23,6 @@ const BaseFrom: FC<any> = (props: any) => {
     const result = await form.validateFields();
     pendingCallback(result);
   };
-  useEffect(() => {
-    form.setFieldsValue(initFormItem);
-  }, [form, initFormItem]);
 
   return (
     <Form form={form} initialValues={initFormItem} onValuesChange={onRequiredTypeChange} onFinish={onFinish} {...layout} className="formdom">

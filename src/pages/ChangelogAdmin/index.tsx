@@ -26,7 +26,6 @@ const ChangelogAdmin: FC = () => {
   const [draft, setDraft] = useState<any>(null);
   const [saving, setSaving] = useState(false);
   const [filterForm] = Form.useForm();
-  const [editForm] = Form.useForm();
   const canWrite = hasPermission("changelog:write");
   const canRead = hasPermission("changelog:read");
 
@@ -51,19 +50,6 @@ const ChangelogAdmin: FC = () => {
   useEffect(() => {
     load(1);
   }, []);
-
-  useEffect(() => {
-    if (!draft) {
-      editForm.resetFields();
-      return;
-    }
-    editForm.setFieldsValue({
-      version: draft.version || "",
-      title: draft.title || "",
-      body: draft.body || "",
-      notify_mail: Boolean(draft.notify_mail)
-    });
-  }, [draft, editForm]);
 
   const openCreate = () => setDraft({ id: "", status: "draft" });
 
@@ -214,11 +200,21 @@ const ChangelogAdmin: FC = () => {
         open={Boolean(draft)}
         title={draft?.id ? "编辑变更日志" : "新建变更日志"}
         onCancel={() => setDraft(null)}
-        onOk={() => editForm.submit()}
         confirmLoading={saving}
+        okButtonProps={{ htmlType: "submit", form: "changelog-edit-form" }}
         destroyOnHidden
         width={640}>
-        <Form form={editForm} layout="vertical" onFinish={save}>
+        <Form
+          key={draft?.id || "new"}
+          id="changelog-edit-form"
+          layout="vertical"
+          onFinish={save}
+          initialValues={{
+            version: draft?.version || "",
+            title: draft?.title || "",
+            body: draft?.body || "",
+            notify_mail: Boolean(draft?.notify_mail)
+          }}>
           <Form.Item name="version" label="版本号" rules={[{ required: true, message: "请填写版本号" }]}>
             <Input placeholder="例如 1.8.0" />
           </Form.Item>

@@ -36,9 +36,6 @@ const Login = () => {
       })
       .catch(() => {});
   }, []);
-  useEffect(() => {
-    if (!allowRegister) setShowRegisterForm(false);
-  }, [allowRegister]);
   useEffect(
     () =>
       whenIdle(() => {

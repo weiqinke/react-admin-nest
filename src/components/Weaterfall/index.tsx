@@ -1,5 +1,5 @@
 import useCalculativeWidth from "@/hooks/useCalculativeWidth";
-import { ReactNode, RefObject, useEffect, useRef, useState } from "react";
+import { ReactNode, RefObject, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { throttle } from "@/utils/throttle";
 
 /**瀑布流的元素，必须含有这个scale数据 （可以自己改个名）*/
@@ -22,6 +22,29 @@ export interface waterfallProps<T> {
   imgMinWidth: number;
 }
 
+function placeIntoColumns<T>(prev: T[][], incoming: T[], cols: number) {
+  const _colList = structuredClone(prev);
+  const colHeightObject: Record<string, number | string> = { minValue: 1, minIndex: "0" };
+  for (let index = 0; index < cols; index++) {
+    colHeightObject[index] = 0;
+  }
+  for (let i = 0; i < incoming.length; i++) {
+    for (let m = cols; m >= 0; m--) {
+      const minValue = colHeightObject.minValue as number;
+      const value = colHeightObject[m] as number;
+      if (value <= minValue) {
+        colHeightObject.minIndex = String(m);
+        colHeightObject.minValue = value;
+      }
+    }
+    const min = colHeightObject.minIndex as string;
+    _colList[Number(min)].push(incoming[i]);
+    colHeightObject[min] = (colHeightObject[min] as number) + 330;
+    colHeightObject.minValue = colHeightObject[min] as number;
+  }
+  return _colList;
+}
+
 /**展示瀑布流的组件  */
 const Waterfall = <T extends waterfallItem>(props: waterfallProps<T>) => {
   const { scrollRef, cols = 5, marginX = 30, getList, itemRender } = props;
@@ -33,51 +56,15 @@ const Waterfall = <T extends waterfallItem>(props: waterfallProps<T>) => {
   const imgWidth = useCalculativeWidth(listRef, marginX, cols);
   console.log("imgWidth: ", imgWidth);
 
-  const [list, setList] = useState<T[]>([]); //用来暂时存储获取到的最新list。
   const [colList, setColList] = useState(Array.from({ length: cols }, () => new Array<T>())); //要展示的图片列表，二维数组
   const [colHeight, setColHeight] = useState(new Array<number>(cols).fill(0)); //当前每一列的高度
   console.log("colHeight: ", colHeight);
 
-  /**获取列表数据 */
+  /**获取列表数据，拿到后直接分列，不再经一份 list state 中转 */
   const _getList = async () => {
     const res = await getList();
-    setList(res);
-  };
-  /**把获取到的列表，按照规律放入二维数组中。 注，需要监听list的变化，再做这个函数，否则无法获取到最新的colList */
-  const listToColList = (list: T[]) => {
-    const _colList = structuredClone(colList);
-    const colHeightObject = { minValue: 1, minIndex: "0" };
-    for (let index = 0; index < cols; index++) {
-      colHeightObject[index] = 0;
-    }
-    //获取当前最短的列表
-    for (let i = 0; i < list.length; i++) {
-      //  判断这个节点往哪里填
-
-      for (let m = cols; m >= 0; m--) {
-        const minValue = colHeightObject["minValue"];
-        const value = colHeightObject[m];
-        //  当前数据是小于最小值吗
-        if (value <= minValue) {
-          // 我是比他小的 就把最小值全取值成我
-          colHeightObject["minIndex"] = m + "";
-          colHeightObject["minValue"] = value;
-        }
-      }
-      // 现在把这个数字扔出去
-      const img = list[i];
-      // 谁是高度最低的列呢？
-      const min = colHeightObject["minIndex"];
-      _colList[min].push(img);
-      // 既然扔进去了，那这一个列就要变一下高度
-      colHeightObject[min] += 330;
-      // 最小高度重置为0；
-      colHeightObject["minValue"] = colHeightObject[min];
-    }
-
-    setColList(_colList);
-
-    //tip: 计算真实高度的函数，在下面的useEffect中，这样才能保证获取到渲染后的数据
+    if (!res?.length) return;
+    setColList(prev => placeIntoColumns(prev, res, cols));
   };
 
   //初始化列表
@@ -102,13 +89,7 @@ const Waterfall = <T extends waterfallItem>(props: waterfallProps<T>) => {
     return () => scrollRef.current?.removeEventListener("scroll", throttleHandler);
   }, []);
 
-  //监听list的变化，变化了就执行插入二维数组函数
-  useEffect(() => {
-    listToColList(list);
-  }, [list]);
-
-  //当数据渲染后，再去计算真实高度
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (colRef.current) {
       const newHeight = colRef.current.map(k => k?.offsetHeight || 0);
       setColHeight(newHeight);
