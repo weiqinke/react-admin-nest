@@ -108,6 +108,14 @@ export const setUserPosition = (id: string, position_id: string) => request(`/ap
 
 export const deleteDept = (id: string) => request(`/api/depts/${segment(id)}`, "DELETE");
 
+export const listAssets = (query: Record<string, any> = {}) => request("/api/assets", "GET", compact(query));
+
+export const getAsset = (id: string) => request(`/api/assets/${segment(id)}`, "GET");
+
+export const createAsset = (payload: Record<string, any>) => request("/api/assets", "POST", payload);
+
+export const updateAsset = (id: string, payload: Record<string, any>) => request(`/api/assets/${segment(id)}`, "PUT", payload);
+
 export const setUserDepartment = (id: string, departmentId: string) => request(`/api/users/${segment(id)}/department`, "PUT", { department_id: departmentId || "" });
 
 export function toDeptTree(nodes: any[] = [], options?: { disableOff?: boolean; keepId?: string }): any[] {
