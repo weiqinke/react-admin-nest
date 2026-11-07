@@ -1,10 +1,9 @@
 import prewImg from "@/assets/prewview.png";
 import { MetaDescModal } from "@/components/Modals";
-import Waterfall from "@/components/Weaterfall";
 import { webSocketManager } from "@/utils/ws";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Image, Modal, message } from "antd";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 import { userinfo } from "@/api/user";
 import SocketCard from "@/components/SocketCard";
@@ -19,26 +18,22 @@ const toCard = (user: any) => ({
   login: true
 });
 
+const pullPresence = () => {
+  webSocketManager.postMessage({ type: "room.join", data: { room: "admin-watch" } });
+  webSocketManager.postMessage({ type: "presence.list" });
+};
+
 const WebsocketAdmin: FC = () => {
-  const imgMinWidth = 280;
-  const scrollRef = useRef();
-  const domRef = useRef<HTMLDivElement>(null);
   const [socketUsers, setSocketUsers] = useState<any[]>([]);
   const [userInfo, setUserInfo] = useState(null);
   const [imgSrc, setImgSrc] = useState(prewImg);
-  const [itemNum, setItemNum] = useState<number>(3);
 
   useEffect(() => {
-    webSocketManager.postMessage({ type: "room.join", data: { room: "admin-watch" } });
-    webSocketManager.postMessage({ type: "presence.list" });
-    return () => {
-      webSocketManager.postMessage({ type: "room.leave", data: { room: "admin-watch" } });
-    };
-  }, []);
-
-  useEffect(() => {
+    pullPresence();
     const removeHandler = webSocketManager.addEventHandler(payload => {
       const { type, data = {} } = payload;
+      // 进页面时连接往往还没 OPEN，第一次 presence.list 会被丢掉。welcome 后再拉一次。
+      if (type === "welcome") pullPresence();
       if (type === "presence.snapshot") {
         setSocketUsers((data.users || []).map(toCard));
       }
@@ -58,7 +53,10 @@ const WebsocketAdmin: FC = () => {
         message.warning("该用户已有进行中的查看请求");
       }
     });
-    return removeHandler;
+    return () => {
+      removeHandler();
+      webSocketManager.postMessage({ type: "room.leave", data: { room: "admin-watch" } });
+    };
   }, []);
 
   const ForcedOffline = item => {
@@ -99,38 +97,19 @@ const WebsocketAdmin: FC = () => {
     });
   };
 
-  const resize = () => {
-    const winW = domRef.current?.clientWidth || 0;
-    setItemNum(Math.max(1, Math.floor(winW / imgMinWidth)));
-  };
-  useEffect(() => {
-    resize();
-    window.addEventListener("resize", resize);
-    return () => window.removeEventListener("resize", resize);
-  }, []);
-
-  const getList = async () => socketUsers;
-
   return (
-    <div className="p-3" ref={domRef}>
+    <div className="p-3">
       <div className="mb-3 h-[140px] w-[300px] select-none">
         <Image width={300} src={imgSrc} preview={{ src: imgSrc }} />
       </div>
       {socketUsers.length ? (
-        <Waterfall
-          scrollRef={scrollRef}
-          getList={getList}
-          key={`${itemNum}-${socketUsers.map(user => user.conn_id).join(",")}`}
-          cols={itemNum}
-          imgMinWidth={imgMinWidth}
-          itemRender={(item, i) => {
-            return (
-              <div style={{ height: 147 }} key={item.conn_id || i}>
-                <SocketCard userInfo={item} ForcedOffline={ForcedOffline} loadUserInfo={loadUserInfo} getUserView={getUserView} />
-              </div>
-            );
-          }}
-        />
+        <div className="flex flex-wrap items-start gap-x-4">
+          {socketUsers.map((item, i) => (
+            <div className="h-[160px] w-[280px]" key={item.conn_id || i}>
+              <SocketCard userInfo={item} ForcedOffline={ForcedOffline} loadUserInfo={loadUserInfo} getUserView={getUserView} />
+            </div>
+          ))}
+        </div>
       ) : null}
 
       {userInfo && <MetaDescModal userInfo={userInfo} onOk={() => setUserInfo(null)} />}
