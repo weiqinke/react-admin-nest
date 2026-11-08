@@ -2,9 +2,10 @@ import { streamAiChat } from "@/api/ai-stream";
 import { getAiConversation, listAiConversations, listAiModelOptions } from "@/api/platform";
 import PageIntroduction from "@/components/PageIntroduction";
 import { canAccessMenuPath } from "@/utils/menuUtils";
-import { App, Button, Drawer, Empty, Input, Select, Spin } from "antd";
+import { Bubble, Conversations, Sender, type BubbleItemType, type BubbleListProps } from "@ant-design/x";
+import { App, Button, Drawer, Empty, Select, Spin } from "antd";
 import dayjs from "dayjs";
-import { type FC, type KeyboardEvent as ReactKeyboardEvent, type ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { type FC, type ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 
 const infos = [{ title: "AI" }, { title: "对话" }];
@@ -165,23 +166,39 @@ function lastIsPendingUser(item: AiConversation, flight: Inflight) {
   return !flight.baseMessages.some(message => message.id === last.id);
 }
 
-function MessageBubble({ item, onCopy }: { item: AiMessage; onCopy: (content: string) => void }) {
-  const mine = item.role === "user";
-  const tokens = mine ? "" : tokenText(item.token_usage);
+function bubbleText(content: string, caret = false) {
   return (
-    <div className={mine ? "flex justify-end" : "flex justify-start"}>
-      <div className={`max-w-[75%] px-3 py-2 ${mine ? "bg-blue-50" : "bg-neutral-100"}`}>
-        <div style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>{item.content}</div>
-        <div className="mt-1 flex items-center justify-end gap-2">
-          <Button type="link" size="small" autoInsertSpace={false} style={{ height: "auto", padding: 0 }} onClick={() => onCopy(item.content)}>
-            复制
-          </Button>
-          {tokens ? <span className="text-xs text-neutral-400">{tokens}</span> : null}
-        </div>
-      </div>
+    <div style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>
+      {content}
+      {caret ? <span className="ml-0.5 inline-block animate-pulse">▍</span> : null}
     </div>
   );
 }
+
+function messageFooter(item: AiMessage, onCopy: (content: string) => void) {
+  const tokens = item.role === "assistant" ? tokenText(item.token_usage) : "";
+  return (
+    <span className="inline-flex items-center gap-2">
+      <Button type="link" size="small" autoInsertSpace={false} style={{ height: "auto", padding: 0 }} onClick={() => onCopy(item.content)}>
+        复制
+      </Button>
+      {tokens ? <span className="text-xs text-neutral-400">{tokens}</span> : null}
+    </span>
+  );
+}
+
+const bubbleRoles: BubbleListProps["role"] = {
+  user: {
+    placement: "end",
+    variant: "filled",
+    contentRender: content => bubbleText(typeof content === "string" ? content : "")
+  },
+  assistant: {
+    placement: "start",
+    variant: "filled",
+    contentRender: content => bubbleText(typeof content === "string" ? content : "")
+  }
+};
 
 const AiChatScreen: FC = () => {
   const { message } = App.useApp();
@@ -478,9 +495,9 @@ const AiChatScreen: FC = () => {
     updateText("");
   };
 
-  const send = async () => {
+  const send = async (draft?: string) => {
     if (sendingRef.current) return;
-    const raw = textRef.current;
+    const raw = Array.from(draft ?? textRef.current).slice(0, 8000).join("");
     const content = raw.trim();
     if (!content) return;
     const origin = viewRef.current;
@@ -551,13 +568,6 @@ const AiChatScreen: FC = () => {
     }
   };
 
-  const onPressEnter = (event: ReactKeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.shiftKey) return;
-    if (event.nativeEvent.isComposing || event.nativeEvent.keyCode === 229) return;
-    event.preventDefault();
-    void send();
-  };
-
   const onMessagesScroll = () => {
     const el = scroller.current;
     if (!el) return;
@@ -582,17 +592,34 @@ const AiChatScreen: FC = () => {
   );
   const showStream = Boolean(flightHere && streamText);
   const showWaiting = Boolean(flightHere && inflight?.phase === "waiting" && !streamText);
-  const showOptimistic = Boolean(showWaiting && inflight && !hasWrittenUser(messages, inflight));
+  const showOptimistic = Boolean(flightHere && inflight && !hasWrittenUser(messages, inflight));
+
+  const conversationItems = conversations.map(item => ({
+    key: item.id,
+    label: (
+      <span className="block min-w-0">
+        <span className="block truncate">{item.title || "未命名对话"}</span>
+        <span className="block truncate text-xs text-neutral-500">{formatUpdatedAt(item.updated_at)}</span>
+      </span>
+    )
+  }));
+  const listReady = listStatus === "ready" && conversations.length > 0;
 
   const conversationPane = () => (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="min-h-0 flex-1 overflow-auto">
-        {listStatus === "loading" ? (
-          <div className="flex h-full min-h-24 items-center justify-center">
+      <Conversations
+        className={listReady ? "min-h-0 flex-1" : "shrink-0"}
+        activeKey={view.kind === "chat" ? view.id : ""}
+        items={listStatus === "ready" ? conversationItems : []}
+        creation={{ label: "新对话", onClick: () => startNew() }}
+        styles={{ creation: { position: "sticky", top: 0, zIndex: 1, background: "#fff" } }}
+        onActiveChange={value => openChat(value)}
+      />
+      {listReady ? null : (
+        <div className="flex min-h-24 flex-1 items-center justify-center">
+          {listStatus === "loading" ? (
             <Spin />
-          </div>
-        ) : listStatus === "error" ? (
-          <div className="flex h-full min-h-24 items-center justify-center">
+          ) : listStatus === "error" ? (
             <Empty
               description={
                 <div>
@@ -603,39 +630,11 @@ const AiChatScreen: FC = () => {
                 </div>
               }
             />
-          </div>
-        ) : conversations.length === 0 ? (
-          <div className="flex h-full min-h-24 items-center justify-center">
+          ) : (
             <Empty description="还没有对话" />
-          </div>
-        ) : (
-          conversations.map(item => {
-            const selected = view.kind === "chat" && view.id === item.id;
-            return (
-              <Button
-                key={item.id}
-                type="text"
-                block
-                autoInsertSpace={false}
-                style={{
-                  height: "auto",
-                  justifyContent: "flex-start",
-                  padding: "8px 12px",
-                  textAlign: "left",
-                  whiteSpace: "normal",
-                  background: selected ? "rgba(22,119,255,0.08)" : undefined,
-                  borderRadius: 6
-                }}
-                onClick={() => openChat(item.id)}>
-                <span className="block w-full min-w-0 overflow-hidden">
-                  <span className="block truncate">{item.title || "未命名对话"}</span>
-                  <span className="block truncate text-xs text-neutral-500">{formatUpdatedAt(item.updated_at)}</span>
-                </span>
-              </Button>
-            );
-          })
-        )}
-      </div>
+          )}
+        </div>
+      )}
       <div className="shrink-0 border-t border-neutral-200 px-3 py-2 text-xs text-neutral-500">仅显示最近 50 条</div>
     </div>
   );
@@ -663,26 +662,47 @@ const AiChatScreen: FC = () => {
       </div>
     );
   } else if (messages.length || showOptimistic || showWaiting || showStream) {
+    const bubbleItems: BubbleItemType[] = messages.map(item => ({
+      key: item.id,
+      role: item.role,
+      content: item.content,
+      footer: messageFooter(item, copyMessage),
+      footerPlacement: "outer-end"
+    }));
+    if (showOptimistic && inflight) {
+      const pending: AiMessage = { id: "pending-user", role: "user", content: inflight.raw, created_at: "" };
+      bubbleItems.push({
+        key: pending.id,
+        role: "user",
+        content: pending.content,
+        footer: messageFooter(pending, copyMessage),
+        footerPlacement: "outer-end"
+      });
+    }
+    if (showStream) {
+      bubbleItems.push({
+        key: "stream-assistant",
+        role: "assistant",
+        content: streamText,
+        streaming: true,
+        contentRender: content => bubbleText(typeof content === "string" ? content : "", true)
+      });
+    } else if (showWaiting) {
+      bubbleItems.push({
+        key: "pending-assistant",
+        role: "assistant",
+        content: "",
+        loading: true,
+        loadingRender: () => <span className="text-sm text-neutral-500">正在等待回复…</span>
+      });
+    }
     messageBody = (
-      <div className="flex flex-col gap-3">
-        {messages.map(item => (
-          <MessageBubble key={item.id} item={item} onCopy={copyMessage} />
-        ))}
-        {showOptimistic && inflight ? (
-          <MessageBubble key="pending-user" item={{ id: "pending-user", role: "user", content: inflight.raw, created_at: "" }} onCopy={copyMessage} />
-        ) : null}
-        {showStream ? (
-          <div className="flex justify-start">
-            <div className="max-w-[75%] bg-neutral-100 px-3 py-2">
-              <div style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>
-                {streamText}
-                <span className="ml-0.5 inline-block animate-pulse">▍</span>
-              </div>
-            </div>
-          </div>
-        ) : null}
-        {showWaiting ? <div className="text-right text-sm text-neutral-500">正在等待回复…</div> : null}
-      </div>
+      <Bubble.List
+        autoScroll={false}
+        items={bubbleItems}
+        role={bubbleRoles}
+        styles={{ scroll: { maxHeight: "none", overflowY: "visible" } }}
+      />
     );
   } else if (modelStatus === "loading") {
     messageBody = (
@@ -724,10 +744,7 @@ const AiChatScreen: FC = () => {
       </div>
       <div className="mt-3 flex min-h-0 flex-1 gap-3">
         <aside className="admin-card hidden h-full min-h-0 w-64 shrink-0 flex-col overflow-hidden md:flex" style={{ marginTop: 0 }}>
-          <Button block type="primary" autoInsertSpace={false} className="shrink-0" onClick={startNew}>
-            新对话
-          </Button>
-          <div className="mt-3 min-h-0 flex-1">{conversationPane()}</div>
+          {conversationPane()}
         </aside>
         <section className="admin-card flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden" style={{ marginTop: 0 }}>
           <div className="flex shrink-0 flex-wrap items-center gap-3 border-b border-neutral-200 pb-3">
@@ -758,24 +775,23 @@ const AiChatScreen: FC = () => {
             {messageBody}
           </div>
           <div className="shrink-0 border-t border-neutral-200 pt-3">
-            <Input.TextArea
+            <Sender
               value={text}
-              disabled={sending}
-              maxLength={8000}
-              showCount
+              disabled={sending || blockEmptyModels || blockUnreadChat || blockList}
               autoSize={{ minRows: 3, maxRows: 6 }}
               placeholder="输入内容，Enter 发送，Shift+Enter 换行"
-              onChange={event => updateText(event.target.value)}
-              onPressEnter={onPressEnter}
+              submitType="enter"
+              onChange={value => updateText(Array.from(value).slice(0, 8000).join(""))}
+              onSubmit={message => void send(message)}
+              footer={
+                <div className="flex items-center justify-between gap-3 text-sm text-neutral-500">
+                  <span>
+                    {awaySending ? "上一条消息仍在发送" : view.kind === "new" && listStatus === "error" ? "会话列表加载失败，请先重试" : ""}
+                  </span>
+                  <span>{Array.from(text).length} / 8000</span>
+                </div>
+              }
             />
-            <div className="mt-2 flex items-center justify-between gap-3">
-              <span className="text-sm text-neutral-500">
-                {awaySending ? "上一条消息仍在发送" : view.kind === "new" && listStatus === "error" ? "会话列表加载失败，请先重试" : ""}
-              </span>
-              <Button type="primary" autoInsertSpace={false} loading={sending} disabled={sending || blockEmptyModels || blockUnreadChat || blockList} onClick={() => void send()}>
-                发送
-              </Button>
-            </div>
           </div>
         </section>
       </div>
@@ -787,10 +803,7 @@ const AiChatScreen: FC = () => {
         destroyOnHidden
         styles={{ body: { display: "flex", flex: 1, flexDirection: "column", minHeight: 0, overflow: "hidden", padding: 12 } }}
         onClose={() => setDrawerOpen(false)}>
-        <Button block type="primary" autoInsertSpace={false} className="shrink-0" onClick={startNew}>
-          新对话
-        </Button>
-        <div className="mt-3 min-h-0 flex-1">{conversationPane()}</div>
+        {conversationPane()}
       </Drawer>
     </div>
   );
