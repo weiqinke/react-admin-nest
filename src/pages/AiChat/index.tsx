@@ -148,12 +148,6 @@ function formatUpdatedAt(value: string) {
   return parsed.format("MM-DD HH:mm");
 }
 
-function titleFromContent(content: string) {
-  const chars = Array.from(content.trim());
-  if (chars.length <= 40) return chars.join("");
-  return chars.slice(0, 40).join("");
-}
-
 function tokenText(usage: number | undefined) {
   if (typeof usage !== "number" || !Number.isFinite(usage) || usage <= 0) return "";
   return `tokens ${usage}`;
@@ -174,8 +168,50 @@ function lastIsPendingUser(item: AiConversation, flight: Inflight) {
   return !flight.baseMessages.some(message => message.id === last.id);
 }
 
-function bubbleText(content: string) {
-  return <div style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>{content}</div>;
+function oneLineExcerpt(content: string, limit: number) {
+  const flat = content.replace(/\s+/g, " ").trim();
+  const chars = Array.from(flat);
+  if (chars.length <= limit) return chars.join("");
+  return `${chars.slice(0, limit).join("")}…`;
+}
+
+function turnMark(content: string) {
+  const failure = classifyAssistantFailure(content);
+  if (failure.kind === "placeholder" && content === AI_STUB_REPLY) return "未接入";
+  if (failure.kind === "placeholder" || failure.kind === "answer-with-failure") return "调用失败";
+  return "";
+}
+
+function buildTurns(messages: AiMessage[]) {
+  const turns: { id: string; n: number; excerpt: string; mark: string }[] = [];
+  let n = 0;
+  messages.forEach((item, index) => {
+    if (item.role !== "user") return;
+    n += 1;
+    const next = messages[index + 1];
+    turns.push({
+      id: item.id,
+      n,
+      excerpt: oneLineExcerpt(item.content, 40),
+      mark: next?.role === "assistant" ? turnMark(next.content) : ""
+    });
+  });
+  return turns;
+}
+
+function UserBubble({ content }: { content: string }) {
+  const [open, setOpen] = useState(false);
+  const long = content.split("\n").length > 4 || Array.from(content).length > 160;
+  return (
+    <div>
+      <div style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere", maxHeight: long && !open ? "6.8em" : undefined, overflow: long && !open ? "hidden" : undefined }}>{content}</div>
+      {long ? (
+        <Button type="link" size="small" autoInsertSpace={false} style={{ height: "auto", padding: 0 }} onClick={() => setOpen(value => !value)}>
+          {open ? "收起" : "展开"}
+        </Button>
+      ) : null}
+    </div>
+  );
 }
 
 const assistantStreaming = {
@@ -404,8 +440,10 @@ function conversationGroup(updatedAt: string) {
 function messageFooter(item: AiMessage, onCopy: (content: string) => void, onReuse?: (content: string) => void) {
   const tokens = item.role === "assistant" ? tokenText(item.token_usage) : "";
   const time = formatUpdatedAt(item.created_at);
+  const mark = item.role === "assistant" ? turnMark(item.content) : "";
   return (
     <span className="inline-flex items-center gap-2 text-xs text-neutral-500">
+      {mark ? <span style={{ color: "var(--ant-color-warning)" }}>{mark}</span> : null}
       {time ? <span>{time}</span> : null}
       <Button type="link" size="small" autoInsertSpace={false} style={{ height: "auto", padding: 0 }} onClick={() => onCopy(copyableContent(item))}>
         复制
@@ -434,7 +472,7 @@ function makeBubbleRoles(token: { colorText: string; colorBgContainer: string })
       shape: "corner",
       footerPlacement: "outer-end",
       styles: { content: { maxWidth: "40rem", lineHeight: 1.7, background: themePalette.light.accentSoft, color: token.colorText } },
-      contentRender: content => bubbleText(typeof content === "string" ? content : "")
+      contentRender: content => <UserBubble content={typeof content === "string" ? content : ""} />
     },
     assistant: {
       placement: "start",
@@ -473,7 +511,6 @@ const AiChatScreen: FC = () => {
   const draftSeq = useRef(1);
   const detailSeq = useRef(0);
   const pinBottom = useRef(true);
-  const alignStart = useRef(false);
   const scroller = useRef<HTMLDivElement>(null);
   const composer = useRef<HTMLDivElement>(null);
   const viewRef = useRef<ViewRef>(view);
@@ -488,6 +525,7 @@ const AiChatScreen: FC = () => {
   const conversationsRef = useRef(conversations);
   const catalogRef = useRef(new Map<string, AiConversation>());
   const searchSeq = useRef(0);
+  const streamMetaRef = useRef<{ conversationId: string; userMessageId: string } | null>(null);
   const messagesRef = useRef(messages);
   const messageCacheRef = useRef(new Map<string, AiMessage[]>());
   const loadModelsRef = useRef<() => Promise<void>>(async () => {});
@@ -619,14 +657,7 @@ const AiChatScreen: FC = () => {
 
   useLayoutEffect(() => {
     const el = scroller.current;
-    if (!el) return;
-    if (alignStart.current && detailStatus === "ready" && !inflightRef.current) {
-      alignStart.current = false;
-      pinBottom.current = scrollToLastTurn(el);
-      setShowJump(false);
-      return;
-    }
-    if (!pinBottom.current) return;
+    if (!el || !pinBottom.current) return;
     el.scrollTop = el.scrollHeight;
   }, [messages, inflight, detailStatus, view, streamText]);
 
@@ -652,8 +683,7 @@ const AiChatScreen: FC = () => {
     setView(next);
     setMessages([]);
     setDetailStatus("loading");
-    alignStart.current = true;
-    pinBottom.current = false;
+    pinBottom.current = true;
     setShowJump(false);
     setDrawerOpen(false);
     getAiConversation(id)
@@ -739,6 +769,22 @@ const AiChatScreen: FC = () => {
   };
 
   const recoverWritten = async (flight: Inflight) => {
+    const meta = streamMetaRef.current;
+    if (meta?.conversationId && (flight.origin.kind === "new" || meta.conversationId === flight.origin.id)) {
+      try {
+        const res = await getAiConversation(meta.conversationId);
+        const item = normalizeConversation(payloadOf(res));
+        const wroteThis = meta.userMessageId
+          ? item?.messages.some(message => message.id === meta.userMessageId)
+          : item ? hasWrittenUser(item.messages, flight) : false;
+        if (!item || !wroteThis) return null;
+        rememberMessages(item.id, item.messages);
+        await loadConversations({ silent: true });
+        return item;
+      } catch {
+        return null;
+      }
+    }
     if (flight.origin.kind === "chat") {
       if (!flight.hasBaseline) return null;
       try {
@@ -762,27 +808,26 @@ const AiChatScreen: FC = () => {
       for (const item of list) catalogRef.current.set(item.id, item);
       setConversations(list);
       setListStatus("ready");
-      let candidates = list.filter(item => !flight.knownIds.has(item.id));
-      const expected = titleFromContent(flight.content);
-      const titled = candidates.filter(item => item.title === expected);
-      if (titled.length) candidates = titled;
+      const candidates = list.filter(item => !flight.knownIds.has(item.id));
       const ordered = [...candidates].sort((left, right) => {
         const leftTime = dayjs(left.updated_at);
         const rightTime = dayjs(right.updated_at);
         return (rightTime.isValid() ? rightTime.valueOf() : 0) - (leftTime.isValid() ? leftTime.valueOf() : 0);
       });
+      const matched: AiConversation[] = [];
       for (const candidate of ordered.slice(0, 5)) {
         try {
           const detailRes = await getAiConversation(candidate.id);
           const item = normalizeConversation(payloadOf(detailRes));
-          if (!item || !hasWrittenUser(item.messages, flight)) continue;
+          const lastUser = item ? [...item.messages].reverse().find(message => message.role === "user") : undefined;
+          if (!item || lastUser?.content !== flight.content) continue;
           rememberMessages(item.id, item.messages);
-          return item;
+          matched.push(item);
         } catch {
           continue;
         }
       }
-      return null;
+      return matched.length === 1 ? matched[0] : null;
     } catch {
       setListStatus("error");
       return null;
@@ -826,10 +871,19 @@ const AiChatScreen: FC = () => {
     if (!content) return;
     const origin = viewRef.current;
     if (origin.kind === "chat" && !messageCacheRef.current.has(origin.id)) return;
-    if (origin.kind === "chat" && modelStatusRef.current === "ready" && modelsRef.current.length > 0 && !modelsRef.current.some(item => item.id === modelIdRef.current)) return;
+    if (origin.kind === "chat" && modelStatusRef.current === "ready" && modelsRef.current.length > 0 && !modelsRef.current.some(item => item.id === modelIdRef.current)) {
+      message.warning("当前模型已停用，请换模型新开");
+      return;
+    }
     if (origin.kind === "new" && listStatusRef.current !== "ready") return;
-    if (origin.kind === "new" && !modelIdRef.current) {
-      if (!(modelStatusRef.current === "ready" && modelsRef.current.length === 0)) message.warning("先选择一个模型");
+    if (origin.kind === "new" && modelStatusRef.current === "ready") {
+      const picked = modelsRef.current.some(item => item.id === modelIdRef.current);
+      if (!picked) {
+        if (modelsRef.current.length > 0) message.warning("先选择一个模型");
+        return;
+      }
+    } else if (origin.kind === "new" && !modelIdRef.current) {
+      message.warning("先选择一个模型");
       return;
     }
     const el = scroller.current;
@@ -850,6 +904,7 @@ const AiChatScreen: FC = () => {
     setInflight(flight);
     setStreamText("");
     setStreamConversationId("");
+    streamMetaRef.current = null;
     draftsRef.current.delete(viewKey(origin));
     updateText("");
     try {
@@ -857,7 +912,11 @@ const AiChatScreen: FC = () => {
       const body = origin.kind === "chat" ? { content } : { model_id: modelIdRef.current, content };
       const rawItem = await streamAiChat(path, body, {
         onMeta: event => {
-          if (event.conversation_id) setStreamConversationId(event.conversation_id);
+          const id = event.conversation_id ?? "";
+          if (id && (origin.kind === "new" || id === origin.id)) {
+            streamMetaRef.current = { conversationId: id, userMessageId: event.user_message_id ?? "" };
+            setStreamConversationId(id);
+          }
           void loadConversationsRef.current({ silent: true });
         },
         onDelta: piece => {
@@ -907,12 +966,25 @@ const AiChatScreen: FC = () => {
     const el = scroller.current;
     setShowJump(false);
     if (!el) return;
-    if (inflightRef.current) {
-      pinBottom.current = true;
-      el.scrollTop = el.scrollHeight;
-      return;
-    }
+    pinBottom.current = true;
+    el.scrollTop = el.scrollHeight;
+  };
+
+  const scrollToTurn = (id: string) => {
+    const el = scroller.current;
+    const mark = el?.querySelector(`[data-turn="${CSS.escape(id)}"]`);
+    if (!el || !(mark instanceof HTMLElement)) return;
+    const top = mark.getBoundingClientRect().top - el.getBoundingClientRect().top + el.scrollTop;
+    el.scrollTop = Math.max(0, top);
+    pinBottom.current = false;
+    setShowJump(true);
+  };
+
+  const lookAtTurnStart = () => {
+    const el = scroller.current;
+    if (!el) return;
     pinBottom.current = scrollToLastTurn(el);
+    setShowJump(!pinBottom.current);
   };
 
   const modelInList = Boolean(modelId && models.some(item => item.id === modelId));
@@ -933,6 +1005,16 @@ const AiChatScreen: FC = () => {
   const showStream = Boolean(flightHere && streamText);
   const showWaiting = Boolean(flightHere && inflight?.phase === "waiting" && !streamText);
   const showOptimistic = Boolean(flightHere && inflight && !hasWrittenUser(messages, inflight));
+  const turns = buildTurns(messages);
+  const lastSaved = messages[messages.length - 1];
+  const previousQuestion = [...messages].reverse().find(item => item.role === "user");
+  const showPreviousQuestion = view.kind === "chat" && detailStatus === "ready" && !flightHere && lastSaved?.role === "assistant" && Boolean(previousQuestion);
+  const showTurnStart = view.kind === "chat" && detailStatus === "ready" && !flightHere && !showJump && lastSaved?.role === "assistant";
+
+  useEffect(() => {
+    if (view.kind !== "chat" || detailStatus !== "ready" || showUnavailable) return;
+    composer.current?.querySelector("textarea")?.focus();
+  }, [view, detailStatus, showUnavailable]);
 
   const bubbleRoles = makeBubbleRoles(token);
   const heading = view.kind === "chat" ? catalogRef.current.get(view.id)?.title || conversations.find(item => item.id === view.id)?.title || "对话" : "新对话";
@@ -1051,13 +1133,20 @@ const AiChatScreen: FC = () => {
   } else if (messages.length || showOptimistic || showWaiting || showStream) {
     const bubbleItems: BubbleItemType[] = messages.map((item, index) => {
       const markLast = index === messages.length - 1 && !showStream && !showWaiting;
-      const body = item.role === "user" ? bubbleText(item.content) : <AssistantBody content={item.content} />;
+      const body = item.role === "user" ? <UserBubble content={item.content} /> : <AssistantBody content={item.content} />;
+      const marked = item.role === "user" || markLast;
       return {
         key: item.id,
         role: item.role,
         content: item.content,
         footer: messageFooter(item, copyMessage, reuseMessage),
-        contentRender: markLast ? () => <div data-last-turn="">{body}</div> : undefined
+        contentRender: marked
+          ? () => (
+              <div data-turn={item.role === "user" ? item.id : undefined} data-last-turn={markLast ? "" : undefined}>
+                {body}
+              </div>
+            )
+          : undefined
       };
     });
     if (showOptimistic && inflight) {
@@ -1066,7 +1155,12 @@ const AiChatScreen: FC = () => {
         key: pending.id,
         role: "user",
         content: pending.content,
-        footer: messageFooter(pending, copyMessage)
+        footer: messageFooter(pending, copyMessage),
+        contentRender: () => (
+          <div data-turn={pending.id}>
+            <UserBubble content={pending.content} />
+          </div>
+        )
       });
     }
     if (showStream) {
@@ -1180,6 +1274,16 @@ const AiChatScreen: FC = () => {
               {inflight.content}
             </div>
           ) : null}
+          {turns.length >= 2 ? (
+            <div className="flex shrink-0 gap-2 overflow-x-auto border-b border-neutral-200 py-2">
+              {turns.map(turn => (
+                <Button key={turn.id} size="small" autoInsertSpace={false} title={turn.excerpt} onClick={() => scrollToTurn(turn.id)}>
+                  {`第 ${turn.n} 问 ${turn.excerpt}`}
+                  {turn.mark ? ` ${turn.mark}` : ""}
+                </Button>
+              ))}
+            </div>
+          ) : null}
           <div className="relative min-h-0 flex-1">
             <div ref={scroller} className="h-full min-h-0 overflow-auto py-3" onScroll={onMessagesScroll}>
               {messageBody}
@@ -1189,8 +1293,18 @@ const AiChatScreen: FC = () => {
                 回到最新
               </Button>
             ) : null}
+            {showTurnStart ? (
+              <Button size="small" autoInsertSpace={false} className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2" onClick={lookAtTurnStart}>
+                看本轮开头
+              </Button>
+            ) : null}
           </div>
           <div ref={composer} className="shrink-0 border-t border-neutral-200 pt-3">
+            {showPreviousQuestion && previousQuestion ? (
+              <button type="button" className="mb-2 block w-full truncate text-left text-sm text-neutral-500" title={previousQuestion.content} onClick={() => scrollToTurn(previousQuestion.id)}>
+                {`上次提问：${oneLineExcerpt(previousQuestion.content, 80)}`}
+              </button>
+            ) : null}
             <Sender
               value={text}
               disabled={blockEmptyModels || blockUnreadChat || blockList}

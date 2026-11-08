@@ -2,7 +2,7 @@ import { reportApiError } from "@/api/feedback";
 import { expireSession, getAccessToken, getRefreshToken, refreshAccessToken } from "@/api/session";
 
 type StreamHandlers = {
-  onMeta?: (event: { conversation_id?: string }) => void;
+  onMeta?: (event: { conversation_id?: string; user_message_id?: string }) => void;
   onDelta?: (content: string) => void;
 };
 
@@ -91,13 +91,25 @@ export async function streamAiChat(path: string, body: Record<string, string>, h
       const data = eventData(buffer.slice(0, splitAt));
       buffer = buffer.slice(splitAt + 2);
       if (data) {
-        let event: { type?: string; content?: string; message?: string; conversation?: unknown; conversation_id?: string } | null = null;
+        let event: {
+          type?: string;
+          content?: string;
+          message?: string;
+          conversation?: unknown;
+          conversation_id?: string;
+          user_message?: { id?: string };
+        } | null = null;
         try {
           event = JSON.parse(data);
         } catch {
           event = null;
         }
-        if (event?.type === "meta") handlers.onMeta?.(event);
+        if (event?.type === "meta") {
+          handlers.onMeta?.({
+            conversation_id: event.conversation_id,
+            user_message_id: typeof event.user_message?.id === "string" ? event.user_message.id : undefined
+          });
+        }
         else if (event?.type === "delta" && typeof event.content === "string") handlers.onDelta?.(event.content);
         else if (event?.type === "done") {
           sawDone = true;
