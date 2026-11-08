@@ -7,13 +7,14 @@ import { Bubble, Conversations, Prompts, Sender, Welcome, type BubbleItemType, t
 import { arePropsEqualIgnoringDomNode, XMarkdown, type ComponentProps } from "@ant-design/x-markdown";
 import { App, Button, Drawer, Empty, Input, Select, Spin, theme } from "antd";
 import dayjs from "dayjs";
-import { type CSSProperties, type FC, memo, type ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Children, type CSSProperties, type FC, isValidElement, memo, type ReactElement, type ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 
 const infos = [{ title: "AI" }, { title: "对话" }];
 const introduction = "向已启用的模型提问。只保留你自己最近的 50 条对话。模型在创建时选定，之后不能更换。";
 const AI_ADMIN_PATH = "/management/aiadmin";
 const NEAR_BOTTOM = 80;
+const CONTINUE_PROMPT = "请接着写下一句，不要重复已经写过的内容。";
 
 type LoadStatus = "loading" | "ready" | "error";
 type DetailStatus = "idle" | "loading" | "ready" | "error";
@@ -199,8 +200,11 @@ function buildTurns(messages: AiMessage[]) {
   return turns;
 }
 
-function UserBubble({ content }: { content: string }) {
+function UserBubble({ content, expanded = false }: { content: string; expanded?: boolean }) {
   const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (expanded) setOpen(true);
+  }, [expanded]);
   const long = content.split("\n").length > 4 || Array.from(content).length > 160;
   return (
     <div>
@@ -357,12 +361,41 @@ const MarkdownPre = memo(function MarkdownPre({ children }: ComponentProps) {
   return <>{children}</>;
 }, arePropsEqualIgnoringDomNode);
 
+function rowElements(node: ReactNode): ReactElement[] {
+  const rows: ReactElement[] = [];
+  for (const child of Children.toArray(node)) {
+    if (!isValidElement(child)) continue;
+    if (typeof child.type === "string" && child.type === "tr") {
+      rows.push(child);
+      continue;
+    }
+    const nested = rowElements((child.props as { children?: ReactNode }).children);
+    if (nested.length) rows.push(...nested);
+  }
+  return rows;
+}
+
 const MarkdownTable = memo(function MarkdownTable({ children, className, style }: ComponentProps) {
+  const [open, setOpen] = useState(false);
+  const rows = rowElements(children);
+  const dataRows = Math.max(rows.length - 1, 0);
+  const long = dataRows > 8;
+  const shown = rows.length && long && !open ? rows.slice(0, 9) : rows;
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr)", minWidth: 0, maxWidth: "100%", overflowX: "auto" }}>
-      <table className={className} style={style}>
-        {children}
-      </table>
+    <div style={{ minWidth: 0, maxWidth: "100%" }}>
+      {long ? (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+          <span style={{ fontSize: 12, color: "var(--ant-color-text-secondary)" }}>{`表格 · ${dataRows} 行`}</span>
+          <Button type="link" size="small" autoInsertSpace={false} onClick={() => setOpen(value => !value)}>
+            {open ? "收起" : "展开"}
+          </Button>
+        </div>
+      ) : null}
+      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr)", minWidth: 0, maxWidth: "100%", overflowX: "auto" }}>
+        <table className={className} style={style}>
+          {shown.length ? <tbody>{shown}</tbody> : children}
+        </table>
+      </div>
     </div>
   );
 }, arePropsEqualIgnoringDomNode);
@@ -386,19 +419,78 @@ function failureLine(text: string) {
   return <div style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere", color: "var(--ant-color-warning)" }}>{text}</div>;
 }
 
+function markdownHeadings(content: string) {
+  const titles: string[] = [];
+  let fence = false;
+  for (const line of content.split("\n")) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith("```")) {
+      fence = !fence;
+      continue;
+    }
+    if (fence) continue;
+    const matched = /^(#{1,3})\s+(.+?)\s*#*$/.exec(trimmed);
+    if (matched?.[2]) titles.push(matched[2].trim());
+  }
+  return titles;
+}
+
+function scrollToHeading(origin: HTMLElement, index: number) {
+  const root = origin.parentElement?.parentElement;
+  const scroller = origin.closest("[data-chat-scroll]");
+  const heading = root?.querySelectorAll("h1, h2, h3")[index];
+  if (!(scroller instanceof HTMLElement) || !(heading instanceof HTMLElement)) return;
+  const top = heading.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop;
+  scroller.scrollTop = Math.max(0, top);
+}
+
+function headingLabel(text: string) {
+  return text.replace(/\*\*(.+?)\*\*/g, "$1").replace(/__(.+?)__/g, "$1").trim();
+}
+
+function HeadingBar({ titles }: { titles: string[] }) {
+  if (titles.length < 2) return null;
+  return (
+    <div className="mb-2 flex gap-2 overflow-x-auto">
+      {titles.map((title, index) => {
+        const label = headingLabel(title);
+        return (
+          <Button key={`${index}-${label}`} size="small" autoInsertSpace={false} title={label} onClick={event => scrollToHeading(event.currentTarget, index)}>
+            {oneLineExcerpt(label, 24)}
+          </Button>
+        );
+      })}
+    </div>
+  );
+}
+
 function AssistantBody({ content, streaming = false }: { content: string; streaming?: boolean }) {
+  const { message } = App.useApp();
   const failure = classifyAssistantFailure(content);
   if (failure.kind === "placeholder") return failureLine(content);
   if (failure.kind === "answer-with-failure") {
+    const note = content.slice(failure.answer.length).trim();
+    const reason = failureNoteBody(content, failure.answer.length + "\n\n".length);
     return (
       <div>
-        <div style={{ marginBottom: 8, color: "var(--ant-color-warning)" }}>调用失败</div>
+        <div style={{ marginBottom: 8, color: "var(--ant-color-warning)" }}>{reason ? `调用失败：${reason}` : "调用失败"}</div>
+        {streaming ? null : <HeadingBar titles={markdownHeadings(failure.answer)} />}
         <AssistantMarkdown content={failure.answer} streaming={streaming} />
-        {failureLine(content.slice(failure.answer.length).trim())}
+        <div className="mt-2">
+          {failureLine(note)}
+          <Button type="link" size="small" autoInsertSpace={false} style={{ height: "auto", padding: 0 }} onClick={() => copyPlainText(note, message)}>
+            复制说明
+          </Button>
+        </div>
       </div>
     );
   }
-  return <AssistantMarkdown content={content} streaming={streaming} />;
+  return (
+    <div>
+      {streaming ? null : <HeadingBar titles={markdownHeadings(content)} />}
+      <AssistantMarkdown content={content} streaming={streaming} />
+    </div>
+  );
 }
 
 function copyableContent(item: AiMessage) {
@@ -412,6 +504,20 @@ function retryableFailure(content: string) {
   const failure = classifyAssistantFailure(content);
   if (failure.kind === "answer-with-failure") return true;
   return failure.kind === "placeholder" && content !== AI_STUB_REPLY;
+}
+
+function scrollToMark(el: HTMLElement, id: string) {
+  const mark = el.querySelector(`[data-mark="${CSS.escape(id)}"]`);
+  if (!(mark instanceof HTMLElement)) return false;
+  const top = mark.getBoundingClientRect().top - el.getBoundingClientRect().top + el.scrollTop;
+  el.scrollTop = Math.max(0, top);
+  return true;
+}
+
+function matchingMessageIds(messages: AiMessage[], keyword: string) {
+  const needle = keyword.trim().toLocaleLowerCase();
+  if (!needle) return [];
+  return messages.filter(item => item.content.toLocaleLowerCase().includes(needle)).map(item => item.id);
 }
 
 function scrollToLastTurn(el: HTMLElement) {
@@ -506,6 +612,8 @@ const AiChatScreen: FC = () => {
   const [searchHits, setSearchHits] = useState<AiConversation[] | null>(null);
   const [searchStatus, setSearchStatus] = useState<LoadStatus | "idle">("idle");
   const [searchNonce, setSearchNonce] = useState(0);
+  const [locateQuery, setLocateQuery] = useState("");
+  const [hitCursor, setHitCursor] = useState(-1);
   const [canManageModels, setCanManageModels] = useState(() => canAccessMenuPath(AI_ADMIN_PATH));
 
   const draftSeq = useRef(1);
@@ -526,6 +634,8 @@ const AiChatScreen: FC = () => {
   const catalogRef = useRef(new Map<string, AiConversation>());
   const searchSeq = useRef(0);
   const streamMetaRef = useRef<{ conversationId: string; userMessageId: string } | null>(null);
+  const locateQueryRef = useRef("");
+  const locatePending = useRef(false);
   const messagesRef = useRef(messages);
   const messageCacheRef = useRef(new Map<string, AiMessage[]>());
   const loadModelsRef = useRef<() => Promise<void>>(async () => {});
@@ -629,10 +739,13 @@ const AiChatScreen: FC = () => {
     if (!keyword) {
       setSearchHits(null);
       setSearchStatus("idle");
+      setLocateQuery("");
+      locateQueryRef.current = "";
+      locatePending.current = false;
+      setHitCursor(-1);
       return;
     }
     const seq = ++searchSeq.current;
-    setSearchHits(null);
     setSearchStatus("loading");
     const timer = window.setTimeout(() => {
       listAiConversations(keyword)
@@ -657,8 +770,16 @@ const AiChatScreen: FC = () => {
 
   useLayoutEffect(() => {
     const el = scroller.current;
-    if (!el || !pinBottom.current) return;
-    el.scrollTop = el.scrollHeight;
+    if (!el) return;
+    if (pinBottom.current) el.scrollTop = el.scrollHeight;
+    if (!locatePending.current || detailStatus !== "ready" || inflightRef.current) return;
+    locatePending.current = false;
+    const ids = matchingMessageIds(messages, locateQueryRef.current);
+    if (!ids.length) return;
+    pinBottom.current = false;
+    scrollToMark(el, ids[ids.length - 1]);
+    setShowJump(true);
+    setHitCursor(ids.length - 1);
   }, [messages, inflight, detailStatus, view, streamText]);
 
   const persistDraft = (target: ViewRef) => {
@@ -734,6 +855,10 @@ const AiChatScreen: FC = () => {
     setShowJump(false);
     setDrawerOpen(false);
     setSessionQuery("");
+    setLocateQuery("");
+    locateQueryRef.current = "";
+    locatePending.current = false;
+    setHitCursor(-1);
     setModelId(current => {
       const options = modelsRef.current;
       if (current && options.some(item => item.id === current)) return current;
@@ -940,7 +1065,7 @@ const AiChatScreen: FC = () => {
         const stayed = sameView(viewRef.current, origin);
         const settled = await settleConversation(recovered, flight);
         applyConversation(origin, settled);
-        parkDraft(origin, settled, raw, false, stayed);
+        parkDraft(origin, settled, raw, true, stayed);
       } else {
         parkDraft(origin, null, raw, false, sameView(viewRef.current, origin));
       }
@@ -1010,6 +1135,34 @@ const AiChatScreen: FC = () => {
   const previousQuestion = [...messages].reverse().find(item => item.role === "user");
   const showPreviousQuestion = view.kind === "chat" && detailStatus === "ready" && !flightHere && lastSaved?.role === "assistant" && Boolean(previousQuestion);
   const showTurnStart = view.kind === "chat" && detailStatus === "ready" && !flightHere && !showJump && lastSaved?.role === "assistant";
+  const showContinue =
+    view.kind === "chat" &&
+    detailStatus === "ready" &&
+    !sending &&
+    !flightHere &&
+    !text.trim() &&
+    lastSaved?.role === "assistant" &&
+    classifyAssistantFailure(lastSaved.content).kind === "answer";
+  const hitIds = matchingMessageIds(messages, locateQuery);
+  const activeHitId = hitCursor >= 0 && hitCursor < hitIds.length ? hitIds[hitCursor] : "";
+
+  const continueWriting = () => {
+    if (textRef.current.trim()) return;
+    updateText(CONTINUE_PROMPT);
+    composer.current?.querySelector("textarea")?.focus();
+  };
+
+  const moveHit = (step: number) => {
+    const next = hitCursor + step;
+    const id = hitIds[next];
+    const el = scroller.current;
+    if (!id || !el) return;
+    setHitCursor(next);
+    if (scrollToMark(el, id)) {
+      pinBottom.current = false;
+      setShowJump(true);
+    }
+  };
 
   useEffect(() => {
     if (view.kind !== "chat" || detailStatus !== "ready" || showUnavailable) return;
@@ -1048,11 +1201,25 @@ const AiChatScreen: FC = () => {
   });
   const listReady = listStatus === "ready" && conversations.length > 0;
   const filterMiss = listReady && searching && searchStatus === "ready" && searchSource.length === 0 && !pinnedOutside;
+  const listFoot = searching
+    ? searchStatus === "ready"
+      ? (searchHits?.length ?? 0) === 0
+        ? ""
+        : (searchHits?.length ?? 0) >= 50
+          ? "只列出最近更新的 50 条匹配，更早的不会出现"
+          : `找到 ${searchHits?.length ?? 0} 条`
+      : ""
+    : listReady
+      ? "仅显示最近 50 条"
+      : "";
 
   const conversationPane = () => (
     <div className="flex h-full min-h-0 flex-col">
       {listReady ? (
-        <Input allowClear className="mb-2 shrink-0" placeholder="查找标题或内容" value={sessionQuery} onChange={event => setSessionQuery(event.target.value)} />
+        <div className="mb-2 shrink-0">
+          <Input allowClear placeholder="查找标题或内容" value={sessionQuery} onChange={event => setSessionQuery(event.target.value)} />
+          {searching && searchStatus === "loading" && searchHits !== null ? <div className="mt-1 text-xs text-neutral-500">正在查找…</div> : null}
+        </div>
       ) : null}
       <Conversations
         className={listReady && !filterMiss ? "min-h-0 flex-1" : "shrink-0"}
@@ -1061,9 +1228,16 @@ const AiChatScreen: FC = () => {
         groupable={listReady && !filterMiss}
         creation={{ label: "新对话", onClick: () => startNew() }}
         styles={{ creation: { position: "sticky", top: 0, zIndex: 1, background: "#fff" } }}
-        onActiveChange={value => openChat(value)}
+        onActiveChange={value => {
+          const query = searching && searchStatus === "ready" ? Array.from(sessionKeyword).slice(0, 64).join("") : "";
+          locateQueryRef.current = query;
+          locatePending.current = query !== "";
+          setLocateQuery(query);
+          setHitCursor(-1);
+          openChat(value);
+        }}
       />
-      {searching && searchStatus === "loading" ? (
+      {searching && searchStatus === "loading" && searchHits === null ? (
         <div className="flex min-h-24 flex-1 items-center justify-center">
           <Spin />
         </div>
@@ -1104,7 +1278,7 @@ const AiChatScreen: FC = () => {
           )}
         </div>
       )}
-      <div className="shrink-0 border-t border-neutral-200 px-3 py-2 text-xs text-neutral-500">仅显示最近 50 条</div>
+      {listFoot ? <div className="shrink-0 border-t border-neutral-200 px-3 py-2 text-xs text-neutral-500">{listFoot}</div> : null}
     </div>
   );
 
@@ -1133,20 +1307,21 @@ const AiChatScreen: FC = () => {
   } else if (messages.length || showOptimistic || showWaiting || showStream) {
     const bubbleItems: BubbleItemType[] = messages.map((item, index) => {
       const markLast = index === messages.length - 1 && !showStream && !showWaiting;
-      const body = item.role === "user" ? <UserBubble content={item.content} /> : <AssistantBody content={item.content} />;
-      const marked = item.role === "user" || markLast;
       return {
         key: item.id,
         role: item.role,
         content: item.content,
         footer: messageFooter(item, copyMessage, reuseMessage),
-        contentRender: marked
-          ? () => (
-              <div data-turn={item.role === "user" ? item.id : undefined} data-last-turn={markLast ? "" : undefined}>
-                {body}
-              </div>
-            )
-          : undefined
+        contentRender: () => (
+          <div
+            data-mark={item.id}
+            data-turn={item.role === "user" ? item.id : undefined}
+            data-last-turn={markLast ? "" : undefined}
+            style={item.id === activeHitId ? { background: themePalette.light.accentSoft, borderRadius: 8 } : undefined}
+          >
+            {item.role === "user" ? <UserBubble content={item.content} expanded={hitIds.includes(item.id)} /> : <AssistantBody content={item.content} />}
+          </div>
+        )
       };
     });
     if (showOptimistic && inflight) {
@@ -1274,6 +1449,16 @@ const AiChatScreen: FC = () => {
               {inflight.content}
             </div>
           ) : null}
+          {hitIds.length > 1 ? (
+            <div className="flex shrink-0 gap-2 border-b border-neutral-200 py-2">
+              <Button size="small" autoInsertSpace={false} disabled={hitCursor <= 0} onClick={() => moveHit(-1)}>
+                上一处
+              </Button>
+              <Button size="small" autoInsertSpace={false} disabled={hitCursor >= hitIds.length - 1} onClick={() => moveHit(1)}>
+                下一处
+              </Button>
+            </div>
+          ) : null}
           {turns.length >= 2 ? (
             <div className="flex shrink-0 gap-2 overflow-x-auto border-b border-neutral-200 py-2">
               {turns.map(turn => (
@@ -1285,7 +1470,7 @@ const AiChatScreen: FC = () => {
             </div>
           ) : null}
           <div className="relative min-h-0 flex-1">
-            <div ref={scroller} className="h-full min-h-0 overflow-auto py-3" onScroll={onMessagesScroll}>
+            <div ref={scroller} data-chat-scroll className="h-full min-h-0 overflow-auto py-3" onScroll={onMessagesScroll}>
               {messageBody}
             </div>
             {showJump ? (
@@ -1300,10 +1485,21 @@ const AiChatScreen: FC = () => {
             ) : null}
           </div>
           <div ref={composer} className="shrink-0 border-t border-neutral-200 pt-3">
-            {showPreviousQuestion && previousQuestion ? (
-              <button type="button" className="mb-2 block w-full truncate text-left text-sm text-neutral-500" title={previousQuestion.content} onClick={() => scrollToTurn(previousQuestion.id)}>
-                {`上次提问：${oneLineExcerpt(previousQuestion.content, 80)}`}
-              </button>
+            {showPreviousQuestion || showContinue ? (
+              <div className="mb-2 flex items-center gap-3">
+                {showPreviousQuestion && previousQuestion ? (
+                  <button type="button" className="min-w-0 flex-1 truncate text-left text-sm text-neutral-500" title={previousQuestion.content} onClick={() => scrollToTurn(previousQuestion.id)}>
+                    {`上次提问：${oneLineExcerpt(previousQuestion.content, 80)}`}
+                  </button>
+                ) : (
+                  <span className="flex-1" />
+                )}
+                {showContinue ? (
+                  <Button type="link" size="small" autoInsertSpace={false} className="shrink-0" style={{ height: "auto", padding: 0 }} onClick={continueWriting}>
+                    接着写
+                  </Button>
+                ) : null}
+              </div>
             ) : null}
             <Sender
               value={text}
@@ -1316,7 +1512,7 @@ const AiChatScreen: FC = () => {
               footer={
                 <div className="flex items-center justify-between gap-3 text-sm text-neutral-500">
                   <span>
-                    {sending ? "上一条消息仍在发送" : showUnavailable ? "当前模型已停用，请换模型新开" : view.kind === "new" && listStatus === "error" ? "会话列表加载失败，请先重试" : ""}
+                    {sending ? (text.trim() ? "下一句先留在这里，回复结束后再按 Enter" : "上一条消息仍在发送") : showUnavailable ? "当前模型已停用，请换模型新开" : view.kind === "new" && listStatus === "error" ? "会话列表加载失败，请先重试" : ""}
                   </span>
                   <span style={Array.from(text).length >= 7600 ? { color: "var(--ant-color-warning)" } : undefined}>{Array.from(text).length} / 8000</span>
                 </div>
