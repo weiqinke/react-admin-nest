@@ -20,6 +20,7 @@
   "dependencies": {
     "@ant-design/icons": "^6.3.4",
     "@ant-design/x": "2.10.0",
+    "@ant-design/x-markdown": "2.10.0",
     "animate.css": "^4.1.1",
     "antd": "^6.7.0",
     "axios": "^1.21.0",
