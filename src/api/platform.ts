@@ -298,8 +298,9 @@ export const deleteAiModel = (id: string) => request(`/api/ai/models/${segment(i
 
 export const listAiConversations = () => request("/api/ai/conversations", "GET");
 
-export const createAiConversation = (payload: { model_id: string; content: string }) => request("/api/ai/conversations", "POST", payload);
+/** 上游约 30 秒、服务端写入约 60 秒。只放宽这两笔，其它请求仍走全局 20 秒。 */
+export const createAiConversation = (payload: { model_id: string; content: string }) => request("/api/ai/conversations", "POST", payload, { timeout: 60000 });
 
 export const getAiConversation = (id: string) => request(`/api/ai/conversations/${segment(id)}`, "GET");
 
-export const sendAiMessage = (id: string, content: string) => request(`/api/ai/conversations/${segment(id)}/messages`, "POST", { content });
+export const sendAiMessage = (id: string, content: string) => request(`/api/ai/conversations/${segment(id)}/messages`, "POST", { content }, { timeout: 60000 });

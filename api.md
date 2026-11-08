@@ -1169,6 +1169,8 @@ OAuth 登录也会写入会话。进程重启后，已吊销会话仍保持失�
 
 `provider`：`none` 或 `openai`。`none` 或 `base_url` 为空时，助手回复固定为「模型未接入，已记录本次调用。」`openai` 走 `{base_url}/v1/chat/completions`（地址已含 `/chat/completions` 则不改）。普通用户通过继承拥有 `ai:use`。每次对话写入操作审计 `module=ai` `action=chat`。
 
+这两笔 POST 默认仍返回 JSON。请求头 `Accept: text/event-stream` 时改为 SSE，事件依次为 `meta`（`conversation_id`、`model_id`、`title`、`user_message`）、`delta`（`content`）、`done`（完整 `conversation`）。校验失败且尚未写出 SSE 时仍是 JSON 错误。助手消息在 `token_usage` 大于 0 时带回该字段。
+
 ### 单元测试
 
 `go test ./internal/service -run 'TestPlatform|TestDept|TestChangePassword|TestTicket|TestJobRun|TestAccountStatus|TestRound'`

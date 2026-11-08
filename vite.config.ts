@@ -42,6 +42,13 @@ function goAdminProxyEntry() {
         const ip = raw.startsWith("::ffff:") ? raw.slice(7) : raw;
         if (ip) proxyReq.setHeader("X-Real-IP", ip);
       });
+      proxy.on("proxyRes", proxyRes => {
+        const type = String(proxyRes.headers["content-type"] || "");
+        if (type.includes("text/event-stream")) {
+          proxyRes.headers["cache-control"] = "no-cache";
+          proxyRes.headers["x-accel-buffering"] = "no";
+        }
+      });
     }
   };
 }
