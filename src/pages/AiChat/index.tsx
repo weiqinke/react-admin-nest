@@ -144,6 +144,7 @@ function formatUpdatedAt(value: string) {
     if (minutes < 60) return `${minutes} 分钟前`;
     return parsed.format("HH:mm");
   }
+  if (!parsed.isSame(dayjs(), "year")) return parsed.format("YYYY-MM-DD HH:mm");
   return parsed.format("MM-DD HH:mm");
 }
 
@@ -307,7 +308,7 @@ const MarkdownCode = memo(function MarkdownCode({ children, className, block, st
           </Button>
         </span>
       </div>
-      <pre style={{ ...fenceScroll, maxHeight: collapsed ? "23.8em" : undefined, overflowY: collapsed ? "auto" : "visible" }}>
+      <pre style={{ ...fenceScroll, maxHeight: collapsed ? "23.8em" : undefined, overflowY: collapsed ? "hidden" : "visible" }}>
         <code className={className} style={fenceScroll}>
           {children}
         </code>
@@ -350,23 +351,53 @@ function failureLine(text: string) {
 }
 
 function AssistantBody({ content, streaming = false }: { content: string; streaming?: boolean }) {
-  if (streaming) return <AssistantMarkdown content={content} streaming />;
   const failure = classifyAssistantFailure(content);
   if (failure.kind === "placeholder") return failureLine(content);
   if (failure.kind === "answer-with-failure") {
     return (
       <div>
-        <AssistantMarkdown content={failure.answer} />
+        <div style={{ marginBottom: 8, color: "var(--ant-color-warning)" }}>调用失败</div>
+        <AssistantMarkdown content={failure.answer} streaming={streaming} />
         {failureLine(content.slice(failure.answer.length).trim())}
       </div>
     );
   }
-  return <AssistantMarkdown content={content} />;
+  return <AssistantMarkdown content={content} streaming={streaming} />;
 }
+
+function copyableContent(item: AiMessage) {
+  if (item.role !== "assistant") return item.content;
+  const failure = classifyAssistantFailure(item.content);
+  if (failure.kind === "answer-with-failure") return failure.answer;
+  return item.content;
+}
+
+function retryableFailure(content: string) {
+  const failure = classifyAssistantFailure(content);
+  if (failure.kind === "answer-with-failure") return true;
+  return failure.kind === "placeholder" && content !== AI_STUB_REPLY;
+}
+
+function scrollToLastTurn(el: HTMLElement) {
+  const mark = el.querySelector("[data-last-turn]");
+  if (!(mark instanceof HTMLElement) || mark.offsetHeight <= el.clientHeight) {
+    el.scrollTop = el.scrollHeight;
+    return true;
+  }
+  const top = mark.getBoundingClientRect().top - el.getBoundingClientRect().top + el.scrollTop;
+  el.scrollTop = Math.max(0, top);
+  return false;
+}
+
+const conversationGroups = ["今天", "昨天", "近 7 天", "更早"] as const;
 
 function conversationGroup(updatedAt: string) {
   const parsed = dayjs(updatedAt);
-  if (parsed.isValid() && parsed.isSame(dayjs(), "day")) return "今天";
+  if (!parsed.isValid()) return "更早";
+  const now = dayjs();
+  if (parsed.isSame(now, "day")) return "今天";
+  if (parsed.isSame(now.subtract(1, "day"), "day")) return "昨天";
+  if (parsed.isBefore(now) && now.startOf("day").diff(parsed.startOf("day"), "day") < 7) return "近 7 天";
   return "更早";
 }
 
@@ -376,7 +407,7 @@ function messageFooter(item: AiMessage, onCopy: (content: string) => void, onReu
   return (
     <span className="inline-flex items-center gap-2 text-xs text-neutral-500">
       {time ? <span>{time}</span> : null}
-      <Button type="link" size="small" autoInsertSpace={false} style={{ height: "auto", padding: 0 }} onClick={() => onCopy(item.content)}>
+      <Button type="link" size="small" autoInsertSpace={false} style={{ height: "auto", padding: 0 }} onClick={() => onCopy(copyableContent(item))}>
         复制
       </Button>
       {item.role === "user" && onReuse ? (
@@ -434,12 +465,17 @@ const AiChatScreen: FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showJump, setShowJump] = useState(false);
   const [sessionQuery, setSessionQuery] = useState("");
+  const [searchHits, setSearchHits] = useState<AiConversation[] | null>(null);
+  const [searchStatus, setSearchStatus] = useState<LoadStatus | "idle">("idle");
+  const [searchNonce, setSearchNonce] = useState(0);
   const [canManageModels, setCanManageModels] = useState(() => canAccessMenuPath(AI_ADMIN_PATH));
 
   const draftSeq = useRef(1);
   const detailSeq = useRef(0);
   const pinBottom = useRef(true);
+  const alignStart = useRef(false);
   const scroller = useRef<HTMLDivElement>(null);
+  const composer = useRef<HTMLDivElement>(null);
   const viewRef = useRef<ViewRef>(view);
   const textRef = useRef(text);
   const sendingRef = useRef(false);
@@ -450,6 +486,8 @@ const AiChatScreen: FC = () => {
   const modelIdRef = useRef("");
   const modelStatusRef = useRef<LoadStatus>(modelStatus);
   const conversationsRef = useRef(conversations);
+  const catalogRef = useRef(new Map<string, AiConversation>());
+  const searchSeq = useRef(0);
   const messagesRef = useRef(messages);
   const messageCacheRef = useRef(new Map<string, AiMessage[]>());
   const loadModelsRef = useRef<() => Promise<void>>(async () => {});
@@ -474,7 +512,10 @@ const AiChatScreen: FC = () => {
   };
 
   const reuseMessage = (content: string) => {
-    updateText(Array.from(content).slice(0, 8000).join(""));
+    const current = textRef.current;
+    const next = current.trim() ? `${current.replace(/\s+$/, "")}\n\n${content}` : content;
+    updateText(Array.from(next).slice(0, 8000).join(""));
+    composer.current?.querySelector("textarea")?.focus();
   };
 
   const rememberMessages = (id: string, list: AiMessage[]) => {
@@ -513,6 +554,7 @@ const AiChatScreen: FC = () => {
         return item ? [item] : [];
       });
       conversationsRef.current = list;
+      for (const item of list) catalogRef.current.set(item.id, item);
       setConversations(list);
       setListStatus("ready");
     } catch {
@@ -544,9 +586,47 @@ const AiChatScreen: FC = () => {
     return () => media.removeEventListener("change", onChange);
   }, []);
 
+  useEffect(() => {
+    const keyword = Array.from(sessionQuery.trim()).slice(0, 64).join("");
+    if (!keyword) {
+      setSearchHits(null);
+      setSearchStatus("idle");
+      return;
+    }
+    const seq = ++searchSeq.current;
+    setSearchHits(null);
+    setSearchStatus("loading");
+    const timer = window.setTimeout(() => {
+      listAiConversations(keyword)
+        .then(res => {
+          if (seq !== searchSeq.current) return;
+          const list = readRows(payloadOf(res)).flatMap(row => {
+            const item = normalizeConversation(row);
+            return item ? [item] : [];
+          });
+          for (const item of list) catalogRef.current.set(item.id, item);
+          setSearchHits(list);
+          setSearchStatus("ready");
+        })
+        .catch(() => {
+          if (seq !== searchSeq.current) return;
+          setSearchHits([]);
+          setSearchStatus("error");
+        });
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [sessionQuery, searchNonce]);
+
   useLayoutEffect(() => {
     const el = scroller.current;
-    if (!el || !pinBottom.current) return;
+    if (!el) return;
+    if (alignStart.current && detailStatus === "ready" && !inflightRef.current) {
+      alignStart.current = false;
+      pinBottom.current = scrollToLastTurn(el);
+      setShowJump(false);
+      return;
+    }
+    if (!pinBottom.current) return;
     el.scrollTop = el.scrollHeight;
   }, [messages, inflight, detailStatus, view, streamText]);
 
@@ -572,7 +652,8 @@ const AiChatScreen: FC = () => {
     setView(next);
     setMessages([]);
     setDetailStatus("loading");
-    pinBottom.current = true;
+    alignStart.current = true;
+    pinBottom.current = false;
     setShowJump(false);
     setDrawerOpen(false);
     getAiConversation(id)
@@ -630,6 +711,16 @@ const AiChatScreen: FC = () => {
     });
   };
 
+  const moveToFreshModel = () => {
+    const typed = textRef.current.trim();
+    const lastUser = [...messagesRef.current].reverse().find(item => item.role === "user");
+    const carried = typed ? textRef.current : (lastUser?.content ?? "");
+    startNew();
+    const next = Array.from(carried).slice(0, 8000).join("");
+    updateText(next);
+    if (next) draftsRef.current.set(viewKey(viewRef.current), next);
+  };
+
   const settleConversation = async (item: AiConversation, flight: Inflight) => {
     let current = item;
     for (let attempt = 0; attempt < 4 && lastIsPendingUser(current, flight); attempt += 1) {
@@ -668,6 +759,7 @@ const AiChatScreen: FC = () => {
         return item ? [item] : [];
       });
       conversationsRef.current = list;
+      for (const item of list) catalogRef.current.set(item.id, item);
       setConversations(list);
       setListStatus("ready");
       let candidates = list.filter(item => !flight.knownIds.has(item.id));
@@ -709,7 +801,22 @@ const AiChatScreen: FC = () => {
     setMessages(item.messages);
     setDetailStatus("ready");
     if (item.model_id) setModelId(item.model_id);
-    updateText("");
+  };
+
+  const parkDraft = (origin: ViewRef, item: AiConversation | null, fallback: string, restoreFailure: boolean, stayed: boolean) => {
+    const carried = stayed ? textRef.current : (draftsRef.current.get(viewKey(origin)) ?? "");
+    const nextKey = item ? viewKey({ kind: "chat", id: item.id }) : viewKey(origin);
+    let stored = carried;
+    if (!stored && restoreFailure && item) {
+      const last = item.messages[item.messages.length - 1];
+      if (last?.role === "assistant" && retryableFailure(last.content)) stored = fallback;
+    }
+    if (!stored && !item) stored = fallback;
+    if (stored) {
+      draftsRef.current.set(nextKey, stored);
+      if (stayed) updateText(stored);
+    }
+    if (viewKey(origin) !== nextKey) draftsRef.current.delete(viewKey(origin));
   };
 
   const send = async (draft?: string) => {
@@ -719,6 +826,7 @@ const AiChatScreen: FC = () => {
     if (!content) return;
     const origin = viewRef.current;
     if (origin.kind === "chat" && !messageCacheRef.current.has(origin.id)) return;
+    if (origin.kind === "chat" && modelStatusRef.current === "ready" && modelsRef.current.length > 0 && !modelsRef.current.some(item => item.id === modelIdRef.current)) return;
     if (origin.kind === "new" && listStatusRef.current !== "ready") return;
     if (origin.kind === "new" && !modelIdRef.current) {
       if (!(modelStatusRef.current === "ready" && modelsRef.current.length === 0)) message.warning("先选择一个模型");
@@ -759,21 +867,23 @@ const AiChatScreen: FC = () => {
       const parsed = normalizeConversation(rawItem);
       const item = parsed ? await settleConversation(parsed, flight) : null;
       await loadConversations({ silent: true });
-      draftsRef.current.delete(viewKey(origin));
-      if (item) applyConversation(origin, item);
-      else if (sameView(viewRef.current, origin)) updateText("");
+      if (item) {
+        const stayed = sameView(viewRef.current, origin);
+        applyConversation(origin, item);
+        parkDraft(origin, item, flight.content, true, stayed);
+      }
     } catch {
       const reconciling = { ...flight, phase: "reconciling" as const };
       inflightRef.current = reconciling;
       setInflight(reconciling);
-      draftsRef.current.set(viewKey(origin), raw);
       const recovered = await recoverWritten(flight);
       if (recovered) {
+        const stayed = sameView(viewRef.current, origin);
         const settled = await settleConversation(recovered, flight);
-        draftsRef.current.delete(viewKey(origin));
         applyConversation(origin, settled);
-      } else if (sameView(viewRef.current, origin) && textRef.current === "") {
-        updateText(raw);
+        parkDraft(origin, settled, raw, false, stayed);
+      } else {
+        parkDraft(origin, null, raw, false, sameView(viewRef.current, origin));
       }
     } finally {
       inflightRef.current = null;
@@ -795,13 +905,18 @@ const AiChatScreen: FC = () => {
 
   const jumpToLatest = () => {
     const el = scroller.current;
-    pinBottom.current = true;
     setShowJump(false);
-    if (el) el.scrollTop = el.scrollHeight;
+    if (!el) return;
+    if (inflightRef.current) {
+      pinBottom.current = true;
+      el.scrollTop = el.scrollHeight;
+      return;
+    }
+    pinBottom.current = scrollToLastTurn(el);
   };
 
   const modelInList = Boolean(modelId && models.some(item => item.id === modelId));
-  const showUnavailable = view.kind === "chat" && detailStatus === "ready" && !modelInList;
+  const showUnavailable = view.kind === "chat" && detailStatus === "ready" && modelStatus === "ready" && models.length > 0 && !modelInList;
   const selectValue = modelInList && (view.kind === "new" || detailStatus === "ready") ? modelId : undefined;
   let modelPlaceholder: string | undefined;
   if (modelStatus === "error") modelPlaceholder = "模型列表加载失败";
@@ -811,7 +926,6 @@ const AiChatScreen: FC = () => {
   const blockEmptyModels = view.kind === "new" && modelStatus === "ready" && models.length === 0;
   const blockUnreadChat = view.kind === "chat" && detailStatus !== "ready";
   const blockList = view.kind === "new" && listStatus !== "ready";
-  const awaySending = Boolean(sending && inflight && !sameView(inflight.origin, view));
   const viewingStreamChat = Boolean(streamConversationId && view.kind === "chat" && view.id === streamConversationId);
   const flightHere = Boolean(
     inflight && detailStatus !== "loading" && detailStatus !== "error" && (sameView(inflight.origin, view) || viewingStreamChat)
@@ -821,23 +935,22 @@ const AiChatScreen: FC = () => {
   const showOptimistic = Boolean(flightHere && inflight && !hasWrittenUser(messages, inflight));
 
   const bubbleRoles = makeBubbleRoles(token);
-  const heading = view.kind === "chat" ? conversations.find(item => item.id === view.id)?.title || "对话" : "新对话";
+  const heading = view.kind === "chat" ? catalogRef.current.get(view.id)?.title || conversations.find(item => item.id === view.id)?.title || "对话" : "新对话";
   const sessionKeyword = sessionQuery.trim();
+  const searching = sessionKeyword !== "";
   const conversationTitle = (item: AiConversation) => item.title || "未命名对话";
-  const titleMatches = (item: AiConversation) => !sessionKeyword || conversationTitle(item).includes(sessionKeyword);
+  const searchSource = searching ? (searchHits ?? []) : conversations;
   const activeId = view.kind === "chat" ? view.id : "";
-  const visibleConversations = conversations.filter(item => titleMatches(item) || item.id === activeId);
-  const matchedCount = conversations.filter(titleMatches).length;
-  const orderedConversations = [
-    ...visibleConversations.filter(item => conversationGroup(item.updated_at) === "今天"),
-    ...visibleConversations.filter(item => conversationGroup(item.updated_at) === "更早")
-  ];
+  const activeSummary = activeId ? catalogRef.current.get(activeId) ?? conversations.find(item => item.id === activeId) : undefined;
+  const pinnedOutside = Boolean(searching && activeSummary && !searchSource.some(item => item.id === activeSummary.id));
+  const visibleConversations = pinnedOutside && activeSummary ? [...searchSource, activeSummary] : searchSource;
+  const orderedConversations = conversationGroups.flatMap(group => visibleConversations.filter(item => conversationGroup(item.updated_at) === group));
   const conversationItems = orderedConversations.map(item => {
     const modelName = models.find(model => model.id === item.model_id)?.name || "";
     const when = formatUpdatedAt(item.updated_at);
     const replying =
       (streamConversationId !== "" && item.id === streamConversationId) || (inflight?.origin.kind === "chat" && inflight.origin.id === item.id);
-    const kept = sessionKeyword !== "" && item.id === activeId && !titleMatches(item);
+    const kept = pinnedOutside && item.id === activeId;
     return {
       key: item.id,
       group: conversationGroup(item.updated_at),
@@ -852,12 +965,12 @@ const AiChatScreen: FC = () => {
     };
   });
   const listReady = listStatus === "ready" && conversations.length > 0;
-  const filterMiss = listReady && sessionKeyword !== "" && matchedCount === 0 && activeId === "";
+  const filterMiss = listReady && searching && searchStatus === "ready" && searchSource.length === 0 && !pinnedOutside;
 
   const conversationPane = () => (
     <div className="flex h-full min-h-0 flex-col">
       {listReady ? (
-        <Input allowClear className="mb-2 shrink-0" placeholder="查找会话" value={sessionQuery} onChange={event => setSessionQuery(event.target.value)} />
+        <Input allowClear className="mb-2 shrink-0" placeholder="查找标题或内容" value={sessionQuery} onChange={event => setSessionQuery(event.target.value)} />
       ) : null}
       <Conversations
         className={listReady && !filterMiss ? "min-h-0 flex-1" : "shrink-0"}
@@ -868,7 +981,24 @@ const AiChatScreen: FC = () => {
         styles={{ creation: { position: "sticky", top: 0, zIndex: 1, background: "#fff" } }}
         onActiveChange={value => openChat(value)}
       />
-      {filterMiss ? (
+      {searching && searchStatus === "loading" ? (
+        <div className="flex min-h-24 flex-1 items-center justify-center">
+          <Spin />
+        </div>
+      ) : searching && searchStatus === "error" ? (
+        <div className="flex min-h-24 flex-1 items-center justify-center">
+          <Empty
+            description={
+              <div>
+                <div>查找失败</div>
+                <Button type="link" autoInsertSpace={false} onClick={() => setSearchNonce(current => current + 1)}>
+                  重试
+                </Button>
+              </div>
+            }
+          />
+        </div>
+      ) : filterMiss ? (
         <div className="flex min-h-24 flex-1 items-center justify-center">
           <Empty description="没有匹配的会话" />
         </div>
@@ -919,12 +1049,17 @@ const AiChatScreen: FC = () => {
       </div>
     );
   } else if (messages.length || showOptimistic || showWaiting || showStream) {
-    const bubbleItems: BubbleItemType[] = messages.map(item => ({
-      key: item.id,
-      role: item.role,
-      content: item.content,
-      footer: messageFooter(item, copyMessage, sending ? undefined : reuseMessage)
-    }));
+    const bubbleItems: BubbleItemType[] = messages.map((item, index) => {
+      const markLast = index === messages.length - 1 && !showStream && !showWaiting;
+      const body = item.role === "user" ? bubbleText(item.content) : <AssistantBody content={item.content} />;
+      return {
+        key: item.id,
+        role: item.role,
+        content: item.content,
+        footer: messageFooter(item, copyMessage, reuseMessage),
+        contentRender: markLast ? () => <div data-last-turn="">{body}</div> : undefined
+      };
+    });
     if (showOptimistic && inflight) {
       const pending: AiMessage = { id: "pending-user", role: "user", content: inflight.raw, created_at: "" };
       bubbleItems.push({
@@ -994,7 +1129,7 @@ const AiChatScreen: FC = () => {
           items={STARTERS.map(item => ({ key: item.key, label: item.label, description: item.text }))}
           onItemClick={({ data }) => {
             const starter = STARTERS.find(item => item.key === data.key);
-            if (starter) updateText(starter.text);
+            if (starter && !textRef.current.trim()) updateText(starter.text);
           }}
         />
       </div>
@@ -1034,6 +1169,11 @@ const AiChatScreen: FC = () => {
                 重试
               </Button>
             ) : null}
+            {showUnavailable ? (
+              <Button autoInsertSpace={false} onClick={moveToFreshModel}>
+                换模型新开
+              </Button>
+            ) : null}
           </div>
           {flightHere && inflight ? (
             <div className="shrink-0 truncate border-b border-neutral-200 px-1 py-2 text-sm" style={{ background: themePalette.light.accentSoft }} title={inflight.content}>
@@ -1050,10 +1190,10 @@ const AiChatScreen: FC = () => {
               </Button>
             ) : null}
           </div>
-          <div className="shrink-0 border-t border-neutral-200 pt-3">
+          <div ref={composer} className="shrink-0 border-t border-neutral-200 pt-3">
             <Sender
               value={text}
-              disabled={sending || blockEmptyModels || blockUnreadChat || blockList}
+              disabled={blockEmptyModels || blockUnreadChat || blockList}
               autoSize={{ minRows: 3, maxRows: 6 }}
               placeholder="输入内容，Enter 发送，Shift+Enter 换行"
               submitType="enter"
@@ -1062,7 +1202,7 @@ const AiChatScreen: FC = () => {
               footer={
                 <div className="flex items-center justify-between gap-3 text-sm text-neutral-500">
                   <span>
-                    {awaySending ? "上一条消息仍在发送" : view.kind === "new" && listStatus === "error" ? "会话列表加载失败，请先重试" : ""}
+                    {sending ? "上一条消息仍在发送" : showUnavailable ? "当前模型已停用，请换模型新开" : view.kind === "new" && listStatus === "error" ? "会话列表加载失败，请先重试" : ""}
                   </span>
                   <span style={Array.from(text).length >= 7600 ? { color: "var(--ant-color-warning)" } : undefined}>{Array.from(text).length} / 8000</span>
                 </div>

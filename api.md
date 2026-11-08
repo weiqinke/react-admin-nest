@@ -1162,7 +1162,7 @@ OAuth 登录也会写入会话。进程重启后，已吊销会话仍保持失�
 | POST   | `/api/ai/models`                      | `ai:write`                                           |
 | PUT    | `/api/ai/models/{id}`                 | `ai:write`。`api_key` 空则保留原值                   |
 | DELETE | `/api/ai/models/{id}`                 | `ai:write`。已有对话 → `40905`                       |
-| GET    | `/api/ai/conversations`               | `ai:use`，只看自己，最多 50 条                       |
+| GET    | `/api/ai/conversations`               | `ai:use`，只看自己，按 `updated_at` 倒序，最多 50 条。`keyword` 再匹配标题或消息正文 |
 | POST   | `/api/ai/conversations`               | `ai:use`。`{model_id, content}`                      |
 | GET    | `/api/ai/conversations/{id}`          | `ai:use`                                             |
 | POST   | `/api/ai/conversations/{id}/messages` | `ai:use`。`{content}`                                |

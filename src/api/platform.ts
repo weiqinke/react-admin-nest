@@ -296,7 +296,11 @@ export const updateAiModel = (id: string, payload: Record<string, any>) => reque
 
 export const deleteAiModel = (id: string) => request(`/api/ai/models/${segment(id)}`, "DELETE");
 
-export const listAiConversations = () => request("/api/ai/conversations", "GET");
+export const listAiConversations = (keyword?: string) => {
+  const trimmed = Array.from((keyword ?? "").trim()).slice(0, 64).join("");
+  if (!trimmed) return request("/api/ai/conversations", "GET");
+  return request(`/api/ai/conversations?keyword=${encodeURIComponent(trimmed)}`, "GET");
+};
 
 /** 上游约 30 秒、服务端写入约 60 秒。只放宽这两笔，其它请求仍走全局 20 秒。 */
 export const createAiConversation = (payload: { model_id: string; content: string }) => request("/api/ai/conversations", "POST", payload, { timeout: 60000 });
