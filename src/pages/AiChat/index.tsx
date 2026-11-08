@@ -208,7 +208,9 @@ function UserBubble({ content, expanded = false }: { content: string; expanded?:
   const long = content.split("\n").length > 4 || Array.from(content).length > 160;
   return (
     <div>
-      <div style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere", maxHeight: long && !open ? "6.8em" : undefined, overflow: long && !open ? "hidden" : undefined }}>{content}</div>
+      <div style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere", maxHeight: long && !open ? "6.8em" : undefined, overflow: long && !open ? "hidden" : undefined }}>
+        {content}
+      </div>
       {long ? (
         <Button type="link" size="small" autoInsertSpace={false} style={{ height: "auto", padding: 0 }} onClick={() => setOpen(value => !value)}>
           {open ? "收起" : "展开"}
@@ -336,7 +338,9 @@ const MarkdownCode = memo(function MarkdownCode({ children, className, block, st
   return (
     <div style={{ minWidth: 0, maxWidth: "100%", border: "1px solid var(--ant-color-border-secondary)", borderRadius: 6 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, paddingLeft: 8 }}>
-        <span style={{ fontSize: 12, color: "var(--ant-color-text-secondary)" }}>{[language || "代码", lineCount ? `${lineCount} 行` : ""].filter(Boolean).join(" · ")}</span>
+        <span style={{ fontSize: 12, color: "var(--ant-color-text-secondary)" }}>
+          {[language || "代码", lineCount ? `${lineCount} 行` : ""].filter(Boolean).join(" · ")}
+        </span>
         <span>
           {streamStatus === "done" && long ? (
             <Button type="link" size="small" autoInsertSpace={false} onClick={() => setOpen(current => !current)}>
@@ -445,7 +449,10 @@ function scrollToHeading(origin: HTMLElement, index: number) {
 }
 
 function headingLabel(text: string) {
-  return text.replace(/\*\*(.+?)\*\*/g, "$1").replace(/__(.+?)__/g, "$1").trim();
+  return text
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/__(.+?)__/g, "$1")
+    .trim();
 }
 
 function HeadingBar({ titles }: { titles: string[] }) {
@@ -899,9 +906,7 @@ const AiChatScreen: FC = () => {
       try {
         const res = await getAiConversation(meta.conversationId);
         const item = normalizeConversation(payloadOf(res));
-        const wroteThis = meta.userMessageId
-          ? item?.messages.some(message => message.id === meta.userMessageId)
-          : item ? hasWrittenUser(item.messages, flight) : false;
+        const wroteThis = meta.userMessageId ? item?.messages.some(message => message.id === meta.userMessageId) : item ? hasWrittenUser(item.messages, flight) : false;
         if (!item || !wroteThis) return null;
         rememberMessages(item.id, item.messages);
         await loadConversations({ silent: true });
@@ -991,7 +996,9 @@ const AiChatScreen: FC = () => {
 
   const send = async (draft?: string) => {
     if (sendingRef.current) return;
-    const raw = Array.from(draft ?? textRef.current).slice(0, 8000).join("");
+    const raw = Array.from(draft ?? textRef.current)
+      .slice(0, 8000)
+      .join("");
     const content = raw.trim();
     if (!content) return;
     const origin = viewRef.current;
@@ -1124,9 +1131,7 @@ const AiChatScreen: FC = () => {
   const blockUnreadChat = view.kind === "chat" && detailStatus !== "ready";
   const blockList = view.kind === "new" && listStatus !== "ready";
   const viewingStreamChat = Boolean(streamConversationId && view.kind === "chat" && view.id === streamConversationId);
-  const flightHere = Boolean(
-    inflight && detailStatus !== "loading" && detailStatus !== "error" && (sameView(inflight.origin, view) || viewingStreamChat)
-  );
+  const flightHere = Boolean(inflight && detailStatus !== "loading" && detailStatus !== "error" && (sameView(inflight.origin, view) || viewingStreamChat));
   const showStream = Boolean(flightHere && streamText);
   const showWaiting = Boolean(flightHere && inflight?.phase === "waiting" && !streamText);
   const showOptimistic = Boolean(flightHere && inflight && !hasWrittenUser(messages, inflight));
@@ -1176,15 +1181,14 @@ const AiChatScreen: FC = () => {
   const conversationTitle = (item: AiConversation) => item.title || "未命名对话";
   const searchSource = searching ? (searchHits ?? []) : conversations;
   const activeId = view.kind === "chat" ? view.id : "";
-  const activeSummary = activeId ? catalogRef.current.get(activeId) ?? conversations.find(item => item.id === activeId) : undefined;
+  const activeSummary = activeId ? (catalogRef.current.get(activeId) ?? conversations.find(item => item.id === activeId)) : undefined;
   const pinnedOutside = Boolean(searching && activeSummary && !searchSource.some(item => item.id === activeSummary.id));
   const visibleConversations = pinnedOutside && activeSummary ? [...searchSource, activeSummary] : searchSource;
   const orderedConversations = conversationGroups.flatMap(group => visibleConversations.filter(item => conversationGroup(item.updated_at) === group));
   const conversationItems = orderedConversations.map(item => {
     const modelName = models.find(model => model.id === item.model_id)?.name || "";
     const when = formatUpdatedAt(item.updated_at);
-    const replying =
-      (streamConversationId !== "" && item.id === streamConversationId) || (inflight?.origin.kind === "chat" && inflight.origin.id === item.id);
+    const replying = (streamConversationId !== "" && item.id === streamConversationId) || (inflight?.origin.kind === "chat" && inflight.origin.id === item.id);
     const kept = pinnedOutside && item.id === activeId;
     return {
       key: item.id,
@@ -1317,8 +1321,7 @@ const AiChatScreen: FC = () => {
             data-mark={item.id}
             data-turn={item.role === "user" ? item.id : undefined}
             data-last-turn={markLast ? "" : undefined}
-            style={item.id === activeHitId ? { background: themePalette.light.accentSoft, borderRadius: 8 } : undefined}
-          >
+            style={item.id === activeHitId ? { background: themePalette.light.accentSoft, borderRadius: 8 } : undefined}>
             {item.role === "user" ? <UserBubble content={item.content} expanded={hitIds.includes(item.id)} /> : <AssistantBody content={item.content} />}
           </div>
         )
@@ -1355,14 +1358,7 @@ const AiChatScreen: FC = () => {
         loadingRender: () => <span className="text-sm text-neutral-500">正在等待回复…</span>
       });
     }
-    messageBody = (
-      <Bubble.List
-        autoScroll={false}
-        items={bubbleItems}
-        role={bubbleRoles}
-        styles={{ scroll: { maxHeight: "none", overflowY: "visible" } }}
-      />
-    );
+    messageBody = <Bubble.List autoScroll={false} items={bubbleItems} role={bubbleRoles} styles={{ scroll: { maxHeight: "none", overflowY: "visible" } }} />;
   } else if (modelStatus === "loading") {
     messageBody = (
       <div className="flex h-full items-center justify-center">
@@ -1445,7 +1441,10 @@ const AiChatScreen: FC = () => {
             ) : null}
           </div>
           {flightHere && inflight ? (
-            <div className="shrink-0 truncate border-b border-neutral-200 px-1 py-2 text-sm" style={{ background: themePalette.light.accentSoft }} title={inflight.content}>
+            <div
+              className="shrink-0 truncate border-b border-neutral-200 px-1 py-2 text-sm"
+              style={{ background: themePalette.light.accentSoft }}
+              title={inflight.content}>
               {inflight.content}
             </div>
           ) : null}
@@ -1488,7 +1487,11 @@ const AiChatScreen: FC = () => {
             {showPreviousQuestion || showContinue ? (
               <div className="mb-2 flex items-center gap-3">
                 {showPreviousQuestion && previousQuestion ? (
-                  <button type="button" className="min-w-0 flex-1 truncate text-left text-sm text-neutral-500" title={previousQuestion.content} onClick={() => scrollToTurn(previousQuestion.id)}>
+                  <button
+                    type="button"
+                    className="min-w-0 flex-1 truncate text-left text-sm text-neutral-500"
+                    title={previousQuestion.content}
+                    onClick={() => scrollToTurn(previousQuestion.id)}>
                     {`上次提问：${oneLineExcerpt(previousQuestion.content, 80)}`}
                   </button>
                 ) : (
@@ -1512,7 +1515,15 @@ const AiChatScreen: FC = () => {
               footer={
                 <div className="flex items-center justify-between gap-3 text-sm text-neutral-500">
                   <span>
-                    {sending ? (text.trim() ? "下一句先留在这里，回复结束后再按 Enter" : "上一条消息仍在发送") : showUnavailable ? "当前模型已停用，请换模型新开" : view.kind === "new" && listStatus === "error" ? "会话列表加载失败，请先重试" : ""}
+                    {sending
+                      ? text.trim()
+                        ? "下一句先留在这里，回复结束后再按 Enter"
+                        : "上一条消息仍在发送"
+                      : showUnavailable
+                        ? "当前模型已停用，请换模型新开"
+                        : view.kind === "new" && listStatus === "error"
+                          ? "会话列表加载失败，请先重试"
+                          : ""}
                   </span>
                   <span style={Array.from(text).length >= 7600 ? { color: "var(--ant-color-warning)" } : undefined}>{Array.from(text).length} / 8000</span>
                 </div>

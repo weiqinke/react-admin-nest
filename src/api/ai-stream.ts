@@ -109,8 +109,7 @@ export async function streamAiChat(path: string, body: Record<string, string>, h
             conversation_id: event.conversation_id,
             user_message_id: typeof event.user_message?.id === "string" ? event.user_message.id : undefined
           });
-        }
-        else if (event?.type === "delta" && typeof event.content === "string") handlers.onDelta?.(event.content);
+        } else if (event?.type === "delta" && typeof event.content === "string") handlers.onDelta?.(event.content);
         else if (event?.type === "done") {
           sawDone = true;
           conversation = event.conversation;

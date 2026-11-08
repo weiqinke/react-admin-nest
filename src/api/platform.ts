@@ -297,7 +297,9 @@ export const updateAiModel = (id: string, payload: Record<string, any>) => reque
 export const deleteAiModel = (id: string) => request(`/api/ai/models/${segment(id)}`, "DELETE");
 
 export const listAiConversations = (keyword?: string) => {
-  const trimmed = Array.from((keyword ?? "").trim()).slice(0, 64).join("");
+  const trimmed = Array.from((keyword ?? "").trim())
+    .slice(0, 64)
+    .join("");
   if (!trimmed) return request("/api/ai/conversations", "GET");
   return request(`/api/ai/conversations?keyword=${encodeURIComponent(trimmed)}`, "GET");
 };

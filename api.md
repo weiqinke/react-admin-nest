@@ -1155,17 +1155,17 @@ OAuth 登录也会写入会话。进程重启后，已吊销会话仍保持失�
 
 ## 19. AI 对话
 
-| 方法   | 路径                                  | 权限                                                 |
-| ------ | ------------------------------------- | ---------------------------------------------------- |
-| GET    | `/api/ai/models/options`              | `ai:use`。启用中的模型，无密钥                       |
-| GET    | `/api/ai/models`                      | `ai:read`。`api_key_set`、`api_key_hint`，不回传密钥 |
-| POST   | `/api/ai/models`                      | `ai:write`                                           |
-| PUT    | `/api/ai/models/{id}`                 | `ai:write`。`api_key` 空则保留原值                   |
-| DELETE | `/api/ai/models/{id}`                 | `ai:write`。已有对话 → `40905`                       |
+| 方法   | 路径                                  | 权限                                                                                 |
+| ------ | ------------------------------------- | ------------------------------------------------------------------------------------ |
+| GET    | `/api/ai/models/options`              | `ai:use`。启用中的模型，无密钥                                                       |
+| GET    | `/api/ai/models`                      | `ai:read`。`api_key_set`、`api_key_hint`，不回传密钥                                 |
+| POST   | `/api/ai/models`                      | `ai:write`                                                                           |
+| PUT    | `/api/ai/models/{id}`                 | `ai:write`。`api_key` 空则保留原值                                                   |
+| DELETE | `/api/ai/models/{id}`                 | `ai:write`。已有对话 → `40905`                                                       |
 | GET    | `/api/ai/conversations`               | `ai:use`，只看自己，按 `updated_at` 倒序，最多 50 条。`keyword` 再匹配标题或消息正文 |
-| POST   | `/api/ai/conversations`               | `ai:use`。`{model_id, content}`                      |
-| GET    | `/api/ai/conversations/{id}`          | `ai:use`                                             |
-| POST   | `/api/ai/conversations/{id}/messages` | `ai:use`。`{content}`                                |
+| POST   | `/api/ai/conversations`               | `ai:use`。`{model_id, content}`                                                      |
+| GET    | `/api/ai/conversations/{id}`          | `ai:use`                                                                             |
+| POST   | `/api/ai/conversations/{id}/messages` | `ai:use`。`{content}`                                                                |
 
 `provider`：`none` 或 `openai`。`none` 或 `base_url` 为空时，助手回复固定为「模型未接入，已记录本次调用。」`openai` 走 `{base_url}/v1/chat/completions`（地址已含 `/chat/completions` 则不改）。普通用户通过继承拥有 `ai:use`。每次对话写入操作审计 `module=ai` `action=chat`。
 

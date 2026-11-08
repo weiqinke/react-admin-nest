@@ -322,13 +322,7 @@ const AssetAdmin: FC = () => {
           </Form.Item>
           <Form.Item name="department_id" label="部门">
             {canPickDept ? (
-              <TreeSelect
-                allowClear
-                treeDefaultExpandAll
-                placeholder="留空则不归属部门"
-                treeData={deptTree}
-                showSearch={{ treeNodeFilterProp: "title" }}
-              />
+              <TreeSelect allowClear treeDefaultExpandAll placeholder="留空则不归属部门" treeData={deptTree} showSearch={{ treeNodeFilterProp: "title" }} />
             ) : (
               <Input allowClear placeholder="部门 ID，可留空" />
             )}
